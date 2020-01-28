@@ -1,4 +1,4 @@
-package org.planit.utils.network;
+package org.planit.utils.graph;
 
 /**
  * EdgeSegment represents an edge in a particular (single) direction. Each edge

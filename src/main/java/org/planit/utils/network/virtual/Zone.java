@@ -1,6 +1,4 @@
-package org.planit.zoning;
-
-import org.planit.utils.network.virtual.Centroid;
+package org.planit.utils.network.virtual;
 
 /** Zone represent a geographical area with a centroid which in turn represent the
  * single point of departure of all traffic in the zone

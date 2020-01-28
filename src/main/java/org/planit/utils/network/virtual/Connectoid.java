@@ -1,7 +1,7 @@
 package org.planit.utils.network.virtual;
 
 import org.planit.exceptions.PlanItException;
-import org.planit.utils.network.Edge;
+import org.planit.utils.graph.Edge;
 
 /** the connecting component between centroid and a first physical node in the network.
  * Note that all connectoids are edges but not all edges are connectoids

@@ -1,4 +1,4 @@
-package org.planit.utils.network;
+package org.planit.utils.graph;
 
 /**
  * Edge interface connecting two vertices in a non-directional fashion. Each edge has one or

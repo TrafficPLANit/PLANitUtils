@@ -1,7 +1,6 @@
 package org.planit.utils.network.virtual;
 
-import org.planit.utils.network.Vertex;
-import org.planit.zoning.Zone;
+import org.planit.utils.graph.Vertex;
 
 /**
  * A centroid is a special type of vertex representing the location of departure/arrival of traffic in

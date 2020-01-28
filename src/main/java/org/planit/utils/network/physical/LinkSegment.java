@@ -1,6 +1,6 @@
 package org.planit.utils.network.physical;
 
-import org.planit.utils.network.EdgeSegment;
+import org.planit.utils.graph.EdgeSegment;
 
 public interface LinkSegment extends EdgeSegment{
 

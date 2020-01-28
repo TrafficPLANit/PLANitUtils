@@ -1,7 +1,7 @@
 package org.planit.utils.network.physical;
 
 import org.planit.exceptions.PlanItException;
-import org.planit.utils.network.Edge;
+import org.planit.utils.graph.Edge;
 
 /**
  * Link interface which extends the Edge interface with a unique id (not all edges are links) as well as an external id

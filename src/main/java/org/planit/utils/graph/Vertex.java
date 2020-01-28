@@ -1,4 +1,4 @@
-package org.planit.utils.network;
+package org.planit.utils.graph;
 
 import java.util.Set;
 

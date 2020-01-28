@@ -1,6 +1,6 @@
 package org.planit.utils.network.physical;
 
-import org.planit.utils.network.Vertex;
+import org.planit.utils.graph.Vertex;
 
 /** Node is a vertex but not all vertices are nodes.
  * Nodes represent locations in the physical network where links intersect, usually 
