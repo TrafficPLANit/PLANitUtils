@@ -1,0 +1,12 @@
+
+/.gitignore
+
+/target
+
+/.classpath
+
+/.settings
+
+/.project
+
+/doc
