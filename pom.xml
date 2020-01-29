@@ -4,7 +4,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	
 	<groupId>org.planit.utils</groupId>
-	<artifactId>PLANItUtils</artifactId>
+	<artifactId>PLANitUtils</artifactId>
 	<description>PLANit utility classes that can be used separately from the PLANit core</description>
 	<version>0.0.3-beta</version>
 	<packaging>jar</packaging>
