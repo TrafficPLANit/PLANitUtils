@@ -26,7 +26,7 @@ public interface Link extends Edge {
 	LinkSegment registerLinkSegment(LinkSegment linkSegment, boolean directionAB) throws PlanItException;
 
 	/**
-	 * get the link's unique id
+	 * Return id of this instance. This id is expected to be generated using the org.planit.utils.misc.IdGenerator
 	 * @return linkId
 	 */
 	long getLinkId();

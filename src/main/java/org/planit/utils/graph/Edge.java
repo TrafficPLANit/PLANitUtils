@@ -11,7 +11,7 @@ package org.planit.utils.graph;
 public interface Edge extends Comparable<Edge> {
 
     /**
-     * Return id of this Edge object
+     * Return id of this instance. This id is expected to be generated using the org.planit.utils.misc.IdGenerator
      * 
      * @return id of this Edge object
      */
@@ -43,12 +43,6 @@ public interface Edge extends Comparable<Edge> {
      * @return the name
      */
     public String getName();
-    
-    /**
-     * set the name of the edge
-     * @param the name
-     */
-    public void setName(String name);
     
     /**
      * Add a property from the original input that is not part of the readily

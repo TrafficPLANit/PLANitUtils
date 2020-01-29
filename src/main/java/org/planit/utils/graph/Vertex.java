@@ -84,8 +84,8 @@ public interface Vertex extends Comparable<Vertex> {
     }
 
     /**
-     * Unique id of the vertex
-     * @return
+     * Return id of this instance. This id is expected to be generated using the org.planit.utils.misc.IdGenerator
+     * @return the id
      */
     public long getId();
     

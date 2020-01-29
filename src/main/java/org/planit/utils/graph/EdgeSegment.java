@@ -12,8 +12,8 @@ package org.planit.utils.graph;
 public interface EdgeSegment extends Comparable<EdgeSegment> {
 
     /**
-     * Collect the unique id of the edge segment
-     * @return id
+     * Return id of this instance. This id is expected to be generated using the org.planit.utils.misc.IdGenerator
+     * @return id the id
      */
     public long getId();
     

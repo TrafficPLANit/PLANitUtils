@@ -9,7 +9,7 @@ public interface Mode extends Comparable<Mode>{
 
 	
 	/** Passenger car unit conversion factor for this mode
-	 * @return
+	 * @return pcu
 	 */
 	double getPcu();
 
@@ -18,7 +18,7 @@ public interface Mode extends Comparable<Mode>{
 	 */
 	String getName();
 
-	/** Unique id of this mode
+	/** Return id of this instance. This id is expected to be generated using the org.planit.utils.misc.IdGenerator
 	 * @return unique id
 	 */
 	long getId();

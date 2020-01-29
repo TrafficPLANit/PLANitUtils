@@ -14,7 +14,7 @@ public interface LinkSegment extends EdgeSegment{
 	double DEFAULT_MAX_SPEED = 130;
 
 	/**
-	 * Collect the unique link segment id
+	 * Return id of this instance. This id is expected to be generated using the org.planit.utils.misc.IdGenerator
 	 * @return link segment id
 	 */
 	long getLinkSegmentId();
