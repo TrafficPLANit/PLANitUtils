@@ -1,5 +1,7 @@
 package org.planit.utils.graph;
 
+import java.io.Serializable;
+
 /**
  * EdgeSegment represents an edge in a particular (single) direction. Each edge
  * has either one or two edge segments where each edge segment may have a more
@@ -9,7 +11,7 @@ package org.planit.utils.graph;
  * @author markr
  *
  */
-public interface EdgeSegment extends Comparable<EdgeSegment> {
+public interface EdgeSegment extends Comparable<EdgeSegment>, Serializable {
 
     /**
      * Return id of this instance. This id is expected to be generated using the org.planit.utils.misc.IdGenerator

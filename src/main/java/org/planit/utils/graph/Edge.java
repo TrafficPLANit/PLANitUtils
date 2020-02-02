@@ -1,5 +1,7 @@
 package org.planit.utils.graph;
 
+import java.io.Serializable;
+
 /**
  * Edge interface connecting two vertices in a non-directional fashion. Each edge has one or
  * two underlying edge segments in a particular direction which may carry
@@ -8,7 +10,7 @@ package org.planit.utils.graph;
  * @author markr
  *
  */
-public interface Edge extends Comparable<Edge> {
+public interface Edge extends Comparable<Edge>, Serializable {
 
     /**
      * Return id of this instance. This id is expected to be generated using the org.planit.utils.misc.IdGenerator

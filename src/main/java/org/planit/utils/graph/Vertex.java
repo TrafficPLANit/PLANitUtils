@@ -1,5 +1,6 @@
 package org.planit.utils.graph;
 
+import java.io.Serializable;
 import java.util.Set;
 
 /**
@@ -8,7 +9,7 @@ import java.util.Set;
  * @author markr
  *
  */
-public interface Vertex extends Comparable<Vertex> {
+public interface Vertex extends Comparable<Vertex>, Serializable {
 
     /**
      * edges of this vertex
