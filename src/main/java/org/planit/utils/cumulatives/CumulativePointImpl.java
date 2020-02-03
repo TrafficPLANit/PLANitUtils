@@ -8,6 +8,9 @@ package org.planit.utils.cumulatives;
  */
 public class CumulativePointImpl implements CumulativePoint {
 	
+	/** generated UID */
+	private static final long serialVersionUID = 630928063482940795L;
+
 	/** the cumulative count */
 	final double cumulativeCount;
 	
