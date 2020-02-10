@@ -1,6 +1,14 @@
 package org.planit.utils.cumulatives;
 
-public interface CumulativePoint {
+import java.io.Serializable;
+
+/** 
+ * Represents a cumulative point in time
+ * 
+ * @author markr
+ *
+ */
+public interface CumulativePoint extends Serializable {
 
 	/** Absolute time difference in seconds between this and passed in cumulative point
 	 * @param otherCumulative
