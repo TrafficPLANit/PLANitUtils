@@ -1,5 +1,9 @@
 package org.planit.utils.network.physical.macroscopic;
 
+import java.util.Map;
+
+import org.planit.utils.network.physical.Mode;
+
 /**
  * The macroscopic link segment type characteristics are contained in this class
  * 
@@ -48,10 +52,19 @@ public interface MacroscopicLinkSegmentType {
 	long getExternalId();
 
 	/**
-	 * reference to internal mode properties
+	 * Set the mode properties for a specified mode for this link
 	 * 
-	 * @return segmentModeProperties
+	 * @param mode the specified mode
+	 * @param modeProperties the mode properties for this link
 	 */
-	MacroscopicLinkSegmentTypeModeProperties getModeProperties();
+	void setModeProperties(Map<Mode, MacroscopicModeProperties> modeProperties);
+	
+	/**
+	 * Returns the mode properties for a specified mode along this link
+	 * 
+	 * @param mode the specified mode
+	 * @return the mode properties for this link and mode
+	 */
+	MacroscopicModeProperties getModeProperties(Mode mode);
 
 }

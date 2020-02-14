@@ -1,5 +1,6 @@
 package org.planit.utils.network.physical.macroscopic;
 
+import org.planit.exceptions.PlanItException;
 import org.planit.utils.network.physical.LinkSegment;
 import org.planit.utils.network.physical.Mode;
 
@@ -26,18 +27,19 @@ public interface MacroscopicLinkSegment extends LinkSegment{
 	 * 
 	 * @param mode mode of travel
 	 * @return freeFlowTravelTime for this mode
+	 * @throws PlanItException 
 	 */
-	double computeFreeFlowTravelTime(Mode mode);
+	double computeFreeFlowTravelTime(Mode mode) throws PlanItException;
 
 	/** Set the link segment type this link segment adheres to
 	 * @param linkSegmentType the link segment type
 	 */
 	void setLinkSegmentType(MacroscopicLinkSegmentType linkSegmentType);
 
-	/** Collect the link segment type of the link segment
-	 * 
-	 * @return the link segment
-	 */
-	MacroscopicLinkSegmentType getLinkSegmentType();
+  /** Collect the link segment type of the link segment
+   * 
+   * @return the link segment
+   */
+  MacroscopicLinkSegmentType getLinkSegmentType();
 
 }
