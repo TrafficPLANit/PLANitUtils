@@ -6,7 +6,7 @@
 	<groupId>org.planit.utils</groupId>
 	<artifactId>PLANitUtils</artifactId>
 	<description>PLANit utility classes that can be used separately from the PLANit core</description>
-	<version>0.0.4</version>
+	<version>0.0.3</version>
 	<packaging>jar</packaging>
 	
 	<name>PLANitUtils</name>
