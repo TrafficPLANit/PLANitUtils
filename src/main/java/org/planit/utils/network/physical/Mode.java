@@ -23,9 +23,18 @@ public interface Mode extends Comparable<Mode>{
 	 */
 	long getId();
 
-	/** External id of this mode (if any)
-	 * @return externalId
+	/** 
+	 * Return the external id of this mode
+	 * 
+	 * @return externalId of this mode
 	 */
-	long getExternalId();
+	Object getExternalId();
+	
+	/**
+	 * Returns whether this mode has an external Id set
+	 * 
+	 * @return true if external Id set, false otherwise
+	 */
+	boolean hasExternalId();
 
 }

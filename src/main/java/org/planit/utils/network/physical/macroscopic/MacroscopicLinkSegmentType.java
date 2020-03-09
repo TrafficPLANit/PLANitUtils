@@ -21,36 +21,55 @@ public interface MacroscopicLinkSegmentType {
 	 */
 	double DEFAULT_CAPACITY_LANE = 1800.0f;
 
-	/** Collect the unique id of this macroscopic link segment type
+	/** 
+	 * Return the unique id of this macroscopic link segment type
+	 * 
 	 * @return the id
 	 */
 	int getId();
 
-	/** Collect the name of this macroscopic link segment type
+	/** 
+	 * Return the name of this macroscopic link segment type
+	 * 
 	 * @return the name
 	 */
 	String getName();
 
-	/** Set the name of this macroscopic link segment type
+	/** 
+	 * Set the name of this macroscopic link segment type
+	 * 
 	 * @param name the name
 	 */
 	void setName(String name);
 
-	/** Collect the capacity per lane of this macroscopic link segment type
+	/** 
+	 * Return the capacity per lane of this macroscopic link segment type
+	 * 
 	 * @return capacity per lane in pcu/h/lane
 	 */
 	double getCapacityPerLane();
 
-	/** Collect the maximum density per lane for this macroscopic link segment type
+	/** 
+	 * Return the maximum density per lane for this macroscopic link segment type
+	 * 
 	 * @return the maximum density per lane in pcu/km/lane
 	 */
 	double getMaximumDensityPerLane();
 
-	/** Collect the external id of this macroscopic link segment type
+	/** 
+	 * Return the external id of this macroscopic link segment type
+	 * 
 	 * @return the external id
 	 */
-	long getExternalId();
+	Object getExternalId();
 
+	/**
+	 * Return whether this link segment type has an external Id
+	 * 
+	 * return true if this link segment type has an external Id, false otherwise
+	 */
+	boolean hasExternalId();
+	
 	/**
 	 * Set the map of mode properties for this link
 	 * 

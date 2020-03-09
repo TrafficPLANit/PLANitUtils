@@ -15,10 +15,19 @@ public interface Zone {
 	 */
 	long getId();
 	
-	/** Collect the external id of this zone
+	/** 
+	 * Returns the external id of this zone
+	 * 
 	 * @return the external id
 	 */
-	long getExternalId();
+	Object getExternalId();
+	
+	/**
+	 * Returns whether this zone has its external Id set
+	 * 
+	 * @return true if the external id has been set, false otherwise
+	 */
+	boolean hasExternalId();
 
 	/**
 	 * Returns the centroid of this zone

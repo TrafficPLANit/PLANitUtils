@@ -1,13 +1,9 @@
-
 /.gitignore
-
 /target
-
 /.classpath
-
 /.settings
-
 /.project
-
 /doc
-/bin/
+/dependency-reduced-pom.xml
+/logs
+/bin

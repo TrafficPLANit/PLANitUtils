@@ -11,14 +11,23 @@ import org.planit.utils.graph.Vertex;
  */
 public interface Node extends Vertex {
 
-	/** Collect the external id of the node
+	/** 
+	 * Collect the external id of the node
+	 * 
 	 * @return external id
 	 */
-	long getExternalId();
+  Object getExternalId();
 
 	/** Set the external id of the node
 	 * @param externalId
 	 */
-	void setExternalId(long externalId);
+  void setExternalId(Object externalId);
+  
+  /**
+   * Returns whether the node has an external Id set
+   * 
+   * @return true if the node has an external Id, false otherwise
+   */
+  boolean hasExternalId();
 
 }

@@ -120,4 +120,10 @@ public interface Vertex extends Comparable<Vertex>, Serializable {
      */
     public void setCentrePointGeometry(final DirectPosition centrePointGeometry);
 
+    /** Collect the geometry of the point location of this vertex
+     * 
+     * @return direct position reflecting point location
+     */
+    public DirectPosition getCentrePointGeometry();
+    
 }

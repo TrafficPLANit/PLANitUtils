@@ -44,11 +44,19 @@ public interface Connectoid extends Edge {
 	/** Collect the external id of this connectoid
 	 * @return external id
 	 */
-	long getExternalId();
+	Object getExternalId();
 
-	/** set the external id of this connectoid
+	/** 
+	 * set the external id of this connectoid
 	 * @param externalId
 	 */
-	void setExternalId(long externalId);
+	void setExternalId(Object externalId);
+	
+	/**
+	 * Returns true if this connectoid has its external Id set, false otherwise
+	 * 
+	 * @return true if this connectoid has its external Id set, false otherwise
+	 */
+	boolean hasExternalId();
 
 }
