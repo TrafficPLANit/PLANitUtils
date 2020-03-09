@@ -35,7 +35,7 @@ public interface Link extends Edge {
 	 * Set the external id
 	 * @param externalId
 	 */
-	void setExternalId(Object externalId);
+	void setExternalId(final Object externalId);
 
 	/**
 	 * Collect the external id
