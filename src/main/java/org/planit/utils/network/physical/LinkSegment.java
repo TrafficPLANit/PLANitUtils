@@ -1,7 +1,5 @@
 package org.planit.utils.network.physical;
 
-import java.io.Serializable;
-
 import org.planit.utils.graph.EdgeSegment;
 
 public interface LinkSegment extends EdgeSegment{
@@ -56,5 +54,13 @@ public interface LinkSegment extends EdgeSegment{
 	 * @return Link object which is the parent of this link segment
 	 */
 	Link getParentLink();
+	
+	/**
+	 * Returns whether vehicles of a specified mode are allowed through this link
+	 * 
+	 * @param mode the specified mode
+	 * @return true if vehicles of this mode can drive along this link, false otherwise
+	 */
+	boolean isModeAllowedThroughLink(Mode mode);
 
 }

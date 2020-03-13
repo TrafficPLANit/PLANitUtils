@@ -3,6 +3,8 @@ package org.planit.utils.graph;
 import java.io.Serializable;
 import java.util.Set;
 
+import org.opengis.geometry.DirectPosition;
+
 /**
  * Vertex representation connected to one or more edges
  * 
@@ -110,5 +112,18 @@ public interface Vertex extends Comparable<Vertex>, Serializable {
      * @return edges
      */
     public Edges getEdges();
+    
+    /**
+     * Set the center point geometry for a vertex
+     * 
+     * @param centrePointGeometry the center point for a vertex
+     */
+    public void setCentrePointGeometry(final DirectPosition centrePointGeometry);
 
+    /** Collect the geometry of the point location of this vertex
+     * 
+     * @return direct position reflecting point location
+     */
+    public DirectPosition getCentrePointGeometry();
+    
 }

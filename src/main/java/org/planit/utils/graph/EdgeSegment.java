@@ -21,21 +21,24 @@ public interface EdgeSegment extends Comparable<EdgeSegment>, Serializable {
     
     /**
      * set external id of the instance. Note that this id need not be unique (unlike regular id)
+     * 
      * @param externalId
      */
-	public void setExternalId(long externalId);
+	public void setExternalId(Object externalId);
 	
     /**
      * Does the instance have an external id
+     * 
      * @return true when available, false otherwise
      */
 	public boolean hasExternalId();
 	
     /**
      * Get external id of the instance. Note that this id need not be unique (unlike regular id)
+     * 
      * @return externalId
      */
-	public long getExternalId();
+	public Object getExternalId();
     
     /**
      * Get the segment's upstream vertex
@@ -53,6 +56,7 @@ public interface EdgeSegment extends Comparable<EdgeSegment>, Serializable {
 
     /**
      * Collect the parent edge of the segment
+     * 
      * @return parentEdge
      */
     public Edge getParentEdge();
