@@ -1,7 +1,7 @@
 package org.planit.utils.cumulatives;
 
 import java.util.LinkedList;
-
+import java.util.logging.Logger;
 import org.planit.exceptions.PlanItException;
 
 /**
@@ -12,6 +12,9 @@ import org.planit.exceptions.PlanItException;
  */
 public class PiecewiseLinearCumulativeCurve {
 	
+  /** the logger */
+  private static final Logger LOGGER = Logger.getLogger(PiecewiseLinearCumulativeCurve .class.getCanonicalName());   
+  
 	/** list of consecutive cumulative points */
 	final LinkedList<CumulativePoint> cumulatives = new LinkedList<CumulativePoint>();
 
@@ -31,7 +34,9 @@ public class PiecewiseLinearCumulativeCurve {
 	public void add(CumulativePoint cumulativePoint, double timeInSecondsEpsilon) throws PlanItException {
 		CumulativePoint currentLast = cumulatives.getLast();
 		if(!cumulativePoint.isLater(currentLast, timeInSecondsEpsilon)) {
-			throw new PlanItException("new cumulative point does not occur later than last available cumulative point in cumulative curve, this is not allowed");
+			String errorMessage = "new cumulative point does not occur later than last available cumulative point in cumulative curve, this is not allowed";
+      LOGGER.severe(errorMessage);
+      throw new PlanItException(errorMessage);
 		}
 		cumulatives.add(cumulativePoint);
 	}
