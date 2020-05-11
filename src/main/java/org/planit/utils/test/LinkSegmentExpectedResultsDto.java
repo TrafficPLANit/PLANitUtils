@@ -8,7 +8,7 @@ package org.planit.utils.test;
  * @author gman6028
  *
  */
-public class LinkSegmentExpectedResultsDto implements Comparable<LinkSegmentExpectedResultsDto> {
+public class LinkSegmentExpectedResultsDto {
 	
  /**
   * Link capacity
@@ -40,10 +40,6 @@ public class LinkSegmentExpectedResultsDto implements Comparable<LinkSegmentExpe
     */
    	private double linkCost;
    /**
-    * Total travel costs from start of path to the end of this node
-    */
-   	private Double totalCostToEndNode;  //use this to order results
-   /**
     * epsilon used for comparing doubles
     */
    	private final static double epsilon = 0.0001; 
@@ -57,18 +53,16 @@ public class LinkSegmentExpectedResultsDto implements Comparable<LinkSegmentExpe
  * @param startNodeId							id of start node 
  * @param linkFlow								flow through link
  * @param linkCost								cost (travel time) of link
- * @param totalCostToEndNode			cumulative travel time from start of output path to the end of the current link (optional)
  * @param capacity								capacity of the link (no lanes x capacity per lane)
  * @param length									length of the link
  * @param speed									travel speed of the link
  */
-	public LinkSegmentExpectedResultsDto(long endNodeId, long startNodeId, double linkFlow, double linkCost, double totalCostToEndNode,
- 			                             double capacity, double length, double speed) {
+  public LinkSegmentExpectedResultsDto(long endNodeId, long startNodeId, double linkFlow, double linkCost,
+                                   double capacity, double length, double speed) {
 		this.startNodeId = startNodeId;
 		this.endNodeId = endNodeId;
 		this.linkFlow = linkFlow;
 		this.linkCost = linkCost;
-		this.totalCostToEndNode = totalCostToEndNode;
 		this.capacity = capacity;
 		this.length = length;
 		this.speed = speed;
@@ -200,41 +194,13 @@ public class LinkSegmentExpectedResultsDto implements Comparable<LinkSegmentExpe
 			this.linkCost = linkCost;
 		}
 		
-	/**
-	 * Get the cumulative cost of travel from the start of the output path to the end of the current link
-	 * 
-	 * @return				the cumulative cost of travel
-	 */
-		public double getTotalCostToEndNode() {
-			return  totalCostToEndNode;
-		}
-		
-	/**
-	 * Set the cumulative cost of travel from the start of the output path to the end of the current link
-	 * 
-	 * @param totalCostToEndNode			the cumulative cost of travel
-	 */
-	  public void setTotalCost(double totalCostToEndNode) {
-		  this.totalCostToEndNode =  totalCostToEndNode;
-	  }
-		
-		/**
-		 * Compare this DTO with another using cumulative travel time
-		 * 
-		 * @param other				other ResultDto which is being compared to this one
-		 * @return						comparison of ResultDto objects based on cumulative travel time
-		 */
-			@Override
-			public int compareTo(LinkSegmentExpectedResultsDto other) {
-				return totalCostToEndNode.compareTo(other.getTotalCostToEndNode());
-			}
-			
 		/**
 		 * Tests whether this ResultDto object is equal to another one
 		 * 
 		 * @param other					ResultDto which is being compared to this one
 		 * @return							true if all fields in the DTO objects are equal, false otherwise
 		 */
+
 			public boolean equals(LinkSegmentExpectedResultsDto other) {
 				if (startNodeId != other.getStartNodeId())
 					return false;
@@ -244,28 +210,17 @@ public class LinkSegmentExpectedResultsDto implements Comparable<LinkSegmentExpe
 					return false;
 				if (Math.abs(linkFlow - other.getLinkFlow()) > epsilon)
 					return false;
-				if (Math.abs(totalCostToEndNode - other.getTotalCostToEndNode()) > epsilon)
-					return false;
 				return true;
 			}
-			
+		
 		/**
 		 * Return the hashCode for this object
 		 * 
 		 * @return      hashCode for this object
 		 */
 			public int hashCode() {
-				double val = startNodeId + endNodeId * linkCost * linkFlow * totalCostToEndNode;
+        double val = startNodeId + endNodeId * linkCost * linkFlow;
 				return (int) Math.round(val);
 			}
 			
-		/**
-		 * Outputs the contents of this object as a String
-		 * 
-		 * @return				String showing the contents of this object
-		 */
-			public String toString() {
-				return "startNodeId = " + startNodeId + " endNodeId = " + endNodeId + " linkCost = " + linkCost + " linkFlow = " + linkFlow + " totalCostToEndNode = " + totalCostToEndNode;
-			}
-
 }
