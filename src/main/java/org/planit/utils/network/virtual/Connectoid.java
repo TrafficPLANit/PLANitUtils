@@ -14,7 +14,7 @@ public interface Connectoid extends Edge {
 	/**
 	 * Default connectoid length in km
 	 */
-	double DEFAULT_LENGTH_KM = 1.0;
+  double DEFAULT_LENGTH_KM = 0.0;
 
 	/**
 	 * Register connectoidSegment.
@@ -22,13 +22,10 @@ public interface Connectoid extends Edge {
 	 * If there already exists a connectoidSegment for that direction it is replaced
 	 * and returned
 	 * 
-	 * @param connectoidSegment
-	 *            connectoid segment to be registered
-	 * @param directionAB
-	 *            direction of travel
+	 * @param connectoidSegment  connectoid segment to be registered
+	 * @param directionAB  direction of travel
 	 * @return replaced ConnectoidSegment
-	 * @throws PlanItException
-	 *             thrown if there is an error
+	 * @throws PlanItException  thrown if there is an error
 	 */
 	ConnectoidSegment registerConnectoidSegment(ConnectoidSegment connectoidSegment, boolean directionAB)
 			throws PlanItException;
