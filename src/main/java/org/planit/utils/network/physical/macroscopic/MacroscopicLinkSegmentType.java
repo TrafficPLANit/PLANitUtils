@@ -26,7 +26,7 @@ public interface MacroscopicLinkSegmentType {
 	 * 
 	 * @return the id
 	 */
-	int getId();
+	long getId();
 
 	/** 
 	 * Return the name of this macroscopic link segment type
