@@ -9,7 +9,7 @@ import org.planit.utils.network.physical.Mode;
  * @author markr
  *
  */
-public interface MacroscopicLinkSegment extends LinkSegment{
+public interface MacroscopicLinkSegment extends LinkSegment {
 
 	/**
 	 * Return the total link segment capacity in pcu/h 
