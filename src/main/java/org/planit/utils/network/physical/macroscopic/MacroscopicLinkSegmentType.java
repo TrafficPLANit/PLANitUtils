@@ -50,7 +50,7 @@ public interface MacroscopicLinkSegmentType {
 	 * 
 	 * @return the maximum density per lane in pcu/km/lane
 	 */
-	//double getMaximumDensityPerLane();
+	double getMaximumDensityPerLane();
 
 	/** 
 	 * Return the external id of this macroscopic link segment type
