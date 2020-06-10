@@ -32,4 +32,8 @@ public class PlanItException extends Exception {
     public PlanItException(Exception parentException) {
         super(parentException);
     }
+    
+    public PlanItException(String exceptionDescription, Throwable cause) {
+      super(exceptionDescription, cause);
+  }
 }
