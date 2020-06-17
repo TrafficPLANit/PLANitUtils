@@ -13,52 +13,54 @@ import java.io.Serializable;
  */
 public interface EdgeSegment extends Comparable<EdgeSegment>, Serializable {
 
-    /**
-     * Return id of this instance. This id is expected to be generated using the org.planit.utils.misc.IdGenerator
-     * @return id the id
-     */
-    public long getId();
-    
-    /**
-     * set external id of the instance. Note that this id need not be unique (unlike regular id)
-     * 
-     * @param externalId
-     */
-	public void setExternalId(Object externalId);
-	
-    /**
-     * Does the instance have an external id
-     * 
-     * @return true when available, false otherwise
-     */
-	public boolean hasExternalId();
-	
-    /**
-     * Get external id of the instance. Note that this id need not be unique (unlike regular id)
-     * 
-     * @return externalId
-     */
-	public Object getExternalId();
-    
-    /**
-     * Get the segment's upstream vertex
-     * 
-     * @return upstream vertex
-     */
-    public Vertex getUpstreamVertex();
+  /**
+   * Return id of this instance. This id is expected to be generated using the
+   * org.planit.utils.misc.IdGenerator
+   * 
+   * @return id the id
+   */
+  public long getId();
 
-    /**
-     * Get the segment's downstream vertex
-     * 
-     * @return downstream vertex
-     */
-    public Vertex getDownstreamVertex();
+  /**
+   * set external id of the instance. Note that this id need not be unique (unlike regular id)
+   * 
+   * @param externalId the external id to set
+   */
+  public void setExternalId(Object externalId);
 
-    /**
-     * Collect the parent edge of the segment
-     * 
-     * @return parentEdge
-     */
-    public Edge getParentEdge();
-    
+  /**
+   * Does the instance have an external id
+   * 
+   * @return true when available, false otherwise
+   */
+  public boolean hasExternalId();
+
+  /**
+   * Get external id of the instance. Note that this id need not be unique (unlike regular id)
+   * 
+   * @return externalId
+   */
+  public Object getExternalId();
+
+  /**
+   * Get the segment's upstream vertex
+   * 
+   * @return upstream vertex
+   */
+  public Vertex getUpstreamVertex();
+
+  /**
+   * Get the segment's downstream vertex
+   * 
+   * @return downstream vertex
+   */
+  public Vertex getDownstreamVertex();
+
+  /**
+   * Collect the parent edge of the segment
+   * 
+   * @return parentEdge
+   */
+  public Edge getParentEdge();
+
 }

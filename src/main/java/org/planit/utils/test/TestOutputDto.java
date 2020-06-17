@@ -5,16 +5,16 @@ package org.planit.utils.test;
  * 
  * @author gman6028
  *
- * @param <A>   first property to store results (stores MemoryOutputFormatter in PlanItIO)
- * @param <B>   second property to store results (stores CustomPlanItProject in PlanItIO)
- * @param <C>   thired property to store results (stores InputBuilderListener in PlanItIO)
+ * @param <A> first property to store results (stores MemoryOutputFormatter in PlanItIO)
+ * @param <B> second property to store results (stores CustomPlanItProject in PlanItIO)
+ * @param <C> thired property to store results (stores InputBuilderListener in PlanItIO)
  */
 public class TestOutputDto<A, B, C> {
-  
+
   private final A a;
-  
+
   private final B b;
-  
+
   private final C c;
 
   public TestOutputDto(A a, B b, C c) {
