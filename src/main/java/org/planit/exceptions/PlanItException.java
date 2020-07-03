@@ -36,4 +36,16 @@ public class PlanItException extends Exception {
   public PlanItException(String exceptionDescription, Throwable cause) {
     super(exceptionDescription, cause);
   }
+  
+  /**
+   * Throw a planitException if condition is met
+   * 
+   * @param message
+   * @throws PlanItException
+   */
+  public static void throwIf(boolean condition, String message) throws PlanItException {
+    if(condition) {
+      throw new PlanItException(message);
+    }
+  }
 }

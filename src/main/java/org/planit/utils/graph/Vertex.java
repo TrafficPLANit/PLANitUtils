@@ -51,7 +51,7 @@ public interface Vertex extends Comparable<Vertex>, Serializable {
    * 
    * @author markr
    */
-  public interface EdgeSegments {
+  public interface EdgeSegments extends Iterable<EdgeSegment> {
 
     /**
      * Add edgeSegment, do not invoke when parsing networks, this connection is
@@ -77,13 +77,12 @@ public interface Vertex extends Comparable<Vertex>, Serializable {
      * @return true if no edge segments have been registered, false otherwise
      */
     public boolean isEmpty();
-
+   
     /**
-     * Return Set of EdgeSegment objects
-     * 
-     * @return Set of EdgeSegment objects
+     * Number of entries in edge segments
+     * @return
      */
-    public Set<EdgeSegment> getEdgeSegments();
+    public int getNumberOfEdges();
   }
 
   /**

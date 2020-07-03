@@ -22,6 +22,16 @@
        <groupId>org.geotools</groupId>
        <artifactId>gt-geometry</artifactId>
      </dependency>
+     
+      <dependency>
+       <groupId>org.geotools</groupId>
+       <artifactId>gt-geometry</artifactId>
+     </dependency>
+     
+	<dependency>
+		<groupId>org.ojalgo</groupId>
+		<artifactId>ojalgo</artifactId>
+	</dependency>     
   </dependencies>	
 	
 </project>
