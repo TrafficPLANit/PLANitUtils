@@ -15,7 +15,7 @@
 	<packaging>jar</packaging>
 	
 	<name>PLANitUtils</name>
-	<url>https://github.sydney.edu.au/planit/planitutils</url>
+	<url>https://github.com/TrafficPLANit/planitutils</url>
 	
 	<dependencies>
      <dependency>
