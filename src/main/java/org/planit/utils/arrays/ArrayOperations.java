@@ -1,5 +1,8 @@
 package org.planit.utils.arrays;
 
+import java.lang.reflect.Array;
+import java.util.Arrays;
+
 /**
  * General methods for updating arrays
  * 
@@ -45,6 +48,18 @@ public class ArrayOperations {
       sum += d1[index] * d2[index];
     }
     return sum;
+  }
+  
+  /** add an element to the start of the passed in array. Note that this involves a copy of the original array
+   * @param elementToPrepend the element to add to start
+   * @param theArray the array to prepend
+   * @return the new array
+   */
+  public static Object[] addtoStart(Object elementToPrepend, Object[] theArray ){
+    Object[] newArray = (theArray==null) ? new Object[1] : Arrays.copyOf(theArray, theArray.length + 1);    
+    newArray[0] = elementToPrepend;
+    System.arraycopy(theArray, 0, newArray, 1, theArray.length);
+    return newArray;
   }
 
 }

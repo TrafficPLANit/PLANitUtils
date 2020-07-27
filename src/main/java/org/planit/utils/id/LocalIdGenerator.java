@@ -1,4 +1,4 @@
-package org.planit.utils.misc;
+package org.planit.utils.id;
 
 import java.util.HashMap;
 

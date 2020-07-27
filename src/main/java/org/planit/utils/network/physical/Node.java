@@ -32,5 +32,13 @@ public interface Node extends Vertex {
    * @return true if the node has an external Id, false otherwise
    */
   boolean hasExternalId();
+  
+  /**
+   * Collect the id of the node. Not all vertices need to be nodes, this node id is contiguous and unique to the nodes
+   * in the network, but not necesssarily across all vertices in the network
+   * 
+   * @return node id
+   */
+  long getNodeId();  
 
 }
