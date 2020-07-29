@@ -1,6 +1,6 @@
 package org.planit.utils.network.virtual;
 
-import org.planit.exceptions.PlanItException;
+import org.planit.utils.exceptions.PlanItException;
 import org.planit.utils.graph.Edge;
 
 /**

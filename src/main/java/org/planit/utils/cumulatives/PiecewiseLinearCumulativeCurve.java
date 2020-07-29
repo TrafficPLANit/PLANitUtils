@@ -2,7 +2,8 @@ package org.planit.utils.cumulatives;
 
 import java.util.LinkedList;
 import java.util.logging.Logger;
-import org.planit.exceptions.PlanItException;
+
+import org.planit.utils.exceptions.PlanItException;
 
 /**
  * Represents a piecewise linear cumulative curve

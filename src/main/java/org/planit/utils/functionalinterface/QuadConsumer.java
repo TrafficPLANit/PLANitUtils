@@ -1,6 +1,6 @@
 package org.planit.utils.functionalinterface;
 
-import org.planit.exceptions.PlanItException;
+import org.planit.utils.exceptions.PlanItException;
 
 /**
  * Function Interface which can process four input objects.

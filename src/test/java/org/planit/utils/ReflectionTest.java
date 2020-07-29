@@ -5,8 +5,7 @@ import static org.junit.Assert.assertEquals;
 
 import org.junit.Before;
 import org.junit.Test;
-
-import org.planit.reflection.StackWalkerUtil;
+import org.planit.utilsreflection.StackWalkerUtil;
 
 /**
  * Test the Reflection utils

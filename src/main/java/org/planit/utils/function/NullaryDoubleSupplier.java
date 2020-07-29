@@ -1,4 +1,4 @@
-package org.planit.math.function;
+package org.planit.utils.function;
 
 import org.ojalgo.function.NullaryFunction;
 

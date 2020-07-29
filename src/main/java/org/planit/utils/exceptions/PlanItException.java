@@ -1,4 +1,4 @@
-package org.planit.exceptions;
+package org.planit.utils.exceptions;
 
 /**
  * General exception for PlanIt which wraps exceptions thrown during execution

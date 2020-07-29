@@ -1,4 +1,4 @@
-package org.planit.reflection;
+package org.planit.utilsreflection;
 
 import java.lang.StackWalker.StackFrame;
 import java.lang.invoke.MethodType;

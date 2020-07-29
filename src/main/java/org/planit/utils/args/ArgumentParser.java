@@ -3,7 +3,7 @@ package org.planit.utils.args;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.planit.exceptions.PlanItException;
+import org.planit.utils.exceptions.PlanItException;
 
 /**
  * This class parses program arguments and returns them as a map of file types and file locations.

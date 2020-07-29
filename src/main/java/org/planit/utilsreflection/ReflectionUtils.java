@@ -1,4 +1,4 @@
-package org.planit.reflection;
+package org.planit.utilsreflection;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
-import org.planit.exceptions.PlanItException;
+import org.planit.utils.exceptions.PlanItException;
 
 /**
  * Reflection specific utility functions

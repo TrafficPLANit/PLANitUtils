@@ -1,4 +1,4 @@
-package org.planit.math;
+package org.planit.utils.math;
 
 /** compare doubles with a certain precision
  * @author markr
