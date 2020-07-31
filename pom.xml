@@ -27,6 +27,7 @@
 		</license>
 	</licenses>
 
+	<!-- versions inherited from parent -->
 	<dependencies>
 
 		<dependency>
@@ -38,6 +39,13 @@
 			<groupId>org.ojalgo</groupId>
 			<artifactId>ojalgo</artifactId>
 		</dependency>
+		
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<!-- only used locally for testing so not an actual dependency for using the API -->
+			<optional>true</optional>
+		</dependency>		
 	</dependencies>
 
 </project>
