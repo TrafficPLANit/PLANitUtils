@@ -3,7 +3,7 @@ package org.planit.utils.function;
 import org.ojalgo.function.NullaryFunction;
 
 /**
- * Lightweight Nullaryfunction implementation to supply doubles in the form of a NullaryFunctinon<Double> compatible with
+ * Lightweight Nullaryfunction implementation to supply doubles in the form of a {@code NullaryFunction<Double>} compatible with
  * OjAlgo
  * 
  * @author markr
@@ -16,7 +16,8 @@ public class NullaryDoubleSupplier implements NullaryFunction<Double> {
   public static NullaryDoubleSupplier ONE = new NullaryDoubleSupplier(1);
 
   /**
-   * Constructor for double supplier compatible with Nullaryfunction<Double> of OjAlgo
+   * Constructor for double supplier compatible with {@code Nullaryfunction<Double>} of OjAlgo
+   * 
    * @param theDouble to supply
    */
   public NullaryDoubleSupplier(final double theDouble) {

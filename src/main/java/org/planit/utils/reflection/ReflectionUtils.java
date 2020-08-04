@@ -1,4 +1,4 @@
-package org.planit.utilsreflection;
+package org.planit.utils.reflection;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
@@ -20,7 +20,7 @@ public class ReflectionUtils {
   
   /** Method that constructs the parameter types that go with the passed in parameters.
    * 
-   * @param parameters
+   * @param parameters the parameters
    * @return parameter class types
    */
   public static Class<?>[] getParameterTypes(Object[] parameters) {

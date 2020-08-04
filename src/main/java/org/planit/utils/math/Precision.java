@@ -31,7 +31,7 @@ public class Precision {
    * @param d1 double1
    * @param d2 double2
    * @param epsilon epsilon value
-   * @return true when d1 <= (d2 + epsilon)
+   * @return true when {@code d1 <= (d2 + epsilon)}
    */
   public static boolean isSmallerEqual(double d1, double d2, double epsilon) {
     return d1 <= (d2 + epsilon); 
@@ -40,7 +40,7 @@ public class Precision {
   /** isSmaller with Precision.EPSILON_6
    * @param d1 double1
    * @param d2 double2
-   * @return true when (d1 + epsilon) < d2
+   * @return true when  {@code (d1 + epsilon) < d2}
    */
   public static boolean isSmaller(double d1, double d2) {
     return isSmallerEqual(d1,d2,EPSILON_6);
@@ -50,7 +50,7 @@ public class Precision {
    * @param d1 double1
    * @param d2 double2
    * @param epsilon epsilon value
-   * @return true when d1 <= (d2 + epsilon)
+   * @return true when  {@code d1 <= (d2 + epsilon)}
    */
   public static boolean isSmaller(double d1, double d2, double epsilon) {
     return d1 < (d2 + epsilon); 
@@ -59,7 +59,7 @@ public class Precision {
   /** isSmallerEqual with Precision.EPSILON_6
    * @param d1 double1
    * @param d2 double2
-   * @return true when (d1 + epsilon) <= d2
+   * @return true when  {@code (d1 + epsilon) <= d2}
    */
   public static boolean isSmallerEqual(double d1, double d2) {
     return isSmallerEqual(d1,d2,EPSILON_6);
@@ -69,7 +69,7 @@ public class Precision {
    * @param d1 double1
    * @param d2 double2
    * @param epsilon epsilon value
-   * @return true when d1 >= (d2 - epsilon)
+   * @return true when  {@code d1 >= (d2 - epsilon)}
    */
   public static boolean isGreaterEqual(double d1, double d2, double epsilon) {
     return d1 >= (d2- epsilon);
@@ -78,7 +78,7 @@ public class Precision {
   /** isGreaterEqual with Precision.EPSILON_6
    * @param d1 double1
    * @param d2 double2
-   * @return true when (d1 - epsilon) >= d2
+   * @return true when  {@code (d1 - epsilon) >= d2}
    */
   public static boolean isGreaterEqual(double d1, double d2) {
     return isGreaterEqual(d1,d2,EPSILON_6);
@@ -88,7 +88,7 @@ public class Precision {
    * @param d1 double1
    * @param d2 double2
    * @param epsilon epsilon value
-   * @return true when d1 > (d2 - epsilon)
+   * @return true when  {@code d1 > (d2 - epsilon)}
    */
   public static boolean isGreater(double d1, double d2, double epsilon) {
     return d1 > (d2- epsilon);
@@ -97,7 +97,7 @@ public class Precision {
   /** isGreater with Precision.EPSILON_6
    * @param d1 double1
    * @param d2 double2
-   * @return true when (d1 - epsilon) > d2
+   * @return true when  {@code (d1 - epsilon) > d2}
    */
   public static boolean isGreater(double d1, double d2) {
     return isGreater(d1,d2,EPSILON_6);

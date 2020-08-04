@@ -16,8 +16,7 @@ public class PlanItException extends Exception {
   /**
    * Constructor using String - catches logic-driven exceptions
    * 
-   * @param exceptionDescription
-   *          text containing description of logic error
+   * @param exceptionDescription text containing description of logic error
    */
   public PlanItException(String exceptionDescription) {
     super(exceptionDescription);
@@ -26,13 +25,18 @@ public class PlanItException extends Exception {
   /**
    * Constructor using Exception - wraps run-time exceptions
    * 
-   * @param parentException
-   *          source exception
+   * @param parentException source exception
    */
   public PlanItException(Exception parentException) {
     super(parentException);
   }
 
+  /**
+   * Constructor using Throwable - wraps run-time exceptions with additional message
+   * 
+   * @param exceptionDescription message
+   * @param cause original exception cause
+   */
   public PlanItException(String exceptionDescription, Throwable cause) {
     super(exceptionDescription, cause);
   }
@@ -40,8 +44,9 @@ public class PlanItException extends Exception {
   /**
    * Throw a planitException if condition is met
    * 
-   * @param message
-   * @throws PlanItException
+   * @param condition when met we throw
+   * @param message for exception
+   * @throws PlanItException thrown when condition not met
    */
   public static void throwIf(boolean condition, String message) throws PlanItException {
     if(condition) {

@@ -44,12 +44,14 @@ public final class IdGroupingToken {
    */
   @Override
   public String toString() {
-    return super.toString();
+    return this.token;
   }
 
   /**
    * We have one default global token available for ids that are globally managed rather than within some container.
    * In that case use the global token
+   * 
+   * @return the global id token
    */
   public static IdGroupingToken collectGlobalToken() {
     return GLOBALTOKEN;

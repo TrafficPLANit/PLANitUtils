@@ -60,7 +60,7 @@ public final class IdGenerator {
   }
   
   /** Factory method to create a new id grouping token
-   * @param groupDescription
+   * @param groupDescription description for the group
    * @return idGroupingToken that has been created
    */
   public static IdGroupingToken createIdGroupingToken(String groupDescription) {
@@ -70,7 +70,8 @@ public final class IdGenerator {
   /** Factory method to create a new id grouping token based on the class instance simple name and the instance id
    * This allows for a human readable token as well as a unique token
    * 
-   * @param groupDescription
+   * @param groupOwner group owner
+   * @param groupOwnerId id of the group owner
    * @return idGroupingToken that has been created
    */
   public static IdGroupingToken createIdGroupingToken(Object groupOwner, long groupOwnerId) {

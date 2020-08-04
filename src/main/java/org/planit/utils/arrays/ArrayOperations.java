@@ -1,6 +1,5 @@
 package org.planit.utils.arrays;
 
-import java.lang.reflect.Array;
 import java.util.Arrays;
 
 /**

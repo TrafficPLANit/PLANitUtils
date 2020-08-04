@@ -80,7 +80,7 @@ public interface Vertex extends Comparable<Vertex>, Serializable {
    
     /**
      * Number of entries in edge segments
-     * @return
+     * @return the number of edges connected to this vertex
      */
     public int getNumberOfEdges();
   }

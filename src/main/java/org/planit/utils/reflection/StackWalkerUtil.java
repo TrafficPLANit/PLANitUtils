@@ -1,4 +1,4 @@
-package org.planit.utilsreflection;
+package org.planit.utils.reflection;
 
 import java.lang.StackWalker.StackFrame;
 import java.lang.invoke.MethodType;
@@ -7,26 +7,32 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-/** Utils class warpping the Stackwalker API functionality in easy to use method calls
+/** Utils class warpping the Stackwalker API functionality in easy to use method calls. Can be used to easily collect information 
+ * about the current execution stack (method names, classes etc.)
  * 
  * @author markr
  *
  */
 public class StackWalkerUtil {
   
+  /** Collect an instance of a stack walker
+   * @return stack walker instance
+   */
   private static StackWalker getStackWalkerInstance() {
     return StackWalker.getInstance(StackWalker.Option.RETAIN_CLASS_REFERENCE);
   }
   
   /** Method to convert the stream to a list of stack frames that can be used for reflection
-   * @param stackFrameStream
+   * 
+   * @param stackFrameStream the stack frame stream
    * @return list of stackFrames
    */
   private static List<StackWalker.StackFrame> convertStreamToList(Stream<StackWalker.StackFrame> stackFrameStream){
     return stackFrameStream.collect(Collectors.toList());
   }
 
-  /** collect the current stackframes as a list
+  /** collect the current stack frames as a list
+   * 
    * @return stack frame list
    */
   public static List<StackWalker.StackFrame> getStackFramesAsList(){
@@ -34,7 +40,8 @@ public class StackWalkerUtil {
   }
   
   /**
-   * Collect the first available stack frame if it exists.
+   * Collect the first available stack frame if it exists
+   * 
    * @return first stack frame as an optional
    */
   public static Optional<StackWalker.StackFrame> getFirstStackFrame() {
@@ -43,7 +50,8 @@ public class StackWalkerUtil {
   
   /**
    * Skip any number of stack frames and return the stream at this offset point
-   * @param skipOffset
+   * 
+   * @param skipOffset offset with which to start
    * @return stack frame at offset point, null if not present
    */
   public static StackFrame getStackFrameWithOffset(int skipOffset) {
@@ -52,6 +60,7 @@ public class StackWalkerUtil {
   
   /**
    * Collect the method name of the method that is the invoker of calling this method
+   * 
    * @return calling method name, "unknown" if unknown
    */
   public static String getCallingMethodName() {
@@ -62,6 +71,7 @@ public class StackWalkerUtil {
   
   /**
    * Collect the class name of the method that is the invoker of calling this method
+   * 
    * @return calling class name, "unknown" if unknown
    */
   public static String getCallingClassName() {
@@ -72,6 +82,7 @@ public class StackWalkerUtil {
   
   /**
    * Collect the method type of the method that is the invoker of calling this method
+   * 
    * @return calling method type, null if unknown
    */
   public static MethodType getCallingMethodType() {
