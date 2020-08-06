@@ -72,14 +72,14 @@ public class LoggingUtils {
   }  
   
   /**
-   * Create a prefix for the logger so that all logging items specific to a particular od route sets
-   * are prefixed with the exact same string, i.e.  {@code [od route sets id: <id> ]}
+   * Create a prefix for the logger so that all logging items specific to a particular od path sets
+   * are prefixed with the exact same string, i.e.  {@code [od path sets id: <id> ]}
    * 
-   * @param odRouteSetsId the odRouteSets id
-   * @return od route sets Prefix
+   * @param odPathSetsId the odPathSets id
+   * @return od path sets Prefix
    */     
-  public static String createOdRouteSetsPrefix(long odRouteSetsId) {
-    return surroundwithBrackets(String.format("od route sets id: %d", odRouteSetsId));
+  public static String createOdPathSetsPrefix(long odPathSetsId) {
+    return surroundwithBrackets(String.format("od path sets id: %d", odPathSetsId));
   }  
   
   /**

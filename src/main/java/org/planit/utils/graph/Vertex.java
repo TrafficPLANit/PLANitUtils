@@ -86,12 +86,32 @@ public interface Vertex extends Comparable<Vertex>, Serializable {
   }
 
   /**
-   * Return id of this instance. This id is expected to be generated using the
-   * org.planit.utils.misc.IdGenerator
+   * Return id of this instance. 
    * 
    * @return the id
    */
   public long getId();
+  
+  /**
+   * Collect the external id of the node
+   * 
+   * @return external id
+   */
+  Object getExternalId();
+
+  /**
+   * Set the external id of the node
+   * 
+   * @param externalId the external id to set
+   */
+  void setExternalId(Object externalId);
+
+  /**
+   * Returns whether the node has an external Id set
+   * 
+   * @return true if the node has an external Id, false otherwise
+   */
+  boolean hasExternalId();
 
   /**
    * Collect the entry edge segments of this vertex

@@ -11,28 +11,7 @@ import org.planit.utils.graph.Vertex;
  *
  */
 public interface Node extends Vertex {
-
-  /**
-   * Collect the external id of the node
-   * 
-   * @return external id
-   */
-  Object getExternalId();
-
-  /**
-   * Set the external id of the node
-   * 
-   * @param externalId the external id to set
-   */
-  void setExternalId(Object externalId);
-
-  /**
-   * Returns whether the node has an external Id set
-   * 
-   * @return true if the node has an external Id, false otherwise
-   */
-  boolean hasExternalId();
-  
+ 
   /**
    * Collect the id of the node. Not all vertices need to be nodes, this node id is contiguous and unique to the nodes
    * in the network, but not necesssarily across all vertices in the network
