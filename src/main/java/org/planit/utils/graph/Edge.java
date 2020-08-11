@@ -2,6 +2,8 @@ package org.planit.utils.graph;
 
 import java.io.Serializable;
 
+import org.planit.utils.exceptions.PlanItException;
+
 /**
  * Edge interface connecting two vertices in a non-directional fashion. Each edge has one or
  * two underlying edge segments in a particular direction which may carry
@@ -26,6 +28,18 @@ public interface Edge extends Comparable<Edge>, Serializable {
    * @return length of this edge in km
    */
   public double getLength();
+  
+  /**
+   * Register EdgeSegment.
+   *
+   * If there already exists an edgeSegment for that direction it is replaced and returned
+   *
+   * @param edgeSegment the edgeSegment to be registered
+   * @param directionAB direction of travel
+   * @return replaced egeSegment (if any)
+   * @throws PlanItException thrown if there is an error
+   */
+  public EdgeSegment registerEdgeSegment(final EdgeSegment edgeSegment, final boolean directionAB) throws PlanItException;  
 
   // Getters-Setters
 
