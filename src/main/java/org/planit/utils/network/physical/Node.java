@@ -19,5 +19,5 @@ public interface Node extends Vertex {
    * @return node id
    */
   long getNodeId();  
-
+  
 }
