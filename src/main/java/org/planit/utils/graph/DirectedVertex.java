@@ -2,11 +2,10 @@ package org.planit.utils.graph;
 
 import java.util.Set;
 
-import org.opengis.geometry.DirectPosition;
 import org.planit.utils.exceptions.PlanItException;
 
 /**
- * Directed vertex representation connected to one or more edge segments that have direction
+ * Directed vertex representation connected to one or more edge segments that have direction. The vertex itself is of course not directional
  * 
  * @author markr
  *

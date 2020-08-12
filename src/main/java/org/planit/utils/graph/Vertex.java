@@ -1,10 +1,10 @@
 package org.planit.utils.graph;
 
 import java.io.Serializable;
+import java.util.HashMap;
 import java.util.Set;
 
 import org.opengis.geometry.DirectPosition;
-import org.planit.utils.exceptions.PlanItException;
 
 /**
  * Vertex representation connected to one or more edges and/or edge segments
@@ -41,6 +41,14 @@ public interface Vertex extends Comparable<Vertex>, Serializable {
    * @return true if the node has an external Id, false otherwise
    */
   boolean hasExternalId();
+  
+  /**
+   * Add a property from the original input that is not part of the readily available members
+   *
+   * @param key   key (name) of the input property
+   * @param value value of the input property
+   */
+  public void addInputProperty(final String key, final Object value);  
 
   /**
    * Set the center point geometry for a vertex
@@ -80,15 +88,7 @@ public interface Vertex extends Comparable<Vertex>, Serializable {
    * @return Set of Edge objects
    */
   public Set<Edge> getEdges();
-
-
-  /**
-   * Test whether no exit edge segments have been registered
-   * 
-   * @return true if no exit edge segments have been registered, false otherwise
-   */
-  public boolean hasExitEdgeSegments();
-  
+ 
   /**
    * Test whether no entry edge segments have been registered
    * 
@@ -102,38 +102,5 @@ public interface Vertex extends Comparable<Vertex>, Serializable {
    */
   public int getNumberOfEdges();  
   
-  /**
-   * Add edgeSegment, do not invoke when parsing networks, this connection is
-   * auto-populated before the assignment starts based on the edge segment
-   * vertices that have been registered.
-   * 
-   * @param edgeSegment EdgeSegment object to be added
-   * @return true when added, false when already present (and not added)
-   * @throws PlanItException thrown when error
-   */
-  public boolean addEdgeSegment(EdgeSegment edgeSegment) throws PlanItException;
-
-  /**
-   * Remove edgeSegment
-   * 
-   * @param edgeSegment EdgeSegment object to be removed
-   * @return true when removed, false when not present (and not removed)
-   * @throws PlanItException thrown when error
-   */
-  public boolean removeEdgeSegment(EdgeSegment edgeSegment) throws PlanItException;
-  
-  /**
-   * Collect the entry edge segments of this vertex
-   * 
-   * @return edgeSegments
-   */
-  public Set<EdgeSegment> getEntryEdgeSegments();
-
-  /**
-   * Collect the exit edge segments of this vertex
-   * 
-   * @return edgeSegments
-   */
-  public Set<EdgeSegment> getExitEdgeSegments();  
 
 }

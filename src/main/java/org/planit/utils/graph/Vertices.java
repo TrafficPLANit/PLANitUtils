@@ -8,6 +8,20 @@ package org.planit.utils.graph;
  */
 public interface Vertices<V extends Vertex> extends Iterable<V> {
 
+  
+  /** Create a new vertex (without registering on this class)
+   * 
+   * @return created vertex
+   */
+  public V createNewVertex();
+  
+  /**
+   * Add vertex to the internal container
+   *
+   * @param vertex vertex to be registered in this network
+   * @return vertex, in case it overrides an existing vertex, the removed vertex is returned
+   */
+  public V registerVertex(V vertex);  
 
   /**
    * Create and register new vertex

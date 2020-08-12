@@ -47,14 +47,14 @@ public interface EdgeSegment extends Comparable<EdgeSegment>, Serializable {
    * 
    * @return upstream vertex
    */
-  public Vertex getUpstreamVertex();
+  public DirectedVertex getUpstreamVertex();
 
   /**
    * Get the segment's downstream vertex
    * 
    * @return downstream vertex
    */
-  public Vertex getDownstreamVertex();
+  public DirectedVertex getDownstreamVertex();
 
   /**
    * Collect the parent edge of the segment

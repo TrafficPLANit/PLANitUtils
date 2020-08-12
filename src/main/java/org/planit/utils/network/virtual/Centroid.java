@@ -1,6 +1,6 @@
 package org.planit.utils.network.virtual;
 
-import org.planit.utils.graph.Vertex;
+import org.planit.utils.graph.DirectedVertex;
 
 /**
  * A centroid is a special type of vertex representing the location of departure/arrival of traffic
@@ -10,7 +10,7 @@ import org.planit.utils.graph.Vertex;
  * @author markr
  *
  */
-public interface Centroid extends Vertex {
+public interface Centroid extends DirectedVertex {
 
   /**
    * Return the parent zone of this centroid

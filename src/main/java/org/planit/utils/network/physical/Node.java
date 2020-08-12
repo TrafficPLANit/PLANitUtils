@@ -1,6 +1,6 @@
 package org.planit.utils.network.physical;
 
-import org.planit.utils.graph.Vertex;
+import org.planit.utils.graph.DirectedVertex;
 
 /**
  * Node is a vertex but not all vertices are nodes.
@@ -10,7 +10,7 @@ import org.planit.utils.graph.Vertex;
  * @author markr
  *
  */
-public interface Node extends Vertex {
+public interface Node extends DirectedVertex {
  
   /**
    * Collect the id of the node. Not all vertices need to be nodes, this node id is contiguous and unique to the nodes

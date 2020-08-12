@@ -5,12 +5,12 @@ package org.planit.utils.graph;
  * 
  * @author markr
  */
-public interface DirectedGraph {
+public interface DirectedGraph<V extends DirectedVertex, E extends Edge, ES extends EdgeSegment> extends Graph<V,E> {
 
-  Edges getEdges();
-  
-  EdgeSegments getEdgeSegments();  
 
-  Vertices getVertices();
+  /** Collect edges segments of graph
+   * @return edges segments
+   */
+  EdgeSegments<ES> getEdgeSegments();  
 
 }
