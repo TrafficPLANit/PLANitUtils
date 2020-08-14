@@ -1,5 +1,7 @@
 package org.planit.utils.misc;
 
+import java.util.logging.Logger;
+
 import org.planit.utils.configurator.Configurator;
 import org.planit.utils.exceptions.PlanItException;
 
@@ -12,6 +14,9 @@ import org.planit.utils.exceptions.PlanItException;
  */
 public abstract class Builder<T> {
   
+  /** the logger */
+  private static final Logger LOGGER = Logger.getLogger(Builder.class.getCanonicalName());  
+  
   /**
    * The traffic assignment class to build in canonical string form
    */
@@ -23,11 +28,10 @@ public abstract class Builder<T> {
   private Configurator<T> configurator;
   
   /** Allow derived classes to provide their own configurator for this builder, by default we create a base class configurator
-   * @return
+   * @return appropriate configurator
+   * @throws PlanItException thrown if error
    */
-  protected Configurator<T> createConfigurator(){
-    return new Configurator<T>();
-  }
+  protected abstract Configurator<T> createConfigurator() throws PlanItException;
   
   /** 
    * collect the class to build
@@ -51,11 +55,15 @@ public abstract class Builder<T> {
   /** the configurator for this builder. It allows one to hide the builder aspect and expose (parts of) the user available configuration options
    * via this object
    *  
-   * @return the configurator
+   * @return the configurator, null if no configurator is available nor could be created
    */
   public Configurator<T> getConfigurator(){
     if(configurator == null) {
-      this.configurator = createConfigurator();
+      try {
+        this.configurator = createConfigurator();
+      }catch(PlanItException e) {
+        LOGGER.severe(String.format("unable to create the appropriate configurator because: %s", e.getMessage()));
+      }
     }
     return configurator;
   }
