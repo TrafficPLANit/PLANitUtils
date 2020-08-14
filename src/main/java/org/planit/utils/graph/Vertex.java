@@ -1,7 +1,6 @@
 package org.planit.utils.graph;
 
 import java.io.Serializable;
-import java.util.HashMap;
 import java.util.Set;
 
 import org.opengis.geometry.DirectPosition;

@@ -1,8 +1,7 @@
-package org.planit.utils.misc;
+package org.planit.utils.builder;
 
 import java.util.logging.Logger;
 
-import org.planit.utils.configurator.Configurator;
 import org.planit.utils.exceptions.PlanItException;
 
 /**

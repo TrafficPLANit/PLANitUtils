@@ -39,7 +39,7 @@ public interface Link extends Edge {
    * 
    * @param externalId the external id to set
    */
-  void setExternalId(final Object externalId);
+  void setExternalId(final Object externalId);   
 
   /**
    * Collect the external id
@@ -54,5 +54,11 @@ public interface Link extends Edge {
    * @return true if the external Id has been set, false otherwise
    */
   boolean hasExternalId();
+  
+  /**
+   * set the name of the link
+   * @param name
+   */
+  void setName(String name);
 
 }

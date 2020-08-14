@@ -1,4 +1,4 @@
-package org.planit.utils.configurator;
+package org.planit.utils.builder;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
