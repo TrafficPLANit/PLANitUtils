@@ -25,6 +25,11 @@ public class Configurator<T> {
 
   /** the logger */
   private static final Logger LOGGER = Logger.getLogger(Configurator.class.getCanonicalName());
+  
+  /**
+   * the class type of the instance we are configuring
+   */
+  private final Class<T> configuratorClassType;  
 
   /** the methods to invoke on the to be configured object instance and their parameters */
   protected final Map<String, Object[]> delayedMethodCalls;
@@ -69,26 +74,40 @@ public class Configurator<T> {
       }
       Class<?>[] parameterTypes = method.getParameterTypes();
       boolean matches = true;
-      for (int i = 0; i < parameterTypes.length; i++) {
-          if (!parameterTypes[i].isAssignableFrom(parameters[i].getClass())) {
-              matches = false;
-              break;
-          }
+      if(parameterTypes.length != parameters.length) {
+        matches = false;
+      }else
+      {
+        for (int i = 0; i < parameterTypes.length; i++) {
+            if (!parameterTypes[i].isAssignableFrom(parameters[i].getClass())) {
+                matches = false;
+                break;
+            }
+        }
       }
       if (matches) {
-          // obtain a Class[] based on the passed arguments as Object[]
+        // obtain a Class[] based on the passed arguments as Object[]
         method.invoke(instance,  parameters);
-        break;
       }
     }    
   }
 
   /**
    * Constructor
+   * 
+   * @param instanceType the class type of the instance we are configuring
    */
-  public Configurator() {
+  public Configurator(Class<T> instanceType) {
+    this.configuratorClassType = instanceType;
     this.delayedMethodCalls = new HashMap<String, Object[]>();
   }
+  
+  /** collect the class type we are configuring for
+   * @return class type
+   */
+  public Class<T> getClassTypeToConfigure(){
+    return configuratorClassType;
+  }  
   
   /**
    * Register a method call to a setter that should be invoked on the to be configured object instance once it is available
@@ -99,6 +118,20 @@ public class Configurator<T> {
   public void registerDelayedMethodCall(String methodName, Object... parameters) {
     delayedMethodCalls.put(methodName, parameters);
   }  
+  
+  /** collect the first parameter submitted with method call of given signature. If not available null is returned
+   * 
+   * @param methodName
+   * @return first parameter of delay method name call
+   */
+  public Object getFirstParameterOfDelayedMethodCall(String methodName) {
+    Object[] parameters = delayedMethodCalls.get(methodName);
+    if(parameters!= null && parameters.length >= 1) {
+      return parameters[0];
+    }else {
+      return null;
+    }
+  }
 
   /**
    * Configure the passed in instance with the registered method calls

@@ -20,7 +20,14 @@ public abstract class Builder<T> {
   /**
    * The configurator for this builder
    */
-  private final Configurator<T> configurator;
+  private Configurator<T> configurator;
+  
+  /** Allow derived classes to provide their own configurator for this builder, by default we create a base class configurator
+   * @return
+   */
+  protected Configurator<T> createConfigurator(){
+    return new Configurator<T>();
+  }
   
   /** 
    * collect the class to build
@@ -31,25 +38,7 @@ public abstract class Builder<T> {
     return classToBuild;
   }
   
-  /** Allow derived builder to register delayed method calls to the instance of T
-   *  which are then invoked upon calling {@code invokedDelayedMethodCalls}. Useful to construct a chain of setters on the
-   *  instance T after it has been created but before returned to the user
-   * 
-   * @param methodName the delayed method call
-   * @param parameters parameters of the method
-   */
-  protected void registerDelayedMethodCall(String methodName, Object...  parameters) {
-    configurator.registerDelayedMethodCall(methodName, parameters);
-  }
-  
-  /** perform the method calls that are registered earlier via {@code registerDelayedMethodCall}
-   * @param theInstance to invoke the calls on
-   * @throws PlanItException thrown when error
-   */
-  protected void invokeDelayedMethodCalls(T theInstance) throws PlanItException {
-    configurator.configure(theInstance);
-  }
-  
+ 
   /**
    * Constructor 
    * 
@@ -57,7 +46,18 @@ public abstract class Builder<T> {
    */
   protected Builder(Class<T> classToBuild) {
     this.classToBuild = classToBuild;
-    this.configurator = new Configurator<T>();
+  }
+  
+  /** the configurator for this builder. It allows one to hide the builder aspect and expose (parts of) the user available configuration options
+   * via this object
+   *  
+   * @return the configurator
+   */
+  public Configurator<T> getConfigurator(){
+    if(configurator == null) {
+      this.configurator = createConfigurator();
+    }
+    return configurator;
   }
 
 
