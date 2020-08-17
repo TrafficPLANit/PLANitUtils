@@ -68,28 +68,67 @@ public class Configurator<T> {
     PlanItException.throwIf(instance == null, "The instance to configure by calling " + methodName + " is not available");
     
     // check if each parameter is assignable for the method at hand. first match we choose
+    boolean matches = false;
     for (Method method : instance.getClass().getMethods()) {
       if (!method.getName().equals(methodName)) {
           continue;
       }
       Class<?>[] parameterTypes = method.getParameterTypes();
-      boolean matches = true;
       if(parameterTypes.length != parameters.length) {
-        matches = false;
+        continue;
       }else
       {
+        boolean parametersMatch = true;
         for (int i = 0; i < parameterTypes.length; i++) {
-            if (!parameterTypes[i].isAssignableFrom(parameters[i].getClass())) {
-                matches = false;
-                break;
+          Class<?> manuallyBoxedParameter = parameterTypes[i];
+          if(parameterTypes[i].isPrimitive()) {
+            // no auto-boxing, do it manually to check for match
+            switch (parameterTypes[i].getName()) {
+            case "double":
+              manuallyBoxedParameter = Double.class;
+              break;
+            case "int":
+              manuallyBoxedParameter = Integer.class;
+              break; 
+            case "byte":
+              manuallyBoxedParameter = Byte.class;
+              break; 
+            case "short":
+              manuallyBoxedParameter = Short.class;
+              break; 
+            case "long":
+              manuallyBoxedParameter = Long.class;
+              break; 
+            case "float":
+              manuallyBoxedParameter = Float.class;
+              break; 
+            case "char":
+              manuallyBoxedParameter = Character.class;
+              break;
+            case "boolean":
+              manuallyBoxedParameter = Boolean.class;
+              break; 
+            default:
+              break;
             }
+            // now try again
+            if (!manuallyBoxedParameter.isAssignableFrom(parameters[i].getClass())) {
+              parametersMatch = false;  
+              break;
+            }
+          }
+          matches = parametersMatch;
         }
       }
       if (matches) {
         // obtain a Class[] based on the passed arguments as Object[]
         method.invoke(instance,  parameters);
+        break;
       }
-    }    
+    } 
+    PlanItException.throwIf(!matches, String.format(
+        "unable to call registered method call %s no match found (or invalid argument list) on instance of type %s",
+        methodName, instance.getClass().getCanonicalName()));
   }
 
   /**

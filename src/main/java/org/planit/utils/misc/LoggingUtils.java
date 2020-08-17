@@ -122,7 +122,7 @@ public class LoggingUtils {
    * @param activate indicate to activate or deactive
    * @return the string (de)activated :  {@code <simple class name>}
    */
-  public static String activateItemByClassName(Object item, boolean activate) {
+  public static String logActiveStateByClassName(Object item, boolean activate) {
     return (activate ? "activated: " : "deactivated :") + item.getClass().getSimpleName();
   }
   
