@@ -39,23 +39,20 @@ public interface LinkSegment extends EdgeSegment {
    * @param numberOfLanes to set
    */
   void setNumberOfLanes(int numberOfLanes);
-
+  
   /**
-   * Return the maximum speed along this link for a specified mode
+   * This is the maximum speed that is physically present and a driver can observe from the signs on the road
    * 
-   * @param mode the specified mode
-   * @return maximum speed along this link for the specified mode
-   */
-  double getMaximumSpeed(Mode mode);
-
-  /**
-   * Set the maximum speed along this link for a specified mode
-   * 
-   * @param mode the specified mode
    * @param maximumSpeed
-   *          maximum speed along this link for the specified mode
    */
-  void setMaximumSpeed(Mode mode, double maximumSpeed);
+  public void setMaximumSpeed(double maximumSpeed);
+
+  /**
+   * This is the maximum speed that is physically present and a driver can observe from the signs on the road
+   * 
+   * @param maximumSpeed
+   */
+  public double getMaximumSpeed(); 
 
   /**
    * Return the parent link of this link segment
