@@ -13,9 +13,14 @@ import org.planit.utils.network.physical.Mode;
 public interface MacroscopicLinkSegmentType {
 
   /**
-   * Default capacity per lane (veh/h)
+   * Default capacity per lane (pcu/h)
    */
-  double DEFAULT_CAPACITY_LANE = 1800.0f;
+  double DEFAULT_CAPACITY_LANE = 1800.0;
+  
+  /**
+   * Default capacity per lane (pcu/h)
+   */
+  double DEFAULT_MAX_DENSITY_LANE = 180.0;  
 
   /**
    * Return the unique id of this macroscopic link segment type

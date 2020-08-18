@@ -27,6 +27,13 @@ public interface MacroscopicModeProperties {
    * @return the maximum speed in km/h
    */
   double getMaxSpeed();
+  
+  /**
+   * set the maximum speed in km/h
+   * 
+   * @param maxSpeed
+   */
+  double setMaximumSpeed(double maxSpeed);  
 
   /**
    * Collect the critical speed in km/h
@@ -34,5 +41,12 @@ public interface MacroscopicModeProperties {
    * @return the critical speed in km/h
    */
   double getCriticalSpeed();
+  
+  /**
+   * set the critical speed in km/h
+   * 
+   * @param criticalSpeed
+   */
+  double setCriticalSpeed(double criticalSpeed); 
 
 }

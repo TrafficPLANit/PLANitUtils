@@ -46,20 +46,4 @@ public interface MacroscopicLinkSegment extends LinkSegment {
    */
   MacroscopicLinkSegmentType getLinkSegmentType();
   
-  /**
-   * Return the maximum speed along this link for a specified mode
-   *
-   * @param mode the specified mode
-   * @return maximum speed along this link for the specified mode
-   */
-  public double getMaximumSpeed(final Mode mode);
-
-  /**
-   * Set the maximum speed along this link for a specified mode
-   *
-   * @param mode         the specified mode
-   * @param maximumSpeed maximum speed along this link for the specified mode
-   */
-  public void setMaximumSpeed(final Mode mode, final double maximumSpeed);  
-
 }
