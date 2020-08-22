@@ -2,7 +2,9 @@ package org.planit.utils.builder;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
 
@@ -31,8 +33,9 @@ public class Configurator<T> {
    */
   private final Class<T> configuratorClassType;  
 
-  /** the methods to invoke on the to be configured object instance and their parameters */
-  protected final Map<String, Object[]> delayedMethodCalls;
+  /** the methods to invoke on the to be configured object instance and their parameters.
+   * Since the same method could be called multiple times (with different parameters) we track a list per call */
+  protected final Map<String, List<Object[]>> delayedMethodCalls;
 
   /**
    * collect the parameter types of the passed in object in their original order
@@ -138,7 +141,7 @@ public class Configurator<T> {
    */
   public Configurator(Class<T> instanceType) {
     this.configuratorClassType = instanceType;
-    this.delayedMethodCalls = new HashMap<String, Object[]>();
+    this.delayedMethodCalls = new HashMap<String, List<Object[]>>();
   }
   
   /** collect the class type we are configuring for
@@ -155,21 +158,29 @@ public class Configurator<T> {
    * @param parameters the parameters of the method
    */
   public void registerDelayedMethodCall(String methodName, Object... parameters) {
-    delayedMethodCalls.put(methodName, parameters);
+    List<Object[]> parametersPerCall = delayedMethodCalls.get(methodName);
+    if(parametersPerCall == null) {
+      parametersPerCall = new ArrayList<Object[]>();
+      delayedMethodCalls.put(methodName, parametersPerCall);  
+    }
+    parametersPerCall.add(parameters);    
   }  
   
-  /** collect the first parameter submitted with method call of given signature. If not available null is returned
+  /** Collect the first parameter submitted with (last) registered delayed method call of given signature. If not available null is returned.
+   * Useful to mimic getters for a given setter on configurator derived class.
    * 
    * @param methodName
    * @return first parameter of delay method name call
    */
   public Object getFirstParameterOfDelayedMethodCall(String methodName) {
-    Object[] parameters = delayedMethodCalls.get(methodName);
-    if(parameters!= null && parameters.length >= 1) {
-      return parameters[0];
-    }else {
-      return null;
+    List<Object[]> parametersPerCall = delayedMethodCalls.get(methodName);
+    if(parametersPerCall!= null) {
+      Object[] parametersOfLastCall = parametersPerCall.get(parametersPerCall.size()-1);
+      if(parametersOfLastCall.length >= 1) {
+        return parametersOfLastCall[0];
+      }
     }
+    return null;
   }
 
   /**
@@ -179,9 +190,13 @@ public class Configurator<T> {
    * @throws PlanItException thrown if error
    */
   public void configure(T toConfigureInstance) throws PlanItException {
-    for (Map.Entry<String, Object[]> methodCall : delayedMethodCalls.entrySet()) {
+    /* cycle through unique method calls */
+    for (Map.Entry<String, List<Object[]>> methodCall : delayedMethodCalls.entrySet()) {
       try {
-        callVoidMethod(toConfigureInstance, methodCall.getKey(), methodCall.getValue());
+        /* cycle through all calls to same method with given parameters */
+        for(Object[] parametersOfCall : methodCall.getValue()) {
+          callVoidMethod(toConfigureInstance, methodCall.getKey(), parametersOfCall);
+        }
       } catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException | NoSuchMethodException | SecurityException e) {
         LOGGER.severe(e.getMessage());
         throw new PlanItException("could not call configurator delayed method call to " + methodCall.getKey() + " on class " + toConfigureInstance.getClass().getCanonicalName());
