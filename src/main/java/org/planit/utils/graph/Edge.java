@@ -89,13 +89,22 @@ public interface Edge extends Comparable<Edge>, Serializable {
    * 
    * @return edge segment AB
    */
-  public EdgeSegment getEdgeSegmentAB();
+  public EdgeSegment getEdgeSegmentAb();
+  
+  /**
+   * Edge segment in the direction indicated
+   * 
+   * @return edge segment if present
+   */
+  default public EdgeSegment getEdgeSegment(boolean directionAb) {
+    return directionAb ? getEdgeSegmentAb() : getEdgeSegmentBa();
+  }
 
   /**
    * Edge segment in the direction from B to A
    * 
    * @return edge segment BA
    */
-  public EdgeSegment getEdgeSegmentBA();
+  public EdgeSegment getEdgeSegmentBa();
 
 }

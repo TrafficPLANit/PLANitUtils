@@ -87,19 +87,20 @@ public interface Vertex extends Comparable<Vertex>, Serializable {
    * @return Set of Edge objects
    */
   public Set<Edge> getEdges();
- 
-  /**
-   * Test whether no entry edge segments have been registered
-   * 
-   * @return true if no entry edge segments have been registered, false otherwise
-   */
-  public boolean hasEntryEdgeSegments();  
- 
+  
   /**
    * Number of entries in edge segments
    * @return the number of edges connected to this vertex
    */
   public int getNumberOfEdges();  
+  
+  /**
+   * colect the edge based on the other vertex
+   * 
+   * @param otherVertex that defines the edge
+   * @return edge the edge if available
+   */
+  Edge getEdge(Vertex otherVertex);   
   
 
 }

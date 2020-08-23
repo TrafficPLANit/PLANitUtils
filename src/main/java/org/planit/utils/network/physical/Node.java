@@ -18,6 +18,6 @@ public interface Node extends DirectedVertex {
    * 
    * @return node id
    */
-  long getNodeId();  
+  long getNodeId();
   
 }
