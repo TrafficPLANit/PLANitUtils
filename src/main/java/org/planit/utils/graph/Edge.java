@@ -21,14 +21,7 @@ public interface Edge extends Comparable<Edge>, Serializable {
    * @return id of this Edge object
    */
   public long getId();
-
-  /**
-   * Return length of this edge in km
-   * 
-   * @return length of this edge in km
-   */
-  public double getLength();
-  
+ 
   /**
    * Register EdgeSegment.
    *
@@ -41,7 +34,7 @@ public interface Edge extends Comparable<Edge>, Serializable {
    */
   public EdgeSegment registerEdgeSegment(final EdgeSegment edgeSegment, final boolean directionAB) throws PlanItException;  
 
-  // Getters-Setters
+  // Getters-Setters  
 
   /**
    * Vertex A of the edge
@@ -58,11 +51,30 @@ public interface Edge extends Comparable<Edge>, Serializable {
   public Vertex getVertexB();
 
   /**
-   * collect the name of the edge
-   * 
-   * @return the name
+   * set the name of the edge
+   * @param name
    */
-  public String getName();
+  void setName(String name);  
+  
+  /**
+   * get the name of the edge
+   * return name
+   */
+  String getName();
+  
+  /**
+   * set length of this edge in km
+   * 
+   * @param length of this edge in km
+   */
+  public void setLength(double lengthInKm);  
+  
+  /**
+   * Return length of this edge in km
+   * 
+   * @return length of this edge in km
+   */
+  public double getLength();  
 
   /**
    * Add a property from the original input that is not part of the readily
