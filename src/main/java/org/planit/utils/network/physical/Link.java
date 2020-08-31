@@ -1,6 +1,6 @@
 package org.planit.utils.network.physical;
 
-import org.planit.utils.exceptions.PlanItException;
+import org.opengis.geometry.coordinate.LineString;
 import org.planit.utils.graph.Edge;
 
 /**
@@ -11,20 +11,6 @@ import org.planit.utils.graph.Edge;
  *
  */
 public interface Link extends Edge {
-
-  /**
-   * Register linkSegment. If there already exists a linkSegment for that
-   * direction it should be replaced and returned
-   * 
-   * @param linkSegment
-   *          the link segment to be registered
-   * @param directionAB
-   *          direction of travel
-   * @return the replaced LinkSegment
-   * @throws PlanItException
-   *           thrown if there is an error
-   */
-  LinkSegment registerLinkSegment(LinkSegment linkSegment, boolean directionAB) throws PlanItException;
 
   /**
    * Return id of this instance. This id is expected to be generated using the
@@ -54,11 +40,18 @@ public interface Link extends Edge {
    * @return true if the external Id has been set, false otherwise
    */
   boolean hasExternalId();
+    
   
   /**
-   * set the name of the link
-   * @param name
+   * Collect the geometry of this line
+   * @return lineString
    */
-  void setName(String name);
+  LineString getGeometry();
+  
+  /**
+   * set the geometry of this link as a line string
+   * @param lineString
+   */
+  void setGeometry(LineString lineString);
 
 }
