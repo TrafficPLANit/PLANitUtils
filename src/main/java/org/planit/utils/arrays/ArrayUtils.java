@@ -3,12 +3,12 @@ package org.planit.utils.arrays;
 import java.util.Arrays;
 
 /**
- * General methods for updating arrays
+ * General methods for arrays
  * 
- * @author gman6028
+ * @author gman6028, markr
  *
  */
-public class ArrayOperations {
+public class ArrayUtils {
 
   /**
    * Add the values of a second array element-wise to the first array
@@ -60,5 +60,18 @@ public class ArrayOperations {
     System.arraycopy(theArray, 0, newArray, 1, theArray.length);
     return newArray;
   }
+  
+  /**
+   * find the maximum of an array of doubles
+   * @param arr to check
+   * @return maximum value
+   */
+  public static double getMaximum(double[] arr) {
+    double max = Double.NEGATIVE_INFINITY;
+    for(double entry: arr) {
+        max = Math.max(max, entry);
+    }
+    return max;
+}
 
 }
