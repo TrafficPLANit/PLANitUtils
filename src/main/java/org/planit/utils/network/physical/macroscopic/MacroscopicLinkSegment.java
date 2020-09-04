@@ -30,7 +30,7 @@ public interface MacroscopicLinkSegment extends LinkSegment {
    * @return freeFlowTravelTime for this mode
    * @throws PlanItException thrown if error
    */
-  double computeFreeFlowTravelTime(Mode mode) throws PlanItException;
+  double computeFreeFlowTravelTime(Mode mode);
 
   /**
    * Set the link segment type this link segment adheres to

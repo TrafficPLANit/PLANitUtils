@@ -16,14 +16,14 @@ public interface Modes extends Iterable<Mode> {
    * @param pcu            value for the mode
    * @return new mode created
    */
-  public Mode registerNewMode(final long externalModeId, final String name, final double pcu);
+  public Mode registerNew(final long externalModeId, final String name, final double pcu);
 
   /**
    * Return number of registered modes
    *
    * @return number of registered modes
    */
-  public int getNumberOfModes();
+  public int size();
 
   /**
    * Return a Mode by its id
@@ -32,7 +32,7 @@ public interface Modes extends Iterable<Mode> {
    * @return the specified mode
    * 
    */
-  public Mode getModeById(long id);
+  public Mode get(long id);
 
   /**
    * Collect the first registered mode
@@ -50,7 +50,7 @@ public interface Modes extends Iterable<Mode> {
    * @param convertToLong if true, the external Id is converted into a long before beginning the search
    * @return the retrieved mode, or null if no mode was found
    */
-  public Mode getModeByExternalId(Object externalId, boolean convertToLong);
+  public Mode getByExternalId(Object externalId, boolean convertToLong);
 
   /**
    * Retrieve a Mode by its external Id
@@ -61,5 +61,5 @@ public interface Modes extends Iterable<Mode> {
    * @param externalId the external Id of the specified mode
    * @return the retrieved mode, or null if no mode was found
    */
-  public Mode getModeByExternalId(Object externalId);
+  public Mode getByExternalId(Object externalId);
 }

@@ -1,6 +1,8 @@
 package org.planit.utils.arrays;
 
 import java.util.Arrays;
+import java.util.function.BiConsumer;
+import java.util.function.Consumer;
 
 /**
  * General methods for arrays
@@ -25,6 +27,21 @@ public class ArrayUtils {
       destination[index] += addToDestination[index];
     }
   }
+  
+  /**
+   * Add the values of a second array element-wise to the first array
+   * 
+   * @param destination
+   *          the array to be updated
+   * @param addToDestination
+   *          array of values to be added to destination array
+   */
+  public static void addTo(double[] destination, double[] addToDestination) {
+    int length = destination.length;
+    for (int index = 0; index < length; ++index) {
+      destination[index] += addToDestination[index];
+    }
+  }  
 
   /**
    * Return the dot product of two arrays
@@ -72,6 +89,32 @@ public class ArrayUtils {
         max = Math.max(max, entry);
     }
     return max;
-}
+  }
+  
+  /**
+   * Loop over array entries and apply consumer
+   * 
+   * @param consumer to apply
+   */
+  public static void loopAll(double[][] array, BiConsumer<Integer, Integer> consumer) {
+    int length1 = array.length;
+    for(int id1=0;id1<length1;++id1) {
+      int length2 = array[id1].length;
+      for(int id2=0;id2<length2;++id2) {
+        consumer.accept(id1, id2);
+      }
+    }
+  }
 
+  /**
+   * Loop over array entries and apply consumer
+   * 
+   * @param consumer to apply
+   */  
+  public static void loopAll(double[] array, Consumer<Integer> consumer) {
+    int length = array.length;
+    for(int id=0;id<length;++id) {
+      consumer.accept(id);
+    }
+  }  
 }
