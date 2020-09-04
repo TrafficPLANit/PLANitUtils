@@ -67,6 +67,6 @@ public interface LinkSegment extends EdgeSegment {
    * @param mode the specified mode
    * @return true if vehicles of this mode can drive along this link, false otherwise
    */
-  boolean isModeAllowedThroughLink(Mode mode);
+  boolean isModeAllowed(Mode mode);
 
 }
