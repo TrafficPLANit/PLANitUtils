@@ -62,5 +62,11 @@ public interface EdgeSegment extends Comparable<EdgeSegment>, Serializable {
    * @return parentEdge
    */
   public Edge getParentEdge();
+  
+  /**
+   * check if edge segment runs from vertex a to b or b to a
+   * @return true when running from a to b, otherwise false
+   */
+  boolean isDirectionAb();
 
 }

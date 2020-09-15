@@ -74,7 +74,7 @@ public interface Edge extends Comparable<Edge>, Serializable {
    * 
    * @return length of this edge in km
    */
-  public double getLength();  
+  public double getLengthKm();  
 
   /**
    * Add a property from the original input that is not part of the readily
@@ -104,6 +104,13 @@ public interface Edge extends Comparable<Edge>, Serializable {
   public EdgeSegment getEdgeSegmentAb();
   
   /**
+   * Edge segment in the direction from B to A
+   * 
+   * @return edge segment BA
+   */
+  public EdgeSegment getEdgeSegmentBa();  
+  
+  /**
    * Edge segment in the direction indicated
    * 
    * @return edge segment if present
@@ -111,12 +118,21 @@ public interface Edge extends Comparable<Edge>, Serializable {
   default public EdgeSegment getEdgeSegment(boolean directionAb) {
     return directionAb ? getEdgeSegmentAb() : getEdgeSegmentBa();
   }
-
-  /**
-   * Edge segment in the direction from B to A
+ 
+  /** Verify if edge segment BA exists
    * 
-   * @return edge segment BA
+   * @return true if present, false otherwise
    */
-  public EdgeSegment getEdgeSegmentBa();
+  default public boolean hasEdgeSegmentBa() {
+    return getEdgeSegmentBa() != null;
+  }
+  
+  /** Verify if edge segment BA exists
+   * 
+   * @return true if present, false otherwise
+   */
+  default public boolean hasEdgeSegmentAb() {
+    return getEdgeSegmentAb() != null;
+  }  
 
 }
