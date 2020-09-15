@@ -17,7 +17,7 @@ public interface MacroscopicLinkSegment extends LinkSegment {
    * 
    * @return linkSegmentCapacity in PCU/h
    */
-  double computeCapacity();
+  double computeCapacityPcuH();
 
   /**
    * Compute the free flow travel time by mode, i.e. when the link's maximum speed

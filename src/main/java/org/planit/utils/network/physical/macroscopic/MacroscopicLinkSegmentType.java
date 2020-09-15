@@ -1,6 +1,7 @@
 package org.planit.utils.network.physical.macroscopic;
 
 import java.util.Map;
+import java.util.Set;
 
 import org.planit.utils.network.physical.Mode;
 
@@ -94,5 +95,12 @@ public interface MacroscopicLinkSegmentType {
    * @return the mode properties for this link and mode
    */
   MacroscopicModeProperties getModeProperties(Mode mode);
+  
+  /**
+   * return the available modes for which mode properties have been registered
+   * 
+   * @return available modes
+   */
+  Set<Mode> getAvailableModes(); 
 
 }
