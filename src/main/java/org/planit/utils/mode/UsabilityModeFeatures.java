@@ -21,7 +21,7 @@ public class UsabilityModeFeatures {
   /**
    * Default constructor
    */
-  protected UsabilityModeFeatures() {
+  public UsabilityModeFeatures() {
     this.useOfType = DEFAULT_USEOF_TYPE;
   }
   

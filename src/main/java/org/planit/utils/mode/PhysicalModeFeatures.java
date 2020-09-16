@@ -36,7 +36,7 @@ public class PhysicalModeFeatures {
   /**
    * Default constructor
    */
-  protected PhysicalModeFeatures() {
+  public PhysicalModeFeatures() {
     this.vehicularType = DEFAULT_VEHICULAR_TYPE;
     this.motorisationType = DEFAULT_MOTORISATION_TYPE;
     this.trackType = DEFAULT_TRACK_TYPE;
