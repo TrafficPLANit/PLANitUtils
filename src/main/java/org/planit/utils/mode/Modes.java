@@ -1,4 +1,4 @@
-package org.planit.utils.network.physical;
+package org.planit.utils.mode;
 
 /**
  * container class and factory methods for modes with some

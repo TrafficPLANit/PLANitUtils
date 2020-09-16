@@ -3,7 +3,7 @@ package org.planit.utils.network.physical.macroscopic;
 import java.util.Map;
 import java.util.Set;
 
-import org.planit.utils.network.physical.Mode;
+import org.planit.utils.mode.Mode;
 
 /**
  * The macroscopic link segment type characteristics are contained in this class

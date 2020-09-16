@@ -3,6 +3,7 @@ package org.planit.utils.network.physical;
 import java.util.Set;
 
 import org.planit.utils.graph.EdgeSegment;
+import org.planit.utils.mode.Mode;
 
 public interface LinkSegment extends EdgeSegment {
 

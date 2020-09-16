@@ -1,8 +1,8 @@
 package org.planit.utils.network.physical.macroscopic;
 
 import org.planit.utils.exceptions.PlanItException;
+import org.planit.utils.mode.Mode;
 import org.planit.utils.network.physical.LinkSegment;
-import org.planit.utils.network.physical.Mode;
 
 /**
  * Macroscopic traffic modeling oriented link segment

@@ -1,4 +1,4 @@
-package org.planit.utils.network.physical;
+package org.planit.utils.mode;
 
 /**
  * Interface to represent a mode
@@ -19,6 +19,20 @@ public interface Mode extends Comparable<Mode> {
    * @return pcu
    */
   double getPcu();
+  
+  /**
+   * collect the physical features of this mode
+   * 
+   * @return the physical mode features
+   */
+  PhysicalModeFeatures getPhysicalFeatures();
+  
+  /**
+   * collect the features of how this mode is used (public, private etc.)
+   * 
+   * @return the use features of this mode
+   */
+  UsabilityModeFeatures getUseFeatures();  
 
   /**
    * Name of this mode
