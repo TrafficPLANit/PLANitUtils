@@ -62,5 +62,21 @@ public interface Mode extends Comparable<Mode> {
    * @return true if external Id set, false otherwise
    */
   boolean hasExternalId();
-
+  
+  /** check if the mode is one of the PLANit predefined mode types or not
+   * 
+   * @return true when predefined, false, when custom
+   */
+  default boolean isPredefinedModeType(){
+    return false;
+  }
+  
+  /**
+   * collect the predefined mode type
+   * 
+   * @return the type, set to CUSTOM when it is not one of the regular predefined modes
+   */
+  default PredefinedModeType getPredefinedModeType() {
+    return PredefinedModeType.CUSTOM;
+  }
 }

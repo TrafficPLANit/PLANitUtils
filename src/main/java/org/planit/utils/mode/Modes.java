@@ -1,5 +1,7 @@
 package org.planit.utils.mode;
 
+import org.planit.utils.exceptions.PlanItException;
+
 /**
  * container class and factory methods for modes with some
  * 
@@ -14,9 +16,20 @@ public interface Modes extends Iterable<Mode> {
    * @param externalModeId the external mode id for the mode
    * @param name           of the mode
    * @param pcu            value for the mode
+   * @param physicalFeatures the physical features of this custom mode
+   * @param usabilityFeatures the usability features of this custom mode
    * @return new mode created
    */
-  public Mode registerNew(final long externalModeId, final String name, final double pcu);
+  public Mode registerNewCustomMode(final Object externalModeId, final String name, final double pcu, PhysicalModeFeatures physicalFeatures, UsabilityModeFeatures usabilityFeatures);
+  
+  /**
+   * Create and register a new predefined mode
+   *
+   * @param modeType the predefined mode type
+   * @return new mode created
+   * @throws PlanItException thrown if error
+   */
+  public PredefinedMode registerNew(PredefinedModeType modeType) throws PlanItException;  
 
   /**
    * Return number of registered modes

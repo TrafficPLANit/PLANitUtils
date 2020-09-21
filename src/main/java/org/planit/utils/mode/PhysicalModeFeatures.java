@@ -7,65 +7,36 @@ package org.planit.utils.mode;
  * @author markr
  *
  */
-public class PhysicalModeFeatures {
+public interface PhysicalModeFeatures {
   
   /**
    * default is of a vehicular type
    */
   public static VehicularModeType DEFAULT_VEHICULAR_TYPE = VehicularModeType.VEHICLE;
-  
+
   /**
    * default is motorised
    */
   public static MotorisationModeType DEFAULT_MOTORISATION_TYPE = MotorisationModeType.MOTORISED;
-  
+
   /**
    * default is double-tracked, e.g. creates two tracks when driving
    */
-  public static TrackModeType DEFAULT_TRACK_TYPE = TrackModeType.DOUBLE;  
-  
-  /** the vehicular type */
-  protected VehicularModeType vehicularType; 
-  
-  /** the motorisation type */
-  protected MotorisationModeType motorisationType;
-  
-  /** the track type */
-  protected TrackModeType trackType;  
-  
-  /**
-   * Default constructor
+  public static TrackModeType DEFAULT_TRACK_TYPE = TrackModeType.DOUBLE;
+
+  /** collect the vehicular type of this mode
+   * @return vehicular type
    */
-  public PhysicalModeFeatures() {
-    this.vehicularType = DEFAULT_VEHICULAR_TYPE;
-    this.motorisationType = DEFAULT_MOTORISATION_TYPE;
-    this.trackType = DEFAULT_TRACK_TYPE;
-  }
-  
-  /* getters - setters */
-  
-  public VehicularModeType getVehicularType() {
-    return vehicularType;
-  }
+  VehicularModeType getVehicularType();
 
-  public void setVehicularType(VehicularModeType vehicularType) {
-    this.vehicularType = vehicularType;
-  }
+  /** collect the motorisation type of this mode
+   * @return motorisation type
+   */
+  MotorisationModeType getMotorisationType();
 
-  public MotorisationModeType getMotorisationType() {
-    return motorisationType;
-  }
-
-  public void setMotorisationType(MotorisationModeType motorisationType) {
-    this.motorisationType = motorisationType;
-  }
-
-  public TrackModeType getTrackType() {
-    return trackType;
-  }
-
-  public void setTrackType(TrackModeType trackType) {
-    this.trackType = trackType;
-  }  
+  /** collect the track type of this mode
+   * @return track type (single, double)
+   */
+  TrackModeType getTrackType();
 
 }

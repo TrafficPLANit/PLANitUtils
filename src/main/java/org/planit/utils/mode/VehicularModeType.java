@@ -1,7 +1,7 @@
 package org.planit.utils.mode;
 
 /**
- * A mode is either vehicular oriented or not
+ * A mode is either vehicular oriented or notmodeType; part of physical features
  * 
  * @author markr
  *

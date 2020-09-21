@@ -7,32 +7,18 @@ package org.planit.utils.mode;
  * @author markr
  *
  */
-public class UsabilityModeFeatures {
+public interface UsabilityModeFeatures {
 
   /**
    * default use of mode is private use
    */
   public static UseOfModeType DEFAULT_USEOF_TYPE = UseOfModeType.PRIVATE;
   
-  /** the use of the type */
-  protected UseOfModeType useOfType;   
   
-   
   /**
-   * Default constructor
+   * collect how this mode is used via this type, e.g. public, private, etc.
+   * @return use of this type
    */
-  public UsabilityModeFeatures() {
-    this.useOfType = DEFAULT_USEOF_TYPE;
-  }
-  
-  /* getters - setters */
-  
-  public UseOfModeType getUseOfType() {
-    return useOfType;
-  }
+  UseOfModeType getUseOfType();
 
-  public void setUseOfType(UseOfModeType useOfType) {
-    this.useOfType = useOfType;
-  }  
-  
 }
