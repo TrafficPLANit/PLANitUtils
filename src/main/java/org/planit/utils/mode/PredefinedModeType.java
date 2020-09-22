@@ -22,8 +22,9 @@ public enum PredefinedModeType {
   MOTOR_BIKE("motor_bike"),
   TRAIN("train"), 
   TRAM("tram"),
-  LIGHTRAIL("tram"),
-  HEAVY_GOODS_VEHICLE("hgv"),        /* non-articulated goods vehicle, up to 3.5 tonnes */
+  LIGHTRAIL("light_rail"),
+  GOODS_VEHICLE("goods"),            /* non-articulated goods vehicle, up to 3.5 tonnes */
+  HEAVY_GOODS_VEHICLE("hgv"),        /* non-articulated goods vehicle, over to 3.5 tonnes */
   LARGE_HEAVY_GOODS_VEHICLE("lhgv"); /* articulated large truck */  
 
   /** string representation of predefined mode type */
