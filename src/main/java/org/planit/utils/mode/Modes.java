@@ -23,10 +23,10 @@ public interface Modes extends Iterable<Mode> {
   public Mode registerNewCustomMode(final Object externalModeId, final String name, final double pcu, PhysicalModeFeatures physicalFeatures, UsabilityModeFeatures usabilityFeatures);
   
   /**
-   * Create and register a new predefined mode
+   * Create and register a new predefined mode. When it already exists, the existing entry is returned
    *
    * @param modeType the predefined mode type
-   * @return new mode created
+   * @return new mode created, or existing mode when already present
    * @throws PlanItException thrown if error
    */
   public PredefinedMode registerNew(PredefinedModeType modeType) throws PlanItException;  
@@ -46,7 +46,21 @@ public interface Modes extends Iterable<Mode> {
    * 
    */
   public Mode get(long id);
-
+  
+  /** verify if predefined mode is registered 
+   * 
+   * @param modeType to verify
+   * @return true when available, false otherwise
+   */
+  public boolean containsPredefinedMode(PredefinedModeType modeType);
+  
+  /** get predefined mode if it is registered 
+   * 
+   * @param modeType to collect
+   * @return predefined mode when available, null otherwise
+   */
+  public PredefinedMode getPredefinedMode(PredefinedModeType modeType);
+    
   /**
    * Collect the first registered mode
    * 

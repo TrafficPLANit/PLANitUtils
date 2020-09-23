@@ -20,6 +20,7 @@ public enum PredefinedModeType {
   BUS("bus"), 
   PEDESTRIAN("pedestrian"),
   MOTOR_BIKE("motor_bike"),
+  SUBWAY("subway"),
   TRAIN("train"), 
   TRAM("tram"),
   LIGHTRAIL("light_rail"),
