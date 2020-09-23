@@ -31,6 +31,27 @@ public interface MacroscopicLinkSegment extends LinkSegment {
    * @throws PlanItException thrown if error
    */
   double computeFreeFlowTravelTime(Mode mode);
+  
+  /**
+   * Collect the maximum speed limit for the mode by taking the minimum of: (i) physical speed limit, (ii) mode's maximum speed limit, (iii) link segment type's mode specific speed
+   * limit.
+   * 
+   * It is possible the link segment type's mode specific speed limit exceeds the physical speed limit. This can happen when the user has assigned a type to the link that is less
+   * restrictive than the physical speed limit sign indicates
+   * 
+   * It is also possible the link segment type's mode specific speed limit is more restrictive than the physical speed limit. For example when trucks are on a motorway and they
+   * have a designated lower speed limit.
+   * 
+   * It is also possible the mode's global speed limit is more restrictive than the physical speed limit. For example when trucks are on a motorway and the physical speed limit
+   * exceeds the mode specific one
+   * 
+   * Hence, it is important to always use this speed limit value when collecting speed limits, rather than collecting the physical, mode specific, or link type/mode specific speed
+   * limits
+   * 
+   * @param mode to collect modelled maximum speed for
+   * @return modelled speed limit, when mode is not allowed on link, 0 is returned
+   */  
+  double getModelledSpeedLimitKmH(Mode mode);    
 
   /**
    * Set the link segment type this link segment adheres to

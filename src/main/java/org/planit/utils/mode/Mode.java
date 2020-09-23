@@ -9,6 +9,16 @@ package org.planit.utils.mode;
 public interface Mode extends Comparable<Mode> {
   
   /**
+   * Default max speed in km/h
+   */
+  double GLOBAL_DEFAULT_MAXIMUM_SPEED_KMH = 80;
+  
+  /**
+   * Default pcu in pcu
+   */  
+  double GLOBAL_DEFAULT_PCU = 1;    
+  
+  /**
    * If no mode is defined the default mode is assumed to have an external idf of 1 
    */
   public static final long DEFAULT_EXTERNAL_ID = 1;  
@@ -40,6 +50,13 @@ public interface Mode extends Comparable<Mode> {
    * @return the name
    */
   String getName();
+  
+
+  /** maximum speed for this mode 
+   * 
+   * @return maximum speed
+   */
+  double getMaximumSpeed();  
 
   /**
    * Return id of this instance. This id is expected to be generated using the
@@ -79,4 +96,5 @@ public interface Mode extends Comparable<Mode> {
   default PredefinedModeType getPredefinedModeType() {
     return PredefinedModeType.CUSTOM;
   }
+
 }

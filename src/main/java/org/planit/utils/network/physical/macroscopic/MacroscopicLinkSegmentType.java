@@ -97,6 +97,13 @@ public interface MacroscopicLinkSegmentType {
   MacroscopicModeProperties getModeProperties(Mode mode);
   
   /**
+   * Verify if mode is available on type
+   * 
+   * @return available modes
+   */
+  boolean isModeAvailable(Mode mode);   
+  
+  /**
    * return the available modes for which mode properties have been registered
    * 
    * @return available modes

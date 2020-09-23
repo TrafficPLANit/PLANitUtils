@@ -48,15 +48,15 @@ public interface LinkSegment extends EdgeSegment {
    * 
    * @param maximumSpeedKmH
    */
-  public void setMaximumSpeedKmH(double maximumSpeedKmH);
+  public void setPhysicalSpeedLimitKmH(double maximumSpeedKmH);
 
   /**
    * This is the maximum speed (Km/h) that is physically present and a driver can observe from the signs on the road
    * 
    * @param maximumSpeedKmH
    */
-  public double getMaximumSpeedKmH(); 
-
+  public double getPhysicalSpeedLimitKmH(); 
+  
   /**
    * Return the parent link of this link segment
    * 

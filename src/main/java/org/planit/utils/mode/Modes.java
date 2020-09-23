@@ -15,12 +15,14 @@ public interface Modes extends Iterable<Mode> {
    *
    * @param externalModeId the external mode id for the mode
    * @param name           of the mode
-   * @param pcu            value for the mode
+   * @param maxSpeed       maximum speed of the mode
+   * @param pcu           value for the mode
    * @param physicalFeatures the physical features of this custom mode
    * @param usabilityFeatures the usability features of this custom mode
    * @return new mode created
    */
-  public Mode registerNewCustomMode(final Object externalModeId, final String name, final double pcu, PhysicalModeFeatures physicalFeatures, UsabilityModeFeatures usabilityFeatures);
+  public Mode registerNewCustomMode(
+      final Object externalModeId, final String name, final double maxSpeed, double pcu, PhysicalModeFeatures physicalFeatures, UsabilityModeFeatures usabilityFeatures);
   
   /**
    * Create and register a new predefined mode. When it already exists, the existing entry is returned

@@ -9,10 +9,6 @@ package org.planit.utils.network.physical.macroscopic;
 public interface MacroscopicModeProperties {
 
   /**
-   * Default max speed in km/h
-   */
-  double DEFAULT_MAXIMUM_SPEED = 80;
-  /**
    * Default critical speed, i.e. speed at capacity in km/h
    */
   double DEFAULT_CRITICAL_SPEED = 60;
@@ -26,7 +22,7 @@ public interface MacroscopicModeProperties {
    * 
    * @return the maximum speed in km/h
    */
-  double getMaxSpeed();
+  double getMaximumSpeed();
   
   /**
    * set the maximum speed in km/h
