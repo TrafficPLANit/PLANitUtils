@@ -20,9 +20,9 @@ public interface PhysicalModeFeatures {
   public static MotorisationModeType DEFAULT_MOTORISATION_TYPE = MotorisationModeType.MOTORISED;
 
   /**
-   * default is double-tracked, e.g. creates two tracks when driving
+   * default is road based, e.g. uses road to propagate
    */
-  public static TrackModeType DEFAULT_TRACK_TYPE = TrackModeType.DOUBLE;
+  public static TrackModeType DEFAULT_TRACK_TYPE = TrackModeType.ROAD;
 
   /** collect the vehicular type of this mode
    * @return vehicular type
@@ -35,7 +35,7 @@ public interface PhysicalModeFeatures {
   MotorisationModeType getMotorisationType();
 
   /** collect the track type of this mode
-   * @return track type (single, double)
+   * @return track type
    */
   TrackModeType getTrackType();
 
