@@ -77,7 +77,7 @@ public interface MacroscopicLinkSegmentType {
    * 
    * @param modeProperties map of mode properties for this link
    */
-  void setModeProperties(Map<Mode, MacroscopicModeProperties> modeProperties);
+  void setModeProperties(final Map<Mode, MacroscopicModeProperties> modeProperties);
   
   /**
    * Add mode properties for this link segment
@@ -86,7 +86,7 @@ public interface MacroscopicLinkSegmentType {
    * @param modeProperties properties to set
    * @return old mode properties for this key (if any) null otherwise
    */
-  MacroscopicModeProperties addModeProperties(Mode mode, MacroscopicModeProperties modeProperties);
+  MacroscopicModeProperties addModeProperties(final Mode mode, final MacroscopicModeProperties modeProperties);
 
   /**
    * Returns the mode properties for a specified mode along this link
@@ -94,14 +94,14 @@ public interface MacroscopicLinkSegmentType {
    * @param mode the specified mode
    * @return the mode properties for this link and mode
    */
-  MacroscopicModeProperties getModeProperties(Mode mode);
+  MacroscopicModeProperties getModeProperties(final Mode mode);
   
   /**
    * Verify if mode is available on type
    * 
    * @return available modes
    */
-  boolean isModeAvailable(Mode mode);   
+  boolean isModeAvailable(final Mode mode);   
   
   /**
    * return the available modes for which mode properties have been registered
