@@ -9,7 +9,13 @@ import org.planit.utils.exceptions.PlanItException;
  * @author markr
  */
 public interface Edges<E extends Edge> extends Iterable<E> {
-
+  
+  /**
+   * remove an edge.
+   * 
+   * @param edge to remove
+   */
+  public void remove(E edge);
 
   /**
    * Create new edge to graph identified via its id
@@ -20,7 +26,7 @@ public interface Edges<E extends Edge> extends Iterable<E> {
    * @return the created edge
    * @throws PlanItException thrown if there is an error
    */
-  public E registerNewEdge(final Vertex vertexA, final Vertex vertexB, final double length) throws PlanItException;
+  public E registerNew(final Vertex vertexA, final Vertex vertexB, final double length) throws PlanItException;
 
   /**
    * Get edge by id
@@ -28,12 +34,12 @@ public interface Edges<E extends Edge> extends Iterable<E> {
    * @param id the id of the edge
    * @return the retrieved edge
    */
-  public E getEdge(final long id);
+  public E get(final long id);
 
   /**
    * Get the number of edges in the graph
    *
    * @return the number of edges in the graph
    */
-  public int getNumberOfEdges();
+  public int size();
 }

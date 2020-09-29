@@ -2,8 +2,6 @@ package org.planit.utils.graph;
 
 import java.util.Set;
 
-import org.planit.utils.exceptions.PlanItException;
-
 /**
  * Directed vertex representation connected to one or more edge segments that have direction. The vertex itself is of course not directional
  * 
@@ -33,18 +31,16 @@ public interface DirectedVertex extends Vertex {
    * 
    * @param edgeSegment EdgeSegment object to be added
    * @return true when added, false when already present (and not added)
-   * @throws PlanItException thrown when error
    */
-  public boolean addEdgeSegment(EdgeSegment edgeSegment) throws PlanItException;
+  public boolean addEdgeSegment(EdgeSegment edgeSegment);
 
   /**
    * Remove edgeSegment
    * 
    * @param edgeSegment EdgeSegment object to be removed
    * @return true when removed, false when not present (and not removed)
-   * @throws PlanItException thrown when error
    */
-  public boolean removeEdgeSegment(EdgeSegment edgeSegment) throws PlanItException;
+  public boolean removeEdgeSegment(EdgeSegment edgeSegment);
   
   /**
    * Collect the entry edge segments of this vertex

@@ -7,6 +7,12 @@ package org.planit.utils.graph;
  * @author markr
  */
 public interface Vertices<V extends Vertex> extends Iterable<V> {
+  
+  /** Remove a vertex
+   * 
+   * @param vertex to remove
+   */
+  public void removeVertex(V vertex);
 
   
   /** Create a new vertex (without registering on this class)

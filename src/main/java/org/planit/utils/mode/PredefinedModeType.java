@@ -1,5 +1,7 @@
 package org.planit.utils.mode;
 
+import java.util.EnumSet;
+
 /**
  * While PLANit allows the user to come up with its own modes. It does suggest a number of predefined modes to use. This is especially useful to get started quickly or when one
  * wants to use the PLANit memory model to convert networks of one type to another with PLANit as the intermediary memory model, in which case some kind of mapping between known
@@ -27,7 +29,7 @@ public enum PredefinedModeType {
   GOODS_VEHICLE("goods"),            /* non-articulated goods vehicle, up to 3.5 tonnes */
   HEAVY_GOODS_VEHICLE("hgv"),        /* non-articulated goods vehicle, over to 3.5 tonnes */
   LARGE_HEAVY_GOODS_VEHICLE("lhgv"); /* articulated large truck */  
-
+  
   /** string representation of predefined mode type */
   private final String value;
   
@@ -74,5 +76,18 @@ public enum PredefinedModeType {
     }else {
       return CUSTOM;
     }
+  }
+  
+  /** collect all predefined mode types
+   * 
+   * @param excludedModeType option to exclude predefined custom modes from the result
+   * @return predefined mode types minus excluded types
+   */
+  public static EnumSet<PredefinedModeType> getPredefinedModeTypes(PredefinedModeType... excludedModeTypes) {
+    EnumSet<PredefinedModeType> allPredefinedModeTypes = EnumSet.allOf(PredefinedModeType.class);
+    for(int index=0; index< excludedModeTypes.length; ++index) {
+      allPredefinedModeTypes.remove(excludedModeTypes[index]);
+    }
+    return allPredefinedModeTypes;
   }
 }
