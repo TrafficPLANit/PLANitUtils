@@ -9,25 +9,17 @@ import org.planit.utils.id.IdGroupingToken;
  * @author markr
  *
  */
-public interface GraphBuilder<V extends Vertex, E extends Edge> {
+public interface DirectedGraphBuilder<V extends DirectedVertex, E extends Edge, ES extends EdgeSegment> extends GraphBuilder<V,E> {
 
   /**
-   * Create a new vertex instance
+   * Create a new physical link segment instance
    * 
-   * @return created vertex
+   * @param parentEdge  the parent edge of the edge segment
+   * @param directionAB direction of travel
+   * @return edgeSegment the created edge segment
+   * @throws PlanItException thrown if error
    */
-  public V createVertex();
-  
-  /**
-   * Create a new link instance
-   * 
-   * @param vertexA the first vertex in this edge
-   * @param vertexB the second vertex in this edge
-   * @param lenght  the length (in km)
-   * @return created edge
-   * @throws PlanItException thrown if there is an error
-   */
-  public E createEdge(final Vertex vertexA, final Vertex vertexB, final double length) throws PlanItException;
+  public ES createEdgeSegment(Edge parentEdge, boolean directionAB) throws PlanItException;
 
   /**
    * Each builder needs a group if token to allow all underlying factory methods to generated ids uniquely tied to the group the entities belong to
@@ -44,13 +36,13 @@ public interface GraphBuilder<V extends Vertex, E extends Edge> {
   public IdGroupingToken getIdGroupingToken();
   
   /**
-   * Remove any existing id gaps for the passed in graph's entities (edges, vertices, edges segments). With an id gap is meant
+   * Remove any existing id gaps for the passed in directed graph's entities (edges, vertices, edges segments). With an id gap is meant
    * that there exists an entity with id x, and id, x+2 but not x+1. Then x+1 is a gap. This method ensures all ids are contiguous
    * such that the highest id reflects the number of available entities -1 (starting at zero).
    * 
    * @param graph the graph to remove the id gaps from.
    */
-  public void removeIdGaps(Graph<V, E> graph);
+  public void removeIdGaps(DirectedGraph<V, E, ES> directedGraph);
   
 
 }

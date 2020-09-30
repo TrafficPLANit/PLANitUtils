@@ -47,11 +47,31 @@ final class LocalIdGenerator {
     }
     return idTypes.get(theClass);
   }
+  
+  /** Collect the latest generated if for the given class (if any)
+   * @param theClass for which the id was generated
+   * @return latest generated id, -1 when no id has been generated yet for the class
+   */
+  public int getLatestGeneratedId(Class<? extends Object> theClass) {
+    if (idTypes.containsKey(theClass)) {
+      return idTypes.get(theClass);
+    }else {
+      return -1;
+    }
+  }
 
   /**
-   * Reset the id generation at the start of a run
+   * Reset the id generation for all registered types
    */
   public void reset() {
     idTypes.clear();
+  }
+
+  /**
+   * Reset the id generation for the given class
+   * @param theClass to reset
+   */
+  public void reset(Class<? extends Object> theClass) {
+    idTypes.remove(theClass);
   }
 }

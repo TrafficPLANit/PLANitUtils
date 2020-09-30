@@ -42,4 +42,11 @@ public interface Edges<E extends Edge> extends Iterable<E> {
    * @return the number of edges in the graph
    */
   public int size();
+
+  /**
+   * Check if is empty
+   * @return true when no edges, false otherwise
+   */
+  public boolean isEmpty();
+
 }
