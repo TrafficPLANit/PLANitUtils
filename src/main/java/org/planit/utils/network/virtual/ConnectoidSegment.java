@@ -17,6 +17,6 @@ public interface ConnectoidSegment extends EdgeSegment {
    * 
    * @return connectoid segment id
    */
-  int getConnectoidSegmentId();
+  long getConnectoidSegmentId();
 
 }

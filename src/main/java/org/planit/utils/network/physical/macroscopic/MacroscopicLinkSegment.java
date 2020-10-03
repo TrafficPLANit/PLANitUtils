@@ -1,5 +1,7 @@
 package org.planit.utils.network.physical.macroscopic;
 
+import java.util.Set;
+
 import org.planit.utils.exceptions.PlanItException;
 import org.planit.utils.mode.Mode;
 import org.planit.utils.network.physical.LinkSegment;
@@ -11,6 +13,21 @@ import org.planit.utils.network.physical.LinkSegment;
  *
  */
 public interface MacroscopicLinkSegment extends LinkSegment {
+  
+  /**
+   * Returns whether vehicles of a specified mode are allowed through this link
+   * 
+   * @param mode the specified mode
+   * @return true if vehicles of this mode can drive along this link, false otherwise
+   */
+  boolean isModeAllowed(Mode mode);
+  
+  /**
+   * Returns the modes that are allowed on the link segment
+   * 
+   * @return allowed modes
+   */
+  Set<Mode> getAllowedModes();    
 
   /**
    * Return the total link segment capacity in pcu/h
@@ -66,5 +83,7 @@ public interface MacroscopicLinkSegment extends LinkSegment {
    * @return the link segment
    */
   MacroscopicLinkSegmentType getLinkSegmentType();
+  
+
   
 }
