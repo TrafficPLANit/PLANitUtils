@@ -32,7 +32,7 @@ public interface Edges<E extends Edge> extends Iterable<E> {
    * Get edge by id
    *
    * @param id the id of the edge
-   * @return the retrieved edge
+   * @return the retrieved edge, null if not present
    */
   public E get(final long id);
 

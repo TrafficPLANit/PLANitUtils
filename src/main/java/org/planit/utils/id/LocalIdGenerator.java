@@ -14,7 +14,7 @@ import java.util.HashMap;
 final class LocalIdGenerator {
 
   /** track unique id's per specific class */
-  private HashMap<Class<? extends Object>, Integer> idTypes = new HashMap<Class<? extends Object>, Integer>();
+  private HashMap<Class<? extends Object>, Long> idTypes = new HashMap<Class<? extends Object>, Long>();
 
   /**
    * Create a new idGenerator for this type such that we track unique id's within
@@ -24,9 +24,9 @@ final class LocalIdGenerator {
    *          the class for which the id is being generated
    */
   protected void createNewIdType(Class<? extends Object> theClass) {
-    Integer initialId = 0; // choose 0 as this way we can use each id as an index in an array
-                           // without
-                           // additional effort
+    Long initialId = 0l; // choose 0 as this way we can use each id as an index in an array
+                         // without
+                         // additional effort
     idTypes.put(theClass, initialId);
   }
 
@@ -37,11 +37,11 @@ final class LocalIdGenerator {
    *          the class for which the id is being generated
    * @return the generated id
    */
-  public int generateId(Class<? extends Object> theClass) {
+  public long generateId(Class<? extends Object> theClass) {
     if (!idTypes.containsKey(theClass)) {
       createNewIdType(theClass);
     } else {
-      int id = idTypes.get(theClass);
+      Long id = idTypes.get(theClass);
       id++;
       idTypes.put(theClass, id);
     }
@@ -52,7 +52,7 @@ final class LocalIdGenerator {
    * @param theClass for which the id was generated
    * @return latest generated id, -1 when no id has been generated yet for the class
    */
-  public int getLatestGeneratedId(Class<? extends Object> theClass) {
+  public long getLatestGeneratedId(Class<? extends Object> theClass) {
     if (idTypes.containsKey(theClass)) {
       return idTypes.get(theClass);
     }else {
@@ -69,9 +69,21 @@ final class LocalIdGenerator {
 
   /**
    * Reset the id generation for the given class
+   * 
    * @param theClass to reset
    */
   public void reset(Class<? extends Object> theClass) {
     idTypes.remove(theClass);
+  }
+
+  /**
+   * Reset the id for class to the given offset
+   * 
+   * @param groupId to reset
+   * @param theClass to reset
+   * @param offset to use
+   */    
+  public void resetTo(Class<? extends Object> theClass, long offset) {
+    idTypes.put(theClass, offset);
   }
 }

@@ -37,8 +37,8 @@ public interface DirectedGraphBuilder<V extends DirectedVertex, E extends Edge, 
   
   /**
    * Remove any existing id gaps for the passed in directed graph's entities (edges, vertices, edges segments). With an id gap is meant
-   * that there exists an entity with id x, and id, x+2 but not x+1. Then x+1 is a gap. This method ensures all ids are contiguous
-   * such that the highest id reflects the number of available entities -1 (starting at zero).
+   * that there exists an entity with id x, and id x+2 but not x+1. Then x+1 is a gap. This method ensures all ids are contiguous
+   * such that the highest id reflects the number of available entities-1 (starting at zero).
    * 
    * @param graph the graph to remove the id gaps from.
    */

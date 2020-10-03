@@ -12,14 +12,14 @@ public interface Vertices<V extends Vertex> extends Iterable<V> {
    * 
    * @param vertex to remove
    */
-  public void removeVertex(V vertex);
+  public void remove(V vertex);
 
   
   /** Create a new vertex (without registering on this class)
    * 
    * @return created vertex
    */
-  public V createNewVertex();
+  public V createNew();
   
   /**
    * Add vertex to the internal container
@@ -27,14 +27,14 @@ public interface Vertices<V extends Vertex> extends Iterable<V> {
    * @param vertex vertex to be registered in this network
    * @return vertex, in case it overrides an existing vertex, the removed vertex is returned
    */
-  public V registerVertex(V vertex);  
+  public V register(V vertex);  
 
   /**
    * Create and register new vertex
    *
    * @return new node created
    */
-  public V registerNewVertex();
+  public V registerNew();
 
   /**
    * Create and register new vertex
@@ -42,14 +42,22 @@ public interface Vertices<V extends Vertex> extends Iterable<V> {
    * @param externalId the externalId of the vertex
    * @return new vertex created
    */
-  public V registerNewVertex(Object externalId);
+  public V registerNew(Object externalId);
 
   /**
    * Return number of registered vertices
    *
    * @return number of registered vertices
    */
-  public int getNumberOfVertices();
+  public int size();
+  
+  /** When there are no vertices the nodes are considered empty
+   * 
+   * @return true when not vertices, false otherwise
+   */
+  default public boolean isEmpty() {
+    return size() > 0;
+  }
 
   /**
    * Find a vertex by its d
@@ -57,5 +65,8 @@ public interface Vertices<V extends Vertex> extends Iterable<V> {
    * @param id Id of vertex
    * @return retrieved vertex
    */
-  public V getVertexById(final long id);
+  public V get(final long id);
+
+
+  
 }

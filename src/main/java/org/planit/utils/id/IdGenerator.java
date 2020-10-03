@@ -42,7 +42,7 @@ public final class IdGenerator {
    * @param theClass the class for which the id is being generated
    * @return the generated id
    */
-  public static int generateId(IdGroupingToken token, Class<? extends Object> theClass) {
+  public static long generateId(IdGroupingToken token, Class<? extends Object> theClass) {
     LocalIdGenerator idGeneratorForGroup = null;
     if (!idGroups.containsKey(token)) {
       idGeneratorForGroup = createIdGeneratorForParent(token);
@@ -80,7 +80,20 @@ public final class IdGenerator {
     if( idGroups.containsKey(groupId)) {
         idGroups.get(groupId).reset(theClass);
     }
-  }   
+  } 
+  
+  /**
+   * Reset the id generation for a specific token and class to the given offset
+   * 
+   * @param groupId to reset
+   * @param theClass to reset
+   * @param offset to use
+   */  
+  public static void resetTo(IdGroupingToken groupId, Class<? extends Object> theClass, long offset) {
+    if( idGroups.containsKey(groupId)) {
+      idGroups.get(groupId).resetTo(theClass, offset);
+  }
+  }  
   
   /** Factory method to create a new id grouping token
    * @param groupDescription description for the group
@@ -106,7 +119,7 @@ public final class IdGenerator {
    * @param theClass to use
    * @return latest generated id, -1 if not available
    */
-  public static int getLatestIdForToken(IdGroupingToken token, Class<? extends Object> theClass) {
+  public static long getLatestIdForToken(IdGroupingToken token, Class<? extends Object> theClass) {
     if (idGroups.containsKey(token)) {
       LocalIdGenerator idGeneratorForGroup = idGroups.get(token);
       if(idGeneratorForGroup != null) {
@@ -115,6 +128,8 @@ public final class IdGenerator {
     }
     return -1;
   }
+
+
 
 
 }
