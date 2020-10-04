@@ -29,6 +29,6 @@ public interface Graph<V extends Vertex, E extends Edge> {
   /** collect edges of graph
    * @return edges
    */
-  public Edges<E> getEdges(); 
+  public Edges<V,E> getEdges(); 
 
 }

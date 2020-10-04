@@ -32,7 +32,15 @@ public interface Edge extends Comparable<Edge>, Serializable {
    * @return replaced egeSegment (if any)
    * @throws PlanItException thrown if there is an error
    */
-  public EdgeSegment registerEdgeSegment(final EdgeSegment edgeSegment, final boolean directionAB) throws PlanItException;  
+  public EdgeSegment registerEdgeSegment(final EdgeSegment edgeSegment, final boolean directionAB) throws PlanItException;
+  
+  /**
+   * Remove vertex from edge 
+   * 
+   * @param vertex to remove
+   * @return true when successful false otherwise
+   */
+  public boolean removeVertex(Vertex vertex);    
 
   // Getters-Setters  
 
@@ -133,6 +141,6 @@ public interface Edge extends Comparable<Edge>, Serializable {
    */
   default public boolean hasEdgeSegmentAb() {
     return getEdgeSegmentAb() != null;
-  }  
+  }
 
 }

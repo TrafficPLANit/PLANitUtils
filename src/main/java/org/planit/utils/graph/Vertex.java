@@ -1,8 +1,7 @@
 package org.planit.utils.graph;
 
 import java.io.Serializable;
-import java.util.Set;
-
+import java.util.Collection;
 import org.opengis.geometry.DirectPosition;
 
 /**
@@ -80,13 +79,21 @@ public interface Vertex extends Comparable<Vertex>, Serializable {
    * @return true when removed, false when not present (and not removed)
    */
   public boolean removeEdge(Edge edge);
+  
+  /**
+   * Remove edge
+   * 
+   * @param edgeId Edge to be removed
+   * @return true when removed, false when not present (and not removed)
+   */
+  public boolean removeEdge(long edgeId);  
 
   /**
-   * Returns a Set of Edge objects
+   * Returns a collection of Edge objects
    * 
    * @return Set of Edge objects
    */
-  public Set<Edge> getEdges();
+  public Collection<Edge> getEdges();
   
   /**
    * Number of entries in edge segments

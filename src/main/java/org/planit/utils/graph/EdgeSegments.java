@@ -8,7 +8,7 @@ import org.planit.utils.exceptions.PlanItException;
  * 
  * @author markr
  */
-public interface EdgeSegments<ES extends EdgeSegment> extends Iterable<ES> {
+public interface EdgeSegments<E extends Edge, ES extends EdgeSegment> extends Iterable<ES> {
   
   /**
    * Remove an edges segment
@@ -25,7 +25,7 @@ public interface EdgeSegments<ES extends EdgeSegment> extends Iterable<ES> {
    * @return the created edge segment
    * @throws PlanItException thrown if there is an error
    */
-  public ES create(final Edge parentEdge, final boolean directionAB) throws PlanItException;
+  public ES create(final E parentEdge, final boolean directionAB) throws PlanItException;
 
   /**
    * Register a edge segment
@@ -35,7 +35,7 @@ public interface EdgeSegments<ES extends EdgeSegment> extends Iterable<ES> {
    * @param directionAB direction of travel
    * @throws PlanItException thrown if there is an error
    */
-  public void createAndRegister(final Edge parentEdge, final ES edgeSegment, final boolean directionAB) throws PlanItException;
+  public void createAndRegister(final E parentEdge, final ES edgeSegment, final boolean directionAB) throws PlanItException;
 
   /**
    * Get edge segment by id

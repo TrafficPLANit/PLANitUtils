@@ -11,6 +11,6 @@ public interface DirectedGraph<V extends DirectedVertex, E extends Edge, ES exte
   /** Collect edges segments of graph
    * @return edges segments
    */
-  EdgeSegments<ES> getEdgeSegments();  
+  EdgeSegments<E, ES> getEdgeSegments();  
 
 }

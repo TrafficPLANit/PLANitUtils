@@ -1,5 +1,7 @@
 package org.planit.utils.graph;
 
+import java.util.Set;
+
 import org.planit.utils.exceptions.PlanItException;
 import org.planit.utils.id.IdGroupingToken;
 
@@ -27,7 +29,7 @@ public interface GraphBuilder<V extends Vertex, E extends Edge> {
    * @return created edge
    * @throws PlanItException thrown if there is an error
    */
-  public E createEdge(final Vertex vertexA, final Vertex vertexB, final double length) throws PlanItException;
+  public E createEdge(final V vertexA, final V vertexB, final double length) throws PlanItException;
 
   /**
    * Each builder needs a group if token to allow all underlying factory methods to generated ids uniquely tied to the group the entities belong to
@@ -44,13 +46,11 @@ public interface GraphBuilder<V extends Vertex, E extends Edge> {
   public IdGroupingToken getIdGroupingToken();
   
   /**
-   * Remove any existing id gaps for the passed in graph's entities (edges, vertices, edges segments). With an id gap is meant
-   * that there exists an entity with id x, and id, x+2 but not x+1. Then x+1 is a gap. This method ensures all ids are contiguous
-   * such that the highest id reflects the number of available entities -1 (starting at zero).
+   * remove the subnetwork identified by the passed in vertices
    * 
-   * @param graph the graph to remove the id gaps from.
+   * @param subNetworkToRemove
    */
-  public void removeIdGaps(Graph<V, E> graph);
+  public void removeSubNetwork(Graph<V,E> graph, Set<V> subNetworkToRemove);
   
 
 }
