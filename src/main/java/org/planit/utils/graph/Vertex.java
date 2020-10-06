@@ -93,7 +93,7 @@ public interface Vertex extends Comparable<Vertex>, Serializable {
    * 
    * @return Set of Edge objects
    */
-  public Collection<Edge> getEdges();
+  public Collection<? extends Edge> getEdges();
   
   /**
    * Number of entries in edge segments

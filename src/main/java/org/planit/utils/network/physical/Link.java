@@ -53,5 +53,27 @@ public interface Link extends Edge {
    * @param lineString
    */
   void setGeometry(LineString lineString);
+  
+  /** collect vertex A as something extending node which is to be expected for any link. Convenience method
+   * for readability
+   * 
+   * @param <N>
+   * @return nodeA
+   */
+  @SuppressWarnings("unchecked")
+  default <N extends Node> Node getNodeA() {
+    return (N) getVertexA();
+  }
+  
+  /** collect vertex A as something extending node which is to be expected for any link. Convenience method
+   * for readability
+   * 
+   * @param <N>
+   * @return nodeA
+   */
+  @SuppressWarnings("unchecked")
+  default <N extends Node> Node getNodeB() {
+    return (N) getVertexB();
+  }  
 
 }

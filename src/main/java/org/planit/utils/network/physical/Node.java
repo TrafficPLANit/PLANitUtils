@@ -1,5 +1,7 @@
 package org.planit.utils.network.physical;
 
+import java.util.Collection;
+
 import org.planit.utils.graph.DirectedVertex;
 
 /**
@@ -19,5 +21,17 @@ public interface Node extends DirectedVertex {
    * @return node id
    */
   long getNodeId();
+  
+  /**
+   * It is expecteds that nodes are used in conjunction with links. If so, this method will cast the edges of the node to a links collection
+   * for readability when collecting a node's edges
+   * 
+   * @param <L>
+   * @return edges cast as collection of links
+   */
+  @SuppressWarnings("unchecked")
+  default <L extends Link> Collection<L> getLinks() {
+    return (Collection<L>) getEdges();
+  }
   
 }
