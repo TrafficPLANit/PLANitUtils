@@ -16,6 +16,13 @@ public interface Edges<V extends Vertex, E extends Edge> extends Iterable<E> {
    * @param edge to remove
    */
   public void remove(E edge);
+  
+  /**
+   * remove an edge.
+   * 
+   * @param edgeId of the edge to remove
+   */
+  public void remove(long edgeId);  
 
   /**
    * Create new edge to graph identified via its id

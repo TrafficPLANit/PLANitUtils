@@ -13,6 +13,12 @@ public interface Vertices<V extends Vertex> extends Iterable<V> {
    * @param vertex to remove
    */
   public void remove(V vertex);
+  
+  /** Remove a vertex by id
+   * 
+   * @param vertexId to remove vertex for
+   */  
+  public void remove(long vertexId);  
 
   
   /** Create a new vertex (without registering on this class)
@@ -66,6 +72,9 @@ public interface Vertices<V extends Vertex> extends Iterable<V> {
    * @return retrieved vertex
    */
   public V get(final long id);
+
+
+
 
 
   

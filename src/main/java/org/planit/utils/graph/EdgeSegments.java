@@ -15,7 +15,14 @@ public interface EdgeSegments<E extends Edge, ES extends EdgeSegment> extends It
    * 
    * @param edgeSegment to remove
    */
-  public void remove(ES edgeSegment);  
+  public void remove(ES edgeSegment); 
+
+  /**
+   * Remove an edge segment by id
+   * 
+   * @param edgeSegment to remove by id
+   */  
+  public void remove(long edgeSegmentId);  
 
   /**
    * Create edge segment
@@ -51,5 +58,7 @@ public interface EdgeSegments<E extends Edge, ES extends EdgeSegment> extends It
    * @return number of registered edge segments
    */
   public int size();
+
+
 
 }

@@ -72,6 +72,11 @@ public interface EdgeSegment extends Comparable<EdgeSegment>, Serializable {
   public Edge getParentEdge();
   
   /**
+   * remove the parent edge from this edge segment
+   */
+  public void removeParentEdge();
+  
+  /**
    * check if edge segment runs from vertex a to b or b to a
    * @return true when running from a to b, otherwise false
    */
