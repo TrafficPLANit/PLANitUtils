@@ -43,12 +43,12 @@ public interface EdgeSegment extends Comparable<EdgeSegment>, Serializable {
   public Object getExternalId();
   
   /**
-   * Remove the vertex from the edge segment if it is either the up or downstrema vertex
+   * Remove the vertex from the edge segment if it is either the up or downstream vertex
    * 
    * @param vertex to remove
    * @return true when successful, false otherwise
    */
-  public boolean removeVertex(Vertex vertex);  
+  public boolean remove(DirectedVertex vertex);  
 
   /**
    * Get the segment's upstream vertex
@@ -69,7 +69,7 @@ public interface EdgeSegment extends Comparable<EdgeSegment>, Serializable {
    * 
    * @return parentEdge
    */
-  public Edge getParentEdge();
+  public DirectedEdge getParentEdge();
   
   /**
    * remove the parent edge from this edge segment
@@ -81,6 +81,15 @@ public interface EdgeSegment extends Comparable<EdgeSegment>, Serializable {
    * @return true when running from a to b, otherwise false
    */
   boolean isDirectionAb();
+
+  /**
+   * Replace one of the vertices of the edge segment
+   * 
+   * @param vertextoReplace the vertex to replace
+   * @param vertexToReplaceWith the vertex to replace with
+   * @return true when replaced, false otherwise
+   */  
+  public boolean replace(DirectedVertex vertexToReplace, DirectedVertex vertexToReplaceWith);
 
 
 

@@ -8,7 +8,7 @@ import org.planit.utils.exceptions.PlanItException;
  * 
  * @author markr
  */
-public interface Edges<V extends Vertex, E extends Edge> extends Iterable<E> {
+public interface Edges<E extends Edge> extends Iterable<E> {
   
   /**
    * remove an edge.
@@ -33,7 +33,14 @@ public interface Edges<V extends Vertex, E extends Edge> extends Iterable<E> {
    * @return the created edge
    * @throws PlanItException thrown if there is an error
    */
-  public E registerNew(final V vertexA, final V vertexB, final double length) throws PlanItException;
+  public E registerNew(final Vertex vertexA, final Vertex vertexB, final double length) throws PlanItException;
+  
+  /** copy the passed in edge and register it
+   * 
+   * @param edgeToCopy
+   * @return copy of edge now registered
+   */
+  public E registerCopy(E edgeToCopy);
 
   /**
    * Get edge by id

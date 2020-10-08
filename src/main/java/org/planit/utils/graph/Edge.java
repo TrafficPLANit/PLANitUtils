@@ -5,14 +5,12 @@ import java.io.Serializable;
 import org.planit.utils.exceptions.PlanItException;
 
 /**
- * Edge interface connecting two vertices in a non-directional fashion. Each edge has one or
- * two underlying edge segments in a particular direction which may carry
- * additional information for each particular direction of the edge.
+ * Edge interface connecting two vertices in a non-directional fashion.
  * 
  * @author markr
  *
  */
-public interface Edge extends Comparable<Edge>, Serializable {
+public interface Edge extends Comparable<Edge>, Serializable, Cloneable {
 
   /**
    * Return id of this instance. This id is expected to be generated using the
@@ -21,19 +19,28 @@ public interface Edge extends Comparable<Edge>, Serializable {
    * @return id of this Edge object
    */
   public long getId();
- 
-  /**
-   * Register EdgeSegment.
-   *
-   * If there already exists an edgeSegment for that direction it is replaced and returned
-   *
-   * @param edgeSegment the edgeSegment to be registered
-   * @param directionAB direction of travel
-   * @return replaced egeSegment (if any)
-   * @throws PlanItException thrown if there is an error
-   */
-  public EdgeSegment registerEdgeSegment(final EdgeSegment edgeSegment, final boolean directionAB) throws PlanItException;
   
+  /**
+   * Set the external id
+   * 
+   * @param externalId the external id to set
+   */
+  void setExternalId(final Object externalId);   
+
+  /**
+   * Collect the external id
+   * 
+   * @return externalID
+   */
+  Object getExternalId();
+
+  /**
+   * Returns whether the external Id has been set
+   * 
+   * @return true if the external Id has been set, false otherwise
+   */
+  boolean hasExternalId();  
+ 
   /**
    * Remove vertex from edge 
    * 
@@ -62,20 +69,20 @@ public interface Edge extends Comparable<Edge>, Serializable {
    * set the name of the edge
    * @param name
    */
-  void setName(String name);  
+  void setName(final String name);  
   
   /**
    * get the name of the edge
    * return name
    */
-  String getName();
+  public String getName();
   
   /**
    * set length of this edge in km
    * 
    * @param length of this edge in km
    */
-  public void setLength(double lengthInKm);  
+  public void setLengthKm(double lengthInKm);  
   
   /**
    * Return length of this edge in km
@@ -93,7 +100,7 @@ public interface Edge extends Comparable<Edge>, Serializable {
    * @param value
    *          value of input property
    */
-  public void addInputProperty(String key, Object value);
+  public void addInputProperty(final String key, final Object value);
 
   /**
    * Get input property by its key
@@ -105,42 +112,14 @@ public interface Edge extends Comparable<Edge>, Serializable {
   public Object getInputProperty(String key);
 
   /**
-   * Edge segment in the direction from A to B
+   * Replace one of the vertices of the link
    * 
-   * @return edge segment AB
+   * @param vertextoReplace the vertex to realpce
+   * @param vertexToReplaceWith the vertex to replace with
+   * @param updateVertexEdges when true register and unregister the changes on the relevant vertices, when false not
+   * @return true when replaced, false otherwise
+   * @throws PlanItException thrown if error
    */
-  public EdgeSegment getEdgeSegmentAb();
-  
-  /**
-   * Edge segment in the direction from B to A
-   * 
-   * @return edge segment BA
-   */
-  public EdgeSegment getEdgeSegmentBa();  
-  
-  /**
-   * Edge segment in the direction indicated
-   * 
-   * @return edge segment if present
-   */
-  default public EdgeSegment getEdgeSegment(boolean directionAb) {
-    return directionAb ? getEdgeSegmentAb() : getEdgeSegmentBa();
-  }
- 
-  /** Verify if edge segment BA exists
-   * 
-   * @return true if present, false otherwise
-   */
-  default public boolean hasEdgeSegmentBa() {
-    return getEdgeSegmentBa() != null;
-  }
-  
-  /** Verify if edge segment BA exists
-   * 
-   * @return true if present, false otherwise
-   */
-  default public boolean hasEdgeSegmentAb() {
-    return getEdgeSegmentAb() != null;
-  }
-
+  public boolean replace(final Vertex vertextoReplace, final Vertex vertexToReplaceWith, boolean updateVertexEdges) throws PlanItException;
+    
 }

@@ -1,16 +1,16 @@
 package org.planit.utils.network.virtual;
 
 import org.planit.utils.exceptions.PlanItException;
-import org.planit.utils.graph.Edge;
+import org.planit.utils.graph.DirectedEdge;
 
 /**
  * the connecting component between centroid and a first physical node in the network.
- * Note that all connectoids are edges but not all edges are connectoids
+ * Note that all connectoids are directed edges but not all edges are connectoids
  * 
  * @author markr
  *
  */
-public interface Connectoid extends Edge {
+public interface Connectoid extends DirectedEdge {
 
   /**
    * Default connectoid length in km

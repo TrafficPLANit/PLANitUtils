@@ -9,7 +9,7 @@ package org.planit.utils.graph;
  * @param <E>
  * @param <ES>
  */
-public interface DirectedSubGraph<V extends DirectedVertex, E extends Edge, ES extends EdgeSegment> {
+public interface DirectedSubGraph<V extends DirectedVertex, E extends DirectedEdge, ES extends EdgeSegment> {
   
   /**
    * collect the id of this subgraph

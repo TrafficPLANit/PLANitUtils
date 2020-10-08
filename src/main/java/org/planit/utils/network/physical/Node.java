@@ -1,6 +1,7 @@
 package org.planit.utils.network.physical;
 
 import java.util.Collection;
+import java.util.Set;
 
 import org.planit.utils.graph.DirectedVertex;
 
@@ -23,7 +24,7 @@ public interface Node extends DirectedVertex {
   long getNodeId();
   
   /**
-   * It is expecteds that nodes are used in conjunction with links. If so, this method will cast the edges of the node to a links collection
+   * It is expected that nodes are used in conjunction with links. If so, this method will cast the edges of the node to a links collection
    * for readability when collecting a node's edges
    * 
    * @param <L>
@@ -33,5 +34,29 @@ public interface Node extends DirectedVertex {
   default <L extends Link> Collection<L> getLinks() {
     return (Collection<L>) getEdges();
   }
+  
+  /**
+   * It is expected that nodes are used in conjunction with link segments. If so, this method will cast the edge segments of the node to link segments
+   * for readability when collecting node's edge segments
+   * 
+   * @param <LS>
+   * @return edgeSegments as collection of linkSegments
+   */
+  @SuppressWarnings("unchecked")  
+  default <LS extends LinkSegment> Set<LS> getEntryLinkSegments() {
+    return (Set<LS>) getEntryEdgeSegments();
+  }
+  
+  /**
+   * It is expected that nodes are used in conjunction with link segments. If so, this method will cast the edge segments of the node to link segments
+   * for readability when collecting node's edge segments
+   * 
+   * @param <LS>
+   * @return edgeSegments as collection of linkSegments
+   */
+  @SuppressWarnings("unchecked")  
+  default <LS extends LinkSegment> Set<LS> getExitLinkSegments() {
+    return (Set<LS>) getExitEdgeSegments();
+  }  
   
 }

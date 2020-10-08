@@ -1,7 +1,7 @@
 package org.planit.utils.network.physical;
 
 import org.opengis.geometry.coordinate.LineString;
-import org.planit.utils.graph.Edge;
+import org.planit.utils.graph.DirectedEdge;
 
 /**
  * Link interface which extends the Edge interface with a unique id (not all edges are links) as
@@ -10,7 +10,7 @@ import org.planit.utils.graph.Edge;
  * @author markr
  *
  */
-public interface Link extends Edge {
+public interface Link extends DirectedEdge {
 
   /**
    * Return id of this instance. This id is expected to be generated using the
@@ -18,29 +18,7 @@ public interface Link extends Edge {
    * 
    * @return linkId
    */
-  long getLinkId();
-
-  /**
-   * Set the external id
-   * 
-   * @param externalId the external id to set
-   */
-  void setExternalId(final Object externalId);   
-
-  /**
-   * Collect the external id
-   * 
-   * @return externalID
-   */
-  Object getExternalId();
-
-  /**
-   * Returns whether the external Id has been set
-   * 
-   * @return true if the external Id has been set, false otherwise
-   */
-  boolean hasExternalId();
-    
+  long getLinkId();   
   
   /**
    * Collect the geometry of this line
@@ -61,7 +39,7 @@ public interface Link extends Edge {
    * @return nodeA
    */
   @SuppressWarnings("unchecked")
-  default <N extends Node> Node getNodeA() {
+  default <N extends Node> N getNodeA() {
     return (N) getVertexA();
   }
   
@@ -72,8 +50,40 @@ public interface Link extends Edge {
    * @return nodeA
    */
   @SuppressWarnings("unchecked")
-  default <N extends Node> Node getNodeB() {
+  default <N extends Node> N getNodeB() {
     return (N) getVertexB();
   }  
+  
+  /** collect edgeSegment as something extending LinkSegment which is to be expected for any link. Convenience method
+   * for readability
+   * 
+   * @param <LS> 
+   * @param directionAb the direction
+   * @return link segment in given direction
+   */
+  @SuppressWarnings("unchecked")
+  default <LS extends LinkSegment> LS getLinkSegment(boolean directionAb) {
+    return (LS) getEdgeSegment(directionAb);
+  }   
+  
+  /** collect edgeSegment Ab as something extending LinkSegment which is to be expected for any link. Convenience method
+   * for readability
+   * 
+   * @param <LS> 
+   * @return link segment in given direction
+   */
+  default <LS extends LinkSegment> LS getLinkSegmentAb() {
+    return getLinkSegment(true);
+  }   
+  
+  /** collect edgeSegment Ba as something extending LinkSegment which is to be expected for any link. Convenience method
+   * for readability
+   * 
+   * @param <LS> 
+   * @return link segment in given direction
+   */
+  default <LS extends LinkSegment> LS getLinkSegmentBa() {
+    return getLinkSegment(false);
+  }   
 
 }
