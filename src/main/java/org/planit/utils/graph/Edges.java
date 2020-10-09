@@ -37,10 +37,10 @@ public interface Edges<E extends Edge> extends Iterable<E> {
   
   /** copy the passed in edge and register it
    * 
-   * @param edgeToCopy
+   * @param edgeToCopy as is except for its ids which will be updated to makeit uniquely identifiable
    * @return copy of edge now registered
    */
-  public E registerCopy(E edgeToCopy);
+  public E registerUniqueCopyOf(E edgeToCopy);
 
   /**
    * Get edge by id

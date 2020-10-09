@@ -63,5 +63,12 @@ public interface DirectedEdge extends Edge {
     return getEdgeSegmentAb() != null;
   }
 
+  /** replace passed in edge segment (if present) with the passed in one
+   * 
+   * @param edgeSegmentToReplace the one to replace
+   * @param edgeSegmentToReplaceWith the one to replace it with
+   */
+  public void replace(EdgeSegment edgeSegmentToReplace, EdgeSegment edgeSegmentToReplaceWith);
+
 
 }

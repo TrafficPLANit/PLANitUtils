@@ -10,7 +10,7 @@ import org.planit.utils.exceptions.PlanItException;
  * @author markr
  *
  */
-public interface Edge extends Comparable<Edge>, Serializable, Cloneable {
+public interface Edge extends Comparable<Edge>, Serializable {
 
   /**
    * Return id of this instance. This id is expected to be generated using the
@@ -114,12 +114,19 @@ public interface Edge extends Comparable<Edge>, Serializable, Cloneable {
   /**
    * Replace one of the vertices of the link
    * 
-   * @param vertextoReplace the vertex to realpce
+   * @param vertextoReplace the vertex to replace
    * @param vertexToReplaceWith the vertex to replace with
    * @param updateVertexEdges when true register and unregister the changes on the relevant vertices, when false not
    * @return true when replaced, false otherwise
    * @throws PlanItException thrown if error
    */
   public boolean replace(final Vertex vertextoReplace, final Vertex vertexToReplaceWith, boolean updateVertexEdges) throws PlanItException;
+  
+  /**
+   * Clone the edge as is
+   * 
+   * @return copy of this edge
+   */
+  public Edge clone();
     
 }

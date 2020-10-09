@@ -109,5 +109,23 @@ public interface Vertex extends Comparable<Vertex>, Serializable {
    */
   Edge getEdge(Vertex otherVertex);   
   
+  /**
+   * Clone the vertex
+   * @return
+   */
+  public Vertex clone();
+
+  
+  /** replace one edge with the other
+   * 
+   * @param edgeToReplace one to replace
+   * @param edgeToReplaceWith one to replace it with
+   */
+  default public boolean replace(Edge edgeToReplace, Edge edgeToReplaceWith) {
+    if(removeEdge(edgeToReplace)) {
+      return addEdge(edgeToReplaceWith);      
+    }
+    return false;
+  }
 
 }

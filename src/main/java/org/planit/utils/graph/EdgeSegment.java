@@ -90,7 +90,12 @@ public interface EdgeSegment extends Comparable<EdgeSegment>, Serializable {
    * @return true when replaced, false otherwise
    */  
   public boolean replace(DirectedVertex vertexToReplace, DirectedVertex vertexToReplaceWith);
-
-
+  
+  /**
+   * Clone the edge segment
+   * 
+   * @return copy of this instance
+   */
+  public EdgeSegment clone();
 
 }

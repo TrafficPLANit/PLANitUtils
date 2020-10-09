@@ -68,6 +68,17 @@ public interface DirectedVertex extends Vertex {
    * 
    * @return number of exit edge segments
    */
-  public int getNumberOfExitEdgeSegments(); 
+  public int getNumberOfExitEdgeSegments();
+
+  /** replace edge segment
+   * @param edgeSegmentToReplace to replace
+   * @param edgeSegmentToReplaceWith to replace with
+   */
+  default public boolean replace(EdgeSegment edgeSegmentToReplace, EdgeSegment edgeSegmentToReplaceWith) {
+    if(removeEdgeSegment(edgeSegmentToReplace)) {
+      return addEdgeSegment(edgeSegmentToReplaceWith);
+    }
+    return false;
+  }
 
 }
