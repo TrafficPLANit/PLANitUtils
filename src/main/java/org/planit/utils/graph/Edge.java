@@ -116,11 +116,10 @@ public interface Edge extends Comparable<Edge>, Serializable {
    * 
    * @param vertextoReplace the vertex to replace
    * @param vertexToReplaceWith the vertex to replace with
-   * @param updateVertexEdges when true register and unregister the changes on the relevant vertices, when false not
    * @return true when replaced, false otherwise
    * @throws PlanItException thrown if error
    */
-  public boolean replace(final Vertex vertextoReplace, final Vertex vertexToReplaceWith, boolean updateVertexEdges) throws PlanItException;
+  public boolean replace(final Vertex vertextoReplace, final Vertex vertexToReplaceWith) throws PlanItException;
   
   /**
    * Clone the edge as is

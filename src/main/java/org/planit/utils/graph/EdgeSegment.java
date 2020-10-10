@@ -49,6 +49,14 @@ public interface EdgeSegment extends Comparable<EdgeSegment>, Serializable {
    * @return true when successful, false otherwise
    */
   public boolean remove(DirectedVertex vertex);  
+  
+  /**
+   * Set another upstream vertex.
+   * 
+   * @param vertexToReplaceWith to use
+   */
+  public void setUpstreamVertex(DirectedVertex vertexToReplaceWith);
+   
 
   /**
    * Get the segment's upstream vertex
@@ -63,6 +71,13 @@ public interface EdgeSegment extends Comparable<EdgeSegment>, Serializable {
    * @return downstream vertex
    */
   public DirectedVertex getDownstreamVertex();
+  
+  /**
+   * Set another downstream vertex.
+   * 
+   * @param vertexToReplaceWith to use
+   */
+  public void setDownstreamVertex(DirectedVertex vertexToReplaceWith);  
 
   /**
    * Collect the parent edge of the segment
@@ -89,13 +104,36 @@ public interface EdgeSegment extends Comparable<EdgeSegment>, Serializable {
    * @param vertexToReplaceWith the vertex to replace with
    * @return true when replaced, false otherwise
    */  
-  public boolean replace(DirectedVertex vertexToReplace, DirectedVertex vertexToReplaceWith);
+  default public boolean replace(DirectedVertex vertexToReplace, DirectedVertex vertexToReplaceWith) {
+    boolean vertexReplaced = false;
+    
+    /* replace vertices on edge segment */
+    if (vertexToReplaceWith != null) {
+      if (getUpstreamVertex() != null && vertexToReplace.getId() == getUpstreamVertex().getId()) {
+        vertexReplaced = remove(vertexToReplace);
+        setUpstreamVertex(vertexToReplaceWith);
+        vertexReplaced = true;
+      } else if (getDownstreamVertex() != null && vertexToReplace.getId() == getDownstreamVertex().getId()) {
+        vertexReplaced = remove(vertexToReplace);
+        setDownstreamVertex(vertexToReplaceWith);
+      }
+    }
+    return vertexReplaced;
+  }  
   
+
   /**
    * Clone the edge segment
    * 
    * @return copy of this instance
    */
   public EdgeSegment clone();
+
+  /**
+   * Set the parent edge
+   * 
+   * @param parentEdge to set
+   */
+  public void setParentEdge(DirectedEdge brokenEdge);
 
 }

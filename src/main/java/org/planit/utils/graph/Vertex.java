@@ -120,8 +120,10 @@ public interface Vertex extends Comparable<Vertex>, Serializable {
    * 
    * @param edgeToReplace one to replace
    * @param edgeToReplaceWith one to replace it with
+   * @param forceInsert when true the replacement will be added event is original cannot be found, when false not
+   * @return successfull replacement/insert when true, false otherwise
    */
-  default public boolean replace(Edge edgeToReplace, Edge edgeToReplaceWith) {
+  default public boolean replace(Edge edgeToReplace, Edge edgeToReplaceWith, boolean forceInsert) {
     if(removeEdge(edgeToReplace)) {
       return addEdge(edgeToReplaceWith);      
     }

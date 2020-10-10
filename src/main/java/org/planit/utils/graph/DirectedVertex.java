@@ -73,9 +73,11 @@ public interface DirectedVertex extends Vertex {
   /** replace edge segment
    * @param edgeSegmentToReplace to replace
    * @param edgeSegmentToReplaceWith to replace with
+   * @param forceInsert when edge segment to repoalce cannot be found, replacement is still inserted when true, when false not
+   * @return true when replacement/insert was successful
    */
-  default public boolean replace(EdgeSegment edgeSegmentToReplace, EdgeSegment edgeSegmentToReplaceWith) {
-    if(removeEdgeSegment(edgeSegmentToReplace)) {
+  default public boolean replace(EdgeSegment edgeSegmentToReplace, EdgeSegment edgeSegmentToReplaceWith, boolean forceInsert) {
+    if(removeEdgeSegment(edgeSegmentToReplace) || forceInsert) {
       return addEdgeSegment(edgeSegmentToReplaceWith);
     }
     return false;
