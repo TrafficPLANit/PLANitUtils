@@ -1,7 +1,8 @@
 package org.planit.utils.network.physical;
 
-import org.opengis.geometry.coordinate.LineString;
 import org.planit.utils.graph.DirectedEdge;
+
+import com.vividsolutions.jts.geom.LineString;
 
 /**
  * Link interface which extends the Edge interface with a unique id (not all edges are links) as

@@ -57,7 +57,7 @@ public interface EdgeSegments<ES extends EdgeSegment> extends Iterable<ES> {
    *
    * @return number of registered edge segments
    */
-  public int size();
+  public long size();
 
   /** copy the passed in edge segment and register it. 
    * 
@@ -66,6 +66,13 @@ public interface EdgeSegments<ES extends EdgeSegment> extends Iterable<ES> {
    * @return copy of edge segment now registered
    */  
   public ES registerUniqueCopyOf(ES edgeSegmentToCopy, DirectedEdge newParent);
+
+  /** check if size is zero
+   * @return true when empty, false otherwise
+   */
+  default public boolean isEmpty() {
+    return size()==0;
+  }
 
 
 

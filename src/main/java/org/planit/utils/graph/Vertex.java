@@ -2,7 +2,8 @@ package org.planit.utils.graph;
 
 import java.io.Serializable;
 import java.util.Collection;
-import org.opengis.geometry.DirectPosition;
+
+import com.vividsolutions.jts.geomgraph.Position;
 
 /**
  * Vertex representation connected to one or more edges and/or edge segments
@@ -51,16 +52,16 @@ public interface Vertex extends Comparable<Vertex>, Serializable {
   /**
    * Set the center point geometry for a vertex
    * 
-   * @param centrePointGeometry the center point for a vertex
+   * @param position the center point for a vertex
    */
-  public void setCentrePointGeometry(final DirectPosition centrePointGeometry);
+  public void setPosition(final Position position);
 
   /**
    * Collect the geometry of the point location of this vertex
    * 
    * @return direct position reflecting point location
    */
-  public DirectPosition getCentrePointGeometry();
+  public Position getPosition();
   
   /**
    * Add edge, do not invoke when parsing networks, this connection is
