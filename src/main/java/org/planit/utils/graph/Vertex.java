@@ -3,7 +3,7 @@ package org.planit.utils.graph;
 import java.io.Serializable;
 import java.util.Collection;
 
-import com.vividsolutions.jts.geomgraph.Position;
+import com.vividsolutions.jts.geom.Point;
 
 /**
  * Vertex representation connected to one or more edges and/or edge segments
@@ -54,14 +54,14 @@ public interface Vertex extends Comparable<Vertex>, Serializable {
    * 
    * @param position the center point for a vertex
    */
-  public void setPosition(final Position position);
+  public void setPosition(final Point position);
 
   /**
    * Collect the geometry of the point location of this vertex
    * 
    * @return direct position reflecting point location
    */
-  public Position getPosition();
+  public Point getPosition();
   
   /**
    * Add edge, do not invoke when parsing networks, this connection is
