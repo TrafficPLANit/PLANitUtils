@@ -122,7 +122,7 @@ public interface Edge extends Comparable<Edge>, Serializable {
   public boolean replace(final Vertex vertextoReplace, final Vertex vertexToReplaceWith) throws PlanItException;
   
   /**
-   * Clone the edge as is
+   * Clone the edge as is, all shared members are shallow copied, fully owned members are deep copied
    * 
    * @return copy of this edge
    */
