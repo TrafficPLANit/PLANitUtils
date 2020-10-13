@@ -4,6 +4,8 @@ import java.util.Collection;
 import java.util.Set;
 
 import org.planit.utils.graph.DirectedVertex;
+import org.planit.utils.graph.Edge;
+import org.planit.utils.graph.EdgeSegment;
 
 /**
  * Node is a vertex but not all vertices are nodes.
@@ -31,7 +33,7 @@ public interface Node extends DirectedVertex {
    * @return edges cast as collection of links
    */
   @SuppressWarnings("unchecked")
-  default <L extends Link> Collection<L> getLinks() {
+  default <L extends Edge> Collection<L> getLinks() {
     return (Collection<L>) getEdges();
   }
   
@@ -43,7 +45,7 @@ public interface Node extends DirectedVertex {
    * @return edgeSegments as collection of linkSegments
    */
   @SuppressWarnings("unchecked")  
-  default <LS extends LinkSegment> Set<LS> getEntryLinkSegments() {
+  default <LS extends EdgeSegment> Set<LS> getEntryLinkSegments() {
     return (Set<LS>) getEntryEdgeSegments();
   }
   
@@ -55,7 +57,7 @@ public interface Node extends DirectedVertex {
    * @return edgeSegments as collection of linkSegments
    */
   @SuppressWarnings("unchecked")  
-  default <LS extends LinkSegment> Set<LS> getExitLinkSegments() {
+  default <LS extends EdgeSegment> Set<LS> getExitLinkSegments() {
     return (Set<LS>) getExitEdgeSegments();
   }  
   
