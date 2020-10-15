@@ -1,5 +1,6 @@
 package org.planit.utils.network.physical;
 
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.planit.utils.graph.DirectedEdge;
 
 import com.vividsolutions.jts.geom.LineString;
@@ -85,6 +86,6 @@ public interface Link extends DirectedEdge {
    */
   default <LS extends LinkSegment> LS getLinkSegmentBa() {
     return getLinkSegment(false);
-  }   
+  }  
 
 }

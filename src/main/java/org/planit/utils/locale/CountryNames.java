@@ -7,6 +7,9 @@ package org.planit.utils.locale;
  *
  */
 public class CountryNames {
+  
+  /** can be used in case one wants to have country specific data store by country, but a defalt in case no country is known/available is also required */
+  public static final String GLOBAL = "global";
  
   public static final String ANTIGUA_BARBUDA = "Antigua and Barbuda";
   
