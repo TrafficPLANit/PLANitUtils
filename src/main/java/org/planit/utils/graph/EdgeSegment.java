@@ -112,7 +112,6 @@ public interface EdgeSegment extends Comparable<EdgeSegment>, Serializable {
       if (getUpstreamVertex() != null && vertexToReplace.getId() == getUpstreamVertex().getId()) {
         vertexReplaced = remove(vertexToReplace);
         setUpstreamVertex(vertexToReplaceWith);
-        vertexReplaced = true;
       } else if (getDownstreamVertex() != null && vertexToReplace.getId() == getDownstreamVertex().getId()) {
         vertexReplaced = remove(vertexToReplace);
         setDownstreamVertex(vertexToReplaceWith);
@@ -120,6 +119,11 @@ public interface EdgeSegment extends Comparable<EdgeSegment>, Serializable {
     }
     return vertexReplaced;
   }  
+  
+  /** validate the contents of this edge segment
+   * @return true when valid, false otherwise
+   */
+  public boolean validate();
   
 
   /**
