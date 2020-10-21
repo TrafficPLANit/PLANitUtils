@@ -87,5 +87,14 @@ public interface Link extends DirectedEdge {
   default <LS extends LinkSegment> LS getLinkSegmentBa() {
     return getLinkSegment(false);
   }  
+  
+  /** verify if the geometry is in the A->B direction of the link 
+   * @return true if in A->B direction, false otherwise
+   */
+  default boolean isGeometryInAbDirection() {
+    boolean isNodeAStartPoint = getGeometry().getStartPoint().equals(getNodeA().getPosition());
+    boolean isNodeBEndPoint = getGeometry().getEndPoint().equals(getNodeB().getPosition());
+    return isNodeAStartPoint && isNodeBEndPoint;     
+  }
 
 }
