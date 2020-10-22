@@ -102,7 +102,7 @@ public class DrivingDirectionDefaultByCountry {
    * @param countryName to check
    * @return true when left hand drive, false otherwise
    */
-  public static boolean isrightHandDrive(String countryName) {
+  public static boolean isRightHandDrive(String countryName) {
     return !isLeftHandDrive(countryName);
   }  
 }

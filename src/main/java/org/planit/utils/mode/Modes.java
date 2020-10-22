@@ -1,5 +1,7 @@
 package org.planit.utils.mode;
 
+import java.util.Collection;
+
 import org.planit.utils.exceptions.PlanItException;
 
 /**
@@ -91,4 +93,10 @@ public interface Modes extends Iterable<Mode> {
    * @return the retrieved mode, or null if no mode was found
    */
   public Mode getByExternalId(Object externalId);
+  
+  /**
+   * Provide all modes as a collection. This collection is a copy so any changes have no impact on the internally registered modes
+   * @return all registered modes
+   */
+  public Collection<Mode> getAll();
 }

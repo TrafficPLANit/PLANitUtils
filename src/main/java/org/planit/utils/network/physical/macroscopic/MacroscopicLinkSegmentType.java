@@ -1,7 +1,11 @@
 package org.planit.utils.network.physical.macroscopic;
 
+import java.util.Collection;
+import java.util.Collections;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
 
 import org.planit.utils.mode.Mode;
 
@@ -108,6 +112,22 @@ public interface MacroscopicLinkSegmentType {
    * 
    * @return available modes
    */
-  Set<Mode> getAvailableModes(); 
+  Set<Mode> getAvailableModes();
+
+  /** Method which identifies which of the passed in modes is unavailable on the link segment
+   * @param mode
+   * @return collection which is a subset of the passed in modes containing only the ones that are not available
+   */
+  default Collection<Mode> getUnAvailableModesFrom(Collection<Mode> includedModes){
+    return includedModes.stream().filter(mode -> !isModeAvailable(mode)).collect(Collectors.toSet());
+  }
+  
+  /** Method which identifies which of the passed in modes is unavailable on the link segment
+   * @param mode
+   * @return collection which is a subset of the passed in modes containing only the ones that are not available
+   */
+  default Collection<Mode> getAvailableModesFrom(Collection<Mode> includedModes){
+    return includedModes.stream().filter(mode -> isModeAvailable(mode)).collect(Collectors.toSet());
+  }  
 
 }
