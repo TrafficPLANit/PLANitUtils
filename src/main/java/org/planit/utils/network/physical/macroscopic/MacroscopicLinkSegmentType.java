@@ -1,10 +1,8 @@
 package org.planit.utils.network.physical.macroscopic;
 
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Map;
 import java.util.Set;
-import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
 import org.planit.utils.mode.Mode;
@@ -15,7 +13,7 @@ import org.planit.utils.mode.Mode;
  * @author markr
  *
  */
-public interface MacroscopicLinkSegmentType {
+public interface MacroscopicLinkSegmentType extends Comparable<MacroscopicLinkSegmentType>, Cloneable {
 
   /**
    * Default capacity per lane (pcu/h)
@@ -91,6 +89,21 @@ public interface MacroscopicLinkSegmentType {
    * @return old mode properties for this key (if any) null otherwise
    */
   MacroscopicModeProperties addModeProperties(final Mode mode, final MacroscopicModeProperties modeProperties);
+  
+  /** remove the mode properties for the passed in mode (if present)
+   * 
+   * @param toBeRemovedMode mode to remove properties for
+   * @return existing mode properties at this location tht were removed, null otherwise
+   */
+  MacroscopicModeProperties removeModeProperties(final Mode toBeRemovedMode);
+
+  /** remove the mode properties for the passed in modes
+   * 
+   * @param toBeRemovedModes all the modes to make unavailable
+   */
+  default void removeModeProperties(final Set<Mode> toBeRemovedModes) {
+    toBeRemovedModes.forEach( mode -> removeModeProperties(mode));
+  }  
 
   /**
    * Returns the mode properties for a specified mode along this link
@@ -118,7 +131,7 @@ public interface MacroscopicLinkSegmentType {
    * @param mode
    * @return collection which is a subset of the passed in modes containing only the ones that are not available
    */
-  default Collection<Mode> getUnAvailableModesFrom(Collection<Mode> includedModes){
+  default Set<Mode> getUnAvailableModesFrom(Collection<Mode> includedModes){
     return includedModes.stream().filter(mode -> !isModeAvailable(mode)).collect(Collectors.toSet());
   }
   
@@ -126,8 +139,17 @@ public interface MacroscopicLinkSegmentType {
    * @param mode
    * @return collection which is a subset of the passed in modes containing only the ones that are not available
    */
-  default Collection<Mode> getAvailableModesFrom(Collection<Mode> includedModes){
+  default Set<Mode> getAvailableModesFrom(Collection<Mode> includedModes){
     return includedModes.stream().filter(mode -> isModeAvailable(mode)).collect(Collectors.toSet());
-  }  
+  }
+
+  /**
+   * Clone this instance using the copy constructor
+   * 
+   * @return copy of this instance
+   */
+  MacroscopicLinkSegmentType clone();
+  
+
 
 }

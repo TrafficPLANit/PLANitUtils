@@ -6,7 +6,7 @@ package org.planit.utils.network.physical.macroscopic;
  * @author markr
  *
  */
-public interface MacroscopicModeProperties {
+public interface MacroscopicModeProperties extends Cloneable {
 
   /**
    * Default critical speed, i.e. speed at capacity in km/h
@@ -43,6 +43,13 @@ public interface MacroscopicModeProperties {
    * 
    * @param criticalSpeed
    */
-  double setCriticalSpeed(double criticalSpeed); 
+  double setCriticalSpeed(double criticalSpeed);
+
+  /**
+   * Clone this instance
+   * 
+   * @return copy of this instance
+   */
+  MacroscopicModeProperties clone(); 
 
 }
