@@ -142,6 +142,13 @@ public interface MacroscopicLinkSegmentType extends Comparable<MacroscopicLinkSe
   default Set<Mode> getAvailableModesFrom(Collection<Mode> includedModes){
     return includedModes.stream().filter(mode -> isModeAvailable(mode)).collect(Collectors.toSet());
   }
+  
+  /** verify if the link segment type has any modes available
+   * @return true when at least one mode is aavailable
+   */
+  default boolean hasAvailableModes() {
+    return getAvailableModes()!=null && !getAvailableModes().isEmpty();
+  }
 
   /**
    * Clone this instance using the copy constructor
@@ -149,6 +156,8 @@ public interface MacroscopicLinkSegmentType extends Comparable<MacroscopicLinkSe
    * @return copy of this instance
    */
   MacroscopicLinkSegmentType clone();
+
+
   
 
 
