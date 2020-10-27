@@ -2,6 +2,7 @@ package org.planit.utils.graph;
 
 import java.io.Serializable;
 import java.util.Collection;
+import java.util.Set;
 
 import com.vividsolutions.jts.geom.Point;
 
@@ -103,12 +104,12 @@ public interface Vertex extends Comparable<Vertex>, Serializable {
   public int getNumberOfEdges();  
   
   /**
-   * colect the edge based on the other vertex
+   * colect the edge(s) based on the other vertex
    * 
-   * @param otherVertex that defines the edge
-   * @return edge the edge if available
+   * @param otherVertex that defines the edge(s)
+   * @return edges for which this holds, if none hold an empty set is returned
    */
-  Edge getEdge(Vertex otherVertex);   
+  Set<Edge> getEdges(Vertex otherVertex);   
   
   /**
    * Clone the vertex
@@ -130,5 +131,11 @@ public interface Vertex extends Comparable<Vertex>, Serializable {
     }
     return false;
   }
+
+  /** validate the vertex
+   * 
+   * @return true when valid, false otherwise
+   */
+  public boolean validate();
 
 }

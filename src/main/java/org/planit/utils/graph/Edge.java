@@ -127,5 +127,18 @@ public interface Edge extends Comparable<Edge>, Serializable {
    * @return copy of this edge
    */
   public Edge clone();
+  
+  /** validate the contents of this edge 
+   * @return true when valid, false otherwise
+   */
+  public boolean validate();
+
+  /** check if vertex is present on the edge
+   * @param vertex to check
+   * @return true when present false otherwise
+   */
+  default public boolean hasVertex(Vertex vertex) {
+    return getVertexA().equals(vertex) || getVertexB().equals(vertex); 
+  }
     
 }

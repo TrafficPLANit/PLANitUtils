@@ -13,4 +13,13 @@ public interface DirectedGraph<V extends DirectedVertex, E extends DirectedEdge,
    */
   EdgeSegments<ES> getEdgeSegments();
 
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  default void validate() {
+    Graph.super.validate();
+    getEdgeSegments().forEach( edgeSegment -> edgeSegment.validate());
+  }
+
 }

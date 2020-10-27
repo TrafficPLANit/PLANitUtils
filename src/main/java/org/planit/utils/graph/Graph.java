@@ -30,5 +30,13 @@ public interface Graph<V extends Vertex, E extends Edge> {
    * @return edges
    */
   public Edges<E> getEdges(); 
+  
+  /**
+   * validate the graph, issues will be logged
+   */
+  default void validate() {
+    getEdges().forEach( edge -> edge.validate());
+    getVertices().forEach( vertex -> vertex.validate());
+  }
 
 }

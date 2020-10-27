@@ -123,8 +123,7 @@ public interface EdgeSegment extends Comparable<EdgeSegment>, Serializable {
   /** validate the contents of this edge segment
    * @return true when valid, false otherwise
    */
-  public boolean validate();
-  
+  public boolean validate(); 
 
   /**
    * Clone the edge segment
