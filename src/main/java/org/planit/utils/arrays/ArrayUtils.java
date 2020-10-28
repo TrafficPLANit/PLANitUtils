@@ -117,4 +117,16 @@ public class ArrayUtils {
       consumer.accept(id);
     }
   }  
+  
+  /**
+   * Loop over array entries and apply consumer
+   * 
+   * @param consumer to apply
+   */  
+  public static <T> void loopAll(T[] array, Consumer<T> consumer) {
+    int length = array.length;
+    for(int index=0;index<length;++index) {
+      consumer.accept(array[index]);
+    }
+  }   
 }
