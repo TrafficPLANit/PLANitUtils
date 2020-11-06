@@ -33,11 +33,20 @@ public class Pair<A, B> {
    * @param second
    *          second object in pair
    */
-  public Pair(A first, B second) {
+  protected Pair(A first, B second) {
     super();
     this.first = first;
     this.second = second;
   }
+  
+  /** Factory method
+   * @param valueA first
+   * @param valueB second
+   * @return new pair
+   */
+  public static <A,B> Pair<A, B> create(A valueA, B valueB) {
+    return new Pair<A,B>(valueA, valueB);
+  }  
 
   /**
    * @see java.lang.Object#hashCode()
@@ -92,5 +101,37 @@ public class Pair<A, B> {
   public B getSecond() {
     return second;
   }
+
+  /** check if any of the two values is not null
+   * @return true when one of the entries is not null
+   */
+  public boolean anyIsNotNull() {
+    return getFirst()!=null || getSecond()!=null;
+  }
+
+  /** check if both values are not null
+   * @return true when both entries are not null
+   */  
+  public boolean bothNotNull() {
+    return getFirst()!=null && getSecond()!=null;
+  }
+
+  /**
+   * @return true when exactly one of the two is not null
+   */
+  public boolean isExactlyOneNonNull() {
+    return anyIsNotNull() && !bothNotNull();
+  }
+  
+  /**
+   * @return earliest entry (first before second) that is nonNull, when both are null, null is returned
+   */
+  public Object getEarliestNonNull() {
+    if(getFirst()!=null) {
+      return getFirst();
+    }else {
+      return getSecond();
+    }
+  }  
 
 }
