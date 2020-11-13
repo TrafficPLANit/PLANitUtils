@@ -89,7 +89,7 @@ public class Pair<A, B> {
    * 
    * @return first object in pair
    */
-  public A getFirst() {
+  public A first() {
     return first;
   }
 
@@ -98,7 +98,7 @@ public class Pair<A, B> {
    * 
    * @return second object in pair
    */
-  public B getSecond() {
+  public B second() {
     return second;
   }
 
@@ -106,14 +106,14 @@ public class Pair<A, B> {
    * @return true when one of the entries is not null
    */
   public boolean anyIsNotNull() {
-    return getFirst()!=null || getSecond()!=null;
+    return first()!=null || second()!=null;
   }
 
   /** check if both values are not null
    * @return true when both entries are not null
    */  
   public boolean bothNotNull() {
-    return getFirst()!=null && getSecond()!=null;
+    return first()!=null && second()!=null;
   }
 
   /**
@@ -127,10 +127,10 @@ public class Pair<A, B> {
    * @return earliest entry (first before second) that is nonNull, when both are null, null is returned
    */
   public Object getEarliestNonNull() {
-    if(getFirst()!=null) {
-      return getFirst();
+    if(first()!=null) {
+      return first();
     }else {
-      return getSecond();
+      return second();
     }
   }  
 
