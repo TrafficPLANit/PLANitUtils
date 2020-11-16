@@ -8,8 +8,12 @@ package org.planit.utils.locale;
  */
 public class CountryNames {
   
-  /** can be used in case one wants to have country specific data store by country, but a defalt in case no country is known/available is also required */
+  /** can be used in case one wants to have country specific data store by country, but a default in case no country is known/available is also required */  
   public static final String GLOBAL = "global";
+  /** alias for global */
+  public static final String WORLD = GLOBAL;
+  
+  /* left-hand drive countries alphabetically */
  
   public static final String ANTIGUA_BARBUDA = "Antigua and Barbuda";
   
@@ -135,5 +139,11 @@ public class CountryNames {
   
   public static final String ZAMBIA = "Zambia";                         
   
-  public static final String ZIMBABWE = "Zimbabwe";                       
+  public static final String ZIMBABWE = "Zimbabwe";
+  
+  /* right hand drive starts here */
+
+  public static final String GERMANY = "Germany";
+  
+  public static final String NETHERLANDS = "Netherlands";                       
 }

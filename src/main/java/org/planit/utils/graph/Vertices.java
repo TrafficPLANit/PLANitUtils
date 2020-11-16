@@ -59,10 +59,10 @@ public interface Vertices<V extends Vertex> extends Iterable<V> {
   
   /** When there are no vertices the nodes are considered empty
    * 
-   * @return true when not vertices, false otherwise
+   * @return true when no vertices exist yet, false otherwise
    */
   default public boolean isEmpty() {
-    return size() > 0;
+    return !(size() > 0);
   }
 
   /**

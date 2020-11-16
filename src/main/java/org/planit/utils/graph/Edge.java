@@ -2,7 +2,14 @@ package org.planit.utils.graph;
 
 import java.io.Serializable;
 
+import org.geotools.geometry.jts.JTS;
+import org.opengis.geometry.MismatchedDimensionException;
+import org.opengis.referencing.operation.MathTransform;
+import org.opengis.referencing.operation.TransformException;
 import org.planit.utils.exceptions.PlanItException;
+
+import com.vividsolutions.jts.geom.LineString;
+import com.vividsolutions.jts.geom.Point;
 
 /**
  * Edge interface connecting two vertices in a non-directional fashion.
@@ -40,6 +47,46 @@ public interface Edge extends Comparable<Edge>, Serializable {
    * @return true if the external Id has been set, false otherwise
    */
   boolean hasExternalId();  
+  
+  /**
+   * Collect the geometry of this line
+   * @return lineString
+   */
+  LineString getGeometry();
+  
+  /**
+   * set the geometry of this link as a line string
+   * @param lineString
+   */
+  void setGeometry(LineString lineString);
+  
+  /**
+   * check if geometry is available
+   * 
+   * @return true when available, false otherwise
+   */
+  default boolean hasGeometry() {
+    return getGeometry()!=null;
+  }
+  
+  /** verify if the geometry is in the A->B direction of the link 
+   * @return true if in A->B direction, false otherwise
+   */
+  default boolean isGeometryInAbDirection() {
+    boolean isVertexAStartPoint = getGeometry().getStartPoint().equals(getVertexA().getPosition());
+    boolean isVertexBEndPoint = getGeometry().getEndPoint().equals(getVertexB().getPosition());
+    return isVertexAStartPoint && isVertexBEndPoint;     
+  }  
+  
+  /** transform the line string information of this edge using the passed in MathTransform
+   * 
+   * @param transformer to apply
+   * @throws MismatchedDimensionException thrown if error
+   * @throws TransformException thrown if error
+   */
+  default public void transformGeometry(MathTransform transformer) throws MismatchedDimensionException, TransformException {
+    setGeometry((LineString) JTS.transform(getGeometry(),transformer));
+  }  
  
   /**
    * Remove vertex from edge 

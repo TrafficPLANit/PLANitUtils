@@ -4,6 +4,11 @@ import java.io.Serializable;
 import java.util.Collection;
 import java.util.Set;
 
+import org.geotools.geometry.jts.JTS;
+import org.opengis.geometry.MismatchedDimensionException;
+import org.opengis.referencing.operation.MathTransform;
+import org.opengis.referencing.operation.TransformException;
+
 import com.vividsolutions.jts.geom.Point;
 
 /**
@@ -117,25 +122,33 @@ public interface Vertex extends Comparable<Vertex>, Serializable {
    */
   public Vertex clone();
 
+  /** validate the vertex regarding it connections to edges etc.
+   * 
+   * @return true when valid, false otherwise
+   */
+  public boolean validate();
   
   /** replace one edge with the other
    * 
    * @param edgeToReplace one to replace
    * @param edgeToReplaceWith one to replace it with
    * @param forceInsert when true the replacement will be added event is original cannot be found, when false not
-   * @return successfull replacement/insert when true, false otherwise
+   * @return successful replacement/insert when true, false otherwise
    */
   default public boolean replace(Edge edgeToReplace, Edge edgeToReplaceWith, boolean forceInsert) {
     if(removeEdge(edgeToReplace)) {
       return addEdge(edgeToReplaceWith);      
     }
     return false;
-  }
+  }  
 
-  /** validate the vertex
+  /** transform the position information of this vertex using the passed in MathTransform
    * 
-   * @return true when valid, false otherwise
+   * @param transformer to apply
+   * @throws MismatchedDimensionException thrown if error
+   * @throws TransformException thrown if error
    */
-  public boolean validate();
-
+  default public void transformPosition(MathTransform transformer) throws MismatchedDimensionException, TransformException {
+    setPosition((Point) JTS.transform(getPosition(),transformer));
+  }
 }

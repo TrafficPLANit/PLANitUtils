@@ -2,8 +2,6 @@ package org.planit.utils.network.physical;
 
 import org.planit.utils.graph.DirectedEdge;
 
-import com.vividsolutions.jts.geom.LineString;
-
 /**
  * Link interface which extends the Edge interface with a unique id (not all edges are links) as
  * well as an external id
@@ -20,19 +18,7 @@ public interface Link extends DirectedEdge {
    * @return linkId
    */
   long getLinkId();   
-  
-  /**
-   * Collect the geometry of this line
-   * @return lineString
-   */
-  LineString getGeometry();
-  
-  /**
-   * set the geometry of this link as a line string
-   * @param lineString
-   */
-  void setGeometry(LineString lineString);
-  
+    
   /** collect vertex A as something extending node which is to be expected for any link. Convenience method
    * for readability
    * 
@@ -87,13 +73,4 @@ public interface Link extends DirectedEdge {
     return getLinkSegment(false);
   }  
   
-  /** verify if the geometry is in the A->B direction of the link 
-   * @return true if in A->B direction, false otherwise
-   */
-  default boolean isGeometryInAbDirection() {
-    boolean isNodeAStartPoint = getGeometry().getStartPoint().equals(getNodeA().getPosition());
-    boolean isNodeBEndPoint = getGeometry().getEndPoint().equals(getNodeB().getPosition());
-    return isNodeAStartPoint && isNodeBEndPoint;     
-  }
-
 }

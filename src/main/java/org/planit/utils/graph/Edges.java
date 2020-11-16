@@ -1,6 +1,12 @@
 package org.planit.utils.graph;
 
+import org.geotools.geometry.jts.JTS;
+import org.opengis.geometry.MismatchedDimensionException;
+import org.opengis.referencing.operation.MathTransform;
+import org.opengis.referencing.operation.TransformException;
 import org.planit.utils.exceptions.PlanItException;
+
+import com.vividsolutions.jts.geom.LineString;
 
 /**
  * Container and factory class for edges in a graph, also to be used to create and register edges of any
@@ -62,5 +68,6 @@ public interface Edges<E extends Edge> extends Iterable<E> {
    * @return true when no edges, false otherwise
    */
   public boolean isEmpty();
+  
 
 }
