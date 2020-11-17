@@ -3,13 +3,11 @@ package org.planit.utils.graph;
 import java.io.Serializable;
 
 import org.geotools.geometry.jts.JTS;
+import org.locationtech.jts.geom.LineString;
 import org.opengis.geometry.MismatchedDimensionException;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.TransformException;
 import org.planit.utils.exceptions.PlanItException;
-
-import com.vividsolutions.jts.geom.LineString;
-import com.vividsolutions.jts.geom.Point;
 
 /**
  * Edge interface connecting two vertices in a non-directional fashion.

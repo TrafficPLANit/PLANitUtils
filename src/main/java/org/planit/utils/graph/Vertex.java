@@ -5,11 +5,10 @@ import java.util.Collection;
 import java.util.Set;
 
 import org.geotools.geometry.jts.JTS;
+import org.locationtech.jts.geom.Point;
 import org.opengis.geometry.MismatchedDimensionException;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.TransformException;
-
-import com.vividsolutions.jts.geom.Point;
 
 /**
  * Vertex representation connected to one or more edges and/or edge segments
