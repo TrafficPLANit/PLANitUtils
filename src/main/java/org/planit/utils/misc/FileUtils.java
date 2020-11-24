@@ -1,6 +1,9 @@
 package org.planit.utils.misc;
 
 import java.io.File;
+import java.io.FilenameFilter;
+
+import org.planit.utils.exceptions.PlanItException;
 
 /**
  * Lightweight File utilities
@@ -24,5 +27,35 @@ public class FileUtils {
     }else {
       return "";      
     }
+  }
+  
+  /** collect all files from a directory with the given extension
+   * @param pathToDir path to dir
+   * @param fileExtension the file extension, e.g. ".xml"
+   * @return the list of files that match this extension in the dir
+   * @throws PlanItException thrown if error
+   */
+  public static File[] getFilesWithExtensionFromDir(final String pathToDir, final String fileExtension) throws PlanItException {
+    PlanItException.throwIfNull(pathToDir,String.format("path directory is null when collecting files"));
+    PlanItException.throwIfNull(fileExtension,String.format("file extension to use is null when collecting files from directory"));
+    
+    /* the dir */
+    File directoryPath = new File(pathToDir);    
+    PlanItException.throwIf(!directoryPath.isDirectory(),String.format("%s is not a valid directory",directoryPath ));    
+    
+    /* the filter */
+    FilenameFilter fileExtensionFilter = new FilenameFilter(){
+       public boolean accept(File dir, String name) {
+          String lowercaseName = name.toLowerCase();
+          if (lowercaseName.endsWith(fileExtension)) {
+             return true;
+          } else {
+             return false;
+          }
+       }
+    };
+
+    /* collect matches */
+    return directoryPath.listFiles(fileExtensionFilter);
   }
 }
