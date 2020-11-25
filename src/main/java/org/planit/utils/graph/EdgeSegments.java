@@ -35,14 +35,25 @@ public interface EdgeSegments<ES extends EdgeSegment> extends Iterable<ES> {
   public ES create(final DirectedEdge parentEdge, final boolean directionAB) throws PlanItException;
 
   /**
-   * Register a edge segment
+   * Register a edge segment (not registered on nodes and edge)
    *
    * @param parentEdge  the parent edge which specified edge segment will be registered on
    * @param edgeSegment edge segment to be registered
    * @param directionAB direction of travel
    * @throws PlanItException thrown if there is an error
    */
-  public void registerNew(final DirectedEdge parentEdge, final ES edgeSegment, final boolean directionAB) throws PlanItException;
+  public void register(final DirectedEdge parentEdge, final ES edgeSegment, final boolean directionAB) throws PlanItException;
+  
+  /**
+   * Create directional edge segment and register it
+   *
+   * @param parentLink            the parent link of this link segment
+   * @param directionAb           direction of travel
+   * @param registerOnNodeAndLink option to register the new link segment on the underlying link and its nodes
+   * @return the created link segment
+   * @throws PlanItException thrown if there is an error
+   */
+  public ES registerNew(final DirectedEdge parentEdge, final boolean directionAb, final boolean registerOnNodeAndLink) throws PlanItException;  
 
   /**
    * Get edge segment by id

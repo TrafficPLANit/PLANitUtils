@@ -22,25 +22,39 @@ public interface Edges<E extends Edge> extends Iterable<E> {
    * 
    * @param edgeId of the edge to remove
    */
-  public void remove(long edgeId);  
+  public void remove(final long edgeId);  
 
   /**
-   * Create new edge to graph identified via its id
+   * Create new edge to graph identified via its id, (not registered on vertices)
    *
-   * @param vertexA the first vertex of this link
-   * @param vertexB the second vertex of this link
+   * @param vertexA the first vertex of this edge
+   * @param vertexB the second vertex of this edge
    * @param length  the length (in km)
    * @return the created edge
    * @throws PlanItException thrown if there is an error
    */
-  public E registerNew(final Vertex vertexA, final Vertex vertexB, final double length) throws PlanItException;
+  default public E registerNew(final Vertex vertexA, final Vertex vertexB, final double length) throws PlanItException{
+    return registerNew(vertexA, vertexB, length, false);
+  }
+  
+  /**
+   * Create new edge to network identified via its id, allow to be registered on vertices if indicated)
+   *
+   * @param vertexA           the first vertex in this edge
+   * @param vertexB           the second certex in this edge
+   * @param length          the length of this edge
+   * @param registerOnVertices choice to register new edge on the vertices or not
+   * @return the created edge
+   * @throws PlanItException thrown if there is an error
+   */
+  public E registerNew(final Vertex vertexA, final Vertex vertexB, final double length, boolean registerOnVertices) throws PlanItException; 
   
   /** copy the passed in edge and register it
    * 
    * @param edgeToCopy as is except for its ids which will be updated to makeit uniquely identifiable
    * @return copy of edge now registered
    */
-  public E registerUniqueCopyOf(E edgeToCopy);
+  public E registerUniqueCopyOf(final E edgeToCopy);
 
   /**
    * Get edge by id
