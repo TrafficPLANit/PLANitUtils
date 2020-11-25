@@ -1,6 +1,5 @@
 package org.planit.utils.mode;
 
-import java.util.Collection;
 import java.util.Set;
 
 import org.planit.utils.exceptions.PlanItException;

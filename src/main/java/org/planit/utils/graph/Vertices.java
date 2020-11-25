@@ -8,17 +8,17 @@ package org.planit.utils.graph;
  */
 public interface Vertices<V extends Vertex> extends Iterable<V> {
   
-  /** Remove a vertex
+  /** Remove
    * 
-   * @param vertex to remove
+   * @param instance to remove
    */
-  public void remove(V vertex);
+  public void remove(V entity);
   
-  /** Remove a vertex by id
+  /** Remove by id
    * 
    * @param vertexId to remove vertex for
    */  
-  public void remove(long vertexId);  
+  public void remove(long id);  
 
   
   /** Create a new vertex (without registering on this class)
@@ -28,32 +28,32 @@ public interface Vertices<V extends Vertex> extends Iterable<V> {
   public V createNew();
   
   /**
-   * Add vertex to the internal container
+   * Add to the container
    *
-   * @param vertex vertex to be registered in this network
-   * @return vertex, in case it overrides an existing vertex, the removed vertex is returned
+   * @param entity to be registered in this network
+   * @return entity, in case it overrides an existing entry, the removed entryis returned
    */
-  public V register(V vertex);  
+  public V register(V entity);  
 
   /**
-   * Create and register new vertex
+   * Create and register new entity
    *
    * @return new node created
    */
   public V registerNew();
 
   /**
-   * Create and register new vertex
+   * Create and register new entity
    *
-   * @param externalId the externalId of the vertex
-   * @return new vertex created
+   * @param externalId the externalId of the entity
+   * @return new entity created
    */
   public V registerNew(Object externalId);
 
   /**
-   * Return number of registered vertices
+   * Return number of registered entity
    *
-   * @return number of registered vertices
+   * @return number of registered entity
    */
   public int size();
   
@@ -66,10 +66,10 @@ public interface Vertices<V extends Vertex> extends Iterable<V> {
   }
 
   /**
-   * Find a vertex by its d
+   * Find a entity by its d
    *
-   * @param id Id of vertex
-   * @return retrieved vertex
+   * @param id Id of entity
+   * @return retrieved entity
    */
   public V get(final long id);
 
