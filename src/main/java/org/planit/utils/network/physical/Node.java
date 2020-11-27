@@ -19,11 +19,24 @@ public interface Node extends DirectedVertex {
  
   /**
    * Collect the id of the node. Not all vertices need to be nodes, this node id is contiguous and unique to the nodes
-   * in the network, but not necesssarily across all vertices in the network
+   * in the network, but not necessarily across all vertices in the network
    * 
    * @return node id
    */
   long getNodeId();
+  
+  
+  /** get the name of this node (if any)
+   * 
+   * @return name of the node
+   */
+  String getName();
+  
+  /** set the name of the node
+   * 
+   * @param name of the node
+   */
+  void setName(String name);
   
   /**
    * It is expected that nodes are used in conjunction with links. If so, this method will cast the edges of the node to a links collection

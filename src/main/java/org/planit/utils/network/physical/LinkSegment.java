@@ -2,6 +2,12 @@ package org.planit.utils.network.physical;
 
 import org.planit.utils.graph.EdgeSegment;
 
+/**
+ * Interface for direction link segment part of non-directional link.
+ * 
+ * @author markr
+ *
+ */
 public interface LinkSegment extends EdgeSegment {
 
   /**

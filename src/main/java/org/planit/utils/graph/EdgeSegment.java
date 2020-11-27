@@ -2,6 +2,8 @@ package org.planit.utils.graph;
 
 import java.io.Serializable;
 
+import org.planit.utils.id.ExternalIdable;
+
 /**
  * EdgeSegment represents an edge in a particular (single) direction. Each edge
  * has either one or two edge segments where each edge segment may have a more
@@ -11,37 +13,8 @@ import java.io.Serializable;
  * @author markr
  *
  */
-public interface EdgeSegment extends Comparable<EdgeSegment>, Serializable {
-
-  /**
-   * Return id of this instance. This id is expected to be generated using the
-   * org.planit.utils.misc.IdGenerator
-   * 
-   * @return id the id
-   */
-  public long getId();
-
-  /**
-   * set external id of the instance. Note that this id need not be unique (unlike regular id)
-   * 
-   * @param externalId the external id to set
-   */
-  public void setExternalId(Object externalId);
-
-  /**
-   * Does the instance have an external id
-   * 
-   * @return true when available, false otherwise
-   */
-  public boolean hasExternalId();
-
-  /**
-   * Get external id of the instance. Note that this id need not be unique (unlike regular id)
-   * 
-   * @return externalId
-   */
-  public Object getExternalId();
-  
+public interface EdgeSegment extends Comparable<EdgeSegment>, Serializable, ExternalIdable {
+ 
   /**
    * Remove the vertex from the edge segment if it is either the up or downstream vertex
    * 

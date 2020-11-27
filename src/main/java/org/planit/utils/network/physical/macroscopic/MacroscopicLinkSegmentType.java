@@ -5,6 +5,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import org.planit.utils.id.ExternalIdable;
 import org.planit.utils.mode.Mode;
 
 /**
@@ -13,7 +14,7 @@ import org.planit.utils.mode.Mode;
  * @author markr
  *
  */
-public interface MacroscopicLinkSegmentType extends Comparable<MacroscopicLinkSegmentType>, Cloneable {
+public interface MacroscopicLinkSegmentType extends Comparable<MacroscopicLinkSegmentType>, Cloneable, ExternalIdable {
 
   /**
    * Default capacity per lane (pcu/h)
@@ -24,13 +25,6 @@ public interface MacroscopicLinkSegmentType extends Comparable<MacroscopicLinkSe
    * Default capacity per lane (pcu/h)
    */
   double DEFAULT_MAX_DENSITY_LANE = 180.0;  
-
-  /**
-   * Return the unique id of this macroscopic link segment type
-   * 
-   * @return the id
-   */
-  long getId();
 
   /**
    * Return the name of this macroscopic link segment type
@@ -59,20 +53,6 @@ public interface MacroscopicLinkSegmentType extends Comparable<MacroscopicLinkSe
    * @return the maximum density per lane in pcu/km/lane
    */
   double getMaximumDensityPerLane();
-
-  /**
-   * Return the external id of this macroscopic link segment type
-   * 
-   * @return the external id
-   */
-  Object getExternalId();
-
-  /**
-   * Return whether this link segment type has an external Id
-   * 
-   * @return true if this link segment type has an external Id, false otherwise
-   */
-  boolean hasExternalId();
 
   /**
    * Set the map of mode properties for this link

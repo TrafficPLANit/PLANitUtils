@@ -9,6 +9,7 @@ import org.locationtech.jts.geom.Point;
 import org.opengis.geometry.MismatchedDimensionException;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.TransformException;
+import org.planit.utils.id.ExternalIdable;
 
 /**
  * Vertex representation connected to one or more edges and/or edge segments
@@ -16,35 +17,7 @@ import org.opengis.referencing.operation.TransformException;
  * @author markr
  *
  */
-public interface Vertex extends Comparable<Vertex>, Serializable {
-
-  /**
-   * Return id of this instance. 
-   * 
-   * @return the id
-   */
-  public long getId();
-  
-  /**
-   * Collect the external id of the node
-   * 
-   * @return external id
-   */
-  Object getExternalId();
-
-  /**
-   * Set the external id of the node
-   * 
-   * @param externalId the external id to set
-   */
-  void setExternalId(Object externalId);
-
-  /**
-   * Returns whether the node has an external Id set
-   * 
-   * @return true if the node has an external Id, false otherwise
-   */
-  boolean hasExternalId();
+public interface Vertex extends Comparable<Vertex>, Serializable, ExternalIdable {
   
   /**
    * Add a property from the original input that is not part of the readily available members

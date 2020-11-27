@@ -1,5 +1,7 @@
 package org.planit.utils.math;
 
+import java.text.DecimalFormat;
+
 /** compare doubles with a certain precision
  * @author markr
  *
@@ -7,6 +9,16 @@ package org.planit.utils.math;
 public class Precision {
   
   public static final double EPSILON_6 = 0.000001;
+  
+  /** default decimal format used applies a maximum of 8 decimals and a minimum of 2 */
+  public static final DecimalFormat DEFAULT_DECIMAL_FORMAT;
+      
+  /* initialise decimal format */
+  static {
+    DEFAULT_DECIMAL_FORMAT = (DecimalFormat) DecimalFormat.getInstance();
+    DEFAULT_DECIMAL_FORMAT.setMaximumFractionDigits(8);
+    DEFAULT_DECIMAL_FORMAT.setMinimumFractionDigits(2);
+  }  
   
   /** Compare using a custom precision epsilon
    * @param d1 double1

@@ -8,6 +8,7 @@ import org.opengis.geometry.MismatchedDimensionException;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.TransformException;
 import org.planit.utils.exceptions.PlanItException;
+import org.planit.utils.id.ExternalIdable;
 
 /**
  * Edge interface connecting two vertices in a non-directional fashion.
@@ -15,37 +16,8 @@ import org.planit.utils.exceptions.PlanItException;
  * @author markr
  *
  */
-public interface Edge extends Comparable<Edge>, Serializable {
-
-  /**
-   * Return id of this instance. This id is expected to be generated using the
-   * org.planit.utils.misc.IdGenerator
-   * 
-   * @return id of this Edge object
-   */
-  public long getId();
-  
-  /**
-   * Set the external id
-   * 
-   * @param externalId the external id to set
-   */
-  void setExternalId(final Object externalId);   
-
-  /**
-   * Collect the external id
-   * 
-   * @return externalID
-   */
-  Object getExternalId();
-
-  /**
-   * Returns whether the external Id has been set
-   * 
-   * @return true if the external Id has been set, false otherwise
-   */
-  boolean hasExternalId();  
-  
+public interface Edge extends Comparable<Edge>, Serializable, ExternalIdable {
+    
   /**
    * Collect the geometry of this line
    * @return lineString
