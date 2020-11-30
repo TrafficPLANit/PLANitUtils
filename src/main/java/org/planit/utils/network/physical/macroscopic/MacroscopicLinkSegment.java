@@ -84,6 +84,14 @@ public interface MacroscopicLinkSegment extends LinkSegment {
    */
   MacroscopicLinkSegmentType getLinkSegmentType();
   
+  /** Verify if link segment type is present on the link segment
+   * 
+   * @return true if present, false otherwise
+   */
+  default boolean hasLinkSegmentType() {
+    return getLinkSegmentType()!=null;
+  }
+  
 
   
 }

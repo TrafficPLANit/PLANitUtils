@@ -63,6 +63,15 @@ public interface Link extends DirectedEdge {
     return getLinkSegment(true);
   }   
   
+  /** verify if linkSegment Ab is present
+   * 
+   * @param <LS> 
+   * @return true when link segment is present, false otherwise
+   */
+  default boolean hasLinkSegmentAb() {
+    return hasEdgeSegmentAb();
+  }   
+  
   /** collect edgeSegment Ba as something extending LinkSegment which is to be expected for any link. Convenience method
    * for readability
    * 
@@ -71,6 +80,15 @@ public interface Link extends DirectedEdge {
    */
   default <LS extends LinkSegment> LS getLinkSegmentBa() {
     return getLinkSegment(false);
-  }  
+  } 
+  
+  /** verify if linkSegment Ba is present
+   * 
+   * @param <LS> 
+   * @return true when link segment is present, false otherwise
+   */
+  default boolean hasLinkSegmentBa() {
+    return hasEdgeSegmentBa();
+  }   
   
 }
