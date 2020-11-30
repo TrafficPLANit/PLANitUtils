@@ -1,12 +1,14 @@
 package org.planit.utils.mode;
 
+import org.planit.utils.id.ExternalIdable;
+
 /**
  * Interface to represent a mode
  * 
  * @author markr
  *
  */
-public interface Mode extends Comparable<Mode> {
+public interface Mode extends Comparable<Mode>, ExternalIdable {
   
   /**
    * Default max speed in km/h
@@ -37,12 +39,26 @@ public interface Mode extends Comparable<Mode> {
    */
   PhysicalModeFeatures getPhysicalFeatures();
   
+  /** Verify if physical features are available
+   * @return true if available, false otherwise
+   */
+  default boolean hasPhysicalFeatures() {
+    return getPhysicalFeatures()!=null;
+  }  
+  
   /**
    * collect the features of how this mode is used (public, private etc.)
    * 
    * @return the use features of this mode
    */
   UsabilityModeFeatures getUseFeatures();  
+  
+  /** Verify if use features are available
+   * @return true if available, false otherwise
+   */
+  default boolean hasUseFeatures() {
+    return getUseFeatures()!=null;
+  }    
 
   /**
    * Name of this mode
@@ -56,29 +72,7 @@ public interface Mode extends Comparable<Mode> {
    * 
    * @return maximum speed
    */
-  double getMaximumSpeed();  
-
-  /**
-   * Return id of this instance. This id is expected to be generated using the
-   * org.planit.utils.misc.IdGenerator
-   * 
-   * @return unique id
-   */
-  long getId();
-
-  /**
-   * Return the external id of this mode
-   * 
-   * @return externalId of this mode
-   */
-  Object getExternalId();
-
-  /**
-   * Returns whether this mode has an external Id set
-   * 
-   * @return true if external Id set, false otherwise
-   */
-  boolean hasExternalId();
+  double getMaximumSpeedKmH();  
   
   /** check if the mode is one of the PLANit predefined mode types or not
    * 
@@ -96,5 +90,7 @@ public interface Mode extends Comparable<Mode> {
   default PredefinedModeType getPredefinedModeType() {
     return PredefinedModeType.CUSTOM;
   }
+
+
 
 }

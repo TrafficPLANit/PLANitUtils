@@ -11,7 +11,7 @@ import org.planit.utils.mode.Mode;
  * @author markr
  *
  */
-public interface MacroscopicLinkSegmentTypes {
+public interface MacroscopicLinkSegmentTypes extends Iterable<MacroscopicLinkSegmentType> {
 
   /**
    * Create and register new macroscopic link segment type on network.

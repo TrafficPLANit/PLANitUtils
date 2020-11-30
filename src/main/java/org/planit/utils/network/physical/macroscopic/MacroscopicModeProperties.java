@@ -11,7 +11,7 @@ public interface MacroscopicModeProperties extends Cloneable {
   /**
    * Default critical speed, i.e. speed at capacity in km/h
    */
-  double DEFAULT_CRITICAL_SPEED = 60;
+  double DEFAULT_CRITICAL_SPEED_KMH = 60;
   /**
    * Epsilon margin when comparing speeds (km/h)
    */
@@ -22,28 +22,28 @@ public interface MacroscopicModeProperties extends Cloneable {
    * 
    * @return the maximum speed in km/h
    */
-  double getMaximumSpeed();
+  double getMaximumSpeedKmH();
   
   /**
    * set the maximum speed in km/h
    * 
-   * @param maxSpeed
+   * @param maxSpeedKmH
    */
-  double setMaximumSpeed(double maxSpeed);  
+  double setMaximumSpeedKmH(double maxSpeedKmH);  
 
   /**
    * Collect the critical speed in km/h
    * 
    * @return the critical speed in km/h
    */
-  double getCriticalSpeed();
+  double getCriticalSpeedKmH();
   
   /**
    * set the critical speed in km/h
    * 
-   * @param criticalSpeed
+   * @param criticalSpeedKmH
    */
-  double setCriticalSpeed(double criticalSpeed);
+  double setCriticalSpeedKmH(double criticalSpeedKmH);
 
   /**
    * Clone this instance
