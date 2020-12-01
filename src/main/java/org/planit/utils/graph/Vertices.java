@@ -43,14 +43,6 @@ public interface Vertices<V extends Vertex> extends Iterable<V> {
   public V registerNew();
 
   /**
-   * Create and register new entity
-   *
-   * @param externalId the externalId of the entity
-   * @return new entity created
-   */
-  public V registerNew(Object externalId);
-
-  /**
    * Return number of registered entity
    *
    * @return number of registered entity

@@ -15,7 +15,6 @@ public interface Modes extends Iterable<Mode> {
   /**
    * Create and register new mode
    *
-   * @param externalModeId the external mode id for the mode
    * @param name           of the mode
    * @param maxSpeed       maximum speed of the mode
    * @param pcu           value for the mode
@@ -23,8 +22,7 @@ public interface Modes extends Iterable<Mode> {
    * @param usabilityFeatures the usability features of this custom mode
    * @return new mode created
    */
-  public Mode registerNewCustomMode(
-      final Object externalModeId, final String name, final double maxSpeed, double pcu, PhysicalModeFeatures physicalFeatures, UsabilityModeFeatures usabilityFeatures);
+  public Mode registerNewCustomMode(final String name, final double maxSpeed, double pcu, PhysicalModeFeatures physicalFeatures, UsabilityModeFeatures usabilityFeatures);
   
   /**
    * Create and register a new predefined mode. When it already exists, the existing entry is returned
@@ -75,24 +73,13 @@ public interface Modes extends Iterable<Mode> {
   /**
    * Retrieve a Mode by its external Id
    * 
-   * This method has the option to convert the external Id parameter into a long value, to find the mode when mode objects use long values for external ids.
-   * 
-   * @param externalId    the external Id of the specified mode
-   * @param convertToLong if true, the external Id is converted into a long before beginning the search
-   * @return the retrieved mode, or null if no mode was found
-   */
-  public Mode getByExternalId(Object externalId, boolean convertToLong);
-
-  /**
-   * Retrieve a Mode by its external Id
-   * 
    * This method is not efficient, since it loops through all the registered modes in order to find the required time period. The equivalent method in InputBuilderListener is
    * more efficient and should be used in preference to this in Java code.
    * 
    * @param externalId the external Id of the specified mode
    * @return the retrieved mode, or null if no mode was found
    */
-  public Mode getByExternalId(Object externalId);
+  public Mode getByExternalId(String externalId);
   
   /**
    * Provide all modes as a set. This collection is a copy so any changes have no impact on the internally registered modes

@@ -23,7 +23,7 @@ public interface Mode extends Comparable<Mode>, ExternalIdable {
   /**
    * If no mode is defined the default mode is assumed to have an external idf of 1 
    */
-  public static final long DEFAULT_EXTERNAL_ID = 1;  
+  public static final long DEFAULT_XML_ID = 1;  
 
   /**
    * Passenger car unit conversion factor for this mode

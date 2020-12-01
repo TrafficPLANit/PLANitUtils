@@ -82,5 +82,24 @@ public interface DirectedVertex extends Vertex {
     }
     return false;
   }
+  
+  /** collect the first edge segment corresponding to the provided other vertex
+   * @param <LS>
+   * @param otherVertex to use
+   * @return first edge segment matching this signature
+   */  
+  default EdgeSegment getEdgeSegment(DirectedVertex otherVertex) {
+    for(EdgeSegment edgeSegment : getExitEdgeSegments()) {
+      if(edgeSegment.getDownstreamVertex().equals(otherVertex)) {
+        return edgeSegment;
+      }
+    }
+    for(EdgeSegment edgeSegment : getEntryEdgeSegments()) {
+      if(edgeSegment.getUpstreamVertex().equals(otherVertex)) {
+        return edgeSegment;
+      }
+    }
+    return null;
+  }
 
 }

@@ -19,13 +19,12 @@ public interface MacroscopicLinkSegmentTypes extends Iterable<MacroscopicLinkSeg
    * @param name                   name of the link segment type
    * @param capacityPcuPerHour     capacity of the link segment type
    * @param maximumDensityPcuPerKm maximum density of the link segment type
-   * @param linkSegmentExternalId  the external reference number of this link type
    * @param modeProperties         mode properties of the link segment type
    * @return the link segment type
    * @throws PlanItException thrown if there is an error
    */
   public MacroscopicLinkSegmentType createAndRegisterNew(final String name, final double capacityPcuPerHour, final double maximumDensityPcuPerKm,
-      final Object linkSegmentExternalId, final Map<Mode, MacroscopicModeProperties> modeProperties) throws PlanItException;
+      final Map<Mode, MacroscopicModeProperties> modeProperties) throws PlanItException;
   
   /**
    * Create and register new macroscopic link segment type on network. No mode properties will be set (null)
@@ -33,12 +32,10 @@ public interface MacroscopicLinkSegmentTypes extends Iterable<MacroscopicLinkSeg
    * @param name                   name of the link segment type
    * @param capacityPcuPerHour     capacity of the link segment type
    * @param maximumDensityPcuPerKm maximum density of the link segment type
-   * @param linkSegmentExternalId  the external reference number of this link type
    * @return the link segment type
    * @throws PlanItException thrown if there is an error
    */
-  public MacroscopicLinkSegmentType createAndRegisterNew(final String name, final double capacityPcuPerHour, final double maximumDensityPcuPerKm,
-      final Object linkSegmentExternalId) throws PlanItException;
+  public MacroscopicLinkSegmentType createAndRegisterNew(final String name, final double capacityPcuPerHour, final double maximumDensityPcuPerKm) throws PlanItException;
   
   /**
    * Register a link segment type

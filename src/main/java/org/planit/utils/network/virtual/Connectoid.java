@@ -39,25 +39,4 @@ public interface Connectoid extends DirectedEdge {
    */
   long getConnectoidId();
 
-  /**
-   * Collect the external id of this connectoid
-   * 
-   * @return external id
-   */
-  Object getExternalId();
-
-  /**
-   * set the external id of this connectoid
-   * 
-   * @param externalId the external id to set
-   */
-  void setExternalId(Object externalId);
-
-  /**
-   * Returns true if this connectoid has its external Id set, false otherwise
-   * 
-   * @return true if this connectoid has its external Id set, false otherwise
-   */
-  boolean hasExternalId();
-
 }
