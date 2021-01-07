@@ -21,7 +21,7 @@ public interface Mode extends Comparable<Mode>, ExternalIdable {
   double GLOBAL_DEFAULT_PCU = 1;    
   
   /**
-   * If no mode is defined the default mode is assumed to have an external idf of 1 
+   * If no mode is defined the default mode is assumed to have an XML id of 1 
    */
   public static final String DEFAULT_XML_ID = "1";  
 

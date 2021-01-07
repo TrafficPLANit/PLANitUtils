@@ -25,6 +25,11 @@ public interface MacroscopicLinkSegmentType extends Comparable<MacroscopicLinkSe
    * Default capacity per lane (pcu/h)
    */
   double DEFAULT_MAX_DENSITY_LANE = 180.0;  
+  
+  /**
+   * If no macroscopic link segment type is defined the default takes on an XML id of 1 
+   */
+  public static final String DEFAULT_XML_ID = "1";    
 
   /**
    * Return the name of this macroscopic link segment type
