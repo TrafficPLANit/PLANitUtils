@@ -65,9 +65,16 @@ public interface MacroscopicLinkSegmentTypes extends Iterable<MacroscopicLinkSeg
    * 
    * @param id the id of the MacroscopicLinkSegmentType
    * @return the specified MacroscopicLinkSegmentType instance
-   * 
    */
   public MacroscopicLinkSegmentType get(long id);
+  
+  /**
+   * Return a MacroscopicLinkSegmentType by its Xml id
+   * 
+   * @param Xmlid the XML id of the MacroscopicLinkSegmentType
+   * @return the specified MacroscopicLinkSegmentType instance
+   */
+  public MacroscopicLinkSegmentType getByXmlId(String xmlId);  
        
   /**
    * Provide all link segment types as a set. This collection is a copy so any changes have no impact on the internally registered modes

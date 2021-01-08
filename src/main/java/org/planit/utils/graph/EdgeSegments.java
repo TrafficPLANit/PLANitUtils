@@ -1,6 +1,7 @@
 package org.planit.utils.graph;
 
 import org.planit.utils.exceptions.PlanItException;
+import org.planit.utils.network.physical.macroscopic.MacroscopicLinkSegmentType;
 
 /**
  * Container and factory class for edge segments in a graph, also to be used to create and register edge segments of any
@@ -62,6 +63,14 @@ public interface EdgeSegments<ES extends EdgeSegment> extends Iterable<ES> {
    * @return retrieved edge Segment
    */
   public ES get(final long id);
+  
+  /**
+   * Return an edge segment by its Xml id
+   * 
+   * @param xmlid the XML id of the edge segment
+   * @return the specified edge segment instance
+   */
+  public ES getByXmlId(String xmlId);    
 
   /**
    * Return number of registered edge segments

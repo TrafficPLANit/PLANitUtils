@@ -71,15 +71,12 @@ public interface Modes extends Iterable<Mode> {
   public Mode getFirst();
 
   /**
-   * Retrieve a Mode by its external Id
-   * 
-   * This method is not efficient, since it loops through all the registered modes in order to find the required time period. The equivalent method in InputBuilderListener is
-   * more efficient and should be used in preference to this in Java code.
-   * 
-   * @param externalId the external Id of the specified mode
+   * Retrieve a Mode by its XML Id
+   *  
+   * @param xmlId the XML Id of the specified mode
    * @return the retrieved mode, or null if no mode was found
    */
-  public Mode getByExternalId(String externalId);
+  public Mode getByXmlId(String xmlId);
   
   /**
    * Provide all modes as a set. This collection is a copy so any changes have no impact on the internally registered modes
