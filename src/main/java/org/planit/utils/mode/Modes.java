@@ -83,4 +83,14 @@ public interface Modes extends Iterable<Mode> {
    * @return all registered modes
    */
   public Set<Mode> setOf();
+
+  /**
+   * Verify if mode is present
+   * 
+   * @param mode to verify for
+   * @return true when present, false otherwise (including when passed in mode is null)
+   */
+  public default boolean contains(Mode mode) {
+    return mode!= null ? get(mode.getId())!=null : false;
+  }
 }

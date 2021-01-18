@@ -8,7 +8,10 @@ import java.text.DecimalFormat;
  */
 public class Precision {
   
+  /** the default Epsilon unless indicated otherwise */
   public static final double EPSILON_6 = 0.000001;
+  
+  public static final double EPSILON_3 = 0.001;
   
   /** default decimal format used applies a maximum of 8 decimals and a minimum of 2 */
   public static final DecimalFormat DEFAULT_DECIMAL_FORMAT;

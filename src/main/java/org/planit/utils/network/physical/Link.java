@@ -89,6 +89,13 @@ public interface Link extends DirectedEdge {
    */
   default boolean hasLinkSegmentBa() {
     return hasEdgeSegmentBa();
-  }   
+  }
+
+  /** verify if name is present on link
+   * @return true when present, false otherwise
+   */
+  default boolean hasName() {
+    return getName()!=null && !getName().isBlank();
+  }
   
 }

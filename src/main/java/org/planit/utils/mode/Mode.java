@@ -91,6 +91,13 @@ public interface Mode extends Comparable<Mode>, ExternalIdable {
     return PredefinedModeType.CUSTOM;
   }
 
+  /** Verify if mode has a name
+   * @return true when present, false otherwise
+   */
+  default boolean hasName() {
+    return getName()!=null && !getName().isBlank();
+  }
+
 
 
 }
