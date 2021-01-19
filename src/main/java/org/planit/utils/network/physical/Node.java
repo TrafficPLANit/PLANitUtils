@@ -6,7 +6,6 @@ import java.util.Set;
 import org.planit.utils.graph.DirectedVertex;
 import org.planit.utils.graph.Edge;
 import org.planit.utils.graph.EdgeSegment;
-import org.planit.utils.network.physical.macroscopic.MacroscopicLinkSegment;
 
 /**
  * Node is a vertex but not all vertices are nodes.
@@ -81,6 +80,7 @@ public interface Node extends DirectedVertex {
    * @param endNode to use
    * @return first edge segment matching this signature
    */
+  @SuppressWarnings("unchecked")
   default <LS extends EdgeSegment> LS getLinkSegment(Node endNode) {
     return (LS) getEdgeSegment(endNode);
   }

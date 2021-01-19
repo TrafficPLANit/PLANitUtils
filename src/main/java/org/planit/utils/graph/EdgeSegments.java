@@ -1,7 +1,6 @@
 package org.planit.utils.graph;
 
 import org.planit.utils.exceptions.PlanItException;
-import org.planit.utils.network.physical.macroscopic.MacroscopicLinkSegmentType;
 
 /**
  * Container and factory class for edge segments in a graph, also to be used to create and register edge segments of any

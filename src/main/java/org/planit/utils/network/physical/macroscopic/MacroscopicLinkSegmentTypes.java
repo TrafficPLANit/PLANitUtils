@@ -82,4 +82,9 @@ public interface MacroscopicLinkSegmentTypes extends Iterable<MacroscopicLinkSeg
    */
   public Set<MacroscopicLinkSegmentType> setOf();
 
+  /** collect the first entry that would be returned by the iterator
+   * @return first entry
+   */
+  public MacroscopicLinkSegmentType getFirst();
+
 }
