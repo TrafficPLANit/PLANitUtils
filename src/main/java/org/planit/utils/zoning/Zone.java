@@ -1,5 +1,6 @@
-package org.planit.utils.network.virtual;
+package org.planit.utils.zoning;
 
+import org.locationtech.jts.geom.Polygon;
 import org.planit.utils.id.ExternalIdable;
 
 /**
@@ -17,5 +18,17 @@ public interface Zone extends ExternalIdable {
    * @return centroid of this zone
    */
   Centroid getCentroid();
+  
+  /** set the geometry (outer border) of this zone
+   * 
+   * @param geometry of the zone
+   */
+  void setGeometry(Polygon geometry);  
+  
+  /** Collect the geometry (outer border) of this zone
+   * 
+   * @return geometry of the zone
+   */
+  Polygon getGeometry();
 
 }

@@ -1,4 +1,4 @@
-package org.planit.utils.network.virtual;
+package org.planit.utils.zoning;
 
 import org.planit.utils.graph.DirectedVertex;
 

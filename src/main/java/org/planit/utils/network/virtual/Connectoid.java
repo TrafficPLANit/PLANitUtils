@@ -1,7 +1,8 @@
 package org.planit.utils.network.virtual;
 
-import org.planit.utils.exceptions.PlanItException;
-import org.planit.utils.graph.DirectedEdge;
+import org.planit.utils.id.ExternalIdable;
+import org.planit.utils.network.physical.Node;
+import org.planit.utils.zoning.Zone;
 
 /**
  * the connecting component between centroid and a first physical node in the network.
@@ -10,33 +11,28 @@ import org.planit.utils.graph.DirectedEdge;
  * @author markr
  *
  */
-public interface Connectoid extends DirectedEdge {
+public interface Connectoid extends ExternalIdable{
 
   /**
    * Default connectoid length in km
    */
   double DEFAULT_LENGTH_KM = 0.0;
-
-  /**
-   * Register connectoidSegment.
+  
+  /** Collect the zone this connectoid provides access to
    * 
-   * If there already exists a connectoidSegment for that direction it is replaced
-   * and returned
-   * 
-   * @param connectoidSegment connectoid segment to be registered
-   * @param directionAB direction of travel
-   * @return replaced ConnectoidSegment
-   * @throws PlanItException thrown if there is an error
+   * @return zone 
    */
-  ConnectoidSegment registerConnectoidSegment(ConnectoidSegment connectoidSegment, boolean directionAB)
-      throws PlanItException;
-
-  /**
+  Zone getParentZone();
+  
+  /** Collect the physical node this connectoid proposes to create an acess point for its zone
    * 
-   * Return the unique id of this connectoid
-   * 
-   * @return id of this connectoid
+   * @return access node
    */
-  long getConnectoidId();
+  Node getAccessNode();  
+  
+  /** length can be used to virtually assign a length to the connectoid
+   * @return length
+   */
+  double getLength();
 
 }
