@@ -1,8 +1,8 @@
 package org.planit.utils.zoning;
 
 import org.planit.utils.exceptions.PlanItException;
+import org.planit.utils.graph.EdgeSegment;
 import org.planit.utils.network.physical.Node;
-import org.planit.utils.network.virtual.Connectoid;
 
 /**
  * container to register and manager connectoids that define the points of access for
@@ -26,19 +26,50 @@ public interface Connectoids extends Iterable<Connectoid>{
     /**
      * Create new connectoid for a zone and physical access node
      * 
-     * @param parentZone of the connectoid
      * @param accessNode node providing access to network layer
+     * @param accessZone of the connectoid 
      * @param length     length of connectoid
      */
-    public Connectoid registerNew(Zone parentzone, Node accessNode, double length) throws PlanItException;
+    public UndirectedConnectoid registerNew(Node accessNode, Zone accessZone, double length) throws PlanItException;       
     
     /**
      * Create new connectoid for a zone and physical access node
      * 
+     * @param accessNode node providing access to network layer
      * @param parentZone of the connectoid
+     */
+    public UndirectedConnectoid registerNew(Node accessNode, Zone parentZone) throws PlanItException;
+    
+    /**
+     * Create new connectoid for a physical access node and leave the connections for access zones for later
+     * 
      * @param accessNode node providing access to network layer
      */
-    public Connectoid registerNew(Zone parentzone, Node accessNode) throws PlanItException;    
+    public UndirectedConnectoid registerNew(Node accessNode) throws PlanItException;    
+    
+    /**
+     * Create new connectoid for a zone and physical access node
+     * 
+     * @param accessEdgeSegment edge segment providing access to network layer
+     * @param accessZone of the connectoid 
+     * @param length     length of connectoid
+     */
+    public DirectedConnectoid registerNew(EdgeSegment accessEdgeSegment, Zone accessZone, double length) throws PlanItException;       
+    
+    /**
+     * Create new connectoid for a zone and physical access edge segment
+     * 
+     * @param accessEdgeSegment edge segment providing access to network layer
+     * @param parentZone of the connectoid
+     */
+    public DirectedConnectoid registerNew(EdgeSegment accessEdgeSegment, Zone parentZone) throws PlanItException;
+    
+    /**
+     * Create new connectoid for a physical access node and leave the connections for access zones for later
+     * 
+     * @param accessEdgeSegment edge segment providing access to network layer
+     */
+    public DirectedConnectoid registerNew(EdgeSegment accessEdgeSegment) throws PlanItException;       
 
     /**
      * Get connectoid by id
