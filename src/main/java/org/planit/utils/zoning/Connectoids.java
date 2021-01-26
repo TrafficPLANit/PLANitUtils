@@ -1,7 +1,7 @@
 package org.planit.utils.zoning;
 
 import org.planit.utils.exceptions.PlanItException;
-import org.planit.utils.graph.EdgeSegment;
+import org.planit.utils.network.physical.LinkSegment;
 import org.planit.utils.network.physical.Node;
 
 /**
@@ -50,26 +50,26 @@ public interface Connectoids extends Iterable<Connectoid>{
     /**
      * Create new connectoid for a zone and physical access node
      * 
-     * @param accessEdgeSegment edge segment providing access to network layer
+     * @param accessLinkSegment link segment providing access to network layer
      * @param accessZone of the connectoid 
      * @param length     length of connectoid
      */
-    public DirectedConnectoid registerNew(EdgeSegment accessEdgeSegment, Zone accessZone, double length) throws PlanItException;       
+    public DirectedConnectoid registerNew(LinkSegment accessLinkSegment, Zone accessZone, double length) throws PlanItException;       
     
     /**
      * Create new connectoid for a zone and physical access edge segment
      * 
-     * @param accessEdgeSegment edge segment providing access to network layer
+     * @param accessLinkSegment link segment providing access to network layer
      * @param parentZone of the connectoid
      */
-    public DirectedConnectoid registerNew(EdgeSegment accessEdgeSegment, Zone parentZone) throws PlanItException;
+    public DirectedConnectoid registerNew(LinkSegment accessLinkSegment, Zone parentZone) throws PlanItException;
     
     /**
      * Create new connectoid for a physical access node and leave the connections for access zones for later
      * 
-     * @param accessEdgeSegment edge segment providing access to network layer
+     * @param accessLinkSegment link segment providing access to network layer
      */
-    public DirectedConnectoid registerNew(EdgeSegment accessEdgeSegment) throws PlanItException;       
+    public DirectedConnectoid registerNew(LinkSegment accessLinkSegment) throws PlanItException;       
 
     /**
      * Get connectoid by id

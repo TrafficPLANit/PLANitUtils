@@ -49,20 +49,20 @@ public interface Modes extends Iterable<Mode> {
    */
   public Mode get(long id);
   
+  /** get predefined mode if it is registered 
+   * 
+   * @param modeType to collect
+   * @return predefined mode when available, null otherwise
+   */
+  public PredefinedMode get(PredefinedModeType modeType);  
+  
   /** verify if predefined mode is registered 
    * 
    * @param modeType to verify
    * @return true when available, false otherwise
    */
   public boolean containsPredefinedMode(PredefinedModeType modeType);
-  
-  /** get predefined mode if it is registered 
-   * 
-   * @param modeType to collect
-   * @return predefined mode when available, null otherwise
-   */
-  public PredefinedMode getPredefinedMode(PredefinedModeType modeType);
-    
+      
   /**
    * Collect the first registered mode
    * 
@@ -93,4 +93,5 @@ public interface Modes extends Iterable<Mode> {
   public default boolean contains(Mode mode) {
     return mode!= null ? get(mode.getId())!=null : false;
   }
+
 }
