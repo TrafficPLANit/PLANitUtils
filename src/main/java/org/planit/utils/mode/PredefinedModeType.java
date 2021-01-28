@@ -84,10 +84,19 @@ public enum PredefinedModeType {
    * @return predefined mode types minus excluded types
    */
   public static EnumSet<PredefinedModeType> getPredefinedModeTypes(PredefinedModeType... excludedModeTypes) {
-    EnumSet<PredefinedModeType> allPredefinedModeTypes = EnumSet.allOf(PredefinedModeType.class);
+    EnumSet<PredefinedModeType> allPredefinedModeTypes = getPredefinedModeTypes();
     for(int index=0; index< excludedModeTypes.length; ++index) {
       allPredefinedModeTypes.remove(excludedModeTypes[index]);
     }
     return allPredefinedModeTypes;
   }
+  
+  /** collect all predefined mode types
+   * 
+   * @return predefined mode types
+   */
+  public static EnumSet<PredefinedModeType> getPredefinedModeTypes() {
+    EnumSet<PredefinedModeType> allPredefinedModeTypes = EnumSet.allOf(PredefinedModeType.class);
+    return allPredefinedModeTypes;
+  }  
 }
