@@ -8,7 +8,7 @@ import org.planit.utils.id.ExternalIdable;
  * @author markr
  *
  */
-public interface Mode extends Comparable<Mode>, ExternalIdable {
+public interface Mode extends ExternalIdable {
   
   /**
    * Default max speed in km/h
@@ -97,7 +97,5 @@ public interface Mode extends Comparable<Mode>, ExternalIdable {
   default boolean hasName() {
     return getName()!=null && !getName().isBlank();
   }
-
-
 
 }

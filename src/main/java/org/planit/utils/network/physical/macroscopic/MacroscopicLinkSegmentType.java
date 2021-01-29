@@ -14,7 +14,7 @@ import org.planit.utils.mode.Mode;
  * @author markr
  *
  */
-public interface MacroscopicLinkSegmentType extends Comparable<MacroscopicLinkSegmentType>, Cloneable, ExternalIdable {
+public interface MacroscopicLinkSegmentType extends Cloneable, ExternalIdable {
 
   /**
    * Default capacity per lane (pcu/h)

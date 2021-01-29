@@ -16,7 +16,7 @@ import org.planit.utils.id.ExternalIdable;
  * @author markr
  *
  */
-public interface Edge extends Comparable<Edge>, Serializable, ExternalIdable {
+public interface Edge extends Serializable, ExternalIdable {
     
   /**
    * Collect the geometry of this line

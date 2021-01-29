@@ -17,7 +17,7 @@ import org.planit.utils.id.ExternalIdable;
  * @author markr
  *
  */
-public interface Vertex extends Comparable<Vertex>, Serializable, ExternalIdable {
+public interface Vertex extends Serializable, ExternalIdable {
   
   /**
    * Add a property from the original input that is not part of the readily available members

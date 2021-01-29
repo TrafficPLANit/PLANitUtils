@@ -13,7 +13,7 @@ import org.planit.utils.id.ExternalIdable;
  * @author markr
  *
  */
-public interface EdgeSegment extends Comparable<EdgeSegment>, Serializable, ExternalIdable {
+public interface EdgeSegment extends Serializable, ExternalIdable {
  
   /**
    * Remove the vertex from the edge segment if it is either the up or downstream vertex

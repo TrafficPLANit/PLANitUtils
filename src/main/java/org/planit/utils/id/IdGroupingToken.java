@@ -38,6 +38,22 @@ public final class IdGroupingToken {
     String uuid = UUID.randomUUID().toString();
     this.token = description+":"+uuid;
   }
+  
+  /**
+   * {@inheritDoc}
+   */  
+  @Override
+  public int hashCode() {
+    return token.hashCode();
+  }
+
+  /**
+   * {@inheritDoc}
+   */  
+  @Override
+  public boolean equals(Object obj) {
+    return token.equals(obj);
+  }  
    
   /**
    * collect the string token
