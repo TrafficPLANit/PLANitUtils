@@ -29,7 +29,7 @@ public interface MacroscopicLinkSegmentType extends Cloneable, ExternalIdable {
   /**
    * If no macroscopic link segment type is defined the default takes on an XML id of 1 
    */
-  public static final String DEFAULT_XML_ID = "1";    
+  static final String DEFAULT_XML_ID = "1";   
 
   /**
    * Return the name of this macroscopic link segment type
