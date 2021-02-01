@@ -36,10 +36,18 @@ public interface Graph<V extends Vertex, E extends Edge> {
   
   /**
    * validate the graph, issues will be logged
+   * 
+   * @return true when valid, false otherwise
    */
-  default void validate() {
-    getEdges().forEach( edge -> edge.validate());
-    getVertices().forEach( vertex -> vertex.validate());
+  default boolean validate() {
+    boolean isValid = true;
+    for(Edge edge : getEdges()) {
+      isValid = isValid && edge.validate();
+    }
+    for(Vertex vertex : getVertices()) {
+      isValid = isValid && vertex.validate();
+    }
+    return isValid;
   }
   
   /** transform all geometries of the nodes and edges using the same transformer, can be used to transform from

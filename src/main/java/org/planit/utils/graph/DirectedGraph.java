@@ -21,9 +21,12 @@ public interface DirectedGraph<V extends DirectedVertex, E extends DirectedEdge,
    * {@inheritDoc}
    */
   @Override
-  default void validate() {
-    Graph.super.validate();
-    getEdgeSegments().forEach( edgeSegment -> edgeSegment.validate());
+  default boolean validate() {
+    boolean isValid = Graph.super.validate();
+    for(EdgeSegment edgeSegment : getEdgeSegments()) {
+      isValid = isValid && edgeSegment.validate();
+    }
+    return isValid;
   }
   
   /** transform all geometries of the vertices, edges, and edge segments using the same transformer, can be used to transform from
