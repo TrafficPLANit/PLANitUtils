@@ -21,6 +21,7 @@ public class Precision {
     DEFAULT_DECIMAL_FORMAT = (DecimalFormat) DecimalFormat.getInstance();
     DEFAULT_DECIMAL_FORMAT.setMaximumFractionDigits(8);
     DEFAULT_DECIMAL_FORMAT.setMinimumFractionDigits(2);
+    DEFAULT_DECIMAL_FORMAT.setGroupingUsed(false);
   }  
   
   /** Compare using a custom precision epsilon
