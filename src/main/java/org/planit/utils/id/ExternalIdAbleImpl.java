@@ -15,7 +15,8 @@ public class ExternalIdAbleImpl implements ExternalIdable{
   private String externalId;
   
   /** constructor 
-   * @param impl
+   * 
+   * @param id to use
    */
   public ExternalIdAbleImpl(long id) {
     setId(id);
@@ -24,18 +25,19 @@ public class ExternalIdAbleImpl implements ExternalIdable{
   }  
   
   /** Copy constructor
-   * @param impl
+   * 
+   * @param other to copy from
    */
-  public ExternalIdAbleImpl(ExternalIdAbleImpl impl) {
-    setId(impl.getId());
-    setXmlId(impl.getXmlId());
-    setExternalId(impl.getExternalId());
+  public ExternalIdAbleImpl(ExternalIdAbleImpl other) {
+    setId(other.getId());
+    setXmlId(other.getXmlId());
+    setExternalId(other.getExternalId());
   }
   
 
   /** set the id 
    * 
-   * @param id
+   * @param id to set
    */
   protected void setId(long id) {
    this.id = id;    

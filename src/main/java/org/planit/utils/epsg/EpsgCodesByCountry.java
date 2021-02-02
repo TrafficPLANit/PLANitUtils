@@ -28,7 +28,7 @@ public class EpsgCodesByCountry {
   /** Area of use: Netherlands, Rijks Driehoek Stelsel, EPSG:28992 */
   public static final String NETHERLANDS_RDS = "EPSG:31468";  
   
-  /** Area of use: world, EPSG:4326, accessible via countryname: "global" as pwe {@link CountryNames.GLOBAL} */
+  /** Area of use: world, EPSG:4326, accessible via countryname: "global" as CountryNames.GLOBAL */
   public static final String WORLD_WG84 = "EPSG:4326";
   
   /** mapping of country names to expected most commonly used EPSG code */

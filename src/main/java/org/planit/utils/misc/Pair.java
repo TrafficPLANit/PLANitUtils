@@ -8,10 +8,8 @@ import java.util.Objects;
  * 
  * @author markr
  *
- * @param <A>
- *          first object in pair
- * @param <B>
- *          second object in pair
+ * @param <A> first object in pair
+ * @param <B> second object in pair
  */
 public class Pair<A, B> {
 
@@ -28,10 +26,8 @@ public class Pair<A, B> {
   /**
    * Constructor
    * 
-   * @param first
-   *          first object in pair
-   * @param second
-   *          second object in pair
+   * @param first first object in pair
+   * @param second second object in pair
    */
   protected Pair(A first, B second) {
     super();
@@ -40,6 +36,10 @@ public class Pair<A, B> {
   }
   
   /** Factory method
+   * 
+   * @param <A> type of valueA
+   * @param <B> type of valueB
+   * 
    * @param valueA first
    * @param valueB second
    * @return new pair
@@ -50,6 +50,8 @@ public class Pair<A, B> {
 
   /**
    * @see java.lang.Object#hashCode()
+   * 
+   * @return hashCode for this entity
    */
   public int hashCode() {
     return Objects.hash(first, second);
@@ -59,8 +61,7 @@ public class Pair<A, B> {
    * Compare to another pair
    * 
    * @see java.lang.Object#equals(java.lang.Object)
-   * @param other
-   *          pair being compared to
+   * @param other pair being compared to
    */
   public boolean equals(Object other) {
     if (other instanceof Pair) {

@@ -254,7 +254,7 @@ public class UnitUtils {
    * @param to unit
    * @param value to convert
    * @return converted value
-   * @throws PlanItException 
+   * @throws PlanItException thrown if error
    */
   public static double convert(Units from, Units to, double value) throws PlanItException {
     switch (from) {

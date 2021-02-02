@@ -73,7 +73,7 @@ public interface EdgeSegment extends Serializable, ExternalIdable {
   /**
    * Replace one of the vertices of the edge segment
    * 
-   * @param vertextoReplace the vertex to replace
+   * @param vertexToReplace the vertex to replace
    * @param vertexToReplaceWith the vertex to replace with
    * @return true when replaced, false otherwise
    */  
@@ -110,6 +110,6 @@ public interface EdgeSegment extends Serializable, ExternalIdable {
    * 
    * @param parentEdge to set
    */
-  public void setParentEdge(DirectedEdge brokenEdge);
+  public void setParentEdge(DirectedEdge parentEdge);
 
 }

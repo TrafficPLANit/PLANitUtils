@@ -169,7 +169,7 @@ public class Configurator<T> {
   /** Collect the first parameter submitted with (last) registered delayed method call of given signature. If not available null is returned.
    * Useful to mimic getters for a given setter on configurator derived class.
    * 
-   * @param methodName
+   * @param methodName that reflects the delayed call
    * @return first parameter of delay method name call
    */
   public Object getFirstParameterOfDelayedMethodCall(String methodName) {

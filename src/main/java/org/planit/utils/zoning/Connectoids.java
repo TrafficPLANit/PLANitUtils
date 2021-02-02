@@ -29,6 +29,8 @@ public interface Connectoids extends Iterable<Connectoid>{
      * @param accessNode node providing access to network layer
      * @param accessZone of the connectoid 
      * @param length     length of connectoid
+     * @return registered connectoid
+     * @throws PlanItException thrown if error
      */
     public UndirectedConnectoid registerNew(Node accessNode, Zone accessZone, double length) throws PlanItException;       
     
@@ -37,6 +39,8 @@ public interface Connectoids extends Iterable<Connectoid>{
      * 
      * @param accessNode node providing access to network layer
      * @param parentZone of the connectoid
+     * @return registered connectoid
+     * @throws PlanItException thrown if error
      */
     public UndirectedConnectoid registerNew(Node accessNode, Zone parentZone) throws PlanItException;
     
@@ -44,6 +48,8 @@ public interface Connectoids extends Iterable<Connectoid>{
      * Create new connectoid for a physical access node and leave the connections for access zones for later
      * 
      * @param accessNode node providing access to network layer
+     * @return registered connectoid
+     * @throws PlanItException thrown if error
      */
     public UndirectedConnectoid registerNew(Node accessNode) throws PlanItException;    
     
@@ -53,6 +59,8 @@ public interface Connectoids extends Iterable<Connectoid>{
      * @param accessLinkSegment link segment providing access to network layer
      * @param accessZone of the connectoid 
      * @param length     length of connectoid
+     * @return registered connectoid
+     * @throws PlanItException thrown if error
      */
     public DirectedConnectoid registerNew(LinkSegment accessLinkSegment, Zone accessZone, double length) throws PlanItException;       
     
@@ -61,6 +69,8 @@ public interface Connectoids extends Iterable<Connectoid>{
      * 
      * @param accessLinkSegment link segment providing access to network layer
      * @param parentZone of the connectoid
+     * @return registered connectoid
+     * @throws PlanItException thrown if error
      */
     public DirectedConnectoid registerNew(LinkSegment accessLinkSegment, Zone parentZone) throws PlanItException;
     
@@ -68,6 +78,8 @@ public interface Connectoids extends Iterable<Connectoid>{
      * Create new connectoid for a physical access node and leave the connections for access zones for later
      * 
      * @param accessLinkSegment link segment providing access to network layer
+     * @return registered connectoid
+     * @throws PlanItException thrown if error
      */
     public DirectedConnectoid registerNew(LinkSegment accessLinkSegment) throws PlanItException;       
 

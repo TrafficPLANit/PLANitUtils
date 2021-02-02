@@ -101,6 +101,7 @@ public interface MacroscopicLinkSegmentType extends Cloneable, ExternalIdable {
   /**
    * Verify if mode is available on type
    * 
+   * @param mode to verify
    * @return available modes
    */
   boolean isModeAvailable(final Mode mode);   
@@ -113,23 +114,24 @@ public interface MacroscopicLinkSegmentType extends Cloneable, ExternalIdable {
   Set<Mode> getAvailableModes();
 
   /** Method which identifies which of the passed in modes is unavailable on the link segment
-   * @param mode
+   * 
+   * @param modes to verify
    * @return collection which is a subset of the passed in modes containing only the ones that are not available
    */
-  default Set<Mode> getUnAvailableModesFrom(Collection<Mode> includedModes){
-    return includedModes.stream().filter(mode -> !isModeAvailable(mode)).collect(Collectors.toSet());
+  default Set<Mode> getUnAvailableModesFrom(Collection<Mode> modes){
+    return modes.stream().filter(mode -> !isModeAvailable(mode)).collect(Collectors.toSet());
   }
   
   /** Method which identifies which of the passed in modes is unavailable on the link segment
-   * @param mode
+   * @param modes to verify
    * @return collection which is a subset of the passed in modes containing only the ones that are not available
    */
-  default Set<Mode> getAvailableModesFrom(Collection<Mode> includedModes){
-    return includedModes.stream().filter(mode -> isModeAvailable(mode)).collect(Collectors.toSet());
+  default Set<Mode> getAvailableModesFrom(Collection<Mode> modes){
+    return modes.stream().filter(mode -> isModeAvailable(mode)).collect(Collectors.toSet());
   }
   
   /** verify if the link segment type has any modes available
-   * @return true when at least one mode is aavailable
+   * @return true when at least one mode is available
    */
   default boolean hasAvailableModes() {
     return getAvailableModes()!=null && !getAvailableModes().isEmpty();

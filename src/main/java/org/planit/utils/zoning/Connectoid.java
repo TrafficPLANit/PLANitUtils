@@ -10,9 +10,10 @@ import org.planit.utils.mode.Mode;
  * the connecting component between zone(s) and the network.
  * Note that connectoids are not vertices, they merely refer to physical entities via derived interfaces 
  * and the physical network.
- * 
- * Each combintation of zone<-->connectoid can have additional properties such as length or allowed modes.
+ * <p>
+ * Each combintation of (zone,connectoid) can have additional properties such as length or allowed modes.
  * Not specifying thos will cause the use of defaults (DEFAULT_LENGTH_KM, all modes allowed) 
+ * </p>
  * 
  * @author markr
  *
@@ -60,21 +61,21 @@ public interface Connectoid extends ExternalIdable, Iterable<Zone> {
   
   /** add an access zone and provide length to this connectoid
    * 
-   * @param zone
+   * @param zone to set length for
    * @param length to traverse between connectoid and zone
    */
   void setLength(Zone zone, double length);
     
   /** add an allowed mode to the already 
    * 
-   * @param zone
-   * @param length to traverse between connectoid and zone
+   * @param zone to add allowed mode(s) to
+   * @param allowedModes to add
    */
-  void addAllowedMode(Zone zone, Mode... allowedMode);   
+  void addAllowedMode(Zone zone, Mode... allowedModes);   
   
   /** add an access zone with default properties
    * 
-   * @param zone
+   * @param zone to register as accessible
    * @return overwritten zone if any
    */
   Zone addAccessZone(Zone zone);
@@ -99,14 +100,15 @@ public interface Connectoid extends ExternalIdable, Iterable<Zone> {
   
   /** length can be used to virtually assign a length to the connectoid/zone combination
    * 
-   * @param accessZone
+   * @param accessZone to collect length for
    * @return length (null if zone is not registered)
+   * @throws PlanItException thrown if error
    */
   Double getLength(Zone accessZone) throws PlanItException;
   
   /** Verify if a mode is allowed access to the zone via this connectoid
    * 
-   * @param accessZone
+   * @param accessZone to verify
    * @param mode to verify if allowed
    * @return true when allowed, false otherwise
    * @throws PlanItException thrown if provided zone is not valid

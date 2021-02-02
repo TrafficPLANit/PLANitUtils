@@ -42,7 +42,7 @@ public interface Node extends DirectedVertex {
    * It is expected that nodes are used in conjunction with links. If so, this method will cast the edges of the node to a links collection
    * for readability when collecting a node's edges
    * 
-   * @param <L>
+   * @param <L> link type
    * @return edges cast as collection of links
    */
   @SuppressWarnings("unchecked")
@@ -54,7 +54,7 @@ public interface Node extends DirectedVertex {
    * It is expected that nodes are used in conjunction with link segments. If so, this method will cast the edge segments of the node to link segments
    * for readability when collecting node's edge segments
    * 
-   * @param <LS>
+   * @param <LS> edge segment type
    * @return edgeSegments as collection of linkSegments
    */
   @SuppressWarnings("unchecked")  
@@ -66,7 +66,7 @@ public interface Node extends DirectedVertex {
    * It is expected that nodes are used in conjunction with link segments. If so, this method will cast the edge segments of the node to link segments
    * for readability when collecting node's edge segments
    * 
-   * @param <LS>
+   * @param <LS> edge segment type
    * @return edgeSegments as collection of linkSegments
    */
   @SuppressWarnings("unchecked")  
@@ -76,7 +76,7 @@ public interface Node extends DirectedVertex {
 
 
   /** collect the first edge segment corresponding to the provided end node
-   * @param <LS>
+   * @param <LS> edge segment type
    * @param endNode to use
    * @return first edge segment matching this signature
    */

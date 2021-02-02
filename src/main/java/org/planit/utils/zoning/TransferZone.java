@@ -9,9 +9,10 @@ package org.planit.utils.zoning;
  */
 public interface TransferZone extends Zone {
 
-  /** In addition to a zone id across all zones of any derived type, each Od zone also has a unique id
-   * across the Od zones specifically
-   * @return
+  /** In addition to a zone id across all zones of any derived type, each transfer zone also has a unique id
+   * across the transfer zones specifically
+   * 
+   * @return transfer zone specific id
    */
   public long getTransferZoneId();
 

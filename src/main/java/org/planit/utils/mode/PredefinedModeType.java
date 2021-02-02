@@ -80,7 +80,7 @@ public enum PredefinedModeType {
   
   /** collect all predefined mode types
    * 
-   * @param excludedModeType option to exclude predefined custom modes from the result
+   * @param excludedModeTypes option to exclude predefined custom modes from the result
    * @return predefined mode types minus excluded types
    */
   public static EnumSet<PredefinedModeType> getPredefinedModeTypes(PredefinedModeType... excludedModeTypes) {

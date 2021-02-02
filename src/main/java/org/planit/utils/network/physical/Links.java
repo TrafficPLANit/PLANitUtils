@@ -7,7 +7,7 @@ import org.planit.utils.graph.Edges;
  * 
  * @author markr
  *
- * @param <L>
+ * @param <L> link type
  */
 public interface Links<L extends Link> extends Edges<L> {
   

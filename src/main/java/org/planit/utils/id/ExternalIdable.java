@@ -42,12 +42,13 @@ public interface ExternalIdable extends Idable {
   /**
    * set the external id
    * 
-   * @param externalId to set
+   * @param xmlId to set
    */
   public void setXmlId(final String xmlId);
   
   /** check if external id is available or not
-   * @return true when nont null, false otherwise
+   * 
+   * @return true when not null, false otherwise
    */
   default boolean hasXmlId() {
     return getXmlId() != null;

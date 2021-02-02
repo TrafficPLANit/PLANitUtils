@@ -7,7 +7,7 @@ import org.planit.utils.graph.Vertices;
  * 
  * @author markr
  *
- * @param <N>
+ * @param <N> node type
  */
 public interface Nodes<N extends Node> extends Vertices<N>, Iterable<N> {
 

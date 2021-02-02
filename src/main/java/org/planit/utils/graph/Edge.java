@@ -26,7 +26,7 @@ public interface Edge extends Serializable, ExternalIdable {
   
   /**
    * set the geometry of this link as a line string
-   * @param lineString
+   * @param lineString to set
    */
   void setGeometry(LineString lineString);
   
@@ -39,8 +39,8 @@ public interface Edge extends Serializable, ExternalIdable {
     return getGeometry()!=null;
   }
   
-  /** verify if the geometry is in the A->B direction of the link 
-   * @return true if in A->B direction, false otherwise
+  /** verify if the geometry is in the A to B direction of the link 
+   * @return true if in A to B direction, false otherwise
    */
   default boolean isGeometryInAbDirection() {
     boolean isVertexAStartPoint = getGeometry().getStartPoint().equals(getVertexA().getPosition());
@@ -84,20 +84,21 @@ public interface Edge extends Serializable, ExternalIdable {
 
   /**
    * set the name of the edge
-   * @param name
+   * @param name to set
    */
   void setName(final String name);  
   
   /**
    * get the name of the edge
-   * return name
+   * 
+   * @return name
    */
   public String getName();
   
   /**
    * set length of this edge in km
    * 
-   * @param length of this edge in km
+   * @param lengthInKm of this edge in km
    */
   public void setLengthKm(double lengthInKm);  
   
@@ -112,18 +113,15 @@ public interface Edge extends Serializable, ExternalIdable {
    * Add a property from the original input that is not part of the readily
    * available link members
    * 
-   * @param key
-   *          key (name) of input property
-   * @param value
-   *          value of input property
+   * @param key (name) of input property
+   * @param value of input property
    */
   public void addInputProperty(final String key, final Object value);
 
   /**
    * Get input property by its key
    * 
-   * @param key
-   *          key of input property
+   * @param key of input property
    * @return value retrieved value of input property
    */
   public Object getInputProperty(String key);

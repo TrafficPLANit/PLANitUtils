@@ -22,7 +22,7 @@ public interface Link extends DirectedEdge {
   /** collect vertex A as something extending node which is to be expected for any link. Convenience method
    * for readability
    * 
-   * @param <N>
+   * @param <N> node type
    * @return nodeA
    */
   @SuppressWarnings("unchecked")
@@ -33,7 +33,7 @@ public interface Link extends DirectedEdge {
   /** collect vertex A as something extending node which is to be expected for any link. Convenience method
    * for readability
    * 
-   * @param <N>
+   * @param <N> node type
    * @return nodeA
    */
   @SuppressWarnings("unchecked")
@@ -44,7 +44,7 @@ public interface Link extends DirectedEdge {
   /** collect edgeSegment as something extending LinkSegment which is to be expected for any link. Convenience method
    * for readability
    * 
-   * @param <LS> 
+   * @param <LS> link segment type
    * @param directionAb the direction
    * @return link segment in given direction
    */
@@ -56,7 +56,7 @@ public interface Link extends DirectedEdge {
   /** collect edgeSegment Ab as something extending LinkSegment which is to be expected for any link. Convenience method
    * for readability
    * 
-   * @param <LS> 
+   * @param <LS> link segment type
    * @return link segment in given direction
    */
   default <LS extends LinkSegment> LS getLinkSegmentAb() {
@@ -65,7 +65,6 @@ public interface Link extends DirectedEdge {
   
   /** verify if linkSegment Ab is present
    * 
-   * @param <LS> 
    * @return true when link segment is present, false otherwise
    */
   default boolean hasLinkSegmentAb() {
@@ -75,7 +74,7 @@ public interface Link extends DirectedEdge {
   /** collect edgeSegment Ba as something extending LinkSegment which is to be expected for any link. Convenience method
    * for readability
    * 
-   * @param <LS> 
+   * @param <LS> link segment type
    * @return link segment in given direction
    */
   default <LS extends LinkSegment> LS getLinkSegmentBa() {
@@ -84,7 +83,6 @@ public interface Link extends DirectedEdge {
   
   /** verify if linkSegment Ba is present
    * 
-   * @param <LS> 
    * @return true when link segment is present, false otherwise
    */
   default boolean hasLinkSegmentBa() {

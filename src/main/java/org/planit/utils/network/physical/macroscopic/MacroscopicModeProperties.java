@@ -27,9 +27,9 @@ public interface MacroscopicModeProperties extends Cloneable {
   /**
    * set the maximum speed in km/h
    * 
-   * @param maxSpeedKmH
+   * @param maxSpeedKmH to set 
    */
-  double setMaximumSpeedKmH(double maxSpeedKmH);  
+  void setMaximumSpeedKmH(double maxSpeedKmH);  
 
   /**
    * Collect the critical speed in km/h
@@ -41,9 +41,9 @@ public interface MacroscopicModeProperties extends Cloneable {
   /**
    * set the critical speed in km/h
    * 
-   * @param criticalSpeedKmH
+   * @param criticalSpeedKmH to set
    */
-  double setCriticalSpeedKmH(double criticalSpeedKmH);
+  void setCriticalSpeedKmH(double criticalSpeedKmH);
 
   /**
    * Clone this instance

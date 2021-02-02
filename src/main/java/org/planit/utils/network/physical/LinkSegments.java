@@ -7,7 +7,7 @@ import org.planit.utils.graph.EdgeSegments;
  * 
  * @author markr
  *
- * @param <LS>
+ * @param <LS> link segment type
  */
 public interface LinkSegments<LS extends LinkSegment> extends EdgeSegments<LS> {
     

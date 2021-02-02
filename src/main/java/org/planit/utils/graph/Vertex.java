@@ -90,7 +90,7 @@ public interface Vertex extends Serializable, ExternalIdable {
   
   /**
    * Clone the vertex
-   * @return
+   * @return the cloned vertex
    */
   public Vertex clone();
 

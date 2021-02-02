@@ -84,7 +84,7 @@ public interface DirectedVertex extends Vertex {
   }
   
   /** collect the first edge segment corresponding to the provided other vertex
-   * @param <LS>
+   * 
    * @param otherVertex to use
    * @return first edge segment matching this signature
    */  

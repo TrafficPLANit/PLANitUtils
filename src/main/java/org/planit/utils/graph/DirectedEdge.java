@@ -41,6 +41,7 @@ public interface DirectedEdge extends Edge {
   /**
    * Edge segment in the direction indicated
    * 
+   * @param directionAb direction of segment
    * @return edge segment if present
    */
   default public EdgeSegment getEdgeSegment(boolean directionAb) {

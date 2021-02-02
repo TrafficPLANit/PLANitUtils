@@ -10,7 +10,8 @@ public interface OdZone extends Zone {
 
   /** In addition to a zone id across all zones of any derived type, each Od zone also has a unique id
    * across the Od zones specifically
-   * @return
+   * 
+   * @return od zone specific id
    */
   public long getOdZoneId();
 }

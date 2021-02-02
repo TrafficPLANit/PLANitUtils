@@ -10,13 +10,13 @@ public interface Vertices<V extends Vertex> extends Iterable<V> {
   
   /** Remove
    * 
-   * @param instance to remove
+   * @param entity to remove
    */
   public void remove(V entity);
   
   /** Remove by id
    * 
-   * @param vertexId to remove vertex for
+   * @param id to remove vertex for
    */  
   public void remove(long id);  
 

@@ -10,7 +10,7 @@ package org.planit.utils.zoning;
 /**
  * @author markr
  *
- * @param <Z>
+ * @param <Z> zone type
  */
 public interface Zones<Z extends Zone> extends Iterable<Z> {
     

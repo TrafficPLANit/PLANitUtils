@@ -20,7 +20,7 @@ public interface EdgeSegments<ES extends EdgeSegment> extends Iterable<ES> {
   /**
    * Remove an edge segment by id
    * 
-   * @param edgeSegment to remove by id
+   * @param edgeSegmentId to remove by id
    */  
   public void remove(long edgeSegmentId);  
 
@@ -47,13 +47,13 @@ public interface EdgeSegments<ES extends EdgeSegment> extends Iterable<ES> {
   /**
    * Create directional edge segment and register it
    *
-   * @param parentLink            the parent link of this link segment
+   * @param parentEdge            the parent edge of this edge segment
    * @param directionAb           direction of travel
-   * @param registerOnNodeAndLink option to register the new link segment on the underlying link and its nodes
-   * @return the created link segment
+   * @param registerOnVertexAndEdge option to register the new edge segment on the underlying edge and its vertices
+   * @return the created edge segment
    * @throws PlanItException thrown if there is an error
    */
-  public ES registerNew(final DirectedEdge parentEdge, final boolean directionAb, final boolean registerOnNodeAndLink) throws PlanItException;  
+  public ES registerNew(final DirectedEdge parentEdge, final boolean directionAb, final boolean registerOnVertexAndEdge) throws PlanItException;  
 
   /**
    * Get edge segment by id
@@ -66,7 +66,7 @@ public interface EdgeSegments<ES extends EdgeSegment> extends Iterable<ES> {
   /**
    * Return an edge segment by its Xml id
    * 
-   * @param xmlid the XML id of the edge segment
+   * @param xmlId the XML id of the edge segment
    * @return the specified edge segment instance
    */
   public ES getByXmlId(String xmlId);    

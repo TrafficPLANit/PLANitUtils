@@ -5,9 +5,9 @@ package org.planit.utils.graph;
  * 
  * @author markr
  *
- * @param <V>
- * @param <E>
- * @param <ES>
+ * @param <V> vertex type
+ * @param <E> edge type
+ * @param <ES> edge segment type
  */
 public interface DirectedSubGraph<V extends DirectedVertex, E extends DirectedEdge, ES extends EdgeSegment> {
   
@@ -30,7 +30,7 @@ public interface DirectedSubGraph<V extends DirectedVertex, E extends DirectedEd
   
   /** register an edge segment on the subgraph
    * 
-   * @param edgeSegment
+   * @param edgeSegment to add
    * @return true when successful, false otherwise (for example when the edge segment is not present on the parent graph)
    */
   public boolean addEdgeSegment(EdgeSegment edgeSegment);

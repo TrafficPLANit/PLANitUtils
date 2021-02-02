@@ -15,7 +15,6 @@ public class TypeConversionUtil {
   /** convert a string that can be interpreted as a long 
    * to a type that parses long via {@code .valueOf(long theLong)}
    * 
-   * @param <T>
    * @param longValue in string form
    * @return the parsed entry in type T
    */
@@ -26,7 +25,6 @@ public class TypeConversionUtil {
   /** convert a string that can be interpreted as a long 
    * to a type that parses long via {@code .valueOf(long theLong)}
    * 
-   * @param <T>
    * @param longValue in string form
    * @return the parsed entry in type T
    */
@@ -37,8 +35,7 @@ public class TypeConversionUtil {
   /** convert a string that can be interpreted as a double 
    * to a type that parses double via {@code .valueOf(double theDouble)}
    * 
-   * @param <T>
-   * @param doubleValue in string form
+   * @param theDouble in string form
    * @return the parsed entry in type T
    */
   public static BigDecimal doubleStringToBigDecimal(String theDouble) {

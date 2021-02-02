@@ -2,7 +2,6 @@ package org.planit.utils.network.physical.macroscopic;
 
 import java.util.Set;
 
-import org.planit.utils.exceptions.PlanItException;
 import org.planit.utils.mode.Mode;
 import org.planit.utils.network.physical.LinkSegment;
 
@@ -45,7 +44,6 @@ public interface MacroscopicLinkSegment extends LinkSegment {
    * 
    * @param mode mode of travel
    * @return freeFlowTravelTime for this mode
-   * @throws PlanItException thrown if error
    */
   double computeFreeFlowTravelTime(Mode mode);
   

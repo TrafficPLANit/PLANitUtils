@@ -19,6 +19,8 @@ public interface Idable extends Comparable<Idable> {
   /**
    * equals based on id
    * 
+   * @param o object to compare id to
+   * @return true when equal id, false otherwise
    * @see java.lang.Comparable#compareTo(java.lang.Object)
    */
   @SuppressWarnings("unused")
@@ -38,8 +40,9 @@ public interface Idable extends Comparable<Idable> {
   }
   
   /**
-   * Compare based on id
+   * Generate hash code based on id
    * 
+   * @return id based hash code
    * @see java.lang.Comparable#compareTo(java.lang.Object)
    */
   default int idHashCode() {
@@ -49,6 +52,8 @@ public interface Idable extends Comparable<Idable> {
   /**
    * Compare based on id
    * 
+   * @param o object to compare id to
+   * @return compare result identical to Long.compare
    * @see java.lang.Comparable#compareTo(java.lang.Object)
    */
   default int compareTo(Idable o) {

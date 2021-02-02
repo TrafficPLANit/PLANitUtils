@@ -80,12 +80,12 @@ public class ArrayUtils {
   
   /**
    * find the maximum of an array of doubles
-   * @param arr to check
+   * @param array to check
    * @return maximum value
    */
-  public static double getMaximum(double[] arr) {
+  public static double getMaximum(double[] array) {
     double max = Double.NEGATIVE_INFINITY;
-    for(double entry: arr) {
+    for(double entry: array) {
         max = Math.max(max, entry);
     }
     return max;
@@ -94,6 +94,7 @@ public class ArrayUtils {
   /**
    * Loop over array entries and apply consumer
    * 
+   * @param array to apply consumer to
    * @param consumer to apply
    */
   public static void loopAll(double[][] array, BiConsumer<Integer, Integer> consumer) {
@@ -109,6 +110,7 @@ public class ArrayUtils {
   /**
    * Loop over array entries and apply consumer
    * 
+   * @param array to apply consumer to
    * @param consumer to apply
    */  
   public static void loopAll(double[] array, Consumer<Integer> consumer) {
@@ -120,7 +122,9 @@ public class ArrayUtils {
   
   /**
    * Loop over array entries and apply consumer
-   * 
+   *
+   * @param <T> type of array contents
+   * @param array to apply consumer to
    * @param consumer to apply
    */  
   public static <T> void loopAll(T[] array, Consumer<T> consumer) {
