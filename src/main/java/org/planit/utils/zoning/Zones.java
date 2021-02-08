@@ -19,16 +19,27 @@ public interface Zones<Z extends Zone> extends Iterable<Z> {
    * contiguous ids
    *
    * @param zone the zone to be added
-   * @return the zone added
+   * @return the previous zone registered under the same id (if any)
    */
-  Zone register(final Z zone);
+  public abstract Zone register(final Z zone);
 
   /**
    * Create and register new zone
    *
    * @return the new zone created
    */
-  public Z registerNew();
+  public default Z registerNew() {
+    Z zone = createNew();
+    register(zone);
+    return zone;
+  }
+  
+  /**
+   * Create a new zone without registering
+   *
+   * @return the new zone created
+   */
+  public abstract Z createNew();  
 
   /**
    * Retrieve zone by its Id
@@ -36,27 +47,27 @@ public interface Zones<Z extends Zone> extends Iterable<Z> {
    * @param id the id of the zone
    * @return zone the zone retrieved
    */
-  public Zone get(final long id);
+  public abstract  Zone get(final long id);
 
   /**
    * Collect number of zones
    *
    * @return the number of zones
    */
-  public int size();
+  public abstract  int size();
   
   /** check if no zones are registered, i.e., size=0
    * 
    * @return true when empty, false otherwise
    */
-  default boolean isEmpty() {
+  public default boolean isEmpty() {
     return size()<= 0;
   }
   
   /** each zone has exactly one centroid, so this is functionally equivalent to calling {@link size()}
    * @return number of centroids
    */
-  default public int getNumberOfCentroids() {
+  public default int getNumberOfCentroids() {
     return size();
   }
 
