@@ -66,7 +66,7 @@ public interface Connectoid extends ExternalIdable, Iterable<Zone> {
    */
   void setLength(Zone zone, double length);
     
-  /** add an allowed mode to the already 
+  /** add an allowed mode. We assume the zone is already registered as an access zone for this connectoid
    * 
    * @param zone to add allowed mode(s) to
    * @param allowedModes to add

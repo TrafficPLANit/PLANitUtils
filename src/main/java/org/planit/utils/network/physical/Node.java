@@ -23,20 +23,20 @@ public interface Node extends DirectedVertex {
    * 
    * @return node id
    */
-  long getNodeId();
+  public long getNodeId();
   
   
   /** get the name of this node (if any)
    * 
    * @return name of the node
    */
-  String getName();
+  public String getName();
   
   /** set the name of the node
    * 
    * @param name of the node
    */
-  void setName(String name);
+  public void setName(String name);
   
   /**
    * It is expected that nodes are used in conjunction with links. If so, this method will cast the edges of the node to a links collection
@@ -46,7 +46,7 @@ public interface Node extends DirectedVertex {
    * @return edges cast as collection of links
    */
   @SuppressWarnings("unchecked")
-  default <L extends Edge> Collection<L> getLinks() {
+  public default <L extends Edge> Collection<L> getLinks() {
     return (Collection<L>) getEdges();
   }
   
@@ -58,7 +58,7 @@ public interface Node extends DirectedVertex {
    * @return edgeSegments as collection of linkSegments
    */
   @SuppressWarnings("unchecked")  
-  default <LS extends EdgeSegment> Set<LS> getEntryLinkSegments() {
+  public default <LS extends EdgeSegment> Set<LS> getEntryLinkSegments() {
     return (Set<LS>) getEntryEdgeSegments();
   }
   
@@ -70,7 +70,7 @@ public interface Node extends DirectedVertex {
    * @return edgeSegments as collection of linkSegments
    */
   @SuppressWarnings("unchecked")  
-  default <LS extends EdgeSegment> Set<LS> getExitLinkSegments() {
+  public default <LS extends EdgeSegment> Set<LS> getExitLinkSegments() {
     return (Set<LS>) getExitEdgeSegments();
   }
 
@@ -81,8 +81,27 @@ public interface Node extends DirectedVertex {
    * @return first edge segment matching this signature
    */
   @SuppressWarnings("unchecked")
-  default <LS extends EdgeSegment> LS getLinkSegment(Node endNode) {
+  public default <LS extends EdgeSegment> LS getLinkSegment(Node endNode) {
     return (LS) getEdgeSegment(endNode);
   }
+
+
+  /**
+   * Collect the first available entry link segment using the iterator internally. It is assumed
+   * at least one entry is available
+   */
+  @SuppressWarnings("unchecked")
+  public default <LS extends EdgeSegment> LS getFirstEntryLinkSegment(){
+    return (LS) getEntryLinkSegments().iterator().next();
+  }
+  
+  /**
+   * Collect the first available exit link segment using the iterator internally. It is assumed
+   * at least one entry is available
+   */
+  @SuppressWarnings("unchecked")
+  public default <LS extends EdgeSegment> LS getFirstExitLinkSegment(){
+    return (LS) getExitLinkSegments().iterator().next();
+  }  
   
 }
