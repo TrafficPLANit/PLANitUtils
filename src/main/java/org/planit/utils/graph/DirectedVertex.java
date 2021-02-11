@@ -35,12 +35,30 @@ public interface DirectedVertex extends Vertex {
   public boolean addEdgeSegment(EdgeSegment edgeSegment);
 
   /**
-   * Remove edgeSegment
+   * Remove edgeSegment on either entry or exit side of vertex
    * 
    * @param edgeSegment EdgeSegment object to be removed
    * @return true when removed, false when not present (and not removed)
    */
-  public boolean removeEdgeSegment(EdgeSegment edgeSegment);
+  public default boolean removeEdgeSegment(EdgeSegment edgeSegment) {
+    return removeEntryEdgeSegment(edgeSegment) || removeExitEdgeSegment(edgeSegment);
+  }
+  
+  /**
+   * Remove entry edgeSegment
+   * 
+   * @param edgeSegment EdgeSegment object to be removed
+   * @return true when removed, false when not present (and not removed)
+   */
+  public boolean removeEntryEdgeSegment(EdgeSegment edgeSegment);
+  
+  /**
+   * Remove exit edgeSegment
+   * 
+   * @param edgeSegment EdgeSegment object to be removed
+   * @return true when removed, false when not present (and not removed)
+   */
+  public boolean removeExitEdgeSegment(EdgeSegment edgeSegment);  
   
   /**
    * Collect the entry edge segments of this vertex
@@ -83,6 +101,36 @@ public interface DirectedVertex extends Vertex {
     return false;
   }
   
+  /** Identical to replace, only now we consider solely the exist segments for the replacing (in case the to replace segment could be
+   * an entry segment that we must keep)
+   * 
+   * @param edgeSegmentToReplace to replace
+   * @param edgeSegmentToReplaceWith to replace with
+   * @param forceInsert when edge segment to replace cannot be found, replacement is still inserted when true, when false not
+   * @return true when replacement/insert was successful
+   */
+  default public boolean replaceExitSegment(EdgeSegment edgeSegmentToReplace, EdgeSegment edgeSegmentToReplaceWith, boolean forceInsert) {
+    if(removeExitEdgeSegment(edgeSegmentToReplace) || forceInsert) {
+      return addEdgeSegment(edgeSegmentToReplaceWith);
+    }
+    return false;    
+  }
+  
+  /** Identical to replace, only now we consider solely the exist segments for the replacing (in case the to replace segment could be
+   * an entry segment that we must keep)
+   * 
+   * @param edgeSegmentToReplace to replace
+   * @param edgeSegmentToReplaceWith to replace with
+   * @param forceInsert when edge segment to replace cannot be found, replacement is still inserted when true, when false not
+   * @return true when replacement/insert was successful
+   */
+  default public boolean replaceEntrySegment(EdgeSegment edgeSegmentToReplace, EdgeSegment edgeSegmentToReplaceWith, boolean forceInsert) {
+    if(removeEntryEdgeSegment(edgeSegmentToReplace) || forceInsert) {
+      return addEdgeSegment(edgeSegmentToReplaceWith);
+    }
+    return false;    
+  }  
+  
   /** collect the first edge segment corresponding to the provided other vertex
    * 
    * @param otherVertex to use
@@ -102,4 +150,5 @@ public interface DirectedVertex extends Vertex {
     return null;
   }
 
+  
 }

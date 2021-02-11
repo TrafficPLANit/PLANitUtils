@@ -8,6 +8,11 @@ package org.planit.utils.zoning;
  *
  */
 public interface TransferZone extends Zone {
+  
+  /**
+   * default transfer zone type
+   */
+  public static TransferZoneType DEFAULT_TYPE = TransferZoneType.NONE;  
 
   /** In addition to a zone id across all zones of any derived type, each transfer zone also has a unique id
    * across the transfer zones specifically
@@ -20,11 +25,12 @@ public interface TransferZone extends Zone {
    * 
    * @param transferZoneType to set
    */  
-  public void setTransferZoneType(TransferZoneType transferZoneType);
+  public void setType(TransferZoneType transferZoneType);
   
   /** collect the type of this transfer zone
    * 
    * @return transfer zone type
    */
   public TransferZoneType getTransferZoneType();
+
 }

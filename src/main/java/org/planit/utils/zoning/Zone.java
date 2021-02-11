@@ -17,18 +17,30 @@ public interface Zone extends ExternalIdable {
    * 
    * @return centroid of this zone
    */
-  Centroid getCentroid();
+  public abstract Centroid getCentroid();
   
   /** set the geometry (outer border) of this zone
    * 
    * @param geometry of the zone
    */
-  void setGeometry(Polygon geometry);  
+  public abstract void setGeometry(Polygon geometry);  
   
   /** Collect the geometry (outer border) of this zone
    * 
    * @return geometry of the zone
    */
-  Polygon getGeometry();
+  public abstract Polygon getGeometry();
+  
+  /** Name of the zone 
+   * 
+   * @param name of the zone
+   */
+  public abstract void setName(String name);
+  
+  /** Name of the zone 
+   * 
+   * @return name of the zone
+   */
+  public abstract String getName();
 
 }

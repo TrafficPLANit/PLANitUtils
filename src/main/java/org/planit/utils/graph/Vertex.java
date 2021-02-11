@@ -104,11 +104,11 @@ public interface Vertex extends Serializable, ExternalIdable {
    * 
    * @param edgeToReplace one to replace
    * @param edgeToReplaceWith one to replace it with
-   * @param forceInsert when true the replacement will be added event is original cannot be found, when false not
+   * @param forceInsert when true the replacement will be added even if original cannot be found, when false not
    * @return successful replacement/insert when true, false otherwise
    */
   default public boolean replace(Edge edgeToReplace, Edge edgeToReplaceWith, boolean forceInsert) {
-    if(removeEdge(edgeToReplace)) {
+    if(removeEdge(edgeToReplace) || forceInsert) {
       return addEdge(edgeToReplaceWith);      
     }
     return false;

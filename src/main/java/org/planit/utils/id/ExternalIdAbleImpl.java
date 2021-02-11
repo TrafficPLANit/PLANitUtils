@@ -1,12 +1,12 @@
 package org.planit.utils.id;
 
 /**
- * Implementation of ExternalIdable interface
+ * Implementation of ExternalIdable interface including hash and equals based on id
  * 
  * @author markr
  *
  */
-public class ExternalIdAbleImpl implements ExternalIdable{
+public class ExternalIdAbleImpl implements ExternalIdable {
   
   private long id;
   
@@ -82,5 +82,21 @@ public class ExternalIdAbleImpl implements ExternalIdable{
   public void setXmlId(String xmlId) {
     this.xmlId = xmlId;
   }
+  
+  /**
+   * {@inheritDoc}
+   */  
+  @Override
+  public int hashCode() {
+    return idHashCode();
+  }
+
+  /**
+   * {@inheritDoc}
+   */    
+  @Override
+  public boolean equals(Object o) {
+    return idEquals(o);
+  }   
 
 }

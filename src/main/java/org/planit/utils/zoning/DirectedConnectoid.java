@@ -42,7 +42,7 @@ public interface DirectedConnectoid extends Connectoid{
    * 
    * @return accessNode to use
    */
-  default Node getAccessNode() {
+  public default Node getAccessNode() {
     if(isNodeAccessDownstream()) {
       return (Node)getAccessLinkSegment().getDownstreamVertex();
     }else {

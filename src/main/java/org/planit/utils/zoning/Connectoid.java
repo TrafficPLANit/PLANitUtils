@@ -1,6 +1,7 @@
 package org.planit.utils.zoning;
 
 import java.util.Collection;
+import java.util.Set;
 
 import org.planit.utils.exceptions.PlanItException;
 import org.planit.utils.id.ExternalIdable;
@@ -65,13 +66,33 @@ public interface Connectoid extends ExternalIdable, Iterable<Zone> {
    * @param length to traverse between connectoid and zone
    */
   void setLength(Zone zone, double length);
-    
+  
   /** add an allowed mode. We assume the zone is already registered as an access zone for this connectoid
+   * 
+   * @param zone to add allowed mode to
+   * @param allowedModes to add
+   */
+  void addAllowedMode(Zone zone, Mode allowedMode);  
+    
+  /** add allowed modes. We assume the zone is already registered as an access zone for this connectoid
    * 
    * @param zone to add allowed mode(s) to
    * @param allowedModes to add
    */
-  void addAllowedMode(Zone zone, Mode... allowedModes);   
+  public default void addAllowedModes(Zone zone, Mode... allowedModes) {
+    for(int index = 0 ; index < allowedModes.length; ++index) {
+      addAllowedMode(zone, allowedModes[index]);
+    }
+  }
+  
+  /** add allowed modes. We assume the zone is already registered as an access zone for this connectoid
+   * 
+   * @param zone to add allowed mode(s) to
+   * @param allowedModes to add
+   */  
+  public default void addAllowedModes(TransferZone transferZone, Set<Mode> allowedModes) {
+    allowedModes.forEach( mode -> addAllowedMode(transferZone, mode));
+  }
   
   /** add an access zone with default properties
    * 

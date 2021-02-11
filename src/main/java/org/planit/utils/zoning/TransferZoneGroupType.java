@@ -1,21 +1,17 @@
 package org.planit.utils.zoning;
 
 /**
- * Types of transfer zones to more easily identify their purpose
+ * Types of transfer zone groups to more easily identify their purpose
  * 
  * @author markr
  *
  */
-public enum TransferZoneType {
+public enum TransferZoneGroupType {
 
   NONE("none"),
-  PLATFORM("platform"),
-  POLE("pole"),
-  SMALL_STATION("small station"),
-  STATION("station"),
+  TRAIN_STATION("train station"),
   UNKNOWN("unknown");
-  
-  
+    
   private final String value;
   
   /** Colect the value
@@ -28,7 +24,7 @@ public enum TransferZoneType {
   /** Constructor
    * @param value representation of enum
    */
-  TransferZoneType(String value){
+  TransferZoneGroupType(String value){
     this.value = value;
   }
 }
