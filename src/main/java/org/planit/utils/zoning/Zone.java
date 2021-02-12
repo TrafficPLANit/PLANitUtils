@@ -13,6 +13,22 @@ import org.planit.utils.id.ExternalIdable;
 public interface Zone extends ExternalIdable {
 
   /**
+   * Add a property from the original input that is not part of the readily available members
+   *
+   * @param key   key (name) of the input property
+   * @param value value of the input property
+   */
+  public abstract void addInputProperty(final String key, final Object value);  
+  
+  /** collect a property 
+   * 
+   * @param key for the property
+   * @return property itself
+   */
+  public abstract Object getInputProperty(final String key);
+
+  
+  /**
    * Returns the centroid of this zone
    * 
    * @return centroid of this zone
@@ -42,5 +58,7 @@ public interface Zone extends ExternalIdable {
    * @return name of the zone
    */
   public abstract String getName();
+  
+  
 
 }

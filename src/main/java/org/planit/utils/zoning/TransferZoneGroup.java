@@ -1,5 +1,8 @@
 package org.planit.utils.zoning;
 
+import java.util.Collection;
+import java.util.Set;
+
 import org.planit.utils.id.ExternalIdable;
 
 /**
@@ -10,9 +13,6 @@ import org.planit.utils.id.ExternalIdable;
  */
 public interface TransferZoneGroup extends ExternalIdable, Iterable<TransferZone> {
   
-  /** default type*/
-  public static TransferZoneGroupType DEFAULT_TYPE = TransferZoneGroupType.NONE;
-
   /** Name of the group
    * @return name
    */
@@ -22,17 +22,7 @@ public interface TransferZoneGroup extends ExternalIdable, Iterable<TransferZone
    * @param name to set
    */
   public abstract void setName(String name);
-  
-  /** type of the group
-   * @return type
-   */
-  public abstract TransferZoneGroupType getType();
-  
-  /** set type of the group
-   * @param type to set
-   */
-  public abstract void setType(TransferZoneGroupType type);  
-  
+    
   /**
    * Add a transferZone
    * 
@@ -60,6 +50,13 @@ public interface TransferZoneGroup extends ExternalIdable, Iterable<TransferZone
    */
   public abstract int size();
   
+  /** create a view of the registered transfer zones. Any changes are
+   * reflected in the group as well
+   * 
+   * @return registered transfer zones
+   */
+  public abstract Collection<TransferZone> getTransferZones();  
+  
   /** Collect first transfer zone that would be returned by the iterator
    * @return transfer zone
    */
@@ -74,5 +71,6 @@ public interface TransferZoneGroup extends ExternalIdable, Iterable<TransferZone
   public default boolean isEmpty() {
     return size()<=0;
   }
+  
 
 }

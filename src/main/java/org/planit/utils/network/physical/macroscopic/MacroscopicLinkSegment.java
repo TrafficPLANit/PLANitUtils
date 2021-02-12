@@ -1,5 +1,7 @@
 package org.planit.utils.network.physical.macroscopic;
 
+import java.util.Collection;
+import java.util.HashSet;
 import java.util.Set;
 
 import org.planit.utils.mode.Mode;
@@ -88,6 +90,20 @@ public interface MacroscopicLinkSegment extends LinkSegment {
    */
   default boolean hasLinkSegmentType() {
     return getLinkSegmentType()!=null;
+  }
+
+  /** collect the allowed modes from the passed in modes
+   * @param modes to choose from
+   * @return allowed modes
+   */
+  public default Set<Mode> getAllowedModes(Collection<Mode> modes){
+    Set<Mode> allowedModes = new HashSet<Mode>();
+    for(Mode mode : modes) {
+      if(isModeAllowed(mode)) {
+        allowedModes.add(mode);
+      }
+    }
+    return allowedModes;
   }
   
 

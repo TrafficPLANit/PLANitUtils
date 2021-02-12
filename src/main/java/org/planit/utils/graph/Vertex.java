@@ -25,21 +25,28 @@ public interface Vertex extends Serializable, ExternalIdable {
    * @param key   key (name) of the input property
    * @param value value of the input property
    */
-  public void addInputProperty(final String key, final Object value);  
+  public abstract void addInputProperty(final String key, final Object value);  
+  
+  /** collect a property 
+   * 
+   * @param key for the property
+   * @return property itself
+   */
+  public abstract Object getInputProperty(final String key);
 
   /**
    * Set the center point geometry for a vertex
    * 
    * @param position the center point for a vertex
    */
-  public void setPosition(final Point position);
+  public abstract void setPosition(final Point position);
 
   /**
    * Collect the geometry of the point location of this vertex
    * 
    * @return direct position reflecting point location
    */
-  public Point getPosition();
+  public abstract Point getPosition();
   
   /**
    * Add edge, do not invoke when parsing networks, this connection is
@@ -49,7 +56,7 @@ public interface Vertex extends Serializable, ExternalIdable {
    * @param edge Edge to be added
    * @return true when added, false when already present (and not added)
    */
-  public boolean addEdge(Edge edge);
+  public abstract boolean addEdge(Edge edge);
 
   /**
    * Remove edge
@@ -57,7 +64,7 @@ public interface Vertex extends Serializable, ExternalIdable {
    * @param edge Edge to be removed
    * @return true when removed, false when not present (and not removed)
    */
-  public boolean removeEdge(Edge edge);
+  public abstract boolean removeEdge(Edge edge);
   
   /**
    * Remove edge
@@ -65,20 +72,20 @@ public interface Vertex extends Serializable, ExternalIdable {
    * @param edgeId Edge to be removed
    * @return true when removed, false when not present (and not removed)
    */
-  public boolean removeEdge(long edgeId);  
+  public abstract boolean removeEdge(long edgeId);  
 
   /**
    * Returns a collection of Edge objects
    * 
    * @return Set of Edge objects
    */
-  public Collection<? extends Edge> getEdges();
+  public abstract Collection<? extends Edge> getEdges();
   
   /**
    * Number of entries in edge segments
    * @return the number of edges connected to this vertex
    */
-  public int getNumberOfEdges();  
+  public abstract int getNumberOfEdges();  
   
   /**
    * colect the edge(s) based on the other vertex
@@ -86,19 +93,19 @@ public interface Vertex extends Serializable, ExternalIdable {
    * @param otherVertex that defines the edge(s)
    * @return edges for which this holds, if none hold an empty set is returned
    */
-  Set<Edge> getEdges(Vertex otherVertex);   
+  public abstract Set<Edge> getEdges(Vertex otherVertex);   
   
   /**
    * Clone the vertex
    * @return the cloned vertex
    */
-  public Vertex clone();
+  public abstract Vertex clone();
 
   /** validate the vertex regarding it connections to edges etc.
    * 
    * @return true when valid, false otherwise
    */
-  public boolean validate();
+  public abstract boolean validate();
   
   /** replace one edge with the other
    * 
@@ -107,7 +114,7 @@ public interface Vertex extends Serializable, ExternalIdable {
    * @param forceInsert when true the replacement will be added even if original cannot be found, when false not
    * @return successful replacement/insert when true, false otherwise
    */
-  default public boolean replace(Edge edgeToReplace, Edge edgeToReplaceWith, boolean forceInsert) {
+  public default boolean replace(Edge edgeToReplace, Edge edgeToReplaceWith, boolean forceInsert) {
     if(removeEdge(edgeToReplace) || forceInsert) {
       return addEdge(edgeToReplaceWith);      
     }
@@ -120,7 +127,7 @@ public interface Vertex extends Serializable, ExternalIdable {
    * @throws MismatchedDimensionException thrown if error
    * @throws TransformException thrown if error
    */
-  default public void transformPosition(MathTransform transformer) throws MismatchedDimensionException, TransformException {
+  public default void transformPosition(MathTransform transformer) throws MismatchedDimensionException, TransformException {
     setPosition((Point) JTS.transform(getPosition(),transformer));
   }
 }
