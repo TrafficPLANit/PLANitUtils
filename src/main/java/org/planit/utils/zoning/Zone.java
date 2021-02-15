@@ -1,5 +1,8 @@
 package org.planit.utils.zoning;
 
+import java.util.logging.Logger;
+
+import org.locationtech.jts.geom.Envelope;
 import org.locationtech.jts.geom.Polygon;
 import org.planit.utils.id.ExternalIdable;
 
@@ -11,6 +14,9 @@ import org.planit.utils.id.ExternalIdable;
  *
  */
 public interface Zone extends ExternalIdable {
+  
+  /** the logger */
+  public static final Logger LOGGER = Logger.getLogger(Zone.class.getCanonicalName());
 
   /**
    * Add a property from the original input that is not part of the readily available members
@@ -59,6 +65,37 @@ public interface Zone extends ExternalIdable {
    */
   public abstract String getName();
   
+  /** verify if the zone has a geometry
+   * 
+   * @return true if available, false otherwise
+   */
+  public default boolean hasGeometry() {
+    return getGeometry() != null;
+  }
   
+  /** verify if centroid is present
+   * 
+   * @return true when present, false otherwise
+   */
+  public default boolean hasCentroid() {
+    return getCentroid() != null;
+  }  
+  
+  /** collect the envelope (bounding box) of this zone's geometry. In case, the zone has no geometry
+   * we revert to using the geometry (location) of its centroid.
+   * 
+   * @return envelope of the zone
+   */
+  public default Envelope getEnvelope() {
+    if(hasGeometry()) {
+      return getGeometry().getEnvelope().getEnvelopeInternal();
+    }else if(hasCentroid() && getCentroid().hasPosition()) {
+      return getCentroid().getPosition().getEnvelopeInternal();
+    }else {
+      LOGGER.warning(String.format("zone (id:%s) has no geometry to collect envelope (bounding box) for",getXmlId()));
+    }
+    return null;    
+  }
+    
 
 }

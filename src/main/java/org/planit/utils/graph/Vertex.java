@@ -107,6 +107,15 @@ public interface Vertex extends Serializable, ExternalIdable {
    */
   public abstract boolean validate();
   
+  /**
+   * Verify if position is available
+   * 
+   * @return true when available, false otherwise
+   */
+  public default boolean hasPosition() {
+    return getPosition() != null;
+  }
+  
   /** replace one edge with the other
    * 
    * @param edgeToReplace one to replace
