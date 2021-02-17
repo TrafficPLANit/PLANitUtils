@@ -1,8 +1,6 @@
 package org.planit.utils.zoning;
 
 import java.util.Collection;
-import java.util.Set;
-
 import org.planit.utils.id.ExternalIdable;
 
 /**
@@ -70,6 +68,13 @@ public interface TransferZoneGroup extends ExternalIdable, Iterable<TransferZone
    */
   public default boolean isEmpty() {
     return size()<=0;
+  }
+
+  /** Verify if the group has a name already
+   * @return true when non-null, non-blank name is present, false otherwise
+   */
+  public default boolean hasName() {
+    return (getName()!=null && !getName().isBlank());
   }
   
 
