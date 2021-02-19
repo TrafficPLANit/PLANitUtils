@@ -77,7 +77,8 @@ public class PlanitJtsUtils {
    */
   public PlanitJtsUtils(CoordinateReferenceSystem coordinateReferenceSystem) {
     this.crs = coordinateReferenceSystem;
-    geoCalculator = new GeodeticCalculator(getCoordinateReferenceSystem());    
+    /* viable only if non-cartesian based */
+    geoCalculator = (!(coordinateReferenceSystem.equals(CARTESIANCRS))) ? new GeodeticCalculator(getCoordinateReferenceSystem()) : null;
   }
   
   /** find the distance between the closest coordinate on the geometry's coordinates. Note that this is likely NOT
@@ -610,6 +611,11 @@ public class PlanitJtsUtils {
    * @return envelope with appropriate square bounding box
    */
   public Envelope createBoundingBox(double centrePointX, double centrePointY, double lengthMeters) {
+    if(geoCalculator == null) {
+      LOGGER.severe("geocalculator not available, likely because cartesian coords are used. Method not available yet for cartesian crs");
+      return null;
+    }
+    
     geoCalculator.setStartingGeographicPoint(centrePointX, centrePointY);
 
     geoCalculator.setDirection( 0, lengthMeters );
