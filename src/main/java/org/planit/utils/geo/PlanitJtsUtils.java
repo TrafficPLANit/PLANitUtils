@@ -3,6 +3,7 @@ package org.planit.utils.geo;
 import java.awt.geom.Point2D;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
@@ -394,6 +395,60 @@ public class PlanitJtsUtils {
     }
     throw new PlanItException("unable to compute distance for less than two points");
   }
+  
+  /** copy the array and remove any null entries
+   * 
+   * @param coordArray to trim
+   * @return copy without null entries
+   */
+  public static Coordinate[] copyWithoutNullEntries(final Coordinate[] coordArray) {
+    Coordinate[] copy = new Coordinate[coordArray.length];
+    int copyIndex=0;
+    for(int index=0;index<copy.length;++index) {
+      Coordinate currCoord = coordArray[index];
+      if(currCoord!=null) {
+        copy[copyIndex] = currCoord;
+        ++copyIndex;        
+      }
+    }
+    if(copyIndex > 0) {
+      return Arrays.copyOf(copy, copyIndex);
+    }
+    return null;
+  }  
+  
+  /** check if coord array is closed, i.e., first coordinate is the same as the last
+   *  in 2D
+   *  
+   * @param coordArray to check
+   * @return true when closed, false otherwise
+   */
+  public static boolean isClosed2D(Coordinate[] coordArray) {
+    if(coordArray != null && coordArray.length>2) {
+      return coordArray[0].equals2D(coordArray[coordArray.length-1]);
+    }
+    return false;
+  }
+  
+  /** create a copy of the passed in coord array and close it by adding a new coordinate at the end that matches the first.
+   * If the array is already closed, it is returned as is. If not eligible for closing, exception is thrown.
+   * 
+   * @param coordArray to make closed if possible
+   * @return closed array
+   * @throws PlanItException thrown if error
+   */
+  public static Coordinate[] makeClosed2D(final Coordinate[] coordArray) throws PlanItException {
+    if(coordArray!= null && coordArray.length >=2) {
+      if(!isClosed2D(coordArray)) {
+        Coordinate[] closedCoordArray = Arrays.copyOf(coordArray, coordArray.length+1);
+        closedCoordArray[coordArray.length] = coordArray[0];
+        return closedCoordArray;
+      }
+      return coordArray;
+    }else {
+      throw new PlanItException("Cannot make passed in coordinates closed 2D");
+    }
+  }  
 
   /**
    * Remove all coordinates in the line string up to but not including the first occurrence of the passed in position. In case the position cannot be found, an exception will be
