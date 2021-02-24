@@ -23,6 +23,8 @@ import org.locationtech.jts.geom.LineString;
 import org.locationtech.jts.geom.MultiLineString;
 import org.locationtech.jts.geom.Point;
 import org.locationtech.jts.geom.Polygon;
+import org.locationtech.jts.linearref.LinearLocation;
+import org.locationtech.jts.linearref.LocationIndexedLine;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.coordinate.PointArray;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -91,18 +93,98 @@ public class PlanitJtsUtils {
    * @throws PlanItException thrown if error
    */
   public double getClosestCoordinateDistanceInMeters(Point point, Geometry geometry) throws PlanItException {
-    double minDistanceMetersToCoordinate = Double.MAX_VALUE;
-    Coordinate referenceCoordinate = point.getCoordinate();
-    Coordinate[] coordinates = geometry.getCoordinates();
-    for(int index = 0 ; index < coordinates.length; ++index) {
-      Coordinate coordinate = coordinates[index];
-      double distanceMeters = getDistanceInMetres(referenceCoordinate, coordinate);
-      if(minDistanceMetersToCoordinate > distanceMeters) {
-        minDistanceMetersToCoordinate = distanceMeters;
+    double minDistanceMetersToCoordinate = Double.POSITIVE_INFINITY;
+    if(geometry !=null ){      
+      Coordinate referenceCoordinate = point.getCoordinate();
+      Coordinate[] coordinates = geometry.getCoordinates();
+      for(int index = 0 ; index < coordinates.length; ++index) {
+        Coordinate coordinate = coordinates[index];
+        double distanceMeters = getDistanceInMetres(referenceCoordinate, coordinate);
+        if(minDistanceMetersToCoordinate > distanceMeters) {
+          minDistanceMetersToCoordinate = distanceMeters;
+        }
       }
     }
     return minDistanceMetersToCoordinate;
+  }
+  
+  /** find the closest distance in meters from the point to the geometry.Here we project onto the geometry, so we find the actual closest distance instead of merely finding the closest
+   * modelled coordinated within the geometry.
+   * 
+   * @param referencePoint the reference point
+   * @param geometry to find closest distance to point to
+   * @return distance found in meters
+   * @throws PlanItException thrown if error
+   */
+  public double getClosestDistanceInMetersToLineString(Point referencePoint, LineString geometry) throws PlanItException {
+    Coordinate referenceCoordinate = referencePoint.getCoordinate();
+    LocationIndexedLine locIndexedLine = new LocationIndexedLine(geometry);
+    LinearLocation projectedLocation = locIndexedLine.project(referenceCoordinate);
+    Coordinate projectedCoord = projectedLocation.getCoordinate(geometry);
+    return getDistanceInMetres(referenceCoordinate, projectedCoord);      
   }  
+  
+  /** find the closest distance in meters from the point to the geometry.Here we project onto the geometry, so we find the actual closest distance instead of merely finding the closest
+   * modelled coordinated within the geometry.
+   * 
+   * @param referencePoint the reference point
+   * @param geometry to find closest distance to point to
+   * @return distance found in meters
+   * @throws PlanItException thrown if error
+   */  
+  public double getClosestDistanceInMetersMultiLineString(Point referencePoint, MultiLineString geometry) throws PlanItException {
+    double minDistanceInMetersForLineSegment = Double.POSITIVE_INFINITY;
+    for(int index=0;index<geometry.getNumGeometries();++index) {       
+      LineString currLineString = (LineString)geometry.getGeometryN(index);
+      minDistanceInMetersForLineSegment = Math.min(minDistanceInMetersForLineSegment,getClosestDistanceInMetersToLineString(referencePoint, currLineString));
+    }      
+    return minDistanceInMetersForLineSegment;
+  }    
+
+  /** find the closest distance in meters from the point to the geometry.Here we project onto the geometry, so we find the actual closest distance instead of merely finding the closest
+   * modelled coordinated within the geometry.
+   * 
+   * @param referencePoint the reference point
+   * @param geometry to find closest distance to point to
+   * @return distance found in meters
+   * @throws PlanItException thrown if error
+   */
+  public double getClosestDistanceInMetersToPolygon(Point referencePoint, Polygon geometry) throws PlanItException {
+    double minDistanceInMetersForLineSegment = Double.POSITIVE_INFINITY;
+    /* explore line segments and project location to find closest distance for each segment */
+    Coordinate[] coords = ((Polygon)geometry).getCoordinates();
+    if(coords != null) {
+      Coordinate prevCoord = coords[0];
+      for(int index=1;index<coords.length;++index) {
+        Coordinate currCoord = coords[index];
+        LineString lineSegment = createLineString(new Coordinate[] {prevCoord,currCoord});
+        minDistanceInMetersForLineSegment = Math.min(minDistanceInMetersForLineSegment,getClosestDistanceInMeters(referencePoint, lineSegment));
+      }
+    }
+    return minDistanceInMetersForLineSegment;
+  }  
+
+  /** find the closest distance in meters from the point to the geometry. Here we project onto the geometry, so we find the actual closest distance instead of merely finding the closest
+   * modelled coordinated within the geometry.
+   * 
+   * @param referencePoint the reference point
+   * @param geometry to find closest distance to point to
+   * @return distance found in meters
+   * @throws PlanItException thrown if error
+   */
+  public double getClosestDistanceInMeters(Point referencePoint, Geometry geometry) throws PlanItException {
+    if(geometry instanceof Point ) {
+      return getClosestCoordinateDistanceInMeters(referencePoint, geometry);
+    }else if(geometry instanceof LineString) {
+      return getClosestDistanceInMetersToLineString(referencePoint, (LineString)geometry);
+    }else if(geometry instanceof MultiLineString) {
+      return getClosestDistanceInMetersMultiLineString(referencePoint, (MultiLineString)geometry);
+    }else if(geometry instanceof Polygon){
+      return getClosestDistanceInMetersToPolygon(referencePoint, (Polygon)geometry);
+    }else {
+      throw new PlanItException("unsupported geometry provided for fiding closest distance to point");
+    }              
+  }
 
   /**
    * Compute the distance in metres between two (JTS) points assuming the positions are provided in the same crs as registered on this class instance
@@ -228,7 +310,7 @@ public class PlanitJtsUtils {
     while (iter.hasNext()) {
       coordinateArray[index++] = new Coordinate(iter.next(), iter.next());
     }
-    return createLineStringFromCoordinates(coordinateArray);
+    return createLineString(coordinateArray);
   }
 
   /**
@@ -262,7 +344,7 @@ public class PlanitJtsUtils {
    * @return created line string
    * @throws PlanItException thrown if error
    */
-  public static LineString createLineStringFromCoordinates(Coordinate[] coordinates) throws PlanItException {
+  public static LineString createLineString(Coordinate[] coordinates) throws PlanItException {
     return jtsGeometryFactory.createLineString(coordinates);
   }
 
@@ -468,7 +550,7 @@ public class PlanitJtsUtils {
 
     Coordinate[] coordinates = copyCoordinatesFrom(offset.get(), geometry);
 
-    return createLineStringFromCoordinates(coordinates);
+    return createLineString(coordinates);
   }
 
   /**
@@ -483,7 +565,7 @@ public class PlanitJtsUtils {
     if (startIndex >= geometry.getNumPoints() || startIndex < 0) {
       throw new PlanItException("invalid start index for extracting coordinates from line string geometry");
     }
-    return createLineStringFromCoordinates(copyCoordinatesFrom(startIndex, geometry));
+    return createLineString(copyCoordinatesFrom(startIndex, geometry));
   }
 
   /**
@@ -502,7 +584,7 @@ public class PlanitJtsUtils {
     }
 
     Coordinate[] coordinates = copyCoordinatesUpToNotIncluding(offset.get() + 1, geometry);
-    return createLineStringFromCoordinates(coordinates);
+    return createLineString(coordinates);
   }
 
   /**
@@ -521,7 +603,7 @@ public class PlanitJtsUtils {
     if (endIndex >= geometry.getNumPoints() || endIndex < 0) {
       throw new PlanItException("invalid end index for extracting coordinates from line string geometry");
     }
-    return createLineStringFromCoordinates(copyCoordinatesUpToNotIncluding(endIndex + 1, geometry));
+    return createLineString(copyCoordinatesUpToNotIncluding(endIndex + 1, geometry));
   }
 
   /**
