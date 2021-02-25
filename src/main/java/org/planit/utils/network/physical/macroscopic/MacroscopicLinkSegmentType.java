@@ -118,17 +118,25 @@ public interface MacroscopicLinkSegmentType extends Cloneable, ExternalIdable {
    * @param modes to verify
    * @return collection which is a subset of the passed in modes containing only the ones that are not available
    */
-  default Set<Mode> getUnAvailableModesFrom(Collection<Mode> modes){
+  default Set<Mode> getUnAvailableModesFrom(final Collection<Mode> modes){
     return modes.stream().filter(mode -> !isModeAvailable(mode)).collect(Collectors.toSet());
   }
   
-  /** Method which identifies which of the passed in modes is unavailable on the link segment
+  /** Method which identifies which of the passed in modes is available on the link segment
    * @param modes to verify
-   * @return collection which is a subset of the passed in modes containing only the ones that are not available
+   * @return collection which is a subset of the passed in modes containing only the ones that are available
    */
-  default Set<Mode> getAvailableModesFrom(Collection<Mode> modes){
+  default Set<Mode> getAvailableModesFrom(final Collection<Mode> modes){
     return modes.stream().filter(mode -> isModeAvailable(mode)).collect(Collectors.toSet());
   }
+  
+  /** Method which identifies which of the passed in modes is available on the link segment but not in the passed in collection of modes
+   * @param modes to exclude from the available modes
+   * @return collection which is a subset of the available modes, namely excludes the the passed in modes
+   */
+  default Set<Mode> getAvailableModesNotIn(Collection<Mode> modes){
+    return getAvailableModes().stream().filter(mode -> !modes.contains(mode)).collect(Collectors.toSet());
+  }  
   
   /** verify if the link segment type has any modes available
    * @return true when at least one mode is available
