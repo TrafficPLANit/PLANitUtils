@@ -1,5 +1,7 @@
 package org.planit.utils.zoning;
 
+import java.util.Set;
+
 /**
  * A zone where transfers between different network layers may occur. Trips do not
  * terminate at transfer zones
@@ -19,18 +21,48 @@ public interface TransferZone extends Zone {
    * 
    * @return transfer zone specific id
    */
-  public long getTransferZoneId();
+  public abstract long getTransferZoneId();
 
   /** set the type of this transfer zone
    * 
    * @param transferZoneType to set
    */  
-  public void setType(TransferZoneType transferZoneType);
+  public abstract void setType(TransferZoneType transferZoneType);
   
   /** collect the type of this transfer zone
    * 
    * @return transfer zone type
    */
-  public TransferZoneType getTransferZoneType();
+  public abstract TransferZoneType getTransferZoneType();
+  
+  /** Verify if a transfer zone is part of one or more transfer zone groups
+   * 
+   * @return true when in transfer zone group, false otherwise
+   */
+  public abstract boolean hasTransferZoneGroup();
+  
+  /** Verify if transfer zone is part of passed in transfer zone group
+   * 
+   * @param transferZoneGroup to check
+   * @return true when part of group, false otherwise
+   */
+  public abstract boolean isInTransferZoneGroup(TransferZoneGroup transferZoneGroup);
+    
+  /** register this transfer zone group as a group this transfer zone is part of
+   * 
+   * @param transferZoneGroup to register as being part of
+   */
+  public abstract void addToTransferZoneGroup(TransferZoneGroup transferZoneGroup);
+
+  /** remove from transfer zone group provided
+   * @param transferZoneGroup to remove ourselves as member from
+   * @return true when removal was successfull, false otherwise
+   */
+  public abstract boolean removeFromTransferZoneGroup(TransferZoneGroup transferZoneGroup);
+
+  /** all transfer zone groups the transfer zone resides in (unmodifiable)
+   * @return transfer zone groups of the transfer zone
+   */
+  public abstract Set<TransferZoneGroup> getTransferZoneGroups();
 
 }

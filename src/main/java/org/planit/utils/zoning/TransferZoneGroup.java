@@ -22,14 +22,14 @@ public interface TransferZoneGroup extends ExternalIdable, Iterable<TransferZone
   public abstract void setName(String name);
     
   /**
-   * Add a transferZone
+   * Add a transferZone and also register this group on this transfer zone at the same time
    * 
    * @param transferZone to add
    * @return previousTransferZone under same id (if any)
    */
   public abstract TransferZone addTransferZone(TransferZone transferZone);
   
-  /** remove a transfer zone
+  /** remove a transfer zone from the group, and also remove the reference on the transfer zone at the same time
    * 
    * @param transferZone to remove
    * @return removed transfer zone

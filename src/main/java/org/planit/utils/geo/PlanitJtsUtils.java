@@ -749,8 +749,8 @@ public class PlanitJtsUtils {
    */
   public Envelope createBoundingBox(double centrePointX, double centrePointY, double lengthMeters) {
     if(geoCalculator == null) {
-      LOGGER.severe("geocalculator not available, likely because cartesian coords are used. Method not available yet for cartesian crs");
-      return null;
+      /* cartesian approach (not in meters though )*/
+      return new Envelope(centrePointX-lengthMeters, centrePointX+lengthMeters, centrePointY-lengthMeters, centrePointY+lengthMeters);
     }
     
     geoCalculator.setStartingGeographicPoint(centrePointX, centrePointY);
@@ -774,5 +774,31 @@ public class PlanitJtsUtils {
     
     return new Envelope(x1, x2, y2, y1);    
   }
+  
+  /** create a square bounding box envelope instance based on the passed in bounding box coordinates and buffer length in meters 
+   * resulting in a larger bounding box returned
+   * 
+   * @param minX x (longitude) coord of minimum extreme point
+   * @param minY y (latitude) coord of minimum extreme point
+   * @param maxX x (longitude) coord of maximum extreme point
+   * @param maxY y (latitude) coord of maximum extreme point
+   * 
+   * @param lengthMeters in meters
+   * @return envelope with appropriate square bounding box
+   */
+  public Envelope createBoundingBox(double minX, double minY, double maxX, double maxY, double lengthMeters) {
+    
+    /* buffer for one of the extreme points */
+    Envelope localExtremeBoundingBox1 = createBoundingBox(minX, minY, lengthMeters);
+    /* buffer for other extreme points */
+    Envelope localExtremeBoundingBox2 = createBoundingBox(maxX, maxY, lengthMeters);
+    
+    /* expand 1 to include 2 */
+    localExtremeBoundingBox1.expandToInclude(localExtremeBoundingBox2.getMaxX(), localExtremeBoundingBox2.getMaxY());
+    /* adding minimum should not alter anything since it is less extreme than the max values. However, if the user accidentically swapper the min and max inputs
+     * to this method,it avoids a wrong result */
+    localExtremeBoundingBox1.expandToInclude(localExtremeBoundingBox2.getMinX(), localExtremeBoundingBox2.getMinY());
+    return localExtremeBoundingBox1;    
+  }  
   
 }
