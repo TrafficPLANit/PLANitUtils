@@ -44,7 +44,7 @@ public class Pair<A, B> {
    * @param valueB second
    * @return new pair
    */
-  public static <A,B> Pair<A, B> create(A valueA, B valueB) {
+  public static <A,B> Pair<A, B> of(A valueA, B valueB) {
     return new Pair<A,B>(valueA, valueB);
   }  
 

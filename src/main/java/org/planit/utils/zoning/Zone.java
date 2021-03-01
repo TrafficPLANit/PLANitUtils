@@ -79,7 +79,22 @@ public interface Zone extends ExternalIdable {
    */
   public default boolean hasCentroid() {
     return getCentroid() != null;
-  }  
+  }
+  
+  /** verify if a name has been set
+   * @return true when present, false otherwise
+   */
+  public default boolean hasName() {
+    return getName() != null && !getName().isBlank();
+  }
+  
+  /** Verify if input property exists
+   * @param key to check
+   * @return truw when present, false otherwise
+   */
+  public default boolean hasInputProperty(String key) {
+    return getInputProperty(key) != null;
+  }
   
   /** collect the envelope (bounding box) of this zone's geometry. In case, the zone has no geometry
    * we revert to using the geometry (location) of its centroid.
