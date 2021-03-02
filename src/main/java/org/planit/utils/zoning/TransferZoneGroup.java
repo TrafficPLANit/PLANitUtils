@@ -1,8 +1,6 @@
 package org.planit.utils.zoning;
 
 import java.util.Collection;
-import java.util.Set;
-
 import org.planit.utils.id.ExternalIdable;
 
 /**
