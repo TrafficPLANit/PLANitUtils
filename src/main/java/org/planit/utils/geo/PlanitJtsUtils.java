@@ -19,6 +19,7 @@ import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.Envelope;
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.GeometryFactory;
+import org.locationtech.jts.geom.LineSegment;
 import org.locationtech.jts.geom.LineString;
 import org.locationtech.jts.geom.MultiLineString;
 import org.locationtech.jts.geom.Point;
@@ -63,7 +64,7 @@ public class PlanitJtsUtils {
 
   /** jts geometry factory, jts geometry differs from opengis implementation by not carrying the crs and being more lightweight */
   private static final GeometryFactory jtsGeometryFactory = JTSFactoryFinder.getGeometryFactory();
-
+  
   /**
    * Constructor
    * 
@@ -92,7 +93,7 @@ public class PlanitJtsUtils {
    * @return closest coordinate distance
    * @throws PlanItException thrown if error
    */
-  public double getClosestCoordinateDistanceInMeters(Point point, Geometry geometry) throws PlanItException {
+  public double getClosestExistingCoordinateDistanceInMeters(Point point, Geometry geometry) throws PlanItException {
     double minDistanceMetersToCoordinate = Double.POSITIVE_INFINITY;
     if(geometry !=null ){      
       Coordinate referenceCoordinate = point.getCoordinate();
@@ -108,6 +109,22 @@ public class PlanitJtsUtils {
     return minDistanceMetersToCoordinate;
   }
   
+  /** find the closest projected coordinate from the reference point to the geometry. Here we project onto the geometry, so we find the location with the actual closest distance 
+   * and create a coordinate at this location regardless if this coordinate is part of the geometry as a predefined coordinate at an extreme point. It is therefore more accurate than
+   * {@link getClosestExistingCoordinateDistanceInMeters}
+   * 
+   * @param referencePoint the reference point
+   * @param geometry to find closest distance to point to
+   * @return distance found in meters
+   * @throws PlanItException thrown if error
+   */  
+  public Coordinate getClosestProjectedCoordinateTo(Point referencePoint, LineString geometry) {
+    Coordinate referenceCoordinate = referencePoint.getCoordinate();
+    LocationIndexedLine locIndexedLine = new LocationIndexedLine(geometry);
+    LinearLocation projectedLocation = locIndexedLine.project(referenceCoordinate);
+    return projectedLocation.getCoordinate(geometry); 
+  }   
+    
   /** find the closest distance in meters from the point to the geometry.Here we project onto the geometry, so we find the actual closest distance instead of merely finding the closest
    * modelled coordinated within the geometry.
    * 
@@ -116,13 +133,10 @@ public class PlanitJtsUtils {
    * @return distance found in meters
    * @throws PlanItException thrown if error
    */
-  public double getClosestDistanceInMetersToLineString(Point referencePoint, LineString geometry) throws PlanItException {
-    Coordinate referenceCoordinate = referencePoint.getCoordinate();
-    LocationIndexedLine locIndexedLine = new LocationIndexedLine(geometry);
-    LinearLocation projectedLocation = locIndexedLine.project(referenceCoordinate);
-    Coordinate projectedCoord = projectedLocation.getCoordinate(geometry);
-    return getDistanceInMetres(referenceCoordinate, projectedCoord);      
+  public double getClosestProjectedDistanceInMetersToLineString(Point referencePoint, LineString geometry) throws PlanItException {
+    return getDistanceInMetres(referencePoint.getCoordinate(), getClosestProjectedCoordinateTo(referencePoint, geometry));      
   }  
+      
   
   /** find the closest distance in meters from the point to the geometry.Here we project onto the geometry, so we find the actual closest distance instead of merely finding the closest
    * modelled coordinated within the geometry.
@@ -136,7 +150,7 @@ public class PlanitJtsUtils {
     double minDistanceInMetersForLineSegment = Double.POSITIVE_INFINITY;
     for(int index=0;index<geometry.getNumGeometries();++index) {       
       LineString currLineString = (LineString)geometry.getGeometryN(index);
-      minDistanceInMetersForLineSegment = Math.min(minDistanceInMetersForLineSegment,getClosestDistanceInMetersToLineString(referencePoint, currLineString));
+      minDistanceInMetersForLineSegment = Math.min(minDistanceInMetersForLineSegment,getClosestProjectedDistanceInMetersToLineString(referencePoint, currLineString));
     }      
     return minDistanceInMetersForLineSegment;
   }    
@@ -174,9 +188,9 @@ public class PlanitJtsUtils {
    */
   public double getClosestDistanceInMeters(Point referencePoint, Geometry geometry) throws PlanItException {
     if(geometry instanceof Point ) {
-      return getClosestCoordinateDistanceInMeters(referencePoint, geometry);
+      return getClosestExistingCoordinateDistanceInMeters(referencePoint, geometry);
     }else if(geometry instanceof LineString) {
-      return getClosestDistanceInMetersToLineString(referencePoint, (LineString)geometry);
+      return getClosestProjectedDistanceInMetersToLineString(referencePoint, (LineString)geometry);
     }else if(geometry instanceof MultiLineString) {
       return getClosestDistanceInMetersMultiLineString(referencePoint, (MultiLineString)geometry);
     }else if(geometry instanceof Polygon){
@@ -255,6 +269,18 @@ public class PlanitJtsUtils {
   public static Coordinate createCoordinate(DirectPosition position) {
     return new Coordinate(position.getOrdinate(0), position.getOrdinate(1));
   }
+  
+  /**
+   * Create JTS point object from coordinate
+   * 
+   * @param coordinate to use
+   * @return point object representing the location
+   * @throws PlanItException thrown if there is an error during processing
+   */
+  public static Point createPoint(Coordinate coordinate) throws PlanItException {
+    Point newPoint = jtsGeometryFactory.createPoint(coordinate);
+    return newPoint;
+  }  
 
   /**
    * Create JTS point object from X- and Y-coordinates
@@ -266,34 +292,18 @@ public class PlanitJtsUtils {
    */
   public static Point createPoint(double xCoordinate, double yCoordinate) throws PlanItException {
     Coordinate coordinate = new Coordinate(xCoordinate, yCoordinate);
-    Point newPoint = jtsGeometryFactory.createPoint(coordinate);
-    return newPoint;
+    return createPoint(coordinate);
   }
-
-  /**
-   * Convert an open gis line string object to a JTS Gis LineString instance by copying the internal coordinates
+  
+  /** create a line segment
    * 
-   * @param openGisLineString to convert
-   * @return jtsLineString created
-   * @throws PlanItException thrown if there is an error
+   * @param coordinate1 first coordinate
+   * @param coordinate2 second coordinate
+   * @return created line segment
    */
-  public static LineString convertToJtsLineString(org.opengis.geometry.coordinate.LineString openGisLineString) throws PlanItException {
-    PointArray samplePoints = openGisLineString.getSamplePoints();
-    List<Coordinate> coordinates = samplePoints.stream().map(point -> createCoordinate(point.getDirectPosition())).collect(Collectors.toList());
-    return jtsGeometryFactory.createLineString((Coordinate[]) coordinates.toArray());
-  }
-
-  /**
-   * Cast a JTS MultiLineString with a single entry into a JTS LineString instance if valid
-   * 
-   * @param jtsMultiLineString JTS MultiLineString input object
-   * @return jts LineString output object
-   * @throws PlanItException thrown if there is an error in casting
-   */
-  public static LineString convertToLineString(MultiLineString jtsMultiLineString) throws PlanItException {
-    PlanItException.throwIf(((MultiLineString) jtsMultiLineString).getNumGeometries() > 1, "MultiLineString contains multiple LineStrings");
-    return (LineString) jtsMultiLineString.getGeometryN(0);
-  }
+  public static LineSegment createLineSegment(Coordinate coordinate1, Coordinate coordinate2) {
+    return new LineSegment(coordinate1, coordinate2);
+  }  
 
   /**
    * Create a JTS line string from the doubles passed in (list of doubles containing x1,y1,x2,y2,etc. coordinates
@@ -344,7 +354,7 @@ public class PlanitJtsUtils {
    * @return created line string
    * @throws PlanItException thrown if error
    */
-  public static LineString createLineString(Coordinate[] coordinates) throws PlanItException {
+  public static LineString createLineString(Coordinate... coordinates) throws PlanItException {
     return jtsGeometryFactory.createLineString(coordinates);
   }
 
@@ -405,7 +415,7 @@ public class PlanitJtsUtils {
    * @return created polygon
    */
   public static Polygon create2DPolygon(List<Double> coordinateList2D) {
-    return jtsGeometryFactory.createPolygon(listTo2DCoordinates(coordinateList2D));
+    return createPolygon(listTo2DCoordinates(coordinateList2D));
   }
 
   /**
@@ -416,6 +426,86 @@ public class PlanitJtsUtils {
    */
   public static Polygon createPolygon(Coordinate[] coords) {
     return jtsGeometryFactory.createPolygon(jtsGeometryFactory.createLinearRing(coords));
+  }
+  
+  /**
+   * create a polygon based on the bounding box
+   * 
+   * @param envelope to use
+   * @return polygon geometry created
+   */
+  public static Polygon create2DPolygon(Envelope envelope) {
+   Coordinate[] coordinates = 
+       new Coordinate[] { 
+           new Coordinate(envelope.getMinX(),envelope.getMinY()),
+           new Coordinate(envelope.getMinX(),envelope.getMaxY()),
+           new Coordinate(envelope.getMaxX(),envelope.getMaxY()),
+           new Coordinate(envelope.getMaxX(),envelope.getMinY()),
+           new Coordinate(envelope.getMinX(),envelope.getMinY()) /* repeat initial coordinate to close polygon*/
+      };
+   return createPolygon(coordinates);
+  }     
+
+  /** create a square bounding box envelope instance based on the passed in reference point and length in meters 
+   * of each of the legs, with the point residing in the middle
+   * 
+   * @param centrePointX x (longitude) coord of centre
+   * @param centrePointY y (latitude) coord of centre
+   * @param lengthMeters in meters
+   * @return envelope with appropriate square bounding box
+   */
+  public Envelope createBoundingBox(double centrePointX, double centrePointY, double lengthMeters) {
+    if(geoCalculator == null) {
+      /* cartesian approach (not in meters though )*/
+      return new Envelope(centrePointX-lengthMeters, centrePointX+lengthMeters, centrePointY-lengthMeters, centrePointY+lengthMeters);
+    }
+    
+    geoCalculator.setStartingGeographicPoint(centrePointX, centrePointY);
+  
+    geoCalculator.setDirection( 0, lengthMeters );
+    Point2D north = geoCalculator.getDestinationGeographicPoint();
+  
+    geoCalculator.setDirection( 90, lengthMeters );
+    Point2D east = geoCalculator.getDestinationGeographicPoint();
+  
+    geoCalculator.setDirection( 180, lengthMeters );
+    Point2D south = geoCalculator.getDestinationGeographicPoint();
+  
+    geoCalculator.setDirection( -90, lengthMeters );
+    Point2D west = geoCalculator.getDestinationGeographicPoint();   
+    
+    double y1 = north.getY();
+    double y2 = south.getY();
+    double x1 = west.getX();
+    double x2 = east.getX();
+    
+    return new Envelope(x1, x2, y2, y1);    
+  }
+
+  /** create a square bounding box envelope instance based on the passed in bounding box coordinates and buffer length in meters 
+   * resulting in a larger bounding box returned
+   * 
+   * @param minX x (longitude) coord of minimum extreme point
+   * @param minY y (latitude) coord of minimum extreme point
+   * @param maxX x (longitude) coord of maximum extreme point
+   * @param maxY y (latitude) coord of maximum extreme point
+   * 
+   * @param lengthMeters in meters
+   * @return envelope with appropriate square bounding box
+   */
+  public Envelope createBoundingBox(double minX, double minY, double maxX, double maxY, double lengthMeters) {
+    
+    /* buffer for one of the extreme points */
+    Envelope localExtremeBoundingBox1 = createBoundingBox(minX, minY, lengthMeters);
+    /* buffer for other extreme points */
+    Envelope localExtremeBoundingBox2 = createBoundingBox(maxX, maxY, lengthMeters);
+    
+    /* expand 1 to include 2 */
+    localExtremeBoundingBox1.expandToInclude(localExtremeBoundingBox2.getMaxX(), localExtremeBoundingBox2.getMaxY());
+    /* adding minimum should not alter anything since it is less extreme than the max values. However, if the user accidentically swapper the min and max inputs
+     * to this method,it avoids a wrong result */
+    localExtremeBoundingBox1.expandToInclude(localExtremeBoundingBox2.getMinX(), localExtremeBoundingBox2.getMinY());
+    return localExtremeBoundingBox1;    
   }
 
   /**
@@ -634,6 +724,54 @@ public class PlanitJtsUtils {
     }
     return jtsGeometryFactory.createLineString(coordinateList.stream().toArray(Coordinate[]::new));
   }
+  
+  /** extend the given line segment in one or two directions with a given distance in meters. One can also extend on both sides at the same time.
+   * Note that this is not correcting for the curvature of the earth in case one uses a geodetic crs.
+   * 
+   * @param source original line segment
+   * @param extensionInMeters desired extension in meters
+   * @param extendStart when true extend from start coordinate onwards
+   * @param extendEnd when true extend further from end coordinate onwards
+   * @return extended line segment based on the passed in parameters
+   * @throws PlanItException thrown if error
+   */
+  public LineSegment createExtendedLineSegment(final LineSegment source, double extensionInMeters, boolean extendStart, boolean extendEnd) throws PlanItException {
+    /* obtain heading first */        
+    DirectPosition newStartPosition = null;
+    if(extendStart) {
+      newStartPosition = createPositionInDirection(source.p0, getAzimuthInDegrees(source.p1, source.p0),extensionInMeters);
+    }
+    
+    DirectPosition newEndPosition = null;    
+    if(extendEnd) {
+      newEndPosition = createPositionInDirection(source.p1, getAzimuthInDegrees(source.p0, source.p1),extensionInMeters);
+    }    
+   
+    Coordinate startCoordinate = newStartPosition!=null ? createCoordinate(newStartPosition) : source.p0;
+    Coordinate endCoordinate = newEndPosition!=null ? createCoordinate(newEndPosition) : source.p1;
+    return createLineSegment( startCoordinate, endCoordinate ); 
+  }  
+
+
+  /** create a new direct position in the given direction starting from the start coordinate for a distance of the given number of meters
+   * using the crs
+   * 
+   * @param start position
+   * @param azimuthInDegrees heading
+   * @param distanceInMeters distance
+   * @return new position in desired location
+   * @throws PlanItException thrown if error
+   */
+  private DirectPosition createPositionInDirection(Coordinate start, double azimuthInDegrees, double distanceInMeters) throws PlanItException {    
+    try {
+      geoCalculator.setStartingGeographicPoint(start.x, start.y);
+      geoCalculator.setDirection(azimuthInDegrees, distanceInMeters);    
+      return geoCalculator.getDestinationPosition();
+    }catch (Exception e) {
+      LOGGER.severe(e.getMessage());
+      throw new PlanItException("Unable to create a position in the desired direction", e);
+    }
+  }
 
   /**
    * find first position where the coordinate resides on the geometry.
@@ -739,66 +877,44 @@ public class PlanitJtsUtils {
     return crs;
   }
 
-  /** create a square bounding box envelope instance based on the passed in reference point and length in meters 
-   * of each of the legs, with the point residing in the middle
+  /**
+   * Convert an open gis line string object to a JTS Gis LineString instance by copying the internal coordinates
    * 
-   * @param centrePointX x (longitude) coord of centre
-   * @param centrePointY y (latitude) coord of centre
-   * @param lengthMeters in meters
-   * @return envelope with appropriate square bounding box
+   * @param openGisLineString to convert
+   * @return jtsLineString created
+   * @throws PlanItException thrown if there is an error
    */
-  public Envelope createBoundingBox(double centrePointX, double centrePointY, double lengthMeters) {
-    if(geoCalculator == null) {
-      /* cartesian approach (not in meters though )*/
-      return new Envelope(centrePointX-lengthMeters, centrePointX+lengthMeters, centrePointY-lengthMeters, centrePointY+lengthMeters);
-    }
-    
-    geoCalculator.setStartingGeographicPoint(centrePointX, centrePointY);
-
-    geoCalculator.setDirection( 0, lengthMeters );
-    Point2D north = geoCalculator.getDestinationGeographicPoint();
-
-    geoCalculator.setDirection( 90, lengthMeters );
-    Point2D east = geoCalculator.getDestinationGeographicPoint();
-
-    geoCalculator.setDirection( 180, lengthMeters );
-    Point2D south = geoCalculator.getDestinationGeographicPoint();
-
-    geoCalculator.setDirection( -90, lengthMeters );
-    Point2D west = geoCalculator.getDestinationGeographicPoint();   
-    
-    double y1 = north.getY();
-    double y2 = south.getY();
-    double x1 = west.getX();
-    double x2 = east.getX();
-    
-    return new Envelope(x1, x2, y2, y1);    
+  public static LineString convertToJtsLineString(org.opengis.geometry.coordinate.LineString openGisLineString) throws PlanItException {
+    PointArray samplePoints = openGisLineString.getSamplePoints();
+    List<Coordinate> coordinates = samplePoints.stream().map(point -> createCoordinate(point.getDirectPosition())).collect(Collectors.toList());
+    return jtsGeometryFactory.createLineString((Coordinate[]) coordinates.toArray());
   }
-  
-  /** create a square bounding box envelope instance based on the passed in bounding box coordinates and buffer length in meters 
-   * resulting in a larger bounding box returned
+
+  /**
+   * Cast a JTS MultiLineString with a single entry into a JTS LineString instance if valid
    * 
-   * @param minX x (longitude) coord of minimum extreme point
-   * @param minY y (latitude) coord of minimum extreme point
-   * @param maxX x (longitude) coord of maximum extreme point
-   * @param maxY y (latitude) coord of maximum extreme point
-   * 
-   * @param lengthMeters in meters
-   * @return envelope with appropriate square bounding box
+   * @param jtsMultiLineString JTS MultiLineString input object
+   * @return jts LineString output object
+   * @throws PlanItException thrown if there is an error in casting
    */
-  public Envelope createBoundingBox(double minX, double minY, double maxX, double maxY, double lengthMeters) {
-    
-    /* buffer for one of the extreme points */
-    Envelope localExtremeBoundingBox1 = createBoundingBox(minX, minY, lengthMeters);
-    /* buffer for other extreme points */
-    Envelope localExtremeBoundingBox2 = createBoundingBox(maxX, maxY, lengthMeters);
-    
-    /* expand 1 to include 2 */
-    localExtremeBoundingBox1.expandToInclude(localExtremeBoundingBox2.getMaxX(), localExtremeBoundingBox2.getMaxY());
-    /* adding minimum should not alter anything since it is less extreme than the max values. However, if the user accidentically swapper the min and max inputs
-     * to this method,it avoids a wrong result */
-    localExtremeBoundingBox1.expandToInclude(localExtremeBoundingBox2.getMinX(), localExtremeBoundingBox2.getMinY());
-    return localExtremeBoundingBox1;    
-  }  
+  public static LineString convertToLineString(MultiLineString jtsMultiLineString) throws PlanItException {
+    PlanItException.throwIf(((MultiLineString) jtsMultiLineString).getNumGeometries() > 1, "MultiLineString contains multiple LineStrings");
+    return (LineString) jtsMultiLineString.getGeometryN(0);
+  }
+
+  /**
+   *  collect the azimuth heading between the two coordinates in decimal degrees between -180 and 180, from location 1 to location 2
+   *  
+   *@param coordinate1 first Coordinate
+   *@param coordinate2 second Coordinate
+   *@return azimuth in degrees
+   */
+  public double getAzimuthInDegrees(Coordinate coordinate1, Coordinate coordinate2) {
+    geoCalculator.setStartingGeographicPoint(coordinate1.getX(), coordinate1.getY());
+    geoCalculator.setDestinationGeographicPoint(coordinate2.getX(), coordinate2.getY());
+    return geoCalculator.getAzimuth();
+  }
+
+
   
 }

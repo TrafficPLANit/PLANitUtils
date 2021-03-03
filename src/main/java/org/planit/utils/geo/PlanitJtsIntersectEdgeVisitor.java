@@ -1,7 +1,8 @@
 package org.planit.utils.geo;
 
 import java.util.Collection;
-import org.locationtech.jts.geom.Envelope;
+import org.locationtech.jts.geom.Geometry;
+import org.locationtech.jts.geom.Polygon;
 import org.planit.utils.graph.Edge;
 
 /**
@@ -17,18 +18,18 @@ public class PlanitJtsIntersectEdgeVisitor<T extends Edge> extends PlanitJtsItem
 
     /** Constructor
      * 
-     * @param geometryEnvelopeFilter
+     * @param geometryFilter
      * @param filteredResultToPopulate
      */
-    public PlanitJtsIntersectEdgeVisitor(Envelope geometryEnvelopeFilter, Collection<T> filteredResultToPopulate) {
-      super(geometryEnvelopeFilter, filteredResultToPopulate);        
+    public PlanitJtsIntersectEdgeVisitor(Polygon geometryFilter, Collection<T> filteredResultToPopulate) {
+      super(geometryFilter, filteredResultToPopulate);        
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    protected Envelope getEnvelope(T edge) {
-      return edge.getEnvelope();
+    protected Geometry getGeometry(T edge) {
+      return edge.getGeometry();
     }
 }

@@ -1,5 +1,6 @@
 package org.planit.utils.zoning;
 
+import org.planit.utils.graph.EdgeSegment;
 import org.planit.utils.network.physical.LinkSegment;
 import org.planit.utils.network.physical.Node;
 
@@ -49,6 +50,13 @@ public interface DirectedConnectoid extends Connectoid{
       return (Node)getAccessLinkSegment().getUpstreamVertex();
     }
   }
+
+  /**
+   * Replace the access link segment for this connectoid
+   * 
+   * @param accessEdgeSegment to use
+   */
+  public abstract void replaceAccessLinkSegment(EdgeSegment exitEdgeSegment);
   
   
 }

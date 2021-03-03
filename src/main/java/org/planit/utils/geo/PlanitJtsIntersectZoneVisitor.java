@@ -1,7 +1,10 @@
 package org.planit.utils.geo;
 
 import java.util.Collection;
-import org.locationtech.jts.geom.Envelope;
+import java.util.logging.Logger;
+
+import org.locationtech.jts.geom.Geometry;
+import org.locationtech.jts.geom.Polygon;
 import org.planit.utils.zoning.Zone;
 
 /**
@@ -15,21 +18,31 @@ import org.planit.utils.zoning.Zone;
  */
 public class PlanitJtsIntersectZoneVisitor<T extends Zone> extends PlanitJtsItemVisitor<T>{
 
+  /** the logger to use */
+    private static final Logger LOGGER = Logger.getLogger(PlanitJtsIntersectZoneVisitor.class.getCanonicalName());
+  
     /** Constructor
      * 
-     * @param geometryEnvelopeFilter
+     * @param geometryFilter
      * @param filteredResultToPopulate
      */
-    public PlanitJtsIntersectZoneVisitor(Envelope geometryEnvelopeFilter, Collection<T> filteredResultToPopulate) {
-      super(geometryEnvelopeFilter, filteredResultToPopulate);        
+    public PlanitJtsIntersectZoneVisitor(Polygon geometryFilter, Collection<T> filteredResultToPopulate) {
+      super(geometryFilter, filteredResultToPopulate);        
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    protected Envelope getEnvelope(T zone) {
-      return zone.getEnvelope();
+    protected Geometry getGeometry(T zone) {
+      if(zone.hasGeometry()) {
+        return zone.getGeometry();
+      }else if(zone.hasCentroid() && zone.getCentroid().hasPosition()) {
+        return zone.getCentroid().getPosition();
+      }else {
+        LOGGER.severe(String.format("Zone %s has no geotry information available",zone.getXmlId()));
+      }
+      return null;
     }
 
 }
