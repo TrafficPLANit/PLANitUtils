@@ -26,11 +26,13 @@ import org.locationtech.jts.geom.Point;
 import org.locationtech.jts.geom.Polygon;
 import org.locationtech.jts.linearref.LinearLocation;
 import org.locationtech.jts.linearref.LocationIndexedLine;
+import org.locationtech.jts.operation.linemerge.LineMerger;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.coordinate.PointArray;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.planit.utils.exceptions.PlanItException;
 import org.planit.utils.graph.Vertex;
+import org.planit.utils.misc.Pair;
 
 /**
  * General geotools related utils. Uses geodetic distance when possible. In case the CRS is not based on an ellipsoid (2d plane) it will simply compute the distance between
@@ -94,7 +96,23 @@ public class PlanitJtsUtils {
    * @throws PlanItException thrown if error
    */
   public double getClosestExistingCoordinateDistanceInMeters(Point point, Geometry geometry) throws PlanItException {
+    if(geometry !=null ){      
+      return getDistanceInMetres(getClosestExistingCoordinate(point, geometry), point.getCoordinate());
+    }
+    return Double.POSITIVE_INFINITY;    
+  }
+  
+  /** find the coordinate on the geometry with the closest distance to the reference point. Note that this is likely NOT
+   * the closest point to the geometry as this likely lies on the line connecting the two closest points.
+   * 
+   * @param point reference
+   * @param geometry to check against, explore all its coordinates
+   * @return closest coordinate distance
+   * @throws PlanItException thrown if error
+   */
+  public Coordinate getClosestExistingCoordinate(Point point, Geometry geometry) throws PlanItException {
     double minDistanceMetersToCoordinate = Double.POSITIVE_INFINITY;
+    Coordinate closestCoordinate = null;
     if(geometry !=null ){      
       Coordinate referenceCoordinate = point.getCoordinate();
       Coordinate[] coordinates = geometry.getCoordinates();
@@ -103,11 +121,27 @@ public class PlanitJtsUtils {
         double distanceMeters = getDistanceInMetres(referenceCoordinate, coordinate);
         if(minDistanceMetersToCoordinate > distanceMeters) {
           minDistanceMetersToCoordinate = distanceMeters;
+          closestCoordinate = coordinate;
         }
       }
     }
-    return minDistanceMetersToCoordinate;
-  }
+    return closestCoordinate;
+  }  
+  
+  /** find the closest location from the reference point to the geometry expressed as a linear location. Here we project onto the geometry, so we find the location with the actual closest distance 
+   * and create a coordinate at this location regardless if this coordinate is part of the geometry as a predefined coordinate at an extreme point. It is therefore more accurate than
+   * {@link getClosestExistingCoordinateDistanceInMeters}
+   * 
+   * @param referencePoint the reference point
+   * @param geometry to find closest distance to point to
+   * @return linearLocation found
+   * @throws PlanItException thrown if error
+   */  
+  public LinearLocation getClosestLinearLocationTo(Point referencePoint, LineString geometry) {
+    Coordinate referenceCoordinate = referencePoint.getCoordinate();
+    LocationIndexedLine locIndexedLine = new LocationIndexedLine(geometry);
+    return locIndexedLine.project(referenceCoordinate); 
+  }   
   
   /** find the closest projected coordinate from the reference point to the geometry. Here we project onto the geometry, so we find the location with the actual closest distance 
    * and create a coordinate at this location regardless if this coordinate is part of the geometry as a predefined coordinate at an extreme point. It is therefore more accurate than
@@ -119,10 +153,7 @@ public class PlanitJtsUtils {
    * @throws PlanItException thrown if error
    */  
   public Coordinate getClosestProjectedCoordinateTo(Point referencePoint, LineString geometry) {
-    Coordinate referenceCoordinate = referencePoint.getCoordinate();
-    LocationIndexedLine locIndexedLine = new LocationIndexedLine(geometry);
-    LinearLocation projectedLocation = locIndexedLine.project(referenceCoordinate);
-    return projectedLocation.getCoordinate(geometry); 
+    return getClosestLinearLocationTo(referencePoint, geometry).getCoordinate(geometry); 
   }   
     
   /** find the closest distance in meters from the point to the geometry.Here we project onto the geometry, so we find the actual closest distance instead of merely finding the closest
@@ -914,6 +945,48 @@ public class PlanitJtsUtils {
     geoCalculator.setDestinationGeographicPoint(coordinate2.getX(), coordinate2.getY());
     return geoCalculator.getAzimuth();
   }
+
+  /** split a line string into two line strings at a given location along the original geometry. the resulting linestrings have the split location in common
+   * 
+   * @param geometry to split
+   * @param splitLocation where to split
+   * @return line string pair, first from start to split location, second from split location to end
+   */
+  public static Pair<LineString, LineString> splitLineString(LineString geometry, LinearLocation splitLocation) {
+    LocationIndexedLine locIndexedLine = new LocationIndexedLine(geometry);
+    LineString geometryStartToLinearLocation= (LineString)locIndexedLine.extractLine(locIndexedLine.getStartIndex(), splitLocation);
+    LineString geometryLinearLocationToEnd = null;
+    if(!splitLocation.isEndpoint(geometry)) {
+      geometryLinearLocationToEnd = (LineString) locIndexedLine.extractLine(splitLocation, locIndexedLine.getEndIndex());
+    }
+    return Pair.of(geometryStartToLinearLocation, geometryLinearLocationToEnd);
+  }
+
+  /**
+   * Merge two line strings that are expected to have at least one point in common, in case any input is null or there is no overlap 
+   * between the two null is returned 
+   * 
+   * 
+   * @param first line string
+   * @param second line string
+   * @return merged line string, or null if failed or any input is null
+   */
+  public static LineString mergeLineStrings(LineString first, LineString second) {
+    if(second == null || first == null) {
+      return null;
+    }
+    /* register */
+    LineMerger lineMerger = new LineMerger();
+    lineMerger.add(first);
+    lineMerger.add(second);
+    /* merge and collect first result */
+    if(lineMerger.getMergedLineStrings()==null || lineMerger.getMergedLineStrings().isEmpty()) {
+      return null;
+    }
+    return (LineString) lineMerger.getMergedLineStrings().iterator().next();
+  }
+
+
 
 
   

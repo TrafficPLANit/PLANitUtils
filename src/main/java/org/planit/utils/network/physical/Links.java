@@ -10,6 +10,15 @@ import org.planit.utils.graph.Edges;
  * @param <L> link type
  */
 public interface Links<L extends Link> extends Edges<L> {
-  
+
+  /**
+   * verify if link is present
+   * 
+   * @param id to check
+   * @return true when present false otherwise
+   */
+  public default boolean hasLink(long id) {
+    return hasEdge(id);
+  } 
 
 }

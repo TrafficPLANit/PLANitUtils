@@ -62,8 +62,8 @@ public interface Edges<E extends Edge> extends Iterable<E> {
    * @param id the id of the edge
    * @return the retrieved edge, null if not present
    */
-  public E get(final long id);
-
+  public E get(long id);
+  
   /**
    * Get the number of edges in the graph
    *
@@ -76,6 +76,14 @@ public interface Edges<E extends Edge> extends Iterable<E> {
    * @return true when no edges, false otherwise
    */
   public boolean isEmpty();
-  
+
+  /** Verify if edge is present
+   * 
+   * @param linkId to verify
+   * @return true when present false otherwise
+   */
+  public default boolean hasEdge(long id) {
+    return get(id) != null;
+  }
 
 }
