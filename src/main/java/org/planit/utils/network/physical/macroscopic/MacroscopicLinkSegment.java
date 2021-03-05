@@ -96,7 +96,7 @@ public interface MacroscopicLinkSegment extends LinkSegment {
    * @param modes to choose from
    * @return allowed modes
    */
-  public default Set<Mode> getAllowedModes(Collection<Mode> modes){
+  public default Set<Mode> getAllowedModesFrom(Collection<Mode> modes){
     Set<Mode> allowedModes = new HashSet<Mode>();
     for(Mode mode : modes) {
       if(isModeAllowed(mode)) {

@@ -97,7 +97,7 @@ public class PlanitJtsUtils {
    */
   public double getClosestExistingCoordinateDistanceInMeters(Point point, Geometry geometry) throws PlanItException {
     if(geometry !=null ){      
-      return getDistanceInMetres(getClosestExistingCoordinate(point, geometry), point.getCoordinate());
+      return getDistanceInMetres(getClosestExistingCoordinateToPoint(point, geometry), point.getCoordinate());
     }
     return Double.POSITIVE_INFINITY;    
   }
@@ -110,7 +110,7 @@ public class PlanitJtsUtils {
    * @return closest coordinate distance
    * @throws PlanItException thrown if error
    */
-  public Coordinate getClosestExistingCoordinate(Point point, Geometry geometry) throws PlanItException {
+  public Coordinate getClosestExistingCoordinateToPoint(Point point, Geometry geometry) throws PlanItException {
     double minDistanceMetersToCoordinate = Double.POSITIVE_INFINITY;
     Coordinate closestCoordinate = null;
     if(geometry !=null ){      
@@ -128,20 +128,84 @@ public class PlanitJtsUtils {
     return closestCoordinate;
   }  
   
+  /** find the coordinate on the geometryToFindCoordinate with the closest distance to the reference referenceGeometry. Note that this is likely NOT
+   * the closest point to the geometry as this likely lies on the line connecting the two closest points.
+   * 
+   * @param referenceGeometry to use
+   * @param geometryToFindCoordinate on
+   * @return closest existing coordinate on geometry to find coordinate on
+   * @throws PlanItException thrown if error
+   */
+  public Coordinate getClosestExistingCoordinateToGeometry(Geometry referenceGeometry, LineString geometryToFindCoordinate) throws PlanItException {
+    double minDistanceMetersToCoordinate = Double.POSITIVE_INFINITY;
+    Coordinate closestCoordinate = null;
+    for(int index = 0; index < geometryToFindCoordinate.getNumPoints() ; ++index) {
+      Coordinate coordinate = geometryToFindCoordinate.getCoordinateN(index);
+      Coordinate closestProjectedReferenceCoordinate = getClosestLinearLocationToPoint(createPoint(coordinate), referenceGeometry).getCoordinate(referenceGeometry);
+      double distanceMeters = getDistanceInMetres(closestProjectedReferenceCoordinate, coordinate);
+      if(minDistanceMetersToCoordinate > distanceMeters) {
+        minDistanceMetersToCoordinate = distanceMeters;
+        closestCoordinate = coordinate;
+      }
+    }
+    return closestCoordinate;
+  }  
+  
   /** find the closest location from the reference point to the geometry expressed as a linear location. Here we project onto the geometry, so we find the location with the actual closest distance 
-   * and create a coordinate at this location regardless if this coordinate is part of the geometry as a predefined coordinate at an extreme point. It is therefore more accurate than
+   * and create a linear location regardless if this coordinate is part of the geometry as a predefined coordinate at an extreme point. It is therefore more accurate than
    * {@link getClosestExistingCoordinateDistanceInMeters}
    * 
    * @param referencePoint the reference point
-   * @param geometry to find closest distance to point to
+   * @param linearGeometry to find closest distance to point to (must be a linear geometry)
    * @return linearLocation found
    * @throws PlanItException thrown if error
    */  
-  public LinearLocation getClosestLinearLocationTo(Point referencePoint, LineString geometry) {
-    Coordinate referenceCoordinate = referencePoint.getCoordinate();
-    LocationIndexedLine locIndexedLine = new LocationIndexedLine(geometry);
+  public LinearLocation getClosestLinearLocationToPoint(Point referencePoint, Geometry linearGeometry) {
+    return getClosestLinearLocationToCoordinate(referencePoint.getCoordinate(), linearGeometry); 
+  }   
+  
+  /** find the closest location from the reference coordinate to the geometry expressed as a linear location. Here we project onto the geometry, so we find the location with the actual closest distance 
+   * and create a linear location regardless if this coordinate is part of the geometry as a predefined coordinate at an extreme point. It is therefore more accurate than
+   * {@link getClosestExistingCoordinateDistanceInMeters}
+   * 
+   * @param referencePoint the reference point
+   * @param linearGeometry to find closest distance to point to (must be a linear geometry)
+   * @return linearLocation found
+   * @throws PlanItException thrown if error
+   */  
+  public LinearLocation getClosestLinearLocationToCoordinate(Coordinate referenceCoordinate, Geometry linearGeometry) {
+    LocationIndexedLine locIndexedLine = new LocationIndexedLine(linearGeometry);
     return locIndexedLine.project(referenceCoordinate); 
   }   
+  
+  /** find the closest location from the reference geometry to the line string expressed as a linear location. Here we project onto the geometry, so we find the location with the actual closest distance 
+   * and extract the linear location regardless if this coordinate is part of the geometry as a predefined coordinate at an extreme point. It is therefore more accurate than
+   * {@link getClosestExistingCoordinateDistanceInMeters}
+   * 
+   * @param referenceGeometry the reference geometry
+   * @param linearGeometry to find closest distance to point to (must be a linear geometry)
+   * @return linearLocation found
+   * @throws PlanItException thrown if error
+   */  
+  public LinearLocation getClosestLinearLocationToGeometry(Geometry referenceGeometry, LineString linearGeometry) throws PlanItException {
+    double minDistanceMetersToCoordinate = Double.POSITIVE_INFINITY;
+    LinearLocation closestLocation = null;
+    Coordinate[] referenceGeometryCoordinates = referenceGeometry.getCoordinates();
+    /* for each coordinate of the reference geometry find min distance projected coordinate on linearGeometry... */
+    for(int index = 0; index < referenceGeometry.getNumPoints() ; ++index) {
+      Coordinate referenceCoordinate = referenceGeometryCoordinates[index];
+      LinearLocation location = getClosestLinearLocationToCoordinate(referenceCoordinate, linearGeometry);
+      double distanceMeters = getDistanceInMetres(location.getCoordinate(linearGeometry), referenceCoordinate);
+      
+      /* ... select minimum of all found connecting line segments */
+      if(minDistanceMetersToCoordinate > distanceMeters) {
+        minDistanceMetersToCoordinate = distanceMeters;
+        closestLocation = location;
+      }      
+    }
+    return closestLocation;
+  }  
+  
   
   /** find the closest projected coordinate from the reference point to the geometry. Here we project onto the geometry, so we find the location with the actual closest distance 
    * and create a coordinate at this location regardless if this coordinate is part of the geometry as a predefined coordinate at an extreme point. It is therefore more accurate than
@@ -153,7 +217,7 @@ public class PlanitJtsUtils {
    * @throws PlanItException thrown if error
    */  
   public Coordinate getClosestProjectedCoordinateTo(Point referencePoint, LineString geometry) {
-    return getClosestLinearLocationTo(referencePoint, geometry).getCoordinate(geometry); 
+    return getClosestLinearLocationToPoint(referencePoint, geometry).getCoordinate(geometry); 
   }   
     
   /** find the closest distance in meters from the point to the geometry.Here we project onto the geometry, so we find the actual closest distance instead of merely finding the closest
@@ -670,6 +734,9 @@ public class PlanitJtsUtils {
     }
 
     Coordinate[] coordinates = copyCoordinatesFrom(offset.get(), geometry);
+    if(coordinates.length == 1) {
+      throw new PlanItException(String.format("linestring (%s) without coordinates before %s results in single coordinate, unable to create linestring", geometry.toString(), position.toString()));
+    }
 
     return createLineString(coordinates);
   }
@@ -985,9 +1052,6 @@ public class PlanitJtsUtils {
     }
     return (LineString) lineMerger.getMergedLineStrings().iterator().next();
   }
-
-
-
 
   
 }
