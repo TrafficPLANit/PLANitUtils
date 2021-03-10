@@ -15,6 +15,7 @@ import org.geotools.geometry.jts.JTSFactoryFinder;
 import org.geotools.referencing.GeodeticCalculator;
 import org.geotools.referencing.crs.DefaultGeographicCRS;
 import org.geotools.referencing.factory.epsg.CartesianAuthorityFactory;
+import org.locationtech.jts.algorithm.RobustDeterminant;
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.Envelope;
 import org.locationtech.jts.geom.Geometry;
@@ -160,7 +161,7 @@ public class PlanitJtsUtils {
    * @return linearLocation found
    * @throws PlanItException thrown if error
    */  
-  public LinearLocation getClosestLinearLocationToPoint(Point referencePoint, Geometry linearGeometry) {
+  public LinearLocation getClosestLinearLocationToPoint(Point referencePoint, Geometry linearGeometry) throws PlanItException {
     return getClosestLinearLocationToCoordinate(referencePoint.getCoordinate(), linearGeometry); 
   }   
   
@@ -173,12 +174,13 @@ public class PlanitJtsUtils {
    * @return linearLocation found
    * @throws PlanItException thrown if error
    */  
-  public LinearLocation getClosestLinearLocationToCoordinate(Coordinate referenceCoordinate, Geometry linearGeometry) {
+  public LinearLocation getClosestLinearLocationToCoordinate(Coordinate referenceCoordinate, Geometry linearGeometry) throws PlanItException {
     LocationIndexedLine locIndexedLine = new LocationIndexedLine(linearGeometry);
-    return locIndexedLine.project(referenceCoordinate); 
-  }   
+    return locIndexedLine.project(referenceCoordinate);
+  } 
+   
   
-  /** find the closest location from the reference geometry to the line string expressed as a linear location. Here we project onto the geometry, so we find the location with the actual closest distance 
+  /** find the closest location from any existing coordinate of the reference geometry to the line string geometry as a linear location. Here we project onto the geometry, so we find the location with the actual closest distance 
    * and extract the linear location regardless if this coordinate is part of the geometry as a predefined coordinate at an extreme point. It is therefore more accurate than
    * {@link getClosestExistingCoordinateDistanceInMeters}
    * 
@@ -206,7 +208,6 @@ public class PlanitJtsUtils {
     return closestLocation;
   }  
   
-  
   /** find the closest projected coordinate from the reference point to the geometry. Here we project onto the geometry, so we find the location with the actual closest distance 
    * and create a coordinate at this location regardless if this coordinate is part of the geometry as a predefined coordinate at an extreme point. It is therefore more accurate than
    * {@link getClosestExistingCoordinateDistanceInMeters}
@@ -216,9 +217,63 @@ public class PlanitJtsUtils {
    * @return distance found in meters
    * @throws PlanItException thrown if error
    */  
-  public Coordinate getClosestProjectedCoordinateTo(Point referencePoint, LineString geometry) {
-    return getClosestLinearLocationToPoint(referencePoint, geometry).getCoordinate(geometry); 
+  public Coordinate getClosestProjectedCoordinateOnGeometry(Point referencePoint, Geometry geometry) throws PlanItException {
+    if(geometry instanceof Point) {
+      return ((Point)geometry).getCoordinate();
+    }else if(geometry instanceof LineString ) {
+        return getClosestProjectedCoordinateOnLineString(referencePoint, (LineString)geometry);  
+    }else if(geometry instanceof Polygon) {
+      return getClosestPojectedCoordinateOnPolygon(referencePoint, (Polygon)geometry);
+    }else {
+      throw new PlanItException("Method getClosestProjectedCoordinateTo not supported for provided geometry type %s",geometry.getClass().getName());
+    }     
+  }  
+  
+  
+  /** find the closest projected coordinate from the reference point to the line string. Here we project onto the geometry, so we find the location with the actual closest distance 
+   * and create a coordinate at this location regardless if this coordinate is part of the geometry as a predefined coordinate at an extreme point. It is therefore more accurate than
+   * {@link getClosestExistingCoordinateDistanceInMeters}
+   * 
+   * @param referencePoint the reference point
+   * @param lineString to find closest distance to point to
+   * @return distance found in meters
+   * @throws PlanItException thrown if error
+   */  
+  public Coordinate getClosestProjectedCoordinateOnLineString(Point referencePoint, LineString lineString) throws PlanItException {
+    return getClosestLinearLocationToPoint(referencePoint, lineString).getCoordinate(lineString); 
   }   
+  
+  /** find the closest location from the reference coordinate to the polygon expressed as a linear location. Here we project onto the polygon, so we find the location with the actual closest distance 
+   * and create a linear location regardless if this coordinate is part of the polygon as a predefined coordinate at an extreme point. It is therefore more accurate than
+   * {@link getClosestExistingCoordinateDistanceInMeters}
+   * 
+   * @param referencePoint the reference point
+   * @param polygon to find closest distance to point to using its exterior ring
+   * @return linearLocation found
+   * @throws PlanItException thrown if error
+   */  
+  public Coordinate getClosestPojectedCoordinateOnPolygon(Point referencePoint, Polygon polygon) throws PlanItException {
+    PlanItException.throwIfNull(referencePoint, "Provided point is null when computing closest location to given coordinate");
+    PlanItException.throwIfNull(polygon, "Provided polygon is null when computing closest location to given coordinate");
+    PlanItException.throwIfNull(polygon.getNumPoints()<2, "Provided polygon has too feww coordinates");
+    
+    double minDistanceMeters = Double.POSITIVE_INFINITY;
+    Coordinate closestProjectedCoordinate = null;
+    Coordinate[] polygonCoordinates = polygon.getExteriorRing().getCoordinates();
+    /* for each coordinate of the ring determine the distance, from all distances collect the smallest one */
+    Coordinate prevCoordinate = polygonCoordinates[0];
+    for(int index = 1; index < polygonCoordinates.length ; ++index) {
+      Coordinate currCoordinate = polygonCoordinates[index];
+      LineString lineString = jtsGeometryFactory.createLineString(new Coordinate[] {prevCoordinate,currCoordinate});
+      LinearLocation linearLocation = getClosestLinearLocationToCoordinate(referencePoint.getCoordinate(), lineString);
+      double distanceMeters = getDistanceInMetres(linearLocation.getCoordinate(lineString), referencePoint.getCoordinate());
+      if(distanceMeters < minDistanceMeters) {
+        minDistanceMeters = distanceMeters;
+        closestProjectedCoordinate = linearLocation.getCoordinate(lineString);
+      }
+    }
+    return closestProjectedCoordinate;
+  }  
     
   /** find the closest distance in meters from the point to the geometry.Here we project onto the geometry, so we find the actual closest distance instead of merely finding the closest
    * modelled coordinated within the geometry.
@@ -229,7 +284,7 @@ public class PlanitJtsUtils {
    * @throws PlanItException thrown if error
    */
   public double getClosestProjectedDistanceInMetersToLineString(Point referencePoint, LineString geometry) throws PlanItException {
-    return getDistanceInMetres(referencePoint.getCoordinate(), getClosestProjectedCoordinateTo(referencePoint, geometry));      
+    return getDistanceInMetres(referencePoint.getCoordinate(), getClosestProjectedCoordinateOnLineString(referencePoint, geometry));      
   }  
       
   
@@ -1052,6 +1107,30 @@ public class PlanitJtsUtils {
     }
     return (LineString) lineMerger.getMergedLineStrings().iterator().next();
   }
+
+  /** Using the normalised sign of the determinant of line AB and AM we determine if coordM resides left of the line segment AB
+   * 
+   * @param coordM to check if left of AB
+   * @param coordA A coord of AB
+   * @param coordB B coord of AB
+   * @return true when M is left of AB 
+   */
+  public static boolean isCoordinateLeftOf(Coordinate coordM, Coordinate coordA, Coordinate coordB) {
+    /* use the RobustDeterminant feature of JTS */
+    return RobustDeterminant.orientationIndex( coordA, coordB, coordM) == 1;
+  }
+  
+  /** Using the normalised sign of the determinant of line AB and AM we determine if coordM resides right of the line segment AB
+   * 
+   * @param coordM to check if right of AB
+   * @param coordA A coord of AB
+   * @param coordB B coord of AB
+   * @return true when M is right of AB
+   */
+  public static boolean isCoordinateRightOf(Coordinate coordM, Coordinate coordA, Coordinate coordB) {
+    /* use the RobustDeterminant feature of JTS */
+    return RobustDeterminant.orientationIndex( coordA, coordB, coordM) == -1;
+  }  
 
   
 }
