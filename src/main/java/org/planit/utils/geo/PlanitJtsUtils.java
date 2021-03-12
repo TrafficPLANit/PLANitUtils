@@ -1120,6 +1120,27 @@ public class PlanitJtsUtils {
     return RobustDeterminant.orientationIndex( coordA, coordB, coordM) == 1;
   }
   
+  /** Verify if the provided geometry resides left of the line defined from coordA to coordB. If the geometry is not a point, we first find the closest
+   * location on the geometry to coordinate B and use that as a reference instead.
+   * 
+   * @param geometry to check
+   * @param coordA of line 
+   * @param coordB of line
+   * @return true when left, false otherwise
+   * @throws PlanItException thrown if error
+   */
+  public boolean isGeometryLeftOf(Geometry geometry, Coordinate coordA, Coordinate coordB) throws PlanItException {
+    
+    Coordinate transferZoneReferenceCoordinate = null; 
+    if(geometry instanceof Point) {
+      transferZoneReferenceCoordinate = ((Point)geometry).getCoordinate();  
+    }else {
+      /* find projected coordinate closest to coordB */
+      transferZoneReferenceCoordinate = getClosestProjectedCoordinateOnGeometry(PlanitJtsUtils.createPoint(coordB),  geometry);
+    }    
+    return PlanitJtsUtils.isCoordinateLeftOf(transferZoneReferenceCoordinate, coordA, coordB);   
+  }  
+  
   /** Using the normalised sign of the determinant of line AB and AM we determine if coordM resides right of the line segment AB
    * 
    * @param coordM to check if right of AB
