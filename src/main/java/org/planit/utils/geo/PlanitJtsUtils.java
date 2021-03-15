@@ -67,6 +67,7 @@ public class PlanitJtsUtils {
 
   /** jts geometry factory, jts geometry differs from opengis implementation by not carrying the crs and being more lightweight */
   private static final GeometryFactory jtsGeometryFactory = JTSFactoryFinder.getGeometryFactory();
+   
   
   /**
    * Constructor
@@ -142,7 +143,7 @@ public class PlanitJtsUtils {
     Coordinate closestCoordinate = null;
     for(int index = 0; index < geometryToFindCoordinate.getNumPoints() ; ++index) {
       Coordinate coordinate = geometryToFindCoordinate.getCoordinateN(index);
-      Coordinate closestProjectedReferenceCoordinate = getClosestLinearLocationToPoint(createPoint(coordinate), referenceGeometry).getCoordinate(referenceGeometry);
+      Coordinate closestProjectedReferenceCoordinate = getClosestProjectedCoordinateOnGeometry(createPoint(coordinate), referenceGeometry);
       double distanceMeters = getDistanceInMetres(closestProjectedReferenceCoordinate, coordinate);
       if(minDistanceMetersToCoordinate > distanceMeters) {
         minDistanceMetersToCoordinate = distanceMeters;
@@ -157,15 +158,23 @@ public class PlanitJtsUtils {
    * {@link getClosestExistingCoordinateDistanceInMeters}
    * 
    * @param referencePoint the reference point
-   * @param linearGeometry to find closest distance to point to (must be a linear geometry)
+   * @param geometry to find closest distance to point to
    * @return linearLocation found
    * @throws PlanItException thrown if error
    */  
-  public LinearLocation getClosestLinearLocationToPoint(Point referencePoint, Geometry linearGeometry) throws PlanItException {
-    return getClosestLinearLocationToCoordinate(referencePoint.getCoordinate(), linearGeometry); 
+  public LinearLocation getClosestProjectedLinearLocationOnGeometry(Point referencePoint, Geometry geometry) throws PlanItException {    
+    if(geometry instanceof Point) {
+      throw new PlanItException("cannot create linear Location from a single point");
+    }else if(geometry instanceof LineString ) {
+        return getClosestProjectedLinearLocationOnLineString(referencePoint.getCoordinate(), (LineString)geometry);  
+    }else if(geometry instanceof Polygon) {
+      return getClosestProjectedLinearLocationOnPolygon(referencePoint.getCoordinate(), (Polygon)geometry);
+    }else {
+      throw new PlanItException("Method getClosestLinearLocationOnGeometry not supported for provided geometry type %s",geometry.getClass().getName());
+    }      
   }   
   
-  /** find the closest location from the reference coordinate to the geometry expressed as a linear location. Here we project onto the geometry, so we find the location with the actual closest distance 
+  /** find the closest location from the reference coordinate to the line string expressed as a linear location. Here we project onto the geometry, so we find the location with the actual closest distance 
    * and create a linear location regardless if this coordinate is part of the geometry as a predefined coordinate at an extreme point. It is therefore more accurate than
    * {@link getClosestExistingCoordinateDistanceInMeters}
    * 
@@ -174,10 +183,42 @@ public class PlanitJtsUtils {
    * @return linearLocation found
    * @throws PlanItException thrown if error
    */  
-  public LinearLocation getClosestLinearLocationToCoordinate(Coordinate referenceCoordinate, Geometry linearGeometry) throws PlanItException {
-    LocationIndexedLine locIndexedLine = new LocationIndexedLine(linearGeometry);
+  public LinearLocation getClosestProjectedLinearLocationOnLineString(Coordinate referenceCoordinate, LineString lineString) throws PlanItException {
+    LocationIndexedLine locIndexedLine = new LocationIndexedLine(lineString);
     return locIndexedLine.project(referenceCoordinate);
   } 
+  
+  /** find the closest location from the reference coordinate to the polygon expressed as a linear location. Here we project onto the geometry, so we find the location with the actual closest distance 
+   * and create a linear location regardless if this coordinate is part of the geometry as a predefined coordinate at an extreme point. It is therefore more accurate than
+   * {@link getClosestExistingCoordinateDistanceInMeters}
+   * 
+   * @param referencePoint the reference point
+   * @param linearGeometry to find closest distance to point to (must be a linear geometry)
+   * @return linearLocation found
+   * @throws PlanItException thrown if error
+   */  
+  public LinearLocation getClosestProjectedLinearLocationOnPolygon(Coordinate referenceCoordinate, Polygon polygon) throws PlanItException {
+    PlanItException.throwIfNull(referenceCoordinate, "Provided coordinate is null when computing closest location to given coordinate");
+    PlanItException.throwIfNull(polygon, "Provided polygon is null when computing closest location to given coordinate");
+    PlanItException.throwIfNull(polygon.getNumPoints()<2, "Provided polygon has too few coordinates");
+    
+    double minDistanceMeters = Double.POSITIVE_INFINITY;
+    LinearLocation closestLinearLocation = null;
+    Coordinate[] polygonCoordinates = polygon.getExteriorRing().getCoordinates();
+    /* for each coordinate of the ring determine the distance, from all distances collect the smallest one */
+    Coordinate prevCoordinate = polygonCoordinates[0];
+    for(int index = 1; index < polygonCoordinates.length ; ++index) {
+      Coordinate currCoordinate = polygonCoordinates[index];
+      LineString lineString = jtsGeometryFactory.createLineString(new Coordinate[] {prevCoordinate,currCoordinate});
+      LinearLocation linearLocation = getClosestProjectedLinearLocationOnLineString(referenceCoordinate, lineString);
+      double distanceMeters = getDistanceInMetres(linearLocation.getCoordinate(lineString), referenceCoordinate);
+      if(distanceMeters < minDistanceMeters) {
+        minDistanceMeters = distanceMeters;
+        closestLinearLocation = linearLocation;
+      }
+    }
+    return closestLinearLocation;
+  }   
    
   
   /** find the closest location from any existing coordinate of the reference geometry to the line string geometry as a linear location. Here we project onto the geometry, so we find the location with the actual closest distance 
@@ -189,14 +230,14 @@ public class PlanitJtsUtils {
    * @return linearLocation found
    * @throws PlanItException thrown if error
    */  
-  public LinearLocation getClosestLinearLocationToGeometry(Geometry referenceGeometry, LineString linearGeometry) throws PlanItException {
+  public LinearLocation getClosestGeometryExistingCoordinateToProjectedLinearLocationOnLineString(Geometry referenceGeometry, LineString linearGeometry) throws PlanItException {
     double minDistanceMetersToCoordinate = Double.POSITIVE_INFINITY;
     LinearLocation closestLocation = null;
     Coordinate[] referenceGeometryCoordinates = referenceGeometry.getCoordinates();
     /* for each coordinate of the reference geometry find min distance projected coordinate on linearGeometry... */
     for(int index = 0; index < referenceGeometry.getNumPoints() ; ++index) {
       Coordinate referenceCoordinate = referenceGeometryCoordinates[index];
-      LinearLocation location = getClosestLinearLocationToCoordinate(referenceCoordinate, linearGeometry);
+      LinearLocation location = getClosestProjectedLinearLocationOnLineString(referenceCoordinate, linearGeometry);
       double distanceMeters = getDistanceInMetres(location.getCoordinate(linearGeometry), referenceCoordinate);
       
       /* ... select minimum of all found connecting line segments */
@@ -240,7 +281,7 @@ public class PlanitJtsUtils {
    * @throws PlanItException thrown if error
    */  
   public Coordinate getClosestProjectedCoordinateOnLineString(Point referencePoint, LineString lineString) throws PlanItException {
-    return getClosestLinearLocationToPoint(referencePoint, lineString).getCoordinate(lineString); 
+    return getClosestProjectedLinearLocationOnGeometry(referencePoint, lineString).getCoordinate(lineString); 
   }   
   
   /** find the closest location from the reference coordinate to the polygon expressed as a linear location. Here we project onto the polygon, so we find the location with the actual closest distance 
@@ -253,26 +294,12 @@ public class PlanitJtsUtils {
    * @throws PlanItException thrown if error
    */  
   public Coordinate getClosestPojectedCoordinateOnPolygon(Point referencePoint, Polygon polygon) throws PlanItException {
-    PlanItException.throwIfNull(referencePoint, "Provided point is null when computing closest location to given coordinate");
-    PlanItException.throwIfNull(polygon, "Provided polygon is null when computing closest location to given coordinate");
-    PlanItException.throwIfNull(polygon.getNumPoints()<2, "Provided polygon has too feww coordinates");
+    /* collect linear location and from that reconstruct the line string to extract the projected coordinate from */
+    LinearLocation linearLocation = getClosestProjectedLinearLocationOnPolygon(referencePoint.getCoordinate(), polygon);
+    int lineSegmentIndex = linearLocation.getSegmentIndex();
     
-    double minDistanceMeters = Double.POSITIVE_INFINITY;
-    Coordinate closestProjectedCoordinate = null;
-    Coordinate[] polygonCoordinates = polygon.getExteriorRing().getCoordinates();
-    /* for each coordinate of the ring determine the distance, from all distances collect the smallest one */
-    Coordinate prevCoordinate = polygonCoordinates[0];
-    for(int index = 1; index < polygonCoordinates.length ; ++index) {
-      Coordinate currCoordinate = polygonCoordinates[index];
-      LineString lineString = jtsGeometryFactory.createLineString(new Coordinate[] {prevCoordinate,currCoordinate});
-      LinearLocation linearLocation = getClosestLinearLocationToCoordinate(referencePoint.getCoordinate(), lineString);
-      double distanceMeters = getDistanceInMetres(linearLocation.getCoordinate(lineString), referencePoint.getCoordinate());
-      if(distanceMeters < minDistanceMeters) {
-        minDistanceMeters = distanceMeters;
-        closestProjectedCoordinate = linearLocation.getCoordinate(lineString);
-      }
-    }
-    return closestProjectedCoordinate;
+    return linearLocation.getCoordinate(
+        createLineString(new Coordinate[] {polygon.getCoordinates()[lineSegmentIndex],polygon.getCoordinates()[lineSegmentIndex+1]}));
   }  
     
   /** find the closest distance in meters from the point to the geometry.Here we project onto the geometry, so we find the actual closest distance instead of merely finding the closest
