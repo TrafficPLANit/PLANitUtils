@@ -30,9 +30,6 @@ public class PlanitJtsIntersectEdgeVisitor<T extends Edge> extends PlanitJtsItem
      */
     @Override
     protected Geometry getGeometry(T edge) {
-      if(edge.getExternalId()==String.valueOf(197882870l)) {
-        int bla = 4;
-      }
       return edge.getGeometry();
     }
 }

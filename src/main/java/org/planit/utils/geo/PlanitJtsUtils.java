@@ -658,6 +658,17 @@ public class PlanitJtsUtils {
     
     return new Envelope(x1, x2, y2, y1);    
   }
+  
+  /** create a square bounding box envelope instance based on an existing envelope bounding box and and buffer length in meters 
+   * resulting in a larger bounding box returned
+   * 
+   * @param boundingBox original bounding box
+   * @param lengthMeters buffer length in meters
+   * @return envelope with appropriate square bounding box
+   */
+  public Envelope createBoundingBox(Envelope boundingBox, double lengthMeters) {
+    return createBoundingBox(boundingBox.getMinX(),boundingBox.getMinY(), boundingBox.getMaxX(), boundingBox.getMaxY(), lengthMeters);   
+  }  
 
   /** create a square bounding box envelope instance based on the passed in bounding box coordinates and buffer length in meters 
    * resulting in a larger bounding box returned
@@ -666,8 +677,7 @@ public class PlanitJtsUtils {
    * @param minY y (latitude) coord of minimum extreme point
    * @param maxX x (longitude) coord of maximum extreme point
    * @param maxY y (latitude) coord of maximum extreme point
-   * 
-   * @param lengthMeters in meters
+   * @param lengthMeters buffer length in meters
    * @return envelope with appropriate square bounding box
    */
   public Envelope createBoundingBox(double minX, double minY, double maxX, double maxY, double lengthMeters) {
