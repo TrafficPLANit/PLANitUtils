@@ -130,19 +130,19 @@ public class PlanitJtsUtils {
     return closestCoordinate;
   }  
   
-  /** find the coordinate on the geometryToFindCoordinate with the closest distance to the reference referenceGeometry. Note that this is likely NOT
+  /** find the coordinate on the line string with the closest distance to the reference referenceGeometry. Note that this is likely NOT
    * the closest point to the geometry as this likely lies on the line connecting the two closest points.
    * 
    * @param referenceGeometry to use
-   * @param geometryToFindCoordinate on
+   * @param lineString on
    * @return closest existing coordinate on geometry to find coordinate on
    * @throws PlanItException thrown if error
    */
-  public Coordinate getClosestExistingCoordinateToGeometry(Geometry referenceGeometry, LineString geometryToFindCoordinate) throws PlanItException {
+  public Coordinate getClosestExistingLineStringCoordinateToGeometry(Geometry referenceGeometry, LineString lineString) throws PlanItException {
     double minDistanceMetersToCoordinate = Double.POSITIVE_INFINITY;
     Coordinate closestCoordinate = null;
-    for(int index = 0; index < geometryToFindCoordinate.getNumPoints() ; ++index) {
-      Coordinate coordinate = geometryToFindCoordinate.getCoordinateN(index);
+    for(int index = 0; index < lineString.getNumPoints() ; ++index) {
+      Coordinate coordinate = lineString.getCoordinateN(index);
       Coordinate closestProjectedReferenceCoordinate = getClosestProjectedCoordinateOnGeometry(createPoint(coordinate), referenceGeometry);
       double distanceMeters = getDistanceInMetres(closestProjectedReferenceCoordinate, coordinate);
       if(minDistanceMetersToCoordinate > distanceMeters) {
