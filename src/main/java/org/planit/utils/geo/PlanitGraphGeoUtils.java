@@ -59,9 +59,7 @@ public class PlanitGraphGeoUtils {
      
       if(distanceMeters < minDistanceMeters) {
         minDistanceMeters = distanceMeters;
-        if(minDistanceMeters < maxDistanceMeters) {
-          closestEntity = entity;
-        }
+        closestEntity = entity;
       }      
     }
     
@@ -113,9 +111,9 @@ public class PlanitGraphGeoUtils {
     }
     
     if(geometry instanceof Point) {
-      findEdgeClosestToPoint((Point)geometry, edges, geoUtils);
+      return findEdgeClosestToPoint((Point)geometry, edges, geoUtils);
     }else if(geometry instanceof LineString) {
-      findEdgeClosestToLineString((LineString)geometry, edges, geoUtils);     
+      return findEdgeClosestToLineString((LineString)geometry, edges, geoUtils);     
     }
     
     return null;
@@ -155,7 +153,7 @@ public class PlanitGraphGeoUtils {
    * @throws PlanItException thrown if error
    */    
   public static Edge findEdgeClosestToPoint(Point point, Collection<? extends Edge> edges, PlanitJtsUtils geoUtils) throws PlanItException {
-    return (Edge) findPlanitEntityClosest(point, edges, Double.POSITIVE_INFINITY, geoUtils);     
+    return findPlanitEntityClosest(point, edges, Double.POSITIVE_INFINITY, geoUtils).first();     
   }  
   
   /** Find edges spatially based on the provided bounding box and spatially indexed quadtree containing edges as values

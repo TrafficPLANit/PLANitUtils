@@ -5,6 +5,7 @@ import java.util.Collection;
 import java.util.Set;
 
 import org.geotools.geometry.jts.JTS;
+import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.Point;
 import org.opengis.geometry.MismatchedDimensionException;
 import org.opengis.referencing.operation.MathTransform;
@@ -138,5 +139,14 @@ public interface Vertex extends Serializable, ExternalIdable {
    */
   public default void transformPosition(MathTransform transformer) throws MismatchedDimensionException, TransformException {
     setPosition((Point) JTS.transform(getPosition(),transformer));
+  }
+
+  /** Verify if the vertex position is equal (in 2D) to the passed in coordinate
+   * 
+   * @param coordinate to check against
+   * @return true when equal location in 2D, false otherwise
+   */
+  public default boolean isPositionEqual2D(Coordinate coordinate) {
+    return hasPosition() && getPosition().getCoordinate().equals2D(coordinate);
   }
 }
