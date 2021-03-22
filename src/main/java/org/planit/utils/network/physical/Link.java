@@ -1,6 +1,10 @@
 package org.planit.utils.network.physical;
 
+import java.util.Collection;
+import java.util.Set;
+
 import org.planit.utils.graph.DirectedEdge;
+import org.planit.utils.graph.EdgeSegment;
 
 /**
  * Link interface which extends the Edge interface with a unique id (not all edges are links) as
@@ -17,7 +21,7 @@ public interface Link extends DirectedEdge {
    * 
    * @return linkId
    */
-  long getLinkId();   
+  public abstract long getLinkId();   
     
   /** collect vertex A as something extending node which is to be expected for any link. Convenience method
    * for readability
@@ -26,7 +30,7 @@ public interface Link extends DirectedEdge {
    * @return nodeA
    */
   @SuppressWarnings("unchecked")
-  default <N extends Node> N getNodeA() {
+  public default <N extends Node> N getNodeA() {
     return (N) getVertexA();
   }
   
@@ -37,7 +41,7 @@ public interface Link extends DirectedEdge {
    * @return nodeA
    */
   @SuppressWarnings("unchecked")
-  default <N extends Node> N getNodeB() {
+  public default <N extends Node> N getNodeB() {
     return (N) getVertexB();
   }  
   
@@ -49,7 +53,7 @@ public interface Link extends DirectedEdge {
    * @return link segment in given direction
    */
   @SuppressWarnings("unchecked")
-  default <LS extends LinkSegment> LS getLinkSegment(boolean directionAb) {
+  public default <LS extends LinkSegment> LS getLinkSegment(boolean directionAb) {
     return (LS) getEdgeSegment(directionAb);
   }   
   
@@ -59,7 +63,7 @@ public interface Link extends DirectedEdge {
    * @param <LS> link segment type
    * @return link segment in given direction
    */
-  default <LS extends LinkSegment> LS getLinkSegmentAb() {
+  public default <LS extends LinkSegment> LS getLinkSegmentAb() {
     return getLinkSegment(true);
   }   
   
@@ -67,7 +71,7 @@ public interface Link extends DirectedEdge {
    * 
    * @return true when link segment is present, false otherwise
    */
-  default boolean hasLinkSegmentAb() {
+  public default boolean hasLinkSegmentAb() {
     return hasEdgeSegmentAb();
   }   
   
@@ -77,7 +81,7 @@ public interface Link extends DirectedEdge {
    * @param <LS> link segment type
    * @return link segment in given direction
    */
-  default <LS extends LinkSegment> LS getLinkSegmentBa() {
+  public default <LS extends LinkSegment> LS getLinkSegmentBa() {
     return getLinkSegment(false);
   } 
   
@@ -85,15 +89,24 @@ public interface Link extends DirectedEdge {
    * 
    * @return true when link segment is present, false otherwise
    */
-  default boolean hasLinkSegmentBa() {
+  public default boolean hasLinkSegmentBa() {
     return hasEdgeSegmentBa();
   }
 
   /** verify if name is present on link
    * @return true when present, false otherwise
    */
-  default boolean hasName() {
+  public default boolean hasName() {
     return getName()!=null && !getName().isBlank();
+  }
+
+  /** collect all available link segments of this link
+   * @param <LS> type of link segment
+   * @return available link segments
+   */
+  @SuppressWarnings("unchecked")
+  public default <LS extends LinkSegment> Collection<LS> getLinkSegments(){
+    return (Collection<LS>) getEdgeSegments();
   }
   
 }

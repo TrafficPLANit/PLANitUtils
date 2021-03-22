@@ -76,7 +76,7 @@ public interface Vertex extends Serializable, ExternalIdable {
   public abstract boolean removeEdge(long edgeId);  
 
   /**
-   * Returns a collection of Edge objects
+   * Returns a collection of Edge objects (unmodifiable)
    * 
    * @return Set of Edge objects
    */

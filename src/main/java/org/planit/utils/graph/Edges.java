@@ -1,5 +1,8 @@
 package org.planit.utils.graph;
 
+import java.util.ArrayList;
+import java.util.Collection;
+
 import org.planit.utils.exceptions.PlanItException;
 
 /**
@@ -84,6 +87,21 @@ public interface Edges<E extends Edge> extends Iterable<E> {
    */
   public default boolean hasEdge(long id) {
     return get(id) != null;
+  }
+
+  /** Collect all edges based on a matching external id. edges are not indexed by external id so this is
+   *  a very inefficient linear search through all registered links.
+   *  
+   * @param externalId to match
+   * @return found matching links
+   */  
+  public default Collection<E> getByExternalId(String externalId) {
+    ArrayList<E> matches = new ArrayList<E>(1);  
+    for(E edge : this) {
+      if(edge.getExternalId().equals(externalId)) {
+        matches.add(edge);      }
+    }
+    return matches;
   }
 
 }

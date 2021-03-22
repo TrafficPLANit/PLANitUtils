@@ -1,5 +1,8 @@
 package org.planit.utils.graph;
 
+import java.util.ArrayList;
+import java.util.Collection;
+
 import org.planit.utils.exceptions.PlanItException;
 
 /**
@@ -22,21 +25,28 @@ public interface DirectedEdge extends Edge {
    * @return replaced egeSegment (if any)
    * @throws PlanItException thrown if there is an error
    */
-  public EdgeSegment registerEdgeSegment(final EdgeSegment edgeSegment, final boolean directionAB) throws PlanItException;
+  public abstract EdgeSegment registerEdgeSegment(final EdgeSegment edgeSegment, final boolean directionAB) throws PlanItException;
   
   /**
    * Edge segment in the direction from A to B
    * 
    * @return edge segment AB
    */
-  public EdgeSegment getEdgeSegmentAb();
+  public abstract EdgeSegment getEdgeSegmentAb();
   
   /**
    * Edge segment in the direction from B to A
    * 
    * @return edge segment BA
    */
-  public EdgeSegment getEdgeSegmentBa();
+  public abstract EdgeSegment getEdgeSegmentBa();
+  
+  /** replace passed in edge segment (if present) with the passed in one
+   * 
+   * @param edgeSegmentToReplace the one to replace
+   * @param edgeSegmentToReplaceWith the one to replace it with
+   */
+  public abstract void replace(EdgeSegment edgeSegmentToReplace, EdgeSegment edgeSegmentToReplaceWith);  
   
   /**
    * Edge segment in the direction indicated
@@ -44,7 +54,7 @@ public interface DirectedEdge extends Edge {
    * @param directionAb direction of segment
    * @return edge segment if present
    */
-  default public EdgeSegment getEdgeSegment(boolean directionAb) {
+  public default EdgeSegment getEdgeSegment(boolean directionAb) {
     return directionAb ? getEdgeSegmentAb() : getEdgeSegmentBa();
   }
  
@@ -52,7 +62,7 @@ public interface DirectedEdge extends Edge {
    * 
    * @return true if present, false otherwise
    */
-  default public boolean hasEdgeSegmentBa() {
+  public default boolean hasEdgeSegmentBa() {
     return getEdgeSegmentBa() != null;
   }
   
@@ -60,16 +70,28 @@ public interface DirectedEdge extends Edge {
    * 
    * @return true if present, false otherwise
    */
-  default public boolean hasEdgeSegmentAb() {
+  public default boolean hasEdgeSegmentAb() {
     return getEdgeSegmentAb() != null;
   }
-
-  /** replace passed in edge segment (if present) with the passed in one
+  
+  /** collect all edge segments available on the edge 
    * 
-   * @param edgeSegmentToReplace the one to replace
-   * @param edgeSegmentToReplaceWith the one to replace it with
+   * @return available edge segments
    */
-  public void replace(EdgeSegment edgeSegmentToReplace, EdgeSegment edgeSegmentToReplaceWith);
+  public default Collection<EdgeSegment> getEdgeSegments(){
+    ArrayList<EdgeSegment> edgeSegments = null;
+    if(hasEdgeSegmentAb() || hasEdgeSegmentBa()) {
+      edgeSegments = new ArrayList<EdgeSegment>(2);
+      if(hasEdgeSegmentAb()) {
+        edgeSegments.add(getEdgeSegmentAb());
+      }
+      if(hasEdgeSegmentBa()) {
+        edgeSegments.add(getEdgeSegmentBa());
+      }
+    }
+    return edgeSegments;
+  }
+ 
 
 
 }

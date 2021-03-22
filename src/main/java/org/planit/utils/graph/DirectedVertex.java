@@ -61,14 +61,14 @@ public interface DirectedVertex extends Vertex {
   public boolean removeExitEdgeSegment(EdgeSegment edgeSegment);  
   
   /**
-   * Collect the entry edge segments of this vertex
+   * Collect the entry edge segments of this vertex (unmodifiable)
    * 
    * @return edgeSegments
    */
   public Set<EdgeSegment> getEntryEdgeSegments();
 
   /**
-   * Collect the exit edge segments of this vertex
+   * Collect the exit edge segments of this vertex (unmodifiable)
    * 
    * @return edgeSegments
    */

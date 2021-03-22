@@ -1,5 +1,7 @@
 package org.planit.utils.network.physical;
 
+import java.util.Collection;
+
 import org.planit.utils.graph.Edges;
 
 /**
@@ -19,6 +21,16 @@ public interface Links<L extends Link> extends Edges<L> {
    */
   public default boolean hasLink(long id) {
     return hasEdge(id);
-  } 
+  }
+
+  /** Collect all links based on a matching external id. links are not indexed by external id so this is
+   *  a very inefficient linear search through all registered links.
+   *  
+   * @param externalId to match
+   * @return found matching links
+   */
+  public default Collection<L> getByExternalId(String externalId){
+    return (Collection<L>) Edges.super.getByExternalId(externalId);
+  }
 
 }
