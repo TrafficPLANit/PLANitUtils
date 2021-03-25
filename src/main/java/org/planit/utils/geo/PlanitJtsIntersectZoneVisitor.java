@@ -35,6 +35,10 @@ public class PlanitJtsIntersectZoneVisitor<T extends Zone> extends PlanitJtsItem
      */
     @Override
     protected Geometry getGeometry(T zone) {
+      if(zone.hasExternalId() && zone.getExternalId().equals("216469462")) {
+        int bla = 4;
+      }
+      
       if(zone.hasGeometry()) {
         return zone.getGeometry();
       }else if(zone.hasCentroid() && zone.getCentroid().hasPosition()) {

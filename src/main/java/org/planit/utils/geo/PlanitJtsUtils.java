@@ -22,6 +22,7 @@ import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.GeometryFactory;
 import org.locationtech.jts.geom.LineSegment;
 import org.locationtech.jts.geom.LineString;
+import org.locationtech.jts.geom.LinearRing;
 import org.locationtech.jts.geom.MultiLineString;
 import org.locationtech.jts.geom.Point;
 import org.locationtech.jts.geom.Polygon;
@@ -33,6 +34,7 @@ import org.opengis.geometry.coordinate.PointArray;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.planit.utils.exceptions.PlanItException;
 import org.planit.utils.graph.Vertex;
+import org.planit.utils.math.Precision;
 import org.planit.utils.misc.Pair;
 
 /**
@@ -134,11 +136,11 @@ public class PlanitJtsUtils {
    * the closest point to the geometry as this likely lies on the line connecting the two closest points.
    * 
    * @param referenceGeometry to use
-   * @param lineString on
-   * @return closest existing coordinate on geometry to find coordinate on
+   * @param lineString to verify closest coordinate
+   * @return closest existing coordinate on line string to find coordinate on
    * @throws PlanItException thrown if error
    */
-  public Coordinate getClosestExistingLineStringCoordinateToGeometry(Geometry referenceGeometry, LineString lineString) throws PlanItException {
+  public <T extends LineString> Coordinate getClosestExistingLineStringCoordinateToGeometry(Geometry referenceGeometry, T lineString) throws PlanItException {
     double minDistanceMetersToCoordinate = Double.POSITIVE_INFINITY;
     Coordinate closestCoordinate = null;
     for(int index = 0; index < lineString.getNumPoints() ; ++index) {
@@ -152,6 +154,19 @@ public class PlanitJtsUtils {
     }
     return closestCoordinate;
   }  
+  
+  /** find the coordinate on the polygon with the closest distance to the reference geometry. Note that this is likely NOT
+   * the closest point to the geometry as this likely lies on the line connecting the two closest points.
+   * 
+   * @param referenceGeometry to use
+   * @param polygon to verify closest coordinate
+   * @return closest existing coordinate on polygon to find coordinate on
+   * @throws PlanItException thrown if error
+   */  
+  private Coordinate getClosestExistingPolygonCoordinateToGeometry(Geometry referenceGeometry, Polygon polygon) throws PlanItException {
+    LinearRing exteriorGeometry = polygon.getExteriorRing();
+    return getClosestExistingLineStringCoordinateToGeometry(referenceGeometry, exteriorGeometry);    
+  }   
   
   /** find the closest location from the reference point to the geometry expressed as a linear location. Here we project onto the geometry, so we find the location with the actual closest distance 
    * and create a linear location regardless if this coordinate is part of the geometry as a predefined coordinate at an extreme point. It is therefore more accurate than
@@ -350,6 +365,7 @@ public class PlanitJtsUtils {
         Coordinate currCoord = coords[index];
         LineString lineSegment = createLineString(new Coordinate[] {prevCoord,currCoord});
         minDistanceInMetersForLineSegment = Math.min(minDistanceInMetersForLineSegment,getClosestDistanceInMeters(referencePoint, lineSegment));
+        prevCoord = currCoord;
       }
     }
     return minDistanceInMetersForLineSegment;
@@ -1188,7 +1204,34 @@ public class PlanitJtsUtils {
   public static boolean isCoordinateRightOf(Coordinate coordM, Coordinate coordA, Coordinate coordB) {
     /* use the RobustDeterminant feature of JTS */
     return RobustDeterminant.orientationIndex( coordA, coordB, coordM) == -1;
-  }  
+  }
+
+  /** Verify if any existing coordinate on the passed in geometry is within the maximum provided distance of the also provided bounding box
+   * 
+   * @param geometry
+   * @param boundingBox
+   * @param maxDistanceMeters
+   * @param geoUtils
+   * @return true when within maximum distance of bounding box, false otherwise
+   * @throws PlanItException thrown if error
+   */
+  public boolean isGeometryNearBoundingBox(Geometry geometry, Envelope boundingBox, double maxDistanceMeters) throws PlanItException {
+    Polygon boundingBoxGeometry = PlanitJtsUtils.create2DPolygon(boundingBox);
+    double distanceMeters  = Double.POSITIVE_INFINITY;
+    if(geometry instanceof Point) {
+      distanceMeters = getClosestDistanceInMetersToPolygon(Point.class.cast(geometry), boundingBoxGeometry);
+    }else if(geometry instanceof LineString) {      
+      Coordinate closestCoordinate = getClosestExistingLineStringCoordinateToGeometry(boundingBoxGeometry, LineString.class.cast(geometry));
+      distanceMeters = getClosestDistanceInMetersToPolygon(createPoint(closestCoordinate), boundingBoxGeometry);
+    }else if( geometry instanceof Polygon) {
+      Coordinate closestCoordinate = getClosestExistingPolygonCoordinateToGeometry(boundingBoxGeometry, Polygon.class.cast(geometry));
+      distanceMeters = getClosestDistanceInMeters(createPoint(closestCoordinate), boundingBoxGeometry );
+    }else {
+      throw new PlanItException("Unsupported geometry type provided when checking if it is near bounding box");
+    }
+    return (distanceMeters + Precision.EPSILON_6) <= maxDistanceMeters;
+  }
+
 
   
 }

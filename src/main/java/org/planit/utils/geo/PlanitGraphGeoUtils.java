@@ -13,7 +13,10 @@ import org.locationtech.jts.index.quadtree.Quadtree;
 import org.planit.utils.exceptions.PlanItException;
 import org.planit.utils.graph.Edge;
 import org.planit.utils.graph.Edges;
+import org.planit.utils.graph.Vertex;
+import org.planit.utils.math.Precision;
 import org.planit.utils.misc.Pair;
+import org.planit.utils.network.physical.Node;
 import org.planit.utils.zoning.Zone;
 
 /**
@@ -54,7 +57,7 @@ public class PlanitGraphGeoUtils {
       }else if(entity instanceof Edge) {
         distanceMeters = geoUtils.getClosestProjectedDistanceInMetersToLineString(referencePoint, ((Edge)entity).getGeometry());
       }else {
-        LOGGER.warning(String.format("unsupported planit entity to compute closest distance to %s",entity.getClass().getCanonicalName()));
+        LOGGER.warning(String.format("Unsupported planit entity to compute closest distance to %s",entity.getClass().getCanonicalName()));
       }      
      
       if(distanceMeters < minDistanceMeters) {
@@ -110,6 +113,10 @@ public class PlanitGraphGeoUtils {
       return null;
     }
     
+    if(edges.size()==1) {
+      return edges.iterator().next();
+    }
+    
     if(geometry instanceof Point) {
       return findEdgeClosestToPoint((Point)geometry, edges, geoUtils);
     }else if(geometry instanceof LineString) {
@@ -153,7 +160,11 @@ public class PlanitGraphGeoUtils {
    * @throws PlanItException thrown if error
    */    
   public static Edge findEdgeClosestToPoint(Point point, Collection<? extends Edge> edges, PlanitJtsUtils geoUtils) throws PlanItException {
-    return findPlanitEntityClosest(point, edges, Double.POSITIVE_INFINITY, geoUtils).first();     
+    Pair<? extends Edge, Double> result = findPlanitEntityClosest(point, edges, Double.POSITIVE_INFINITY, geoUtils);
+    if(result != null) {
+      return result.first();  
+    }
+    return null;
   }  
   
   /** Find edges spatially based on the provided bounding box and spatially indexed quadtree containing edges as values
@@ -164,5 +175,17 @@ public class PlanitGraphGeoUtils {
     PlanitJtsIntersectEdgeVisitor<T> edgevisitor = new PlanitJtsIntersectEdgeVisitor<T>(PlanitJtsUtils.create2DPolygon(searchBoundingBox), new HashSet<T>());
     spatiallyIndexedEdgeTree.query(searchBoundingBox, edgevisitor);
     return edgevisitor.getResult();
+  }  
+  
+  /** Verify if node is within maximum distance of provided bounding box
+   * @param node the node
+   * @param boundingBox the bounding box
+   * @param maxDistanceMeters maximum distance between node and nounding box
+   * @param geoUtils to use
+   * @return true when within given distance, false otherwise
+   * @throws PlanItException thrown if error
+   */
+  public static boolean isVertexNearBoundingBox(Vertex node, Envelope boundingBox, double maxDistanceMeters, PlanitJtsUtils geoUtils) throws PlanItException {
+    return geoUtils.isGeometryNearBoundingBox(node.getPosition(), boundingBox, maxDistanceMeters);
   }  
 }
