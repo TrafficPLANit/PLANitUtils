@@ -179,7 +179,7 @@ public class PlanitJtsUtils {
    */  
   public LinearLocation getClosestProjectedLinearLocationOnGeometry(Point referencePoint, Geometry geometry) throws PlanItException {    
     if(geometry instanceof Point) {
-      throw new PlanItException("cannot create linear Location from a single point");
+      throw new PlanItException("Cannot create linear Location from a single point");
     }else if(geometry instanceof LineString ) {
         return getClosestProjectedLinearLocationOnLineString(referencePoint.getCoordinate(), (LineString)geometry);  
     }else if(geometry instanceof Polygon) {
@@ -1147,9 +1147,12 @@ public class PlanitJtsUtils {
    * @return merged line string, or null if failed or any input is null
    */
   public static LineString mergeLineStrings(LineString first, LineString second) {
-    if(second == null || first == null) {
-      return null;
+    if(first == null && second!=null) {
+      return (LineString) second.copy();
+    }else if(first!=null && second==null){
+      return (LineString) first.copy();
     }
+  
     /* register */
     LineMerger lineMerger = new LineMerger();
     lineMerger.add(first);
@@ -1230,6 +1233,22 @@ public class PlanitJtsUtils {
       throw new PlanItException("Unsupported geometry type provided when checking if it is near bounding box");
     }
     return (distanceMeters + Precision.EPSILON_6) <= maxDistanceMeters;
+  }
+
+  /** collect the index of the given coordinate from the array
+   * @param coordinate to colelct index for
+   * @param coordinates to collect from
+   * @return index, -1 if nto found
+   * @throws PlanItException thrown if error
+   */
+  public int getCoordinateIndexOf(Coordinate coordinate, Coordinate[] coordinates) throws PlanItException {
+    for(int coordinateIndex = 1; coordinateIndex < coordinates.length-1; ++coordinateIndex) {
+      Point internalPoint = PlanitJtsUtils.createPoint(coordinates[coordinateIndex]);
+      if(internalPoint.getCoordinate().equals2D(coordinate)) {
+        return coordinateIndex;
+      }
+    }
+    return -1;
   }
 
 
