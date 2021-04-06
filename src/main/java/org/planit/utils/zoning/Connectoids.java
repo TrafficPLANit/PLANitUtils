@@ -9,6 +9,22 @@ package org.planit.utils.zoning;
  */
 public interface Connectoids<T extends Connectoid> extends Iterable<T>{
   
+    /** Remove a connectoid. Use with caution as it invalidates the contiguous nature of connectoid ids.
+     * consider recreating the internal ids to avoid this
+     * 
+     * @param connectoid to remove
+     * @param connectoid that has been removed 
+     */
+    public abstract Connectoid remove(T connectoid);
+    
+    /** Remove a connectoid. Use with caution as it invalidates the contiguous nature of connectoid ids.
+     * consider recreating the internal ids to avoid this
+     * 
+     * @param connectoidId the connectoid to remove by its internal id (unique across all connectoids of any type)
+     * @param connectoid that has been removed 
+     */
+    public abstract Connectoid remove(long connectoidId);    
+  
     /**
      * register a connectoid
      * 
@@ -17,7 +33,7 @@ public interface Connectoids<T extends Connectoid> extends Iterable<T>{
      * @param connectoid the connectoid to be registered
      * @return connectoid added
      */
-    T register(T connectoid);             
+    public abstract T register(T connectoid);             
 
     /**
      * Get connectoid by its connectoid type specific id
@@ -25,12 +41,12 @@ public interface Connectoids<T extends Connectoid> extends Iterable<T>{
      * @param id the connectoid type specific id of this connectoid
      * @return the retrieved connectoid
      */
-    public T get(long id);
+    public abstract T get(long id);
 
     /**
      * Return number of connectoids
      * 
      * @return the number of connectoids
      */
-    public int size();
+    public abstract int size();
 }

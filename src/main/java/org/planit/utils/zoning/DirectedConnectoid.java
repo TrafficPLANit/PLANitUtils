@@ -41,7 +41,7 @@ public interface DirectedConnectoid extends Connectoid{
    * @return true when downstream, false otherwise, i.e., upstream
    */
   boolean isNodeAccessDownstream();
-  
+    
   
   /** Based on the edge segment and the location (upstream/downstream) of the access point, collect
    * the access node

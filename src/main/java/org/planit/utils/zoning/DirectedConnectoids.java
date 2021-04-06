@@ -39,4 +39,5 @@ public interface DirectedConnectoids extends Connectoids<DirectedConnectoid> {
    * @throws PlanItException thrown if error
    */  
   public DirectedConnectoid registerNew(LinkSegment accessLinkSegment) throws PlanItException;
+  
 }
