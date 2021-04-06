@@ -1,9 +1,5 @@
 package org.planit.utils.zoning;
 
-import org.planit.utils.exceptions.PlanItException;
-import org.planit.utils.network.physical.LinkSegment;
-import org.planit.utils.network.physical.Node;
-
 /**
  * container to register and manager connectoids that define the points of access for
  * zones regarding infrastructure network (layer)
@@ -11,7 +7,7 @@ import org.planit.utils.network.physical.Node;
  * @author markr
  *
  */
-public interface Connectoids extends Iterable<Connectoid>{
+public interface Connectoids<T extends Connectoid> extends Iterable<T>{
   
     /**
      * register a connectoid
@@ -21,75 +17,15 @@ public interface Connectoids extends Iterable<Connectoid>{
      * @param connectoid the connectoid to be registered
      * @return connectoid added
      */
-    Connectoid register(Connectoid connectoid);
+    T register(T connectoid);             
 
     /**
-     * Create new connectoid for a zone and physical access node
+     * Get connectoid by its connectoid type specific id
      * 
-     * @param accessNode node providing access to network layer
-     * @param accessZone of the connectoid 
-     * @param length     length of connectoid
-     * @return registered connectoid
-     * @throws PlanItException thrown if error
-     */
-    public UndirectedConnectoid registerNew(Node accessNode, Zone accessZone, double length) throws PlanItException;       
-    
-    /**
-     * Create new connectoid for a zone and physical access node
-     * 
-     * @param accessNode node providing access to network layer
-     * @param parentZone of the connectoid
-     * @return registered connectoid
-     * @throws PlanItException thrown if error
-     */
-    public UndirectedConnectoid registerNew(Node accessNode, Zone parentZone) throws PlanItException;
-    
-    /**
-     * Create new connectoid for a physical access node and leave the connections for access zones for later
-     * 
-     * @param accessNode node providing access to network layer
-     * @return registered connectoid
-     * @throws PlanItException thrown if error
-     */
-    public UndirectedConnectoid registerNew(Node accessNode) throws PlanItException;    
-    
-    /**
-     * Create new connectoid for a zone and physical access node
-     * 
-     * @param accessLinkSegment link segment providing access to network layer
-     * @param accessZone of the connectoid 
-     * @param length     length of connectoid
-     * @return registered connectoid
-     * @throws PlanItException thrown if error
-     */
-    public DirectedConnectoid registerNew(LinkSegment accessLinkSegment, Zone accessZone, double length) throws PlanItException;       
-    
-    /**
-     * Create new connectoid for a zone and physical access edge segment
-     * 
-     * @param accessLinkSegment link segment providing access to network layer
-     * @param parentZone of the connectoid
-     * @return registered connectoid
-     * @throws PlanItException thrown if error
-     */
-    public DirectedConnectoid registerNew(LinkSegment accessLinkSegment, Zone parentZone) throws PlanItException;
-    
-    /**
-     * Create new connectoid for a physical access node and leave the connections for access zones for later
-     * 
-     * @param accessLinkSegment link segment providing access to network layer
-     * @return registered connectoid
-     * @throws PlanItException thrown if error
-     */
-    public DirectedConnectoid registerNew(LinkSegment accessLinkSegment) throws PlanItException;       
-
-    /**
-     * Get connectoid by id
-     * 
-     * @param id the id of this connectoid
+     * @param id the connectoid type specific id of this connectoid
      * @return the retrieved connectoid
      */
-    public Connectoid get(long id);
+    public T get(long id);
 
     /**
      * Return number of connectoids

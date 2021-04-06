@@ -91,7 +91,5 @@ public interface DirectedEdge extends Edge {
     }
     return edgeSegments;
   }
- 
-
 
 }

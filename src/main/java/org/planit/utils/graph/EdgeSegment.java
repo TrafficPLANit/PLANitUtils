@@ -21,14 +21,14 @@ public interface EdgeSegment extends Serializable, ExternalIdable {
    * @param vertex to remove
    * @return true when successful, false otherwise
    */
-  public boolean remove(DirectedVertex vertex);  
+  public abstract  boolean remove(DirectedVertex vertex);  
   
   /**
    * Set another upstream vertex.
    * 
    * @param vertexToReplaceWith to use
    */
-  public void setUpstreamVertex(DirectedVertex vertexToReplaceWith);
+  public abstract  void setUpstreamVertex(DirectedVertex vertexToReplaceWith);
    
 
   /**
@@ -36,40 +36,59 @@ public interface EdgeSegment extends Serializable, ExternalIdable {
    * 
    * @return upstream vertex
    */
-  public DirectedVertex getUpstreamVertex();
+  public abstract  DirectedVertex getUpstreamVertex();
 
   /**
    * Get the segment's downstream vertex
    * 
    * @return downstream vertex
    */
-  public DirectedVertex getDownstreamVertex();
+  public abstract  DirectedVertex getDownstreamVertex();
   
   /**
    * Set another downstream vertex.
    * 
    * @param vertexToReplaceWith to use
    */
-  public void setDownstreamVertex(DirectedVertex vertexToReplaceWith);  
+  public abstract  void setDownstreamVertex(DirectedVertex vertexToReplaceWith);  
 
   /**
    * Collect the parent edge of the segment
    * 
    * @return parentEdge
    */
-  public DirectedEdge getParentEdge();
+  public abstract  DirectedEdge getParentEdge();
   
   /**
    * remove the parent edge from this edge segment
    */
-  public void removeParentEdge();
+  public abstract void removeParentEdge();
   
   /**
    * check if edge segment runs from vertex a to b or b to a
    * @return true when running from a to b, otherwise false
    */
-  boolean isDirectionAb();
+  public abstract boolean isDirectionAb();
+  
+  /** validate the contents of this edge segment
+   * @return true when valid, false otherwise
+   */
+  public abstract boolean validate(); 
 
+  /**
+   * Clone the edge segment
+   * 
+   * @return copy of this instance
+   */
+  public abstract EdgeSegment clone();
+
+  /**
+   * Set the parent edge
+   * 
+   * @param parentEdge to set
+   */
+  public abstract void setParentEdge(DirectedEdge parentEdge);
+  
   /**
    * Replace one of the vertices of the edge segment
    * 
@@ -77,7 +96,7 @@ public interface EdgeSegment extends Serializable, ExternalIdable {
    * @param vertexToReplaceWith the vertex to replace with
    * @return true when replaced, false otherwise
    */  
-  default public boolean replace(DirectedVertex vertexToReplace, DirectedVertex vertexToReplaceWith) {
+  public default boolean replace(DirectedVertex vertexToReplace, DirectedVertex vertexToReplaceWith) {
     boolean vertexReplaced = false;
     
     /* replace vertices on edge segment */
@@ -91,25 +110,28 @@ public interface EdgeSegment extends Serializable, ExternalIdable {
       }
     }
     return vertexReplaced;
-  }  
+  } 
   
-  /** validate the contents of this edge segment
-   * @return true when valid, false otherwise
-   */
-  public boolean validate(); 
-
-  /**
-   * Clone the edge segment
+  /** verify if parent (edge) has a name
    * 
-   * @return copy of this instance
+   * @return true when present, false otherwise
    */
-  public EdgeSegment clone();
-
-  /**
-   * Set the parent edge
+  public default boolean hasParentName() {
+    if(getParentEdge()!=null) {
+      return getParentEdge().hasName();
+    }
+    return false;
+  }
+  
+  /** verify if parent (edge) has a name
    * 
-   * @param parentEdge to set
+   * @return true when present, false otherwise
    */
-  public void setParentEdge(DirectedEdge parentEdge);
+  public default String getParentName() {
+    if(getParentEdge()!=null) {
+      return getParentEdge().getName();
+    }
+    return null;
+  }  
 
 }

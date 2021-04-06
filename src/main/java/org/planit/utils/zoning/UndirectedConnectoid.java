@@ -16,4 +16,10 @@ public interface UndirectedConnectoid extends Connectoid{
    * @return access node
    */
   Node getAccessNode(); 
+  
+  
+  /** collect the undirected connectoid id
+   * @return undirected connectoid id
+   */
+  long getUndirectedConnectoidId();
 }

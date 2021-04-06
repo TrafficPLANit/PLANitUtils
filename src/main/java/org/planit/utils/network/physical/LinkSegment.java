@@ -30,41 +30,41 @@ public interface LinkSegment extends EdgeSegment {
    * 
    * @return link segment id
    */
-  long getLinkSegmentId();
+  public abstract long getLinkSegmentId();
 
   /**
    * Collect the number of lanes of this segment
    * 
    * @return number of lanes
    */
-  int getNumberOfLanes();
+  public abstract int getNumberOfLanes();
 
   /**
    * Set the number of lanes
    * 
    * @param numberOfLanes to set
    */
-  void setNumberOfLanes(int numberOfLanes);
+  public abstract void setNumberOfLanes(int numberOfLanes);
   
   /**
    * This is the maximum speed that is physically present and a driver can observe from the signs on the road (km/h)
    * 
    * @param maximumSpeedKmH to set
    */
-  public void setPhysicalSpeedLimitKmH(double maximumSpeedKmH);
+  public abstract  void setPhysicalSpeedLimitKmH(double maximumSpeedKmH);
 
   /**
    * This is the maximum speed (Km/h) that is physically present and a driver can observe from the signs on the road
    * 
    * @return maximumSpeedKmH
    */
-  public double getPhysicalSpeedLimitKmH(); 
+  public abstract double getPhysicalSpeedLimitKmH(); 
   
   /**
    * Return the parent link of this link segment
    * 
    * @return Link object which is the parent of this link segment
    */
-  public Link getParentLink();
+  public abstract Link getParentLink();
 
 }

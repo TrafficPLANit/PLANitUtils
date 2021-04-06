@@ -18,6 +18,11 @@ public interface DirectedConnectoid extends Connectoid{
   
   /** default node access is set to the downstream end of a link segment */
   static boolean DEFAULT_NODE_ACCESS_DOWNSTREAM = true; 
+  
+  /** collect the directed connectoid id
+   * @return directed connectoid id
+   */
+  long getDirectedConnectoidId();  
 
   /** the edge segment that provides access
    * 

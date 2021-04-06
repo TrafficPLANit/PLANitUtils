@@ -120,6 +120,13 @@ public interface Edge extends Serializable, ExternalIdable {
    * @return true when valid, false otherwise
    */
   public abstract boolean validate();
+  
+  /** Verify if a name has been set
+   * @return true when present, false otherwise
+   */
+  public default boolean hasName() {
+    return getName()!=null && !getName().isBlank();
+  }
 
   /** check if vertex is present on the edge
    * @param vertex to check
