@@ -1,5 +1,7 @@
 package org.planit.utils.zoning;
 
+import java.util.Collection;
+
 /**
  * Interface to manage zones
  * 
@@ -22,6 +24,15 @@ public interface Zones<Z extends Zone> extends Iterable<Z> {
    * @return the previous zone registered under the same id (if any)
    */
   public abstract Zone register(final Z zone);
+  
+  /**
+   * Remove zone from the internal container. Use carefully to avoid issues with internal
+   * contiguous ids
+   *
+   * @param zone the zone to be removed
+   * @return the previous zone registered under the same id (if any)
+   */  
+  public abstract Zone remove(Z zone);
 
   /**
    * Create and register new zone
@@ -70,5 +81,10 @@ public interface Zones<Z extends Zone> extends Iterable<Z> {
   public default int getNumberOfCentroids() {
     return size();
   }
+
+  /** collect an unmodifiable collection of the known zones
+   * @return the zones
+   */
+  public abstract Collection<Z> toCollection();
 
 }

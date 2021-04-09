@@ -4,6 +4,8 @@ import java.util.Collection;
 import java.util.Set;
 
 import org.planit.utils.exceptions.PlanItException;
+import org.planit.utils.graph.DirectedVertex;
+import org.planit.utils.graph.Vertex;
 import org.planit.utils.id.ExternalIdable;
 import org.planit.utils.mode.Mode;
 
@@ -33,47 +35,95 @@ public interface Connectoid extends ExternalIdable, Iterable<Zone> {
    * 
    * @param name its name
    */
-  void setName(String name);  
+  public abstract void setName(String name);  
   
   /** The name of the connectoid
    * 
    * @return its name
    */
-  String getName();
+  public abstract String getName();
   
   /** Set the type of the connectoid
    * 
    * @param type its type
    */
-  void setType(ConnectoidType type);  
+  public abstract void setType(ConnectoidType type);  
   
   /** The type of the connectoid
    * 
    * @return its type
    */
-  ConnectoidType getType();  
+  public abstract ConnectoidType getType();  
       
   /**
    * the zones that can be accessed by this connectoid
    * 
    * @return accessible zones
    */
-  Collection<Zone> getAccessZones();
+  public abstract Collection<Zone> getAccessZones();
   
   /** add an access zone and provide length to this connectoid
    * 
    * @param zone to set length for
    * @param length to traverse between connectoid and zone
    */
-  void setLength(Zone zone, double length);
+  public abstract void setLength(Zone zone, double length);
   
   /** add an allowed mode. We assume the zone is already registered as an access zone for this connectoid
    * 
    * @param zone to add allowed mode to
    * @param allowedModes to add
    */
-  void addAllowedMode(Zone zone, Mode allowedMode);  
+  public abstract void addAllowedMode(Zone zone, Mode allowedMode);  
     
+ 
+  /** add an access zone with default properties
+   * 
+   * @param zone to register as accessible
+   * @return overwritten zone if any
+   */
+  public abstract Zone addAccessZone(Zone zone);
+  
+  /** check if zone is registered as access zone
+   * @param accessZone to verify
+   * @return true when registered, false otherwise
+   */
+  public abstract boolean hasAccessZone(Zone accessZone);
+  
+  /** first available zone that is accessible based on the first entry the iterator returns
+   * 
+   * @return first available zone
+   */
+  public abstract Zone getFirstAccessZone();
+  
+  /** the number of accessible zones registered
+   * 
+   * @return number of accessible zones
+   */
+  public abstract long getNumberOfAccessZones();
+  
+  /** length can be used to virtually assign a length to the connectoid/zone combination
+   * 
+   * @param accessZone to collect length for
+   * @return length (null if zone is not registered)
+   * @throws PlanItException thrown if error
+   */
+  public abstract Double getLength(Zone accessZone) throws PlanItException;
+  
+  /** Verify if a mode is allowed access to the zone via this connectoid
+   * 
+   * @param accessZone to verify
+   * @param mode to verify if allowed
+   * @return true when allowed, false otherwise
+   * @throws PlanItException thrown if provided zone is not valid
+   */
+  public abstract boolean isModeAllowed(Zone accessZone, Mode mode) throws PlanItException;
+
+  /** collect the access vertex for this connectoid
+   * @return access vertex
+   */
+  public abstract DirectedVertex getAccessVertex();
+  
   /** add allowed modes. We assume the zone is already registered as an access zone for this connectoid
    * 
    * @param zone to add allowed mode(s) to
@@ -92,48 +142,6 @@ public interface Connectoid extends ExternalIdable, Iterable<Zone> {
    */  
   public default void addAllowedModes(TransferZone transferZone, Set<Mode> allowedModes) {
     allowedModes.forEach( mode -> addAllowedMode(transferZone, mode));
-  }
-  
-  /** add an access zone with default properties
-   * 
-   * @param zone to register as accessible
-   * @return overwritten zone if any
-   */
-  Zone addAccessZone(Zone zone);
-  
-  /** check if zone is registered as access zone
-   * @param accessZone to verify
-   * @return true when registered, false otherwise
-   */
-  boolean hasAccessZone(Zone accessZone);
-  
-  /** first available zone that is accessible based on the first entry the iterator returns
-   * 
-   * @return first available zone
-   */
-  Zone getFirstAccessZone();
-  
-  /** the number of accessible zones registered
-   * 
-   * @return number of accessible zones
-   */
-  long getNumberOfAccessZones();
-  
-  /** length can be used to virtually assign a length to the connectoid/zone combination
-   * 
-   * @param accessZone to collect length for
-   * @return length (null if zone is not registered)
-   * @throws PlanItException thrown if error
-   */
-  Double getLength(Zone accessZone) throws PlanItException;
-  
-  /** Verify if a mode is allowed access to the zone via this connectoid
-   * 
-   * @param accessZone to verify
-   * @param mode to verify if allowed
-   * @return true when allowed, false otherwise
-   * @throws PlanItException thrown if provided zone is not valid
-   */
-  boolean isModeAllowed(Zone accessZone, Mode mode) throws PlanItException;  
+  }  
 
 }

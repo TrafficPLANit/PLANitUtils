@@ -49,4 +49,13 @@ public interface Connectoids<T extends Connectoid> extends Iterable<T>{
      * @return the number of connectoids
      */
     public abstract int size();
+    
+    /**
+     * Verify if no connectoids are registered
+     * 
+     * @return true when no registered connectoids exist, false otherwise
+     */
+    public default boolean isEmpty() {
+      return size()<=0;
+    }
 }

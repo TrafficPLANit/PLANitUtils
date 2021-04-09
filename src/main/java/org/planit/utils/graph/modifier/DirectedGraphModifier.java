@@ -1,10 +1,5 @@
 package org.planit.utils.graph.modifier;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.planit.utils.graph.Edge;
 import org.planit.utils.graph.EdgeSegment;
 import org.planit.utils.graph.Vertex;
@@ -21,6 +16,7 @@ public interface DirectedGraphModifier<V extends Vertex, E extends Edge, ES exte
    * @param subGraphRemovalListener to register
    */
   public abstract void registerRemoveSubGraphListener(RemoveDirectedSubGraphListener<V, E, ES> subGraphRemovalListener);
+   
 
 
 }

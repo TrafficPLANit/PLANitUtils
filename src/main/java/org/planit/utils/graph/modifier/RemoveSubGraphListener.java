@@ -2,6 +2,7 @@ package org.planit.utils.graph.modifier;
 
 import org.planit.utils.graph.Edge;
 import org.planit.utils.graph.Vertex;
+import org.planit.utils.id.Idable;
 
 /**
  * A listener interface to be triggered whenever planit entities are removed from the network due to a sub graph being
@@ -10,8 +11,8 @@ import org.planit.utils.graph.Vertex;
  * @author markr
  *
  */
-public interface RemoveSubGraphListener<V extends Vertex, E extends Edge> {
-
+public interface RemoveSubGraphListener<V extends Vertex, E extends Edge> extends Idable {
+  
   /** callback whenever an edge is removed from a subgraph it is part of
    * 
    * @param edge that is removed
