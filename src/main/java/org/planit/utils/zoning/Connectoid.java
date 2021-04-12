@@ -5,7 +5,6 @@ import java.util.Set;
 
 import org.planit.utils.exceptions.PlanItException;
 import org.planit.utils.graph.DirectedVertex;
-import org.planit.utils.graph.Vertex;
 import org.planit.utils.id.ExternalIdable;
 import org.planit.utils.mode.Mode;
 

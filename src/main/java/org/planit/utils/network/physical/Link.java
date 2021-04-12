@@ -1,10 +1,8 @@
 package org.planit.utils.network.physical;
 
 import java.util.Collection;
-import java.util.Set;
 
 import org.planit.utils.graph.DirectedEdge;
-import org.planit.utils.graph.EdgeSegment;
 
 /**
  * Link interface which extends the Edge interface with a unique id (not all edges are links) as

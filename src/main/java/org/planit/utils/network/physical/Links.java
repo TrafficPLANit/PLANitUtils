@@ -29,7 +29,8 @@ public interface Links<L extends Link> extends Edges<L> {
    * @param externalId to match
    * @return found matching links
    */
-  public default Collection<L> getByExternalId(String externalId){
+  @SuppressWarnings("unchecked")
+  public default Collection<? extends L> getByExternalId(String externalId){
     return (Collection<L>) Edges.super.getByExternalId(externalId);
   }
 

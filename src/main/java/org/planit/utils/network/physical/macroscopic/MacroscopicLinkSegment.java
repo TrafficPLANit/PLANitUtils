@@ -42,7 +42,7 @@ public interface MacroscopicLinkSegment extends LinkSegment {
    * might be capped by the mode's maximum speed
    * 
    * If the input data are invalid, this method logs the problem and returns a
-   * negative value.
+   * negative value. In case the mode is not supported the maximum possible double value is returned as the free flow travel time
    * 
    * @param mode mode of travel
    * @return freeFlowTravelTime for this mode

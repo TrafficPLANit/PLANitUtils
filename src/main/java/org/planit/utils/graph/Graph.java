@@ -6,7 +6,6 @@ import org.opengis.referencing.operation.TransformException;
 import org.planit.utils.graph.Edge;
 import org.planit.utils.graph.Edges;
 import org.planit.utils.graph.Vertex;
-import org.planit.utils.graph.Vertices;
 
 /**
  * 

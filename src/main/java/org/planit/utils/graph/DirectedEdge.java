@@ -78,7 +78,7 @@ public interface DirectedEdge extends Edge {
    * 
    * @return available edge segments
    */
-  public default Collection<EdgeSegment> getEdgeSegments(){
+  public default Collection<? extends EdgeSegment> getEdgeSegments(){
     ArrayList<EdgeSegment> edgeSegments = null;
     if(hasEdgeSegmentAb() || hasEdgeSegmentBa()) {
       edgeSegments = new ArrayList<EdgeSegment>(2);

@@ -1,5 +1,7 @@
 package org.planit.utils.misc;
 
+import org.planit.utils.time.TimePeriod;
+
 /**
  * some utilities for consistent logging message creation in PLANit
  * 
@@ -98,12 +100,12 @@ public class LoggingUtils {
    * Create a prefix for the logger so that all logging items specific to a particular time period
    * are prefixed with the exact same string, i.e.  {@code [time period : <external id> (id <id>) ]}
    * 
-   * @param timePeriodExternalId the time period's external id
-   * @param timePeriodId the time period internal id
+   * @param timePeriod the time period to create it for
    * @return time period prefix
    */
-  public static String createTimePeriodPrefix(Object timePeriodExternalId, long timePeriodId) {
-    return surroundwithBrackets(String.format("time period: %s (id %d)", timePeriodExternalId, timePeriodId));
+  public static String createTimePeriodPrefix(TimePeriod timePeriod) {
+    String timePeriodReference = timePeriod.hasExternalId() ? "external id: " + timePeriod.getExternalId() : (timePeriod.hasXmlId() ? "xml id: "+timePeriod.getXmlId() : "");
+    return surroundwithBrackets(String.format("time period: %s (id %d)", timePeriodReference, timePeriod.getId()));
   }  
   
   /**

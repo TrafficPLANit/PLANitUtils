@@ -95,7 +95,7 @@ public interface Edges<E extends Edge> extends Iterable<E> {
    * @param externalId to match
    * @return found matching links
    */  
-  public default Collection<E> getByExternalId(String externalId) {
+  public default Collection<? extends E> getByExternalId(String externalId) {
     ArrayList<E> matches = new ArrayList<E>(1);  
     for(E edge : this) {
       if(edge.getExternalId().equals(externalId)) {
