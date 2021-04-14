@@ -1,6 +1,7 @@
 package org.planit.utils.zoning;
 
 import java.util.Collection;
+import java.util.Optional;
 import java.util.Set;
 
 import org.planit.utils.exceptions.PlanItException;
@@ -104,10 +105,10 @@ public interface Connectoid extends ExternalIdable, Iterable<Zone> {
   /** length can be used to virtually assign a length to the connectoid/zone combination
    * 
    * @param accessZone to collect length for
-   * @return length (null if zone is not registered)
+   * @return length in km(null if zone is not registered)
    * @throws PlanItException thrown if error
    */
-  public abstract Double getLength(Zone accessZone) throws PlanItException;
+  public abstract Optional<Double> getLengthKm(Zone accessZone) throws PlanItException;
   
   /** Verify if a mode is allowed access to the zone via this connectoid
    * 
@@ -117,11 +118,25 @@ public interface Connectoid extends ExternalIdable, Iterable<Zone> {
    * @throws PlanItException thrown if provided zone is not valid
    */
   public abstract boolean isModeAllowed(Zone accessZone, Mode mode) throws PlanItException;
+  
+  /** colect modes that are allowed for this zone (unmodifiable)
+   * @param accessZone to check
+   * @return the modes allowed for this zone, null if none
+   */
+  public abstract Collection<Mode> getAllowedModes(Zone accessZone);   
 
   /** collect the access vertex for this connectoid
    * @return access vertex
    */
   public abstract DirectedVertex getAccessVertex();
+  
+  /** Verify if the connectoid has a name
+   * 
+   * @return true when present false otherwise
+   */
+  public default boolean hasName() {
+    return getName()!=null && !getName().isBlank();
+  }
   
   /** add allowed modes. We assume the zone is already registered as an access zone for this connectoid
    * 
@@ -141,6 +156,29 @@ public interface Connectoid extends ExternalIdable, Iterable<Zone> {
    */  
   public default void addAllowedModes(TransferZone transferZone, Set<Mode> allowedModes) {
     allowedModes.forEach( mode -> addAllowedMode(transferZone, mode));
-  }  
+  }
+
+  /** Verify if any modes are allowed for this zone
+   * @param accessZone to check
+   * @return true when at least one mode is allowed, false otherwise
+   */
+  public default boolean hasAllowedModes(Zone accessZone) {
+    Collection<Mode> allowedModes = getAllowedModes(accessZone);
+    return allowedModes!=null && !allowedModes.isEmpty(); 
+  }
+
+  /** Verify if a length has been specified for the access zone to connectoid combination
+   * @param accessZone to verify
+   * @return true if present, false otherwise
+   */
+  public default boolean hasLength(Zone accessZone) {    
+    try {
+      return getLengthKm(accessZone).isEmpty();
+    } catch (PlanItException e) {
+      return false;
+    }
+  }
+  
+  
 
 }

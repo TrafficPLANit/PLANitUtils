@@ -17,6 +17,28 @@ public interface Centroid extends DirectedVertex {
    * 
    * @return parent zone of this centroid
    */
-  Zone getParentZone();
+  public abstract Zone getParentZone();
+  
+  /**
+   * The name of the centroid
+   * 
+   * @return its name
+   */
+  public abstract String getName();
+  
+  /**
+   * Set the name of the centroid
+   * 
+   * @param name to use
+   */
+  public abstract void setName(String name);
+  
+  /** check if a name has been set
+   * 
+   * @return true when set, false otherwise
+   */
+  public default boolean hasName() {
+    return getName()!= null && !getName().isBlank();
+  }
 
 }
