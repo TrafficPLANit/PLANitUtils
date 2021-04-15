@@ -119,11 +119,14 @@ public interface Connectoid extends ExternalIdable, Iterable<Zone> {
    */
   public abstract boolean isModeAllowed(Zone accessZone, Mode mode) throws PlanItException;
   
-  /** colect modes that are allowed for this zone (unmodifiable)
+  /** collect modes that are explicitly allowed for this zone (unmodifiable). Note that if no explicit allowed
+   * modes are present, all modes are implicitly allowed. When there exist explicitly allowed modes, any mdoes 
+   * in the network not included in the explicitly allowed modes are regarded to not be allowed.
+   * 
    * @param accessZone to check
-   * @return the modes allowed for this zone, null if none
+   * @return the modes explicitly allowed for this zone, null if none
    */
-  public abstract Collection<Mode> getAllowedModes(Zone accessZone);   
+  public abstract Collection<Mode> getExplicitlyAllowedModes(Zone accessZone);   
 
   /** collect the access vertex for this connectoid
    * @return access vertex
@@ -162,10 +165,19 @@ public interface Connectoid extends ExternalIdable, Iterable<Zone> {
    * @param accessZone to check
    * @return true when at least one mode is allowed, false otherwise
    */
-  public default boolean hasAllowedModes(Zone accessZone) {
-    Collection<Mode> allowedModes = getAllowedModes(accessZone);
+  public default boolean hasExplicitlyAllowedModes(Zone accessZone) {
+    Collection<Mode> allowedModes = getExplicitlyAllowedModes(accessZone);
     return allowedModes!=null && !allowedModes.isEmpty(); 
   }
+  
+  /** Verify if all modes are allowed for this zone
+   * @param accessZone to check
+   * @return true when we know for certain all modes are allowed, false otherwise
+   */
+  public default boolean isAllModesAllowed(Zone accessZone) {
+    /* no explicit allowed modes set, so all mdoes allowed */
+    return !hasExplicitlyAllowedModes(accessZone); 
+  }  
 
   /** Verify if a length has been specified for the access zone to connectoid combination
    * @param accessZone to verify
@@ -177,6 +189,13 @@ public interface Connectoid extends ExternalIdable, Iterable<Zone> {
     } catch (PlanItException e) {
       return false;
     }
+  }
+  
+  /** Verify if access zones are registered
+   * @return true when present, false otherwise
+   */
+  public default boolean hasAccessZones() {
+    return getNumberOfAccessZones()>0;
   }
   
   

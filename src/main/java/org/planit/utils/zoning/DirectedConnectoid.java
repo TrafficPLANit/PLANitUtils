@@ -17,30 +17,37 @@ import org.planit.utils.network.physical.Node;
 public interface DirectedConnectoid extends Connectoid{
   
   /** default node access is set to the downstream end of a link segment */
-  static boolean DEFAULT_NODE_ACCESS_DOWNSTREAM = true; 
+  public static boolean DEFAULT_NODE_ACCESS_DOWNSTREAM = true; 
   
   /** collect the directed connectoid id
    * @return directed connectoid id
    */
-  long getDirectedConnectoidId();  
+  public abstract long getDirectedConnectoidId();  
 
   /** the edge segment that provides access
    * 
    * @return access edge segment
    */
-  LinkSegment getAccessLinkSegment();
+  public abstract LinkSegment getAccessLinkSegment();
+  
+  /**
+   * Replace the access link segment for this connectoid
+   * 
+   * @param accessEdgeSegment to use
+   */
+  public abstract void replaceAccessLinkSegment(EdgeSegment exitEdgeSegment);  
   
   /** set if the node access is downstream or not
    * 
    * @param nodeAccessDownstream true to set it downstream, false otherwise
    */
-  void setNodeAccessDownstream(boolean nodeAccessDownstream);  
+  public abstract void setNodeAccessDownstream(boolean nodeAccessDownstream);  
   
   /** determine if the node access is downstream or not
    * 
    * @return true when downstream, false otherwise, i.e., upstream
    */
-  boolean isNodeAccessDownstream();
+  public abstract boolean isNodeAccessDownstream();
     
   
   /** Based on the edge segment and the location (upstream/downstream) of the access point, collect
@@ -56,12 +63,13 @@ public interface DirectedConnectoid extends Connectoid{
     }
   }
 
-  /**
-   * Replace the access link segment for this connectoid
-   * 
-   * @param accessEdgeSegment to use
+
+  /** Verify if an access link segment is present
+   * @return true when present, false otherwise
    */
-  public abstract void replaceAccessLinkSegment(EdgeSegment exitEdgeSegment);
+  public default boolean hasAccessLinkSegment() {
+    return getAccessLinkSegment()!=null;
+  }
   
   
 }
