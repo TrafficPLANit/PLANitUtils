@@ -76,6 +76,13 @@ public interface TransferZoneGroup extends ExternalIdable, Iterable<TransferZone
   public default boolean hasName() {
     return (getName()!=null && !getName().isBlank());
   }
+
+  /** verify if groups has any transfer zones registered
+   * @return true when present false otherwise
+   */
+  public default boolean hasTransferZones() {
+    return isEmpty();
+  }
   
 
 }
