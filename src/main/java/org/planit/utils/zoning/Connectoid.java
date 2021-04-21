@@ -197,7 +197,7 @@ public interface Connectoid extends ExternalIdable, Iterable<Zone> {
   public default boolean hasAccessZones() {
     return getNumberOfAccessZones()>0;
   }
-  
+ 
   
 
 }

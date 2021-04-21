@@ -64,10 +64,5 @@ public interface Vertices<V extends Vertex> extends Iterable<V> {
    * @return retrieved entity
    */
   public V get(final long id);
-
-
-
-
-
   
 }
