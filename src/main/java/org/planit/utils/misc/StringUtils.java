@@ -17,4 +17,12 @@ public class StringUtils {
   public static String[] splitByAnythingExceptAlphaNumeric(String toSplit) {
     return toSplit.split("[^a-zA-Z0-9]");
   }
+
+  /** Verify if null or blank
+   * @param string to verify
+   * @return true when null or blank
+   */
+  public static boolean isNullOrBlank(String string) {
+    return string==null || string.isBlank();
+  }
 }
