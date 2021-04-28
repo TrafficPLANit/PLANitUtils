@@ -63,12 +63,16 @@ public enum PredefinedModeType {
       return PEDESTRIAN;
     }else if(MOTOR_BIKE.value().equals(predefinedModeTypeValue)) {
       return MOTOR_BIKE;
+    }else if(SUBWAY.value().equals(predefinedModeTypeValue)) {
+      return SUBWAY;      
     }else if(TRAIN.value().equals(predefinedModeTypeValue)) {
       return TRAIN;
     }else if(TRAM.value().equals(predefinedModeTypeValue)) {
       return TRAM;
     }else if(LIGHTRAIL.value().equals(predefinedModeTypeValue)) {
       return LIGHTRAIL;
+    }else if(GOODS_VEHICLE.value().equals(predefinedModeTypeValue)) {
+      return GOODS_VEHICLE;
     }else if(HEAVY_GOODS_VEHICLE.value().equals(predefinedModeTypeValue)) {
       return HEAVY_GOODS_VEHICLE;
     }else if(LARGE_HEAVY_GOODS_VEHICLE.value().equals(predefinedModeTypeValue)) {
