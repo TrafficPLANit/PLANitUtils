@@ -81,7 +81,7 @@ public interface TransferZoneGroup extends ExternalIdable, Iterable<TransferZone
    * @return true when present false otherwise
    */
   public default boolean hasTransferZones() {
-    return isEmpty();
+    return !isEmpty();
   }
   
 
