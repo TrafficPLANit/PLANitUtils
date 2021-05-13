@@ -59,9 +59,8 @@ public class PlanitJtsUtils {
    * 
    * @param coordinate to use
    * @return point object representing the location
-   * @throws PlanItException thrown if there is an error during processing
    */
-  public static Point createPoint(Coordinate coordinate) throws PlanItException {
+  public static Point createPoint(Coordinate coordinate) {
     Point newPoint = jtsGeometryFactory.createPoint(coordinate);
     return newPoint;
   }  
@@ -74,8 +73,8 @@ public class PlanitJtsUtils {
    * @return point object representing the location
    * @throws PlanItException thrown if there is an error during processing
    */
-  public static Point createPoint(double xCoordinate, double yCoordinate) throws PlanItException {
-    Coordinate coordinate = new Coordinate(xCoordinate, yCoordinate);
+  public static Point createPoint(Number xCoordinate, Number yCoordinate) throws PlanItException {
+    Coordinate coordinate = new Coordinate(xCoordinate.doubleValue(), yCoordinate.doubleValue());
     return createPoint(coordinate);
   }
   
