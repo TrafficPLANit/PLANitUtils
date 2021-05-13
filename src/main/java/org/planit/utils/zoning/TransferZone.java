@@ -54,9 +54,9 @@ public interface TransferZone extends Zone {
    */
   public abstract void addToTransferZoneGroup(TransferZoneGroup transferZoneGroup);
 
-  /** remove from transfer zone group provided
+  /** remove from transfer zone group provided and also remove ths transfer zone from group provided
    * @param transferZoneGroup to remove ourselves as member from
-   * @return true when removal was successfull, false otherwise
+   * @return true when removal was successful, false otherwise
    */
   public abstract boolean removeFromTransferZoneGroup(TransferZoneGroup transferZoneGroup);
 
@@ -64,5 +64,10 @@ public interface TransferZone extends Zone {
    * @return transfer zone groups of the transfer zone
    */
   public abstract Set<TransferZoneGroup> getTransferZoneGroups();
+
+  /**
+   * remove this transfer zone from all groups it is registered on (and also update the group references
+   */
+  public abstract void removeFromAllTransferZoneGroups();
 
 }
