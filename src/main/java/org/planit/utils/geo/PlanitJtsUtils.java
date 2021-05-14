@@ -10,6 +10,7 @@ import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 import org.geotools.geometry.jts.JTSFactoryFinder;
+import org.geotools.referencing.CRS;
 import org.locationtech.jts.algorithm.RobustDeterminant;
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.Envelope;
@@ -24,6 +25,8 @@ import org.locationtech.jts.linearref.LocationIndexedLine;
 import org.locationtech.jts.operation.linemerge.LineMerger;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.coordinate.PointArray;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.opengis.referencing.operation.MathTransform;
 import org.planit.utils.exceptions.PlanItException;
 import org.planit.utils.misc.Pair;
 
@@ -42,7 +45,27 @@ public class PlanitJtsUtils {
   /** jts geometry factory, jts geometry differs from opengis implementation by not carrying the crs and being more lightweight */
   protected static final GeometryFactory jtsGeometryFactory = JTSFactoryFinder.getGeometryFactory();
    
-  
+  /**
+   * Convenience method that wraps the CRS.findMathTransform by catching exceptions and producing a planit excepion only as well as allowing for lenient transformer
+   * 
+   * @param sourceCRS      the source
+   * @param destinationCRS the destination
+   * @return transformer
+   * @throws PlanItException thrown if error
+   */
+  public static MathTransform findMathTransform(CoordinateReferenceSystem sourceCRS, CoordinateReferenceSystem destinationCRS) throws PlanItException {
+    PlanItException.throwIfNull(sourceCRS, "source coordinate reference system null when creating math transform");
+    PlanItException.throwIfNull(destinationCRS, "destination coordinate reference system null when creating math transform");
+
+    try {
+      /* allows for some lenience in transformation due to different datums */
+      boolean lenient = true;
+      return CRS.findMathTransform(sourceCRS, destinationCRS, lenient);
+    } catch (Exception e) {
+      throw new PlanItException(String.format("error during creation of transformer from CRS %s to CRS %s", sourceCRS.toString(), destinationCRS.toString()), e);
+    }
+
+  }
   
   /**
    * create a coordinate by mapping ordinate 0 to x and ordinate 1 to y on the open gis DirecPosition
@@ -161,14 +184,13 @@ public class PlanitJtsUtils {
   /**
    * Based on the line string construct a csv string
    * 
-   * @param geometry the values containing the x,y coordinates in the crs of this instance
+   * @param coordinates the values containing the x,y coordinates in the crs of this instance
    * @param ts       tuple separating string to use
    * @param cs       comma separating string to use
    * @param df       decinal formatter to format the decimals of the coordinates
    * @return the LineString created from the String
    */
-  public static String createCsvStringFromLineString(LineString geometry, Character ts, Character cs, DecimalFormat df) {
-    Coordinate[] coordinates = geometry.getCoordinates();
+  public static String createCsvStringFromCoordinates(Coordinate[] coordinates, Character ts, Character cs, DecimalFormat df) {
     StringBuilder csvStringBuilder = new StringBuilder();
     for (int index = 0, lastIndex = coordinates.length - 1; index < coordinates.length; ++index) {
       Coordinate coordinate = coordinates[index];
