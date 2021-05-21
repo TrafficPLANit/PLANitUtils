@@ -58,4 +58,16 @@ public class FileUtils {
     /* collect matches */
     return directoryPath.listFiles(fileExtensionFilter);
   }
+  
+  
+  /** extract the file name without the extension, i.e. remove the last part of the string after the last "." encountered
+   * @param fileName to use
+   * @return fileName without extension
+   */
+  public static String getFileNameWithoutExtension(final String fileName) {
+    if(fileName!= null && fileName.contains(".")) {
+      return fileName.substring(0, fileName.lastIndexOf('.'));      
+    }
+    return fileName;
+  }
 }

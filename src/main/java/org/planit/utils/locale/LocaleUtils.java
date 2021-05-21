@@ -23,7 +23,8 @@ public class LocaleUtils {
   }
   }
   
-  /**
+  /**Collect ISO2 code based on full name
+   * 
    * @param countryName (full name as per English locale)
    * @return ISO2 code, null if incorrect name
    */
@@ -31,9 +32,10 @@ public class LocaleUtils {
     return countries2ISO.get(countryName);
   }
   
-  /** collect full name of country based on ISO2 code
+  /** Collect full name of country based on ISO2 code
+   * 
    * @param iso2Code country code
-   * @return full name under English Locale
+   * @return full name under English Locale, empty string if not available
    */
   public static String getCountryNameCodeByIso2Code(String iso2Code){
     return new Locale("en", iso2Code).getDisplayCountry();
