@@ -2,6 +2,8 @@ package org.planit.utils.misc;
 
 import java.io.File;
 import java.io.FilenameFilter;
+import java.nio.file.Paths;
+import java.util.function.Consumer;
 
 import org.planit.utils.exceptions.PlanItException;
 
@@ -69,5 +71,16 @@ public class FileUtils {
       return fileName.substring(0, fileName.lastIndexOf('.'));      
     }
     return fileName;
+  }
+  
+  /** call the callback for each file in the directory provided
+   * @param pathToDir to check
+   * @param callBack to use no eac file found in dir
+   */
+  public static void callForEachFileIn(final String pathToDir, final Consumer<File> callBack) {
+    File[] filesInDir = new File(pathToDir).listFiles();
+    for(int index=0;index<filesInDir.length;++index) {
+      callBack.accept(filesInDir[index]);
+    } 
   }
 }

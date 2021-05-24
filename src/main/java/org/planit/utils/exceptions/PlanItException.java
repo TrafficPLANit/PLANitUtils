@@ -76,4 +76,18 @@ public class PlanItException extends Exception {
       throw new PlanItException(message);
     }
   }  
+  
+  /**
+   * Throw a planitException if object is null
+   * 
+   * @param object to test
+   * @param message for exception
+   * @param objectArgs to format exception string with
+   * @throws PlanItException thrown when condition not met
+   */
+  public static void throwIfNull(Object object, String message, Object... objectArgs) throws PlanItException {
+    if(object==null) {
+      throw new PlanItException(message, objectArgs);
+    }
+  }   
 }
