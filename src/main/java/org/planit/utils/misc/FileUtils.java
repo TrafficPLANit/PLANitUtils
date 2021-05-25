@@ -3,6 +3,7 @@ package org.planit.utils.misc;
 import java.io.File;
 import java.io.FilenameFilter;
 import java.util.function.Consumer;
+import java.util.logging.Logger;
 
 import org.planit.utils.exceptions.PlanItException;
 
@@ -13,6 +14,9 @@ import org.planit.utils.exceptions.PlanItException;
  *
  */
 public class FileUtils {
+  
+  /** logger to use */
+  private static final Logger LOGGER = Logger.getLogger(FileUtils.class.getCanonicalName());
   
   public static final String DOT = ".";
   
@@ -80,9 +84,16 @@ public class FileUtils {
    * @param callBack to use no each file found in dir
    */
   public static void callForEachFileIn(final String pathToDir, final Consumer<File> callBack) {
+    if(pathToDir==null) {
+      return;
+    }
+    if(callBack == null) {
+      LOGGER.warning(String.format("No callback provided for any file in %s",pathToDir));
+    }
     File[] filesInDir = new File(pathToDir).listFiles();
     for(int index=0;index<filesInDir.length;++index) {
       callBack.accept(filesInDir[index]);
     } 
   }
+   
 }

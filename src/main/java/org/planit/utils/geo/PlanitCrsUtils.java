@@ -1,5 +1,6 @@
 package org.planit.utils.geo;
 
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.geotools.referencing.CRS;
@@ -14,7 +15,16 @@ public class PlanitCrsUtils {
   
   /** the logger to use */
   private static final Logger LOGGER = Logger.getLogger(PlanitCrsUtils.class.getCanonicalName());
-
+  
+  /**
+   * make sure we silence the Hsql logging that is used by CRS to collect crs for different countries. Make sure this is called
+   * BEFORE it is loaded, otherwise it is too late
+   */
+  protected static void silenceHsqlLogging() {
+    Logger.getLogger("org.hsqldb").setLevel(Level.WARNING);
+    System.setProperty("hsqldb.reconfig_logging", "false");
+  }
+  
   /**
    * create a coordinate reference system instance based on String representation, e.g. "EPSG:4326" for WGS84", using the underlying geotools hsql authority factory. see also
    * {@code https://docs.geotools.org/latest/userguide/library/referencing/crs.html} on some context on why we include the hsql dependency in the planit build to ensure that the
@@ -28,6 +38,8 @@ public class PlanitCrsUtils {
    * @return the created coordinate reference system
    */
   public static CoordinateReferenceSystem createCoordinateReferenceSystem(String code) {
+    silenceHsqlLogging();
+    
     CoordinateReferenceSystem crs = null;
     if (code != null) {
       try {

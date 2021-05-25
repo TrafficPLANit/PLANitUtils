@@ -39,7 +39,24 @@ public class PlanitJtsCrsUtils {
 
   /** the logger */
   private static final Logger LOGGER = Logger.getLogger(PlanitJtsCrsUtils.class.getCanonicalName());
+    
+  /*
+   * the geotools gt-epsg-hsql dependency tries to take over the logging and the formatting of the logging. It is initialised whenever {@code CRS.decode} is invoked from some of
+   * this class' static methods. Therefore, here we programmatically disable this unwanted behaviour
+   */
+  static {
+    PlanitCrsUtils.silenceHsqlLogging();
+  }     
+
+  /** the crs to use */
+  protected final CoordinateReferenceSystem crs;
   
+  /** geodetic calculator to use in tandem with the used CRS */
+  protected final GeodeticCalculator geoCalculator;  
+
+  /** jts geometry factory, jts geometry differs from opengis implementation by not carrying the crs and being more lightweight */
+  protected static final GeometryFactory jtsGeometryFactory = JTSFactoryFinder.getGeometryFactory();
+    
   /**
    * Default Coordinate Reference System: WGS84
    */
@@ -49,15 +66,6 @@ public class PlanitJtsCrsUtils {
    * In absence of a geographic crs we can also use cartesian: GENERIC_2D
    */
   public static final CoordinateReferenceSystem CARTESIANCRS = CartesianAuthorityFactory.GENERIC_2D;  
-
-  /** the crs to use */
-  private final CoordinateReferenceSystem crs;
-  
-  /** geodetic calculator to use in tandem with the used CRS */
-  private final GeodeticCalculator geoCalculator;  
-
-  /** jts geometry factory, jts geometry differs from opengis implementation by not carrying the crs and being more lightweight */
-  private static final GeometryFactory jtsGeometryFactory = JTSFactoryFinder.getGeometryFactory();
     
   /**
    * Constructor

@@ -56,6 +56,7 @@ public class PlanitJtsUtils {
   public static MathTransform findMathTransform(CoordinateReferenceSystem sourceCRS, CoordinateReferenceSystem destinationCRS) throws PlanItException {
     PlanItException.throwIfNull(sourceCRS, "source coordinate reference system null when creating math transform");
     PlanItException.throwIfNull(destinationCRS, "destination coordinate reference system null when creating math transform");
+    PlanitCrsUtils.silenceHsqlLogging();
 
     try {
       /* allows for some lenience in transformation due to different datums */
