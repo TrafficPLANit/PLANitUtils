@@ -31,6 +31,17 @@ public class PlanItException extends Exception {
   public PlanItException(String exceptionDescription, Object... objectArgs) {
     this(String.format(exceptionDescription,objectArgs));
   }  
+  
+  /**
+   * Constructor using formatted string - catches logic-driven exceptions
+   * 
+   * @param exceptionDescription text containing description of logic error with formatted place holders
+   * @param cause original exception cause
+   * @param objectArgs arguments to be added to formatted string message
+   */
+  public PlanItException(String exceptionDescription, Throwable cause, Object... objectArgs) {
+    this(String.format(exceptionDescription,objectArgs), cause);
+  }   
 
   /**
    * Constructor using Exception - wraps run-time exceptions
