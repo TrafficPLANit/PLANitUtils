@@ -82,7 +82,7 @@ public interface Edges<E extends Edge> extends Iterable<E> {
 
   /** Verify if edge is present
    * 
-   * @param linkId to verify
+   * @param id to verify
    * @return true when present false otherwise
    */
   public default boolean hasEdge(long id) {
