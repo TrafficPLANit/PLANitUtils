@@ -89,6 +89,9 @@ public interface Node extends DirectedVertex {
   /**
    * Collect the first available entry link segment using the iterator internally. It is assumed
    * at least one entry is available
+   * 
+   * @param <LS> link segment type used
+   * @return first entry available
    */
   @SuppressWarnings("unchecked")
   public default <LS extends EdgeSegment> LS getFirstEntryLinkSegment(){
@@ -98,6 +101,9 @@ public interface Node extends DirectedVertex {
   /**
    * Collect the first available exit link segment using the iterator internally. It is assumed
    * at least one entry is available
+   * 
+   * @param <LS> link segment type used
+   * @return first exit available
    */
   @SuppressWarnings("unchecked")
   public default <LS extends EdgeSegment> LS getFirstExitLinkSegment(){
