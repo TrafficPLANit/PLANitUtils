@@ -5,16 +5,15 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.net.JarURLConnection;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.file.FileSystem;
 import java.nio.file.FileSystems;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.Collections;
 import java.util.logging.Logger;
+
+import org.planit.utils.misc.UriUtils;
 
 /** Utilities to access resources in the Java environment
  * 
@@ -25,15 +24,12 @@ public class ResourceUtils {
   /** logger to use */
   private static final Logger LOGGER = Logger.getLogger(ResourceUtils.class.getCanonicalName());
   
-  /** jar uri scheme */
-  private static final String JAR = "jar";
-
   /** find the resource URL via this class' classloader
    * 
    * @param resourceLocation to find URL for
    * @return the URL of the resource
    */
-  public static URL getResourceUrl(String resourceLocation) {
+  public static URL getResourceUrl(final String resourceLocation) {
     /* collect the resource assuming it is available in the context where the utils are made available */
     return ResourceUtils.class.getClassLoader().getResource(resourceLocation);
   }
@@ -44,7 +40,7 @@ public class ResourceUtils {
    * @return the URI of the resource
    * @throws URISyntaxException thrown if error
    */
-  public static URI getResourceUri(String resourceLocation) throws URISyntaxException{
+  public static URI getResourceUri(final String resourceLocation) throws URISyntaxException{
     URL url = getResourceUrl(resourceLocation);
     if(url==null) {
       LOGGER.warning(String.format("Unable to create resource URL and therefore URI for %s",resourceLocation));
@@ -52,23 +48,14 @@ public class ResourceUtils {
     }
     return url.toURI(); 
   }  
-
-  /** check if URI is contained within a JAR file
-   * 
-   * @param uri to check
-   * @return true when within jar, false otherwise
-   */
-  public static boolean isResourceInJar(URI uri) {
-    return JAR.equals(uri.getScheme());
-  }
-
+  
   /** Collect the jar as a Filesystem to access its internals
    * 
    * @param uri to use
    * @return FileSystem of Jar
    * @throws IOException thrown if error
    */
-  public static FileSystem getJarFileSystem(URI uri) throws IOException {
+  public static FileSystem getJarFileSystem(final URI uri) throws IOException {
     return FileSystems.newFileSystem(uri, Collections.emptyMap(), ResourceUtils.class.getClassLoader());    
   }
   
@@ -97,8 +84,8 @@ public class ResourceUtils {
    */  
   public static InputStreamReader getResourceAsInputStreamReader(final URI uri) {
     try {      
-      /* depending on whether or not locaton is in a jar we create the input reader differently */
-      if(isResourceInJar(uri)) {
+      /* depending on whether or not location is in a jar we create the input reader differently */
+      if(UriUtils.isInJar(uri)) {
         /* input stream */
         return new InputStreamReader(getResourceAsInputStream(uri));
       }else {
@@ -122,71 +109,34 @@ public class ResourceUtils {
   public static InputStream getResourceAsInputStream(final URI uri) {
     try {
       
-      URI thisUri = Path.of("").toUri();
-      /* extract relative location to cwd (if possible), so we can provide a location relative to this */     
-      URI relativeResourceUri = thisUri.relativize(uri);
-      LOGGER.warning("thisuri: "+thisUri.toString() );
-      LOGGER.warning("desired uri: "+uri.toString() );
-      LOGGER.warning("relativised desired uri: "+relativeResourceUri.toString() );
-      
-      Path finalResourcePath = null;
-      if(relativeResourceUri.getScheme()!=null) {
-        
-        //TODO --> NOT WORKING UGLY AS WELL
-        
-        /** Consider using this for jar based approach instead and then obtain the input stream
-         * or path from the resource URL instead or something
-        URL[] urls = new URL[]{new File("/path/to/com.me.Y.jar").toURI().toURL())};
-        URLClassLoader classLoader = new URLClassLoader(urls);
-        URL resource = classLoader.findResource("/config/conf.txt");
-        **/
-        
-        /* scheme still present, meaning that relative path could not be extracted (because uri is not somewhere in the cwd hierarchy) and therefore the
-         * beginning of uri is kept (which contains the scheme). In that case we extract a path directly from the URI, otherwise the 
-         * relativisation already removed the scheme (at the front) and is effectively a relative path already and no additional effort is needed (which would break
-         * the call) and we simply collect the string representation
-         */
-        String resourcePathInFileSystem = null;
-        FileSystem fs = FileSystems.getDefault(); //regular file system
-        if(isResourceInJar(uri)) {
-          /* collect jar file system within jar */
-          JarURLConnection jarEntryConn = (JarURLConnection) uri.toURL().openConnection();
-          URL jarLocationURL = jarEntryConn.getJarFileURL(); 
-          LOGGER.warning("jar location url: "+jarLocationURL.toString() );
-          LOGGER.warning("jar location path : "+Paths.get(jarLocationURL.toURI()).toString() );
-          fs = FileSystems.newFileSystem(Paths.get(jarLocationURL.toURI()), null);
-          /* determine location within jar file system of resource */
-          resourcePathInFileSystem = jarEntryConn.getEntryName();          
-        }else {
-          /* determine location of resource within default file system */
-          resourcePathInFileSystem = uri.getPath();
-        }
-        finalResourcePath = fs.getPath(resourcePathInFileSystem);        
-        LOGGER.warning("scheme not null:"+ relativeResourceUri.getScheme().toString() );        
-        fs.close();
-      }else {
-        /* relativised, so scheme and other preceding clutter is removed already and we know we obtain it relative to cwd so simply use relativised string location 
-         * in the default file system's path form */
-        finalResourcePath = Path.of(relativeResourceUri.toString());
-      }
-      LOGGER.warning("relative source location :"+ finalResourcePath.toString() );
+      /* we must convert the universal URI back to a local string that we know we can use to extract an input stream. This is more complicated than it 
+       * seems, since depending on whether or not we run within the IDE, externally, or are invoked by a third party process, both the URI and the context
+       * i.e. current working dir differ and in the end we only want a relative location to the root directory of this process for this to work properly
+       * So:
+       * 1) IDE: all local files relative to current working dir of the project --> 
+       *          current working dir can be used to create relative path and use file stream to parse as it is a regular file
+       * 2) RUNNING JAR IN SAME DIR --> 
+       *          current working dir is jar dir s can be used to create relative path, but files are within jar so cannot create file input stream (they are in jar file system, not default file system and therefore are
+       *          not considered a regular file in Java, so FileInputStream does not work, use class loader stream instead
+       * 3) RUNNING JAR from other dir -->
+       *          current working dir is NOT jar dir, create relative path by first finding jar URI and then relative against that instead, also use class loader stream
+       */
+      URI relativeResourceUri = UriUtils.asRelativeUri(uri);      
         
       /* depending on whether or not location is in a jar we create the input reader differently */
-      if(isResourceInJar(uri)) {
-        LOGGER.warning("in jar use:"+ finalResourcePath.toString() );
+      if(UriUtils.isInJar(uri)) {
         /* input stream */
-        return getResourceAsStream(finalResourcePath.toString());
+        return getResourceAsStream(relativeResourceUri.toString()/*"/logging.properties"*/);
       }else {
         /* file based stream */
-        LOGGER.warning("not in jar use:"+ finalResourcePath.toFile().toString() );
-        return new FileInputStream(finalResourcePath.toFile());
+        return new FileInputStream(new File(uri));
       }
     }catch(Exception e) {
       e.printStackTrace();
       LOGGER.warning(e.getMessage());
       LOGGER.warning(String.format("Unable to create an input stream for resource %s",uri.toString()));
     }
-      return null;
+    return null;
   }  
   
   
