@@ -644,7 +644,6 @@ public class PlanitJtsCrsUtils {
    * @param geometry to check
    * @param boundingBox to consider
    * @param maxDistanceMeters to consider
-   * @param geoUtils to use
    * @return true when within maximum distance of bounding box, false otherwise
    * @throws PlanItException thrown if error
    */
