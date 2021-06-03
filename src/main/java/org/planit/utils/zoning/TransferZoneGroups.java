@@ -30,12 +30,12 @@ public interface TransferZoneGroups extends Iterable<TransferZoneGroup>{
    */
   public abstract TransferZoneGroup createNew();   
   
-  /** remove a transfer zone group
+  /** Remove a transfer zone group
    * 
    * @param transferZoneGroup to remove
    * @return removed transfer zone group
    */
-  public abstract TransferZoneGroup remove(TransferZoneGroup transferZone);
+  public abstract TransferZoneGroup remove(TransferZoneGroup transferZoneGroup);
   
   /** Verify if transfer zone group is present
    * 

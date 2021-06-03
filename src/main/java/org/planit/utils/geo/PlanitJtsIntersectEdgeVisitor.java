@@ -18,8 +18,8 @@ public class PlanitJtsIntersectEdgeVisitor<T extends Edge> extends PlanitJtsItem
 
     /** Constructor
      * 
-     * @param geometryFilter
-     * @param filteredResultToPopulate
+     * @param geometryFilter to use
+     * @param filteredResultToPopulate to populate
      */
     public PlanitJtsIntersectEdgeVisitor(Polygon geometryFilter, Collection<T> filteredResultToPopulate) {
       super(geometryFilter, filteredResultToPopulate);        

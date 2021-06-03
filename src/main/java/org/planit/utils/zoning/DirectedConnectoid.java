@@ -19,12 +19,13 @@ public interface DirectedConnectoid extends Connectoid{
   /** default node access is set to the downstream end of a link segment */
   public static boolean DEFAULT_NODE_ACCESS_DOWNSTREAM = true; 
   
-  /** collect the directed connectoid id
+  /** Collect the directed connectoid id
+   * 
    * @return directed connectoid id
    */
   public abstract long getDirectedConnectoidId();  
 
-  /** the edge segment that provides access
+  /** The edge segment that provides access
    * 
    * @return access edge segment
    */
@@ -33,7 +34,7 @@ public interface DirectedConnectoid extends Connectoid{
   /**
    * Replace the access link segment for this connectoid
    * 
-   * @param accessEdgeSegment to use
+   * @param exitEdgeSegment to use
    */
   public abstract void replaceAccessLinkSegment(EdgeSegment exitEdgeSegment);  
   

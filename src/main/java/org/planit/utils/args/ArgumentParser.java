@@ -19,7 +19,7 @@ public class ArgumentParser {
   private static final Logger LOGGER = Logger.getLogger(ArgumentParser.class.getCanonicalName());
 
   /**
-   * the logger
+   * The logger
    * 
    * @param splitter separator to use for string
    * @param arg to split
@@ -36,7 +36,7 @@ public class ArgumentParser {
   }
 
   /**
-   * Convert program arguments into a Map, with signature: "<key>=/-/:<value>",
+   * Convert program arguments into a Map, with signature: {@code <key>=/-/:<value>},
    * e.g. the default style
    * 
    * @param args command-line arguments
@@ -58,7 +58,7 @@ public class ArgumentParser {
   }
 
   /**
-   * Convert program arguments into a Map, with signature: "--<key> <value>", e.g.
+   * Convert program arguments into a Map, with signature: {@code --<key> <value>}, e.g.
    * the double hyphen style
    * 
    * @param args command-line arguments
@@ -97,7 +97,7 @@ public class ArgumentParser {
   }
 
   /**
-   * Convert program arguments into a Map, with signature: "<key>=/-/:<value>",
+   * Convert program arguments into a Map, with signature: {@code <key>=/-/:<value>},
    * e.g. the default style
    * 
    * @param args command-line arguments

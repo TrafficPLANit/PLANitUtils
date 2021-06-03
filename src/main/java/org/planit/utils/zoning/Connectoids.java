@@ -13,7 +13,7 @@ public interface Connectoids<T extends Connectoid> extends Iterable<T>{
      * consider recreating the internal ids to avoid this
      * 
      * @param connectoid to remove
-     * @param connectoid that has been removed 
+     * @return connectoid that has been removed 
      */
     public abstract Connectoid remove(T connectoid);
     
@@ -21,7 +21,7 @@ public interface Connectoids<T extends Connectoid> extends Iterable<T>{
      * consider recreating the internal ids to avoid this
      * 
      * @param connectoidId the connectoid to remove by its internal id (unique across all connectoids of any type)
-     * @param connectoid that has been removed 
+     * @return connectoid that has been removed 
      */
     public abstract Connectoid remove(long connectoidId);    
   

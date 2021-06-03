@@ -32,8 +32,8 @@ public abstract class PlanitJtsItemVisitor<T> implements ItemVisitor{
 
     /** Constructor
      * 
-     * @param geometryEnvelopeFilter
-     * @param filteredResultToPopulate
+     * @param geometryFilter to use
+     * @param filteredResultToPopulate to populate
      */
     public PlanitJtsItemVisitor(Polygon geometryFilter, Collection<T> filteredResultToPopulate) {
       this.geometryFilter = geometryFilter;
@@ -52,8 +52,9 @@ public abstract class PlanitJtsItemVisitor<T> implements ItemVisitor{
       }
     }
 
-    /** Collect the filtered result created by the visitor 
-     * @return
+    /** Collect the filtered result created by the visitor
+     *  
+     * @return populated container
      */
     public Collection<T> getResult() {
       return filteredResultToPopulate;

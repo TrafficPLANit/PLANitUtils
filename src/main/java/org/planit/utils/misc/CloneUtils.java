@@ -7,7 +7,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 
 /**
- * some utility methods to use serialisation to allow for deep copy cloning without knowing anything about the objects type
+ * Some utility methods to use serialization to allow for deep copy cloning without knowing anything about the objects type
  * 
  * @author markr
  *
@@ -15,6 +15,7 @@ import java.io.ObjectOutputStream;
 public class CloneUtils {
 
   /** Serialise an object
+   * 
    * @param object to serialise
    * @return byte array
    * @throws IOException thrown if error
@@ -25,10 +26,11 @@ public class CloneUtils {
       return os.toByteArray();
   }
 
-  /** Deserialise based on bytearray to object
-   * @param <T> type
-   * @param array to deserialise
-   * @return object 
+  /** Deserialise based on byte array to object
+   * 
+   * @param <T> type to deserialize
+   * @param array to deserialize
+   * @return object created
    * @throws IOException thrown if error
    * @throws ClassNotFoundException thrown if error
    */
@@ -39,7 +41,7 @@ public class CloneUtils {
 
   /** clone an object by using the serialise/deserialise methods in this class. This is a costly operation
    * 
-   * @param <T>
+   * @param <T> object type
    * @param object to clone
    * @return cloned version
    */

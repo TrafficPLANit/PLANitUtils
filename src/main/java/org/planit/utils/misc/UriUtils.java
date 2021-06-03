@@ -27,22 +27,21 @@ public class UriUtils {
   /** Collect working directory as URI
    * 
    * @return URI of working directory
-   * @throws URISyntaxException 
    */
   public static URI getWorkingDirUri() {
     return Path.of("").toUri();
   }    
   
-  /** find user dir URI of JVM, which is the current working dir unless overridden upon instantiation of the Jvm
+  /** Find user dir URI of JVM, which is the current working dir unless overridden upon instantiation of the Jvm
    * 
    * @return URI of JVM user dir property
-   * @throws URISyntaxException 
+   * @throws URISyntaxException thrown if error
    */
   public static URI getJvmUserDirUri() throws URISyntaxException {
     return ClassLoader.getSystemClassLoader().getResource(".").toURI();
   }  
   
-  /** check if URI is contained within a JAR file
+  /** Check if URI is contained within a JAR file
    * 
    * @param uri to check
    * @return true when within jar, false otherwise
@@ -62,6 +61,7 @@ public class UriUtils {
   
   /** Make sure it is a directory by adding a trailing forward slash if not present
    * 
+   * @param uri to extract from
    * @return URI as directory
    */
   public static URI asDirectory(URI uri) {
@@ -91,6 +91,7 @@ public class UriUtils {
    * we return original uri. When path is found, we ensure that a "/" is included in the beginning to signal the uri location is to
    * be found from the root of whatever is the root of this application
    * 
+   * @param uri to extract from
    * @return URI as relative from root.
    */
   public static URI asRelativeUriFromRoot(URI uri) {
@@ -133,7 +134,7 @@ public class UriUtils {
   }
 
   /** Create a URI knowing that the passed in URL points to a jar file, i.e., we transform something from
-   * "file:/<path>/xyz.jar to "jar:file:/<path>/xyz.jar!/".
+   * {@code file:<path>/xyz.jar} to {@code jar:file:<path>/xyz.jar!/}.
    * 
    * @param jarFileURL to create URI for
    * @return created URI
@@ -156,7 +157,7 @@ public class UriUtils {
   /** Extract relative URI based on provided URI and the user.dir property set for the application.
    * If there is no overlap copy of original URI is returned
    * 
-   * @param URI to relativise
+   * @param uri to relativise
    * @return created URI
    * @throws URISyntaxException thrown if error
    */  
@@ -168,7 +169,7 @@ public class UriUtils {
   /** Extract relative URI based on provided URI, knowing that the uri points to a location within a jar. We relativise against the jar location
    * stripping all but the internal location relative to the jar. If the uri is not pointing to a jar location, the original uri is returned
    * 
-   * @param URI to relativise
+   * @param uri to relativise
    * @return created URI
    */    
   public static URI asRelativeUriFromJar(URI uri) {

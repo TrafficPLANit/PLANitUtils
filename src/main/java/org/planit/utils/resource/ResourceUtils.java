@@ -80,7 +80,6 @@ public class ResourceUtils {
    * @param uri to deduce whether or not this resource resides within a jar or not, which drives the type of input reader that is to be
    * created, if null we attempt to create it using the resourceLocation
    * @return input stream reader created, or null if something happened
-   * @throws URISyntaxException thrown if error
    */  
   public static InputStreamReader getResourceAsInputStreamReader(final URI uri) {
     try {      
@@ -104,7 +103,6 @@ public class ResourceUtils {
    * @param uri to deduce whether or not this resource resides within a jar or not, which drives the type of input reader that is to be
    * created, if null we attempt to create it using the resourceLocation
    * @return input stream reader created, or null if something happened
-   * @throws URISyntaxException thrown if error
    */  
   public static InputStream getResourceAsInputStream(final URI uri) {
     try {

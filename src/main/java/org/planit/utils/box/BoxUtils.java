@@ -12,8 +12,9 @@ public class BoxUtils {
 
   
   /** Convert an integer list to a long list
-   * @param integerList
-   * @return
+   * 
+   * @param integerList to convert
+   * @return created long list
    */
   public static List<Long> IntegerToLongList(List<Integer> integerList) {
     return integerList.stream().mapToLong(Integer::longValue).boxed().collect(Collectors.toList());

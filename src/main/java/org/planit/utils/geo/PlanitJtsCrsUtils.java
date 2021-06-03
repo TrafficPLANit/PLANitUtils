@@ -128,9 +128,10 @@ public class PlanitJtsCrsUtils {
     return closestCoordinate;
   }  
   
-  /** find the coordinate on the line string with the closest distance to the reference referenceGeometry. Note that this is likely NOT
+  /** Find the coordinate on the line string with the closest distance to the reference referenceGeometry. Note that this is likely NOT
    * the closest point to the geometry as this likely lies on the line connecting the two closest points.
    * 
+   * @param <T> type of line string
    * @param referenceGeometry to use
    * @param lineString to verify closest coordinate
    * @return closest existing coordinate on line string to find coordinate on
@@ -185,12 +186,12 @@ public class PlanitJtsCrsUtils {
     }      
   }   
   
-  /** find the closest location from the reference coordinate to the line string expressed as a linear location. Here we project onto the geometry, so we find the location with the actual closest distance 
+  /** Find the closest location from the reference coordinate to the line string expressed as a linear location. Here we project onto the geometry, so we find the location with the actual closest distance 
    * and create a linear location regardless if this coordinate is part of the geometry as a predefined coordinate at an extreme point. It is therefore more accurate than
    * {@link getClosestExistingCoordinateDistanceInMeters}
    * 
-   * @param referencePoint the reference point
-   * @param linearGeometry to find closest distance to point to (must be a linear geometry)
+   * @param referenceCoordinate the reference point
+   * @param lineString to find closest distance to point to (must be a linear geometry)
    * @return linearLocation found
    * @throws PlanItException thrown if error
    */  
@@ -199,12 +200,12 @@ public class PlanitJtsCrsUtils {
     return locIndexedLine.project(referenceCoordinate);
   } 
   
-  /** find the closest location from the reference coordinate to the polygon expressed as a linear location. Here we project onto the geometry, so we find the location with the actual closest distance 
+  /** Find the closest location from the reference coordinate to the polygon expressed as a linear location. Here we project onto the geometry, so we find the location with the actual closest distance 
    * and create a linear location regardless if this coordinate is part of the geometry as a predefined coordinate at an extreme point. It is therefore more accurate than
    * {@link getClosestExistingCoordinateDistanceInMeters}
    * 
-   * @param referencePoint the reference point
-   * @param linearGeometry to find closest distance to point to (must be a linear geometry)
+   * @param referenceCoordinate the reference point
+   * @param polygon to find closest distance to point to (must be a linear geometry)
    * @return linearLocation found
    * @throws PlanItException thrown if error
    */  
@@ -605,7 +606,7 @@ public class PlanitJtsCrsUtils {
   }
 
   /**
-   *  collect the azimuth heading between the two coordinates in decimal degrees between -180 and 180, from location 1 to location 2
+   *  Collect the azimuth heading between the two coordinates in decimal degrees between -180 and 180, from location 1 to location 2
    *  
    *@param coordinate1 first Coordinate
    *@param coordinate2 second Coordinate
@@ -640,10 +641,10 @@ public class PlanitJtsCrsUtils {
   
   /** Verify if any existing coordinate on the passed in geometry is within the maximum provided distance of the also provided bounding box
    * 
-   * @param geometry
-   * @param boundingBox
-   * @param maxDistanceMeters
-   * @param geoUtils
+   * @param geometry to check
+   * @param boundingBox to consider
+   * @param maxDistanceMeters to consider
+   * @param geoUtils to use
    * @return true when within maximum distance of bounding box, false otherwise
    * @throws PlanItException thrown if error
    */

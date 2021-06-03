@@ -56,35 +56,36 @@ public interface Connectoid extends ExternalIdable, Iterable<Zone> {
   public abstract ConnectoidType getType();  
       
   /**
-   * the zones that can be accessed by this connectoid
+   * The zones that can be accessed by this connectoid
    * 
    * @return accessible zones
    */
   public abstract Collection<Zone> getAccessZones();
   
-  /** add an access zone and provide length to this connectoid
+  /** Add an access zone and provide length to this connectoid
    * 
    * @param zone to set length for
    * @param length to traverse between connectoid and zone
    */
   public abstract void setLength(Zone zone, double length);
   
-  /** add an allowed mode. We assume the zone is already registered as an access zone for this connectoid
+  /** Add an allowed mode. We assume the zone is already registered as an access zone for this connectoid
    * 
    * @param zone to add allowed mode to
-   * @param allowedModes to add
+   * @param allowedMode to add
    */
   public abstract void addAllowedMode(Zone zone, Mode allowedMode);  
     
  
-  /** add an access zone with default properties
+  /** Add an access zone with default properties
    * 
    * @param zone to register as accessible
    * @return overwritten zone if any
    */
   public abstract Zone addAccessZone(Zone zone);
   
-  /** check if zone is registered as access zone
+  /** Check if zone is registered as access zone
+   * 
    * @param accessZone to verify
    * @return true when registered, false otherwise
    */
@@ -141,7 +142,7 @@ public interface Connectoid extends ExternalIdable, Iterable<Zone> {
     return getName()!=null && !getName().isBlank();
   }
   
-  /** add allowed modes. We assume the zone is already registered as an access zone for this connectoid
+  /** Add allowed modes. We assume the zone is already registered as an access zone for this connectoid
    * 
    * @param zone to add allowed mode(s) to
    * @param allowedModes to add
@@ -152,9 +153,9 @@ public interface Connectoid extends ExternalIdable, Iterable<Zone> {
     }
   }
   
-  /** add allowed modes. We assume the zone is already registered as an access zone for this connectoid
+  /** Add allowed modes. We assume the zone is already registered as an access zone for this connectoid
    * 
-   * @param zone to add allowed mode(s) to
+   * @param transferZone to add allowed mode(s) to
    * @param allowedModes to add
    */  
   public default void addAllowedModes(TransferZone transferZone, Set<Mode> allowedModes) {
@@ -162,6 +163,7 @@ public interface Connectoid extends ExternalIdable, Iterable<Zone> {
   }
 
   /** Verify if any modes are allowed for this zone
+   * 
    * @param accessZone to check
    * @return true when at least one mode is allowed, false otherwise
    */
@@ -171,6 +173,7 @@ public interface Connectoid extends ExternalIdable, Iterable<Zone> {
   }
   
   /** Verify if all modes are allowed for this zone
+   * 
    * @param accessZone to check
    * @return true when we know for certain all modes are allowed, false otherwise
    */
@@ -180,6 +183,7 @@ public interface Connectoid extends ExternalIdable, Iterable<Zone> {
   }  
 
   /** Verify if a length has been specified for the access zone to connectoid combination
+   * 
    * @param accessZone to verify
    * @return true if present, false otherwise
    */

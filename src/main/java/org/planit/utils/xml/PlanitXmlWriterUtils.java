@@ -88,10 +88,10 @@ public class PlanitXmlWriterUtils {
   }  
   
   /**
-   * write an empty element (with indentation), e.g. {@code <xmlElementName/>}
+   * Write an empty element (with indentation), e.g. {@code <xmlElementName>}
    * 
    * @param xmlWriter to use
-   * @param xmlElementName element to start tag, e.g. <xmlElementName>\n
+   * @param xmlElementName element to start tag, e.g. {@code <xmlElementName>}
    * @param indentationLevel to use
    * @throws XMLStreamException thrown if error
    */
@@ -101,7 +101,7 @@ public class PlanitXmlWriterUtils {
   }  
   
   /**
-   * write a start element (with indentation) and add newline afterwards
+   * Write a start element (with indentation) and add newline afterwards
    * 
    * @param xmlWriter to use
    * @param xmlElementName element to start tag, e.g. {@code <xmlElementName>}
@@ -116,7 +116,7 @@ public class PlanitXmlWriterUtils {
    
   
   /**
-   * write an end element and add newline afterwards
+   * Write an end element and add newline afterwards
    * 
    * @param xmlWriter to use
    * @param indentationLevel to use
@@ -128,8 +128,9 @@ public class PlanitXmlWriterUtils {
     writeNewLine(xmlWriter);
   }  
   
-  /** start xml document
-   * @param xmlFileWriter the writer
+  /** Start XML document
+   * 
+   * @param xmlWriter the writer
    * @param docType to reference
    * @throws XMLStreamException thrown if exception
    */
@@ -146,7 +147,7 @@ public class PlanitXmlWriterUtils {
     writeNewLine(xmlWriter);
   } 
   
-  /** end the xml document and close the writers, streams etc.
+  /** end the XML document and close the writers, streams etc.
    * 
    * @param xmlFileWriterPair writer pair
    * @throws XMLStreamException thrown if error
