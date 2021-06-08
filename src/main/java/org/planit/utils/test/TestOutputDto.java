@@ -7,7 +7,7 @@ package org.planit.utils.test;
  *
  * @param <A> first property to store results (stores MemoryOutputFormatter in PlanItIO)
  * @param <B> second property to store results (stores CustomPlanItProject in PlanItIO)
- * @param <C> thired property to store results (stores InputBuilderListener in PlanItIO)
+ * @param <C> third property to store results (stores InputBuilderListener in PlanItIO)
  */
 public class TestOutputDto<A, B, C> {
 

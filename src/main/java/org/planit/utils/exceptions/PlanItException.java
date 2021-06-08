@@ -67,11 +67,12 @@ public class PlanItException extends Exception {
    * 
    * @param condition when met we throw
    * @param message for exception
+   * @param objectArgs to format exception string with
    * @throws PlanItException thrown when condition not met
    */
-  public static void throwIf(boolean condition, String message) throws PlanItException {
+  public static void throwIf(boolean condition, String message, Object... objectArgs) throws PlanItException {
     if(condition) {
-      throw new PlanItException(message);
+      throw new PlanItException(message, objectArgs);
     }
   }
   
@@ -97,8 +98,6 @@ public class PlanItException extends Exception {
    * @throws PlanItException thrown when condition not met
    */
   public static void throwIfNull(Object object, String message, Object... objectArgs) throws PlanItException {
-    if(object==null) {
-      throw new PlanItException(message, objectArgs);
-    }
+    throwIf(object==null, message, objectArgs);
   }   
 }
