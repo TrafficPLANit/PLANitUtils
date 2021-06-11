@@ -13,12 +13,15 @@ import java.util.logging.Logger;
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.Envelope;
 import org.locationtech.jts.geom.Geometry;
+import org.locationtech.jts.geom.LineSegment;
 import org.locationtech.jts.geom.LineString;
 import org.locationtech.jts.geom.Point;
 import org.locationtech.jts.geom.Polygon;
 import org.locationtech.jts.index.quadtree.Quadtree;
+import org.locationtech.jts.linearref.LinearLocation;
 import org.planit.utils.exceptions.PlanItException;
 import org.planit.utils.graph.Edge;
+import org.planit.utils.graph.EdgeSegment;
 import org.planit.utils.graph.Edges;
 import org.planit.utils.graph.Vertex;
 import org.planit.utils.math.Precision;
@@ -393,6 +396,31 @@ public class PlanitGraphGeoUtils {
     PlanitJtsIntersectEdgeVisitor<T> edgevisitor = new PlanitJtsIntersectEdgeVisitor<T>(PlanitJtsUtils.create2DPolygon(searchBoundingBox), new HashSet<T>());
     spatiallyIndexedEdgeTree.query(searchBoundingBox, edgevisitor);
     return edgevisitor.getResult();
+  }  
+  
+  /** Extract the JTS line segment from the edge segment that is closest to the reference geometry in its intended direction.
+   * 
+   * @param referenceGeometry to determine closeness criteria on  
+   * @param linkSegment to extract line segment from
+   * @param geoUtils for distance calculations
+   * @return line segment if found
+   * @throws PlanItException  thrown if error
+   */
+  public static <T extends EdgeSegment> LineSegment extractClosestLineSegmentTo(Geometry referenceGeometry, T edgeSegment, PlanitJtsCrsUtils geoUtils) throws PlanItException {
+    
+    LineString linkSegmentGeometry = edgeSegment.getParentEdge().getGeometry();
+    if(linkSegmentGeometry == null) {
+      throw new PlanItException("Geometry not available on edge segment %d (external id %s), unable to determine closest line segment to reference geometry, this shouldn't happen", edgeSegment.getId(), edgeSegment.getExternalId());
+    }
+    
+    LinearLocation linearLocation = geoUtils.getClosestGeometryExistingCoordinateToProjectedLinearLocationOnLineString(referenceGeometry, linkSegmentGeometry);
+    boolean reverseLinearLocationGeometry = edgeSegment.isDirectionAb()!=edgeSegment.getParentEdge().isGeometryInAbDirection();
+    
+    LineSegment lineSegment = linearLocation.getSegment(edgeSegment.getParentEdge().getGeometry());
+    if(reverseLinearLocationGeometry) {
+      lineSegment.reverse();
+    }
+    return lineSegment;        
   }  
   
   /** Verify if node is within maximum distance of provided bounding box
