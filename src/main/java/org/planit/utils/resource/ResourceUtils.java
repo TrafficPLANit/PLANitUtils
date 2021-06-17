@@ -49,7 +49,7 @@ public class ResourceUtils {
     return url.toURI(); 
   }  
   
-  /** Collect the jar as a Filesystem to access its internals
+  /** Collect the jar as a FileSystem to access its internals
    * 
    * @param uri to use
    * @return FileSystem of Jar
