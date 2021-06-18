@@ -1,5 +1,6 @@
 package org.planit.utils.misc;
 
+import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.file.Path;
@@ -21,17 +22,44 @@ public class UrlUtils {
   public static final String PROTOCOL_FILE = "file";
 
   
+  /** Test if URL is local, i.e. a local file or directory 
+   * 
+   * @param url to verify
+   * @return true when local, false otherwise
+   */
+  public static boolean isLocal(URL url) {
+    String scheme = url.getProtocol();
+    return !hasHost(url) && PROTOCOL_FILE.equalsIgnoreCase(scheme);
+  }
+  
   /** Test if URL is a local file
    * 
    * @param url to verify
    * @return true when local, false otherwise
    */
   public static boolean isLocalFile(URL url) {
-    String scheme = url.getProtocol();
-    return !hasHost(url) && PROTOCOL_FILE.equalsIgnoreCase(scheme);
+    return isLocal(url) && new File(url.getFile()).isFile();
   }
+  
+  /** Test if URL is a local file
+   * 
+   * @param url to verify
+   * @return true when local, false otherwise
+   */
+  public static boolean isLocalDirectory(URL url) {
+    return isLocal(url) && new File(url.getFile()).isDirectory();
+  }  
+  
+  /** Test if URL is a local file
+   * 
+   * @param url to verify
+   * @return true when local, false otherwise
+   */
+  public static boolean isLocalZipFile(URL url) {
+    return isLocalFile(url) && url.getFile().endsWith(FileUtils.DOT+FileUtils.ZIP);
+  }   
 
-  /** Verify if the URL has a has specified
+  /** Verify if the URL has a host specified
    * 
    * @param url to check
    * @return true when host present, false otherwise

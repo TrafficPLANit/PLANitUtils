@@ -18,7 +18,11 @@ public class FileUtils {
   /** logger to use */
   private static final Logger LOGGER = Logger.getLogger(FileUtils.class.getCanonicalName());
   
+  /* dor character */
   public static final String DOT = ".";
+  
+  /* zip extension without dot */
+  public static final String ZIP = "zip";
   
   /** Collect the extension of a file. In case the file is hidden (starts with "." it does not count as extension)
    * 
