@@ -25,4 +25,24 @@ public class StringUtils {
   public static boolean isNullOrBlank(String string) {
     return string==null || string.isBlank();
   }
+
+  /** Remove the given string from the beginning of the string if present and return result
+   * 
+   * @param theString to alter
+   * @param initialString to remove if present
+   * @return altered string
+   */
+  public static String removeInitialStringWhenPresent(String theString, String initialString) {
+    return theString.startsWith(initialString) ? theString.substring(initialString.length()) : theString;
+  }
+  
+  /** Remove the given string from the end of the string if present and return result
+   * 
+   * @param theString to alter
+   * @param initialString to remove if present
+   * @return altered string
+   */
+  public static String removeEndingStringWhenPresent(String theString, String endString) {
+    return theString.endsWith(endString) ? theString.substring(0, theString.length() - endString.length()) : theString;
+  }  
 }

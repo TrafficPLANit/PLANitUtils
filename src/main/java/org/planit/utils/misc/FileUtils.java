@@ -2,6 +2,8 @@ package org.planit.utils.misc;
 
 import java.io.File;
 import java.io.FilenameFilter;
+import java.net.URISyntaxException;
+import java.net.URL;
 import java.util.function.Consumer;
 import java.util.logging.Logger;
 
@@ -98,6 +100,24 @@ public class FileUtils {
     for(int index=0;index<filesInDir.length;++index) {
       callBack.accept(filesInDir[index]);
     } 
+  }
+
+  /** Create from URL given it is a local file
+   * 
+   * @param url to use
+   * @return file
+   */
+  public static File create(URL url) {
+    
+    if(UrlUtils.isLocal(url)) {
+      try {
+        return new File(url.toURI());
+      }catch(URISyntaxException e) {
+        LOGGER.warning(String.format("Unable to convert URL %s to file",url.toString()));
+      }
+    }
+    
+    return null;
   }
    
 }

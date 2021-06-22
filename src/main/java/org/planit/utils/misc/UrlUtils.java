@@ -2,6 +2,7 @@ package org.planit.utils.misc;
 
 import java.io.File;
 import java.net.MalformedURLException;
+import java.net.URI;
 import java.net.URL;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -96,4 +97,38 @@ public class UrlUtils {
     }
     return null;
   }  
+  
+  /** Append the given relative path to the URL. Implementation based on answer by Martin Senne via
+   * https://stackoverflow.com/questions/7498030/append-relative-url-to-java-net-url
+   * 
+   * @param baseUrl base url
+   * @param relativePath to append
+   * @return combined URL
+   */
+  public static URL appendRelativePathToURL(URL baseUrl, String relativePath) {
+    /*
+      foo://example.com:8042/over/there?name=ferret#nose
+      \_/   \______________/\_________/ \_________/ \__/
+       |           |            |            |        |
+    scheme     authority       path        query   fragment
+       |   _____________________|__
+      / \ /                        \
+      urn:example:animal:ferret:nose
+
+    see https://en.wikipedia.org/wiki/Uniform_Resource_Identifier
+    */
+    try {
+
+        URI baseUri = baseUrl.toURI();
+
+        String relPathToAdd = StringUtils.removeInitialStringWhenPresent(relativePath, "/");
+        String pathWithoutTrailingSlash = StringUtils.removeEndingStringWhenPresent(baseUri.getPath(), "/");
+        String combinedRawPath = pathWithoutTrailingSlash + "/" + relPathToAdd;
+
+        return new URI(baseUri.getScheme(),baseUri.getAuthority(),combinedRawPath,baseUri.getQuery(),baseUri.getFragment()).toURL();
+    } catch (Exception e) {
+      LOGGER.warning(String.format("Unable to append relativePath %s to base URL %s",relativePath, baseUrl.toString()));
+    }
+    return null;
+  }
 }
