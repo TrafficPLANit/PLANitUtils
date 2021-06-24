@@ -18,14 +18,14 @@ public interface Edges<E extends Edge> extends Iterable<E> {
    * 
    * @param edge to remove
    */
-  public void remove(E edge);
+  public abstract void remove(E edge);
   
   /**
    * remove an edge.
    * 
    * @param edgeId of the edge to remove
    */
-  public void remove(final long edgeId);  
+  public abstract void remove(final long edgeId);  
 
   /**
    * Create new edge to graph identified via its id, (not registered on vertices)
@@ -50,14 +50,14 @@ public interface Edges<E extends Edge> extends Iterable<E> {
    * @return the created edge
    * @throws PlanItException thrown if there is an error
    */
-  public E registerNew(final Vertex vertexA, final Vertex vertexB, final double length, boolean registerOnVertices) throws PlanItException; 
+  public abstract E registerNew(final Vertex vertexA, final Vertex vertexB, final double length, boolean registerOnVertices) throws PlanItException; 
   
   /** copy the passed in edge and register it
    * 
    * @param edgeToCopy as is except for its ids which will be updated to makeit uniquely identifiable
    * @return copy of edge now registered
    */
-  public E registerUniqueCopyOf(final E edgeToCopy);
+  public abstract E registerUniqueCopyOf(final E edgeToCopy);
 
   /**
    * Get edge by id
@@ -65,20 +65,22 @@ public interface Edges<E extends Edge> extends Iterable<E> {
    * @param id the id of the edge
    * @return the retrieved edge, null if not present
    */
-  public E get(long id);
+  public abstract E get(long id);
   
   /**
    * Get the number of edges in the graph
    *
    * @return the number of edges in the graph
    */
-  public int size();
+  public abstract int size();
 
   /**
    * Check if is empty
    * @return true when no edges, false otherwise
    */
-  public boolean isEmpty();
+  public default boolean isEmpty() {
+    return size() == 0;
+  }
 
   /** Verify if edge is present
    * 
