@@ -74,6 +74,17 @@ public class LoggingUtils {
   }  
   
   /**
+   * Create a prefix for the logger so that all logging items specific to a particular routed services
+   * are prefixed with the exact same string, i.e.  {@code [routed services id: <id> ]}
+   * 
+   * @param routedServicesId the routed services id
+   * @return routed services Prefix
+   */    
+  public static String createRoutedServicesPrefix(long routedServicesId) {
+    return surroundwithBrackets(String.format("routed services id: %d", routedServicesId));
+  }  
+  
+  /**
    * Create a prefix for the logger so that all logging items specific to a particular od path sets
    * are prefixed with the exact same string, i.e.  {@code [od path sets id: <id> ]}
    * 
@@ -135,7 +146,5 @@ public class LoggingUtils {
   public static String getClassNameWithBrackets(Object item) {
     return surroundwithBrackets(item.getClass().getSimpleName());
   }
-
-
 
 }
