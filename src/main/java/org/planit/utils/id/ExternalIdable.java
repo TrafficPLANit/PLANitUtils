@@ -16,42 +16,42 @@ public interface ExternalIdable extends Idable {
   /** get external id of the entity
    * @return external id
    */
-  public String getExternalId();
+  public abstract String getExternalId();
     
   /**
    * set the external id
    * 
    * @param externalId to set
    */
-  public void setExternalId(final String externalId);
-  
-  /** check if external id is available or not
-   * @return true when nont null, false otherwise
-   */
-  default boolean hasExternalId() {
-    return getExternalId() != null;
-  }
-  
+  public abstract void setExternalId(final String externalId);
+    
   /** 
    * the id exposed to users as the "normal" id in the PLANit native xml format
    * 
    * @return xmlId
    */
-  public String getXmlId();  
+  public abstract String getXmlId();  
   
   /**
    * set the external id
    * 
    * @param xmlId to set
    */
-  public void setXmlId(final String xmlId);
+  public abstract void setXmlId(final String xmlId);
   
   /** check if external id is available or not
    * 
    * @return true when not null, false otherwise
    */
-  default boolean hasXmlId() {
+  public default boolean hasXmlId() {
     return getXmlId() != null;
+  }  
+  
+  /** check if external id is available or not
+   * @return true when nont null, false otherwise
+   */
+  public default boolean hasExternalId() {
+    return getExternalId() != null;
   }  
 
 }
