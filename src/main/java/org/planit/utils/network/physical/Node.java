@@ -23,20 +23,20 @@ public interface Node extends DirectedVertex {
    * 
    * @return node id
    */
-  public long getNodeId();
+  public abstract long getNodeId();
   
   
   /** get the name of this node (if any)
    * 
    * @return name of the node
    */
-  public String getName();
+  public abstract String getName();
   
   /** set the name of the node
    * 
    * @param name of the node
    */
-  public void setName(String name);
+  public abstract void setName(String name);
   
   /**
    * It is expected that nodes are used in conjunction with links. If so, this method will cast the edges of the node to a links collection

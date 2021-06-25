@@ -80,13 +80,7 @@ public interface Vertex extends Serializable, ExternalIdable {
    * 
    * @return Set of Edge objects
    */
-  public abstract Collection<? extends Edge> getEdges();
-  
-  /**
-   * Number of entries in edge segments
-   * @return the number of edges connected to this vertex
-   */
-  public abstract int getNumberOfEdges();  
+  public abstract Collection<? extends Edge> getEdges();  
   
   /**
    * colect the edge(s) based on the other vertex
@@ -115,6 +109,14 @@ public interface Vertex extends Serializable, ExternalIdable {
    */
   public default boolean hasPosition() {
     return getPosition() != null;
+  }
+  
+  /**
+   * Number of entries in edge segments
+   * @return the number of edges connected to this vertex
+   */
+  public default int getNumberOfEdges() {
+    return getEdges().size();
   }
   
   /** replace one edge with the other

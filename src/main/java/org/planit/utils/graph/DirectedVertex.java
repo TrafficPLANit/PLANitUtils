@@ -9,20 +9,6 @@ import java.util.Set;
  *
  */
 public interface DirectedVertex extends Vertex {
-
-  /**
-   * Test whether no exit edge segments have been registered
-   * 
-   * @return true if no exit edge segments have been registered, false otherwise
-   */
-  public boolean hasExitEdgeSegments();
-  
-  /**
-   * Test whether no entry edge segments have been registered
-   * 
-   * @return true if no entry edge segments have been registered, false otherwise
-   */
-  public boolean hasEntryEdgeSegments();  
   
   /**
    * Add edgeSegment, do not invoke when parsing networks, this connection is
@@ -74,20 +60,6 @@ public interface DirectedVertex extends Vertex {
    */
   public Set<EdgeSegment> getExitEdgeSegments();  
   
-  /**
-   * Collect the number of entry edge segments of this vertex
-   * 
-   * @return number of entry edge segments
-   */
-  public int getNumberOfEntryEdgeSegments();
-
-  /**
-   * Collect the number of exit edge segments of this vertex
-   * 
-   * @return number of exit edge segments
-   */
-  public int getNumberOfExitEdgeSegments();
-
   /** replace edge segment
    * @param edgeSegmentToReplace to replace
    * @param edgeSegmentToReplaceWith to replace with
@@ -149,6 +121,41 @@ public interface DirectedVertex extends Vertex {
     }
     return null;
   }
+  
+  /**
+   * Test whether no exit edge segments have been registered
+   * 
+   * @return true if no exit edge segments have been registered, false otherwise
+   */
+  public default boolean hasExitEdgeSegments() {
+    return getExitEdgeSegments()!=null && !getExitEdgeSegments().isEmpty(); 
+  }
+  
+  /**
+   * Test whether no entry edge segments have been registered
+   * 
+   * @return true if no entry edge segments have been registered, false otherwise
+   */
+  public default boolean hasEntryEdgeSegments() {
+    return getEntryEdgeSegments()!=null && !getEntryEdgeSegments().isEmpty();
+  }
+  
+  /**
+   * Collect the number of entry edge segments of this vertex
+   * 
+   * @return number of entry edge segments
+   */
+  public default int getNumberOfEntryEdgeSegments() {
+    return getEntryEdgeSegments().size();
+  }
 
+  /**
+   * Collect the number of exit edge segments of this vertex
+   * 
+   * @return number of exit edge segments
+   */
+  public default int getNumberOfExitEdgeSegments() {
+    return getExitEdgeSegments().size();
+  }
   
 }
