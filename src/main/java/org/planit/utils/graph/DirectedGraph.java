@@ -16,6 +16,15 @@ public interface DirectedGraph<V extends DirectedVertex, E extends DirectedEdge,
    * @return edges segments
    */
   EdgeSegments<ES> getEdgeSegments();
+  
+  /** Verify if empty, empty when no nodes, edges, edge segments exist
+   * 
+   * @return true when no nodes, edges, edge segments,  false otherwise
+   */
+  @Override
+  public default boolean isEmpty() {
+    return Graph.super.isEmpty() && getEdgeSegments()!=null && !getEdgeSegments().isEmpty();
+  }  
 
   /**
    * {@inheritDoc}

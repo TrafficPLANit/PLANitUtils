@@ -21,24 +21,32 @@ public interface Graph<V extends Vertex, E extends Edge> {
    * 
    * @return graph id
    */
-  long getId();
+  public abstract long getId();
 
   /** collect vertices of graph
    * @return vertices
    */
-  Vertices<V> getVertices();
+  public abstract Vertices<V> getVertices();
   
   /** collect edges of graph
    * @return edges
    */
-  Edges<E> getEdges(); 
+  public abstract Edges<E> getEdges(); 
+  
+  /** Verify if empty, empty when no nodes and edges exist
+   * 
+   * @return true when no nodes and edges, false otherwise
+   */
+  public default boolean isEmpty() {
+    return getVertices()!=null && !getVertices().isEmpty() && getEdges()!=null && !getEdges().isEmpty();
+  }
   
   /**
    * validate the graph, issues will be logged
    * 
    * @return true when valid, false otherwise
    */
-  default boolean validate() {
+  public default boolean validate() {
     boolean isValid = true;
     for(Edge edge : getEdges()) {
       isValid = isValid && edge.validate();
@@ -56,7 +64,7 @@ public interface Graph<V extends Vertex, E extends Edge> {
    * @throws MismatchedDimensionException thrown if error
    * @throws TransformException thrown if error
    */
-  default void transformGeometries(MathTransform transformer) throws MismatchedDimensionException, TransformException {
+  public default void transformGeometries(MathTransform transformer) throws MismatchedDimensionException, TransformException {
     for(Edge edge : getEdges()) {
       edge.transformGeometry(transformer);
     }

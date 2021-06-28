@@ -32,25 +32,23 @@ public interface Edges<E extends Edge> extends Iterable<E> {
    *
    * @param vertexA the first vertex of this edge
    * @param vertexB the second vertex of this edge
-   * @param length  the length (in km)
    * @return the created edge
    * @throws PlanItException thrown if there is an error
    */
-  default public E registerNew(final Vertex vertexA, final Vertex vertexB, final double length) throws PlanItException{
-    return registerNew(vertexA, vertexB, length, false);
+  default public E registerNew(final Vertex vertexA, final Vertex vertexB) throws PlanItException{
+    return registerNew(vertexA, vertexB, false);
   }
   
   /**
    * Create new edge to network identified via its id, allow to be registered on vertices if indicated)
    *
    * @param vertexA           the first vertex in this edge
-   * @param vertexB           the second certex in this edge
-   * @param length          the length of this edge
+   * @param vertexB           the second vertex in this edge
    * @param registerOnVertices choice to register new edge on the vertices or not
    * @return the created edge
    * @throws PlanItException thrown if there is an error
    */
-  public abstract E registerNew(final Vertex vertexA, final Vertex vertexB, final double length, boolean registerOnVertices) throws PlanItException; 
+  public abstract E registerNew(final Vertex vertexA, final Vertex vertexB, boolean registerOnVertices) throws PlanItException; 
   
   /** copy the passed in edge and register it
    * 

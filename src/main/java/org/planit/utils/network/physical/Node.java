@@ -6,6 +6,8 @@ import java.util.Set;
 import org.planit.utils.graph.DirectedVertex;
 import org.planit.utils.graph.Edge;
 import org.planit.utils.graph.EdgeSegment;
+import org.planit.utils.id.IdGenerator;
+import org.planit.utils.id.IdGroupingToken;
 
 /**
  * Node is a vertex but not all vertices are nodes.
@@ -16,6 +18,16 @@ import org.planit.utils.graph.EdgeSegment;
  *
  */
 public interface Node extends DirectedVertex {
+  
+  /**
+   * generate unique node id
+   *
+   * @param tokenId contiguous id generation within this group for instances of this class
+   * @return nodeId
+   */
+  public static long generateNodeId(final IdGroupingToken tokenId) {
+    return IdGenerator.generateId(tokenId, Node.class);
+  }  
  
   /**
    * Collect the id of the node. Not all vertices need to be nodes, this node id is contiguous and unique to the nodes

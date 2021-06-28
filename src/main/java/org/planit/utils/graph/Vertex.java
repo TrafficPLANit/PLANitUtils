@@ -2,7 +2,9 @@ package org.planit.utils.graph;
 
 import java.io.Serializable;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.Set;
+import java.util.logging.Logger;
 
 import org.geotools.geometry.jts.JTS;
 import org.locationtech.jts.geom.Coordinate;
@@ -11,6 +13,8 @@ import org.opengis.geometry.MismatchedDimensionException;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.TransformException;
 import org.planit.utils.id.ExternalIdable;
+import org.planit.utils.id.IdGenerator;
+import org.planit.utils.id.IdGroupingToken;
 
 /**
  * Vertex representation connected to one or more edges and/or edge segments
@@ -19,6 +23,19 @@ import org.planit.utils.id.ExternalIdable;
  *
  */
 public interface Vertex extends Serializable, ExternalIdable {
+  
+  /** vertex logger */
+  public static final Logger LOGGER = Logger.getLogger(Vertex.class.getCanonicalName());
+  
+  /**
+   * generate unique vertex id
+   *
+   * @param groupId, contiguous id generation within this group for instances of this class
+   * @return vertex id generated
+   */
+  public static long generateVertexId(final IdGroupingToken tokenId) {
+    return IdGenerator.generateId(tokenId, Vertex.class);
+  }  
   
   /**
    * Add a property from the original input that is not part of the readily available members
@@ -58,14 +75,6 @@ public interface Vertex extends Serializable, ExternalIdable {
    * @return true when added, false when already present (and not added)
    */
   public abstract boolean addEdge(Edge edge);
-
-  /**
-   * Remove edge
-   * 
-   * @param edge Edge to be removed
-   * @return true when removed, false when not present (and not removed)
-   */
-  public abstract boolean removeEdge(Edge edge);
   
   /**
    * Remove edge
@@ -81,26 +90,12 @@ public interface Vertex extends Serializable, ExternalIdable {
    * @return Set of Edge objects
    */
   public abstract Collection<? extends Edge> getEdges();  
-  
-  /**
-   * colect the edge(s) based on the other vertex
-   * 
-   * @param otherVertex that defines the edge(s)
-   * @return edges for which this holds, if none hold an empty set is returned
-   */
-  public abstract Set<Edge> getEdges(Vertex otherVertex);   
-  
+    
   /**
    * Clone the vertex
    * @return the cloned vertex
    */
   public abstract Vertex clone();
-
-  /** validate the vertex regarding it connections to edges etc.
-   * 
-   * @return true when valid, false otherwise
-   */
-  public abstract boolean validate();
   
   /**
    * Verify if position is available
@@ -110,6 +105,34 @@ public interface Vertex extends Serializable, ExternalIdable {
   public default boolean hasPosition() {
     return getPosition() != null;
   }
+  
+  /**
+   * Remove edge
+   * 
+   * @param edge Edge to be removed
+   * @return true when removed, false when not present (and not removed)
+   */
+  public default boolean removeEdge(final Edge edge) {
+    return removeEdge(edge.getId());
+  }  
+  
+  /**
+   * Collect the edge(s) based on the other vertex
+   * 
+   * @param otherVertex that defines the edge(s)
+   * @return edges for which this holds, if none hold an empty set is returned
+   */
+  public default Set<Edge> getEdges(Vertex otherVertex) {
+    Set<Edge> edges = new HashSet<Edge>();
+    for (Edge edge : getEdges()) {
+      if (edge.getVertexA().getId() == this.getId() && edge.getVertexB().getId() == otherVertex.getId()) {
+        edges.add(edge);
+      } else if (edge.getVertexB().getId() == this.getId() && edge.getVertexA().getId() == otherVertex.getId()) {
+        edges.add(edge);
+      }
+    }
+    return edges;
+  }  
   
   /**
    * Number of entries in edge segments
@@ -151,4 +174,20 @@ public interface Vertex extends Serializable, ExternalIdable {
   public default boolean isPositionEqual2D(Coordinate coordinate) {
     return hasPosition() && getPosition().getCoordinate().equals2D(coordinate);
   }
+  
+  /** Validate the vertex regarding it connections to edges etc.
+   * 
+   * @return true when valid, false otherwise
+   */
+  public default boolean validate() {
+    for (Edge edge : getEdges()) {
+      if (!edge.hasVertex(this)) {
+        LOGGER.warning(
+            String.format(
+                "Edge (id:%d) does not contain vertex (id:%d externalId:%s) even though the vertex is connected to it", edge.getId(), getId(), getExternalId()));
+        return false;
+      }
+    }
+    return true;
+  }  
 }
