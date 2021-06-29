@@ -26,7 +26,7 @@ public interface GraphBuilder<V extends Vertex, E extends Edge> {
    * @return created edge
    * @throws PlanItException thrown if there is an error
    */
-  public E createEdge(final Vertex vertexA, final Vertex vertexB) throws PlanItException;
+  public E createEdge(final V vertexA, final V vertexB) throws PlanItException;
 
   /**
    * Each builder needs a group if token to allow all underlying factory methods to generated ids uniquely tied to the group the entities belong to
@@ -47,14 +47,14 @@ public interface GraphBuilder<V extends Vertex, E extends Edge> {
    * 
    * @param edges to recreate ids for
    */
-  public void recreateIds(Edges<? extends E> edges);
+  public void recreateIds(Edges<E> edges);
 
   /**
    * recreate the ids for all passed in vertices
    * 
    * @param vertices to recreate ids for
    */
-  public void recreateIds(Vertices<? extends V> vertices);
+  public void recreateIds(Vertices<V> vertices);
 
   /**
    * create a shallow copy of the passed in edge, albeit with unique internal ids

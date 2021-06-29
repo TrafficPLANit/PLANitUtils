@@ -1,4 +1,4 @@
-package org.planit.utils.network.physical.macroscopic;
+package org.planit.utils.network.layer.macroscopic;
 
 /**
  * Contains the properties of a mode specific to a link segment type

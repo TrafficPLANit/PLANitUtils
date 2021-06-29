@@ -18,14 +18,14 @@ public interface DirectedPaths<P extends DirectedPath> extends Iterable<P>  {
    * 
    * @param path to remove
    */
-  public abstract void remove(P path);
+  public abstract P remove(P path);
   
   /**
    * remove a path.
    * 
    * @param pathId of the edge to remove
    */
-  public abstract void remove(final long pathId);  
+  public abstract P remove(final long pathId);  
 
   /**
    * Create new path

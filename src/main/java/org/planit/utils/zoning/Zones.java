@@ -58,7 +58,7 @@ public interface Zones<Z extends Zone> extends Iterable<Z> {
    * @param id the id of the zone
    * @return zone the zone retrieved
    */
-  public abstract  Zone get(final long id);
+  public abstract Zone get(final Long id);
 
   /**
    * Collect number of zones
@@ -66,6 +66,12 @@ public interface Zones<Z extends Zone> extends Iterable<Z> {
    * @return the number of zones
    */
   public abstract  int size();
+  
+  /** Collect an unmodifiable collection of the known zones
+   * 
+   * @return the zones
+   */
+  public abstract Collection<Z> toCollection();  
   
   /** check if no zones are registered, i.e., size=0
    * 
@@ -75,16 +81,22 @@ public interface Zones<Z extends Zone> extends Iterable<Z> {
     return size()<= 0;
   }
   
-  /** each zone has exactly one centroid, so this is functionally equivalent to calling {@link size()}
+  /** Each zone has exactly one centroid, so this is functionally equivalent to calling {@link size()}
+   * 
    * @return number of centroids
    */
   public default int getNumberOfCentroids() {
     return size();
   }
-
-  /** collect an unmodifiable collection of the known zones
-   * @return the zones
+  
+  /**
+   * Retrieve zone by its Id
+   *
+   * @param id the id of the zone
+   * @return zone the zone retrieved
    */
-  public abstract Collection<Z> toCollection();
+  public default Zone get(final long id) {
+    return get(Long.valueOf(id));
+  }
 
 }

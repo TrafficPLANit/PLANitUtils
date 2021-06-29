@@ -4,7 +4,7 @@ import java.util.function.Function;
 
 import org.planit.utils.graph.EdgeSegment;
 import org.planit.utils.graph.Vertex;
-import org.planit.utils.network.physical.Node;
+import org.planit.utils.network.layer.physical.Node;
 
 /**
  * Path utilities

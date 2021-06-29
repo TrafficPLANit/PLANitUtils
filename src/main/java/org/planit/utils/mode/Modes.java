@@ -82,7 +82,7 @@ public interface Modes extends Iterable<Mode> {
    * Provide all modes as a set. This collection is a copy so any changes have no impact on the internally registered modes
    * @return all registered modes
    */
-  public Set<Mode> setOf();
+  public abstract Set<Mode> copyOfValuesAsSet();
 
   /**
    * Verify if mode is present

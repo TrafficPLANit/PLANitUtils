@@ -18,14 +18,14 @@ public interface Edges<E extends Edge> extends Iterable<E> {
    * 
    * @param edge to remove
    */
-  public abstract void remove(E edge);
+  public abstract E remove(E edge);
   
   /**
    * remove an edge.
    * 
    * @param edgeId of the edge to remove
    */
-  public abstract void remove(final long edgeId);  
+  public abstract E remove(final long edgeId);  
 
   /**
    * Create new edge to graph identified via its id, (not registered on vertices)
@@ -35,7 +35,7 @@ public interface Edges<E extends Edge> extends Iterable<E> {
    * @return the created edge
    * @throws PlanItException thrown if there is an error
    */
-  default public E registerNew(final Vertex vertexA, final Vertex vertexB) throws PlanItException{
+  default public <V extends Vertex> E registerNew(final V vertexA, final V vertexB) throws PlanItException{
     return registerNew(vertexA, vertexB, false);
   }
   
@@ -48,7 +48,7 @@ public interface Edges<E extends Edge> extends Iterable<E> {
    * @return the created edge
    * @throws PlanItException thrown if there is an error
    */
-  public abstract E registerNew(final Vertex vertexA, final Vertex vertexB, boolean registerOnVertices) throws PlanItException; 
+  public abstract <V extends Vertex> E registerNew(final V vertexA, final V vertexB, boolean registerOnVertices) throws PlanItException; 
   
   /** copy the passed in edge and register it
    * 

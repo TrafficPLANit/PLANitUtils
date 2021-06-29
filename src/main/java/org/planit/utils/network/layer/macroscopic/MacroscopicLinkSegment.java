@@ -1,11 +1,11 @@
-package org.planit.utils.network.physical.macroscopic;
+package org.planit.utils.network.layer.macroscopic;
 
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
 import org.planit.utils.mode.Mode;
-import org.planit.utils.network.physical.LinkSegment;
+import org.planit.utils.network.layer.physical.LinkSegment;
 
 /**
  * Macroscopic traffic modeling oriented link segment

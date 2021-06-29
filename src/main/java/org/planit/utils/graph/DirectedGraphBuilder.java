@@ -8,7 +8,7 @@ import org.planit.utils.exceptions.PlanItException;
  * @author markr
  *
  */
-public interface DirectedGraphBuilder<V extends DirectedVertex, E extends Edge, ES extends EdgeSegment> extends GraphBuilder<V, E> {
+public interface DirectedGraphBuilder<V extends DirectedVertex, E extends DirectedEdge, ES extends EdgeSegment> extends GraphBuilder<V, E> {
 
   /**
    * Create a new physical link segment instance
@@ -18,14 +18,24 @@ public interface DirectedGraphBuilder<V extends DirectedVertex, E extends Edge, 
    * @return edgeSegment the created edge segment
    * @throws PlanItException thrown if error
    */
-  public ES createEdgeSegment(DirectedEdge parentEdge, boolean directionAB) throws PlanItException;    
+  public ES createEdgeSegment(E parentEdge, boolean directionAB) throws PlanItException;    
+  
+  /**
+   * Create a new physical link segment instance, without setting the parent edge yet, this is required to be done manually afterwards
+   * before the edge segment is considered valid
+   * 
+   * @param directionAB direction of travel
+   * @return edgeSegment the created edge segment
+   * @throws PlanItException thrown if error
+   */
+  public ES createEdgeSegment(boolean directionAB) throws PlanItException;   
 
   /**
    * recreate the ids for all passed in edge segments
    * 
    * @param edgeSegments to recreate ids for
    */
-  public void recreateIds(EdgeSegments<? extends ES> edgeSegments);
+  public void recreateIds(EdgeSegments<ES> edgeSegments);
 
   /**
    * Create a unique copy of the passed in edge segment. All members are copied as is, except for its ids which are created uniquely created so it remains identifiable, also the
@@ -35,6 +45,6 @@ public interface DirectedGraphBuilder<V extends DirectedVertex, E extends Edge, 
    * @param newParentEdge     use this as the new parent edge
    * @return created copy
    */
-  public ES createUniqueCopyOf(ES edgeSegmentToCopy, DirectedEdge newParentEdge);    
+  public ES createUniqueCopyOf(ES edgeSegmentToCopy, E newParentEdge);    
 
 }

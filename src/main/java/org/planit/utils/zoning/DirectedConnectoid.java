@@ -1,8 +1,8 @@
 package org.planit.utils.zoning;
 
 import org.planit.utils.graph.EdgeSegment;
-import org.planit.utils.network.physical.LinkSegment;
-import org.planit.utils.network.physical.Node;
+import org.planit.utils.network.layer.physical.LinkSegment;
+import org.planit.utils.network.layer.physical.Node;
 
 /**
  * A directed connectoid is referring to an edge segment in a network (layer) which is directed for access

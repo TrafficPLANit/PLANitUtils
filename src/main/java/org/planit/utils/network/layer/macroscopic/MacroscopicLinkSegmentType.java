@@ -1,4 +1,4 @@
-package org.planit.utils.network.physical.macroscopic;
+package org.planit.utils.network.layer.macroscopic;
 
 import java.util.Collection;
 import java.util.Map;

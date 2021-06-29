@@ -1,4 +1,4 @@
-package org.planit.utils.network.physical;
+package org.planit.utils.network.layer.physical;
 
 import org.planit.utils.graph.Vertices;
 

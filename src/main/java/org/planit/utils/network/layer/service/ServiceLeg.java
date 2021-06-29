@@ -1,4 +1,4 @@
-package org.planit.utils.network.service;
+package org.planit.utils.network.layer.service;
 
 import java.util.Collection;
 

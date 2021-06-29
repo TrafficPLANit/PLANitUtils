@@ -1,4 +1,4 @@
-package org.planit.zoning.modifier;
+package org.planit.utils.zoning.modifier;
 
 /**
  * zoning modifier takes care of modifications that comprise multiple components across the zoning in an integrated fashion

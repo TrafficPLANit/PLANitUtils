@@ -14,15 +14,17 @@ public interface EdgeSegments<ES extends EdgeSegment> extends Iterable<ES> {
    * Remove an edges segment
    * 
    * @param edgeSegment to remove
+   * @return removed entry
    */
-  public void remove(ES edgeSegment); 
+  public abstract ES remove(ES edgeSegment); 
 
   /**
    * Remove an edge segment by id
    * 
    * @param edgeSegmentId to remove by id
+   * @param removed entry 
    */  
-  public void remove(long edgeSegmentId);  
+  public abstract ES remove(final long edgeSegmentId);  
 
   /**
    * Create edge segment
@@ -32,7 +34,7 @@ public interface EdgeSegments<ES extends EdgeSegment> extends Iterable<ES> {
    * @return the created edge segment
    * @throws PlanItException thrown if there is an error
    */
-  public ES create(final DirectedEdge parentEdge, final boolean directionAB) throws PlanItException;
+  public abstract ES create(final DirectedEdge parentEdge, final boolean directionAB) throws PlanItException;
 
   /**
    * Register a edge segment (not registered on nodes and edge)
@@ -42,7 +44,7 @@ public interface EdgeSegments<ES extends EdgeSegment> extends Iterable<ES> {
    * @param directionAB direction of travel
    * @throws PlanItException thrown if there is an error
    */
-  public void register(final DirectedEdge parentEdge, final ES edgeSegment, final boolean directionAB) throws PlanItException;
+  public abstract void register(final DirectedEdge parentEdge, final ES edgeSegment, final boolean directionAB) throws PlanItException;
   
   /**
    * Create directional edge segment and register it
@@ -53,7 +55,7 @@ public interface EdgeSegments<ES extends EdgeSegment> extends Iterable<ES> {
    * @return the created edge segment
    * @throws PlanItException thrown if there is an error
    */
-  public ES registerNew(final DirectedEdge parentEdge, final boolean directionAb, final boolean registerOnVertexAndEdge) throws PlanItException;  
+  public abstract ES registerNew(final DirectedEdge parentEdge, final boolean directionAb, final boolean registerOnVertexAndEdge) throws PlanItException;  
 
   /**
    * Get edge segment by id
@@ -61,7 +63,7 @@ public interface EdgeSegments<ES extends EdgeSegment> extends Iterable<ES> {
    * @param id id of the edge segment
    * @return retrieved edge Segment
    */
-  public ES get(final long id);
+  public abstract ES get(final long id);
   
   /**
    * Return an edge segment by its Xml id
@@ -69,14 +71,22 @@ public interface EdgeSegments<ES extends EdgeSegment> extends Iterable<ES> {
    * @param xmlId the XML id of the edge segment
    * @return the specified edge segment instance
    */
-  public ES getByXmlId(String xmlId);    
+  public abstract ES getByXmlId(String xmlId);    
+  
+  /**
+   * Return an edge segment by its external id
+   * 
+   * @param externalId the external id of the edge segment
+   * @return the specified edge segment instance
+   */  
+  public abstract ES getByExternalId(String externalId);  
 
   /**
    * Return number of registered edge segments
    *
    * @return number of registered edge segments
    */
-  public long size();
+  public abstract int size();
 
   /** copy the passed in edge segment and register it. 
    * 
@@ -84,7 +94,7 @@ public interface EdgeSegments<ES extends EdgeSegment> extends Iterable<ES> {
    * @param newParent update the parent edge to passed in edge
    * @return copy of edge segment now registered
    */  
-  public ES registerUniqueCopyOf(ES edgeSegmentToCopy, DirectedEdge newParent);
+  public abstract ES registerUniqueCopyOf(ES edgeSegmentToCopy, DirectedEdge newParent);
 
   /** check if size is zero
    * @return true when empty, false otherwise
@@ -92,7 +102,5 @@ public interface EdgeSegments<ES extends EdgeSegment> extends Iterable<ES> {
   default public boolean isEmpty() {
     return size()==0;
   }
-
-
 
 }
