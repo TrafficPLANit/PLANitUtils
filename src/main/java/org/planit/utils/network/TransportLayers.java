@@ -5,6 +5,7 @@ import java.util.Collection;
 
 import org.planit.utils.mode.Mode;
 import org.planit.utils.network.layer.TransportLayer;
+import org.planit.utils.wrapper.LongMapWrapper;
 
 /**
  * interface to manage transport layers.
@@ -12,23 +13,7 @@ import org.planit.utils.network.layer.TransportLayer;
  * @author markr
  *
  */
-public interface TransportLayers<T extends TransportLayer> extends Iterable<T> {
-
-  /**
-   * Remove
-   * 
-   * @param entity to remove
-   * @return removed instance (if any), otherwise null
-   */
-  public abstract T remove(final T entity);
-
-  /**
-   * Remove by id
-   * 
-   * @param id to remove entity for
-   * @return removed instance (if any), otherwise null
-   */
-  public abstract T remove(long id);
+public interface TransportLayers<T extends TransportLayer> extends LongMapWrapper<T> {
 
   /**
    * Create a new infrastructure layer (without registering on this class).
@@ -51,21 +36,6 @@ public interface TransportLayers<T extends TransportLayer> extends Iterable<T> {
    * @return entity, in case it overrides an existing entry, the removed entry is returned
    */
   public abstract T register(final T entity);
-
-  /**
-   * Return number of registered entity
-   *
-   * @return number of registered entity
-   */
-  public abstract int size();
-
-  /**
-   * Find a entity by its id
-   *
-   * @param id Id of entity
-   * @return retrieved entity
-   */
-  public abstract T get(final long id);
 
   /**
    * Find the layer that supports the passed in mode. Since a mode is only allowed to be supported by a single layer, this should yield the correct result. If multiple layers

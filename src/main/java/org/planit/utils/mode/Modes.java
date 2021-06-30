@@ -3,6 +3,7 @@ package org.planit.utils.mode;
 import java.util.Set;
 
 import org.planit.utils.exceptions.PlanItException;
+import org.planit.utils.wrapper.LongMapWrapper;
 
 /**
  * container class and factory methods for modes with some
@@ -10,7 +11,7 @@ import org.planit.utils.exceptions.PlanItException;
  * @author markr
  *
  */
-public interface Modes extends Iterable<Mode> {
+public interface Modes extends LongMapWrapper<Mode> {
 
   /**
    * Create and register new mode
@@ -32,22 +33,6 @@ public interface Modes extends Iterable<Mode> {
    * @throws PlanItException thrown if error
    */
   public PredefinedMode registerNew(PredefinedModeType modeType) throws PlanItException;  
-
-  /**
-   * Return number of registered modes
-   *
-   * @return number of registered modes
-   */
-  public int size();
-
-  /**
-   * Return a Mode by its id
-   * 
-   * @param id the id of the Mode
-   * @return the specified mode
-   * 
-   */
-  public Mode get(long id);
   
   /** get predefined mode if it is registered 
    * 

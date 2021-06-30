@@ -18,7 +18,7 @@ public interface DirectedGraphBuilder<V extends DirectedVertex, E extends Direct
    * @return edgeSegment the created edge segment
    * @throws PlanItException thrown if error
    */
-  public ES createEdgeSegment(E parentEdge, boolean directionAB) throws PlanItException;    
+  public abstract <W extends E> ES createEdgeSegment(W parentEdge, boolean directionAB) throws PlanItException;    
   
   /**
    * Create a new physical link segment instance, without setting the parent edge yet, this is required to be done manually afterwards
@@ -28,14 +28,16 @@ public interface DirectedGraphBuilder<V extends DirectedVertex, E extends Direct
    * @return edgeSegment the created edge segment
    * @throws PlanItException thrown if error
    */
-  public ES createEdgeSegment(boolean directionAB) throws PlanItException;   
+  public default ES createEdgeSegment(boolean directionAB) throws PlanItException {
+    return createEdgeSegment(null, directionAB);
+  }
 
   /**
    * recreate the ids for all passed in edge segments
    * 
    * @param edgeSegments to recreate ids for
    */
-  public void recreateIds(EdgeSegments<ES> edgeSegments);
+  public abstract <X extends ES> void recreateIds(EdgeSegments<X> edgeSegments);
 
   /**
    * Create a unique copy of the passed in edge segment. All members are copied as is, except for its ids which are created uniquely created so it remains identifiable, also the
@@ -45,6 +47,6 @@ public interface DirectedGraphBuilder<V extends DirectedVertex, E extends Direct
    * @param newParentEdge     use this as the new parent edge
    * @return created copy
    */
-  public ES createUniqueCopyOf(ES edgeSegmentToCopy, E newParentEdge);    
+  public abstract <X extends ES> ES createUniqueCopyOf(X edgeSegmentToCopy, E newParentEdge);    
 
 }

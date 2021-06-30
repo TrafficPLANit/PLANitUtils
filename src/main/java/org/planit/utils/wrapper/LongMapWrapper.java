@@ -1,41 +1,12 @@
 package org.planit.utils.wrapper;
 
-import java.util.Map;
-import java.util.function.Function;
-
-/**
- * Wrapper class for a map instance with Long keys
+/** Verion of MApWrapper when we use Long as key
  * 
  * @author markr
  *
- * @param <U> map value
+ * @param <V> value type of the map
  */
-public abstract class LongMapWrapper<V> extends MapWrapper<Long, V>{
- 
-  /** Constructor 
-   * 
-   * @param mapToWrap the map to wrap
-   */
-  public LongMapWrapper(final Map<Long, V> mapToWrap, final Function<V, Long> valueToKey) {
-    super(mapToWrap, valueToKey);
-  }
-  
-  /**
-   * Remove value from map by its key
-   * 
-   * @param key to use
-   * @return removed entry if any
-   */  
-  public V remove(final long key) {
-    return getMap().remove(key);
-  }  
+public interface LongMapWrapper<V> extends MapWrapper<Long,V> {
 
-  /**
-   * Collect entry from container
-   * 
-   * @param key to use
-   */ 
-  public V get(final long key) {
-    return getMap().get(key);
-  }
+  
 }

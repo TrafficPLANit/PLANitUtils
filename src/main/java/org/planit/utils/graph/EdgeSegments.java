@@ -1,6 +1,7 @@
 package org.planit.utils.graph;
 
 import org.planit.utils.exceptions.PlanItException;
+import org.planit.utils.wrapper.LongMapWrapper;
 
 /**
  * Container and factory class for edge segments in a graph, also to be used to create and register edge segments of any
@@ -8,24 +9,8 @@ import org.planit.utils.exceptions.PlanItException;
  * 
  * @author markr
  */
-public interface EdgeSegments<ES extends EdgeSegment> extends Iterable<ES> {
+public interface EdgeSegments<ES extends EdgeSegment> extends LongMapWrapper<ES> {
   
-  /**
-   * Remove an edges segment
-   * 
-   * @param edgeSegment to remove
-   * @return removed entry
-   */
-  public abstract ES remove(ES edgeSegment); 
-
-  /**
-   * Remove an edge segment by id
-   * 
-   * @param edgeSegmentId to remove by id
-   * @param removed entry 
-   */  
-  public abstract ES remove(final long edgeSegmentId);  
-
   /**
    * Create edge segment
    *
@@ -56,14 +41,6 @@ public interface EdgeSegments<ES extends EdgeSegment> extends Iterable<ES> {
    * @throws PlanItException thrown if there is an error
    */
   public abstract ES registerNew(final DirectedEdge parentEdge, final boolean directionAb, final boolean registerOnVertexAndEdge) throws PlanItException;  
-
-  /**
-   * Get edge segment by id
-   *
-   * @param id id of the edge segment
-   * @return retrieved edge Segment
-   */
-  public abstract ES get(final long id);
   
   /**
    * Return an edge segment by its Xml id
@@ -81,13 +58,6 @@ public interface EdgeSegments<ES extends EdgeSegment> extends Iterable<ES> {
    */  
   public abstract ES getByExternalId(String externalId);  
 
-  /**
-   * Return number of registered edge segments
-   *
-   * @return number of registered edge segments
-   */
-  public abstract int size();
-
   /** copy the passed in edge segment and register it. 
    * 
    * @param edgeSegmentToCopy as is except for its ids which will be updated to make it uniquely identifiable
@@ -95,12 +65,5 @@ public interface EdgeSegments<ES extends EdgeSegment> extends Iterable<ES> {
    * @return copy of edge segment now registered
    */  
   public abstract ES registerUniqueCopyOf(ES edgeSegmentToCopy, DirectedEdge newParent);
-
-  /** check if size is zero
-   * @return true when empty, false otherwise
-   */
-  default public boolean isEmpty() {
-    return size()==0;
-  }
 
 }

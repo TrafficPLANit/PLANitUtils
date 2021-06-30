@@ -26,35 +26,35 @@ public interface GraphBuilder<V extends Vertex, E extends Edge> {
    * @return created edge
    * @throws PlanItException thrown if there is an error
    */
-  public E createEdge(final V vertexA, final V vertexB) throws PlanItException;
+  public abstract E createEdge(final Vertex vertexA, final Vertex vertexB) throws PlanItException;
 
   /**
    * Each builder needs a group if token to allow all underlying factory methods to generated ids uniquely tied to the group the entities belong to
    * 
    * @param groupId, contiguous id generation within this group for instances created with the factory methods
    */
-  public void setIdGroupingToken(IdGroupingToken groupId);
+  public abstract void setIdGroupingToken(IdGroupingToken groupId);
 
   /**
    * Collect the id grouping token used by this builder
    * 
    * @return idGroupingToken the id grouping token used by this builder
    */
-  public IdGroupingToken getIdGroupingToken();
+  public abstract IdGroupingToken getIdGroupingToken();
 
   /**
    * recreate the ids for all passed in edges
    * 
    * @param edges to recreate ids for
    */
-  public void recreateIds(Edges<E> edges);
+  public abstract void recreateIds(Edges<? extends E> edges);
 
   /**
    * recreate the ids for all passed in vertices
    * 
    * @param vertices to recreate ids for
    */
-  public void recreateIds(Vertices<V> vertices);
+  public abstract void recreateIds(Vertices<? extends V> vertices);
 
   /**
    * create a shallow copy of the passed in edge, albeit with unique internal ids
@@ -62,6 +62,6 @@ public interface GraphBuilder<V extends Vertex, E extends Edge> {
    * @param edgeToCopy the edge to copy
    * @return new edge based on passed in edge
    */
-  public E createUniqueCopyOf(E edgeToCopy);
+  public abstract E createUniqueCopyOf(E edgeToCopy);
 
 }

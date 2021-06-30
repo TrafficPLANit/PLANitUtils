@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 import org.planit.utils.exceptions.PlanItException;
+import org.planit.utils.wrapper.LongMapWrapper;
 
 /**
  * Container and factory class for edges in a graph, also to be used to create and register edges of any
@@ -11,22 +12,10 @@ import org.planit.utils.exceptions.PlanItException;
  * 
  * @author markr
  */
-public interface Edges<E extends Edge> extends Iterable<E> {
+public interface Edges<E extends Edge> extends LongMapWrapper<E> {
   
-  /**
-   * remove an edge.
-   * 
-   * @param edge to remove
-   */
-  public abstract E remove(E edge);
+  //TODO REPLACE factory methods by a method to collect the factory or have a separated factory class with the builder??
   
-  /**
-   * remove an edge.
-   * 
-   * @param edgeId of the edge to remove
-   */
-  public abstract E remove(final long edgeId);  
-
   /**
    * Create new edge to graph identified via its id, (not registered on vertices)
    *
@@ -35,7 +24,7 @@ public interface Edges<E extends Edge> extends Iterable<E> {
    * @return the created edge
    * @throws PlanItException thrown if there is an error
    */
-  default public <V extends Vertex> E registerNew(final V vertexA, final V vertexB) throws PlanItException{
+  public default E registerNew(final Vertex vertexA, final Vertex vertexB) throws PlanItException{
     return registerNew(vertexA, vertexB, false);
   }
   
@@ -48,37 +37,14 @@ public interface Edges<E extends Edge> extends Iterable<E> {
    * @return the created edge
    * @throws PlanItException thrown if there is an error
    */
-  public abstract <V extends Vertex> E registerNew(final V vertexA, final V vertexB, boolean registerOnVertices) throws PlanItException; 
+  public abstract E registerNew(final Vertex vertexA, final Vertex vertexB, boolean registerOnVertices) throws PlanItException; 
   
   /** copy the passed in edge and register it
    * 
-   * @param edgeToCopy as is except for its ids which will be updated to makeit uniquely identifiable
+   * @param edgeToCopy as is except for its ids which will be updated to make it uniquely identifiable
    * @return copy of edge now registered
    */
   public abstract E registerUniqueCopyOf(final E edgeToCopy);
-
-  /**
-   * Get edge by id
-   *
-   * @param id the id of the edge
-   * @return the retrieved edge, null if not present
-   */
-  public abstract E get(long id);
-  
-  /**
-   * Get the number of edges in the graph
-   *
-   * @return the number of edges in the graph
-   */
-  public abstract int size();
-
-  /**
-   * Check if is empty
-   * @return true when no edges, false otherwise
-   */
-  public default boolean isEmpty() {
-    return size() == 0;
-  }
 
   /** Verify if edge is present
    * 
