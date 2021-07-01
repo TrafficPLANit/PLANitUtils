@@ -1,26 +1,25 @@
 package org.planit.utils.graph;
 
-import org.planit.utils.wrapper.LongMapWrapper;
+import java.util.logging.Logger;
 
 /**
- * Container and factory class for vertices in a graph, also to be used to create and register vertices of any
- * (derived) type
+ * Container class for vertices and creating instances within this container via factory.
  * 
  * @author markr
  */
-public interface Vertices<V extends Vertex> extends LongMapWrapper<V> {
-    
-  /** Create a new vertex (without registering on this class)
-   * 
-   * @return created vertex
-   */
-  public abstract V createNew();
-  
+public interface Vertices<V extends Vertex> extends GraphEntities<V> {
+      
   /**
-   * Create and register new entity
-   *
-   * @return new node created
+   * Collect the vertex factory to use for creating instances
+   * 
+   * @return vertexFactory to create edges for this container
    */
-  public abstract V registerNew();
+  @Override
+  public default VertexFactory<? extends V> getFactory(){
+    /** override to change return type signature on interface, implementation must still
+     * implement this method to provide access to an actual instance */
+    Logger.getLogger(Vertices.class.getCanonicalName()).warning("getFactory not implemented yet for vertices implementation");
+    return null;
+  }  
   
 }

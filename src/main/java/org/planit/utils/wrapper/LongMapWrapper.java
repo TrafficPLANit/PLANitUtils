@@ -1,6 +1,6 @@
 package org.planit.utils.wrapper;
 
-/** Verion of MApWrapper when we use Long as key
+/** Version of MApWrapper when we use Long as key
  * 
  * @author markr
  *

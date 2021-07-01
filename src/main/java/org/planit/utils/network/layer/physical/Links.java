@@ -47,7 +47,7 @@ public interface Links<L extends Link> extends Edges<L> {
    * @return true when present false otherwise
    */
   public default boolean hasLink(long id) {
-    return hasEdge(id);
+    return contains(id);
   }
 
   /** Collect all links based on a matching external id. links are not indexed by external id so this is

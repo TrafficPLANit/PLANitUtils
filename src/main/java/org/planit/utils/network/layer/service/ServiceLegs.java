@@ -17,7 +17,7 @@ public interface ServiceLegs<SL extends ServiceLeg> extends Edges<SL> {
    * @return true when present false otherwise
    */
   public default boolean hasServiceLeg(long id) {
-    return hasEdge(id);
+    return contains(id);
   }
 
 }

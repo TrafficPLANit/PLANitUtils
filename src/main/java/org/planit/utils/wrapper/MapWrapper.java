@@ -4,6 +4,14 @@ import java.util.Collection;
 import java.util.Set;
 import java.util.function.Predicate;
 
+/**
+ * Wrap a map as a named class
+ * 
+ * @author markr
+ *
+ * @param <K> key type
+ * @param <V> value type
+ */
 public interface MapWrapper<K, V> extends Iterable<V> {
 
   /**

@@ -38,7 +38,7 @@ public interface ExternalIdable extends Idable {
    * @param xmlId to set
    */
   public abstract void setXmlId(final String xmlId);
-  
+    
   /** check if external id is available or not
    * 
    * @return true when not null, false otherwise
@@ -52,6 +52,6 @@ public interface ExternalIdable extends Idable {
    */
   public default boolean hasExternalId() {
     return getExternalId() != null;
-  }  
+  }
 
 }

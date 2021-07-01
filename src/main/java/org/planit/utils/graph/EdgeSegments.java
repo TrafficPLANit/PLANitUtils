@@ -1,7 +1,8 @@
 package org.planit.utils.graph;
 
+import java.util.logging.Logger;
+
 import org.planit.utils.exceptions.PlanItException;
-import org.planit.utils.wrapper.LongMapWrapper;
 
 /**
  * Container and factory class for edge segments in a graph, also to be used to create and register edge segments of any
@@ -9,18 +10,8 @@ import org.planit.utils.wrapper.LongMapWrapper;
  * 
  * @author markr
  */
-public interface EdgeSegments<ES extends EdgeSegment> extends LongMapWrapper<ES> {
+public interface EdgeSegments<ES extends EdgeSegment> extends GraphEntities<ES> {
   
-  /**
-   * Create edge segment
-   *
-   * @param parentEdge  the parent edge of this edge segment
-   * @param directionAB direction of travel
-   * @return the created edge segment
-   * @throws PlanItException thrown if there is an error
-   */
-  public abstract ES create(final DirectedEdge parentEdge, final boolean directionAB) throws PlanItException;
-
   /**
    * Register a edge segment (not registered on nodes and edge)
    *
@@ -30,40 +21,18 @@ public interface EdgeSegments<ES extends EdgeSegment> extends LongMapWrapper<ES>
    * @throws PlanItException thrown if there is an error
    */
   public abstract void register(final DirectedEdge parentEdge, final ES edgeSegment, final boolean directionAB) throws PlanItException;
+      
   
   /**
-   * Create directional edge segment and register it
-   *
-   * @param parentEdge            the parent edge of this edge segment
-   * @param directionAb           direction of travel
-   * @param registerOnVertexAndEdge option to register the new edge segment on the underlying edge and its vertices
-   * @return the created edge segment
-   * @throws PlanItException thrown if there is an error
+   * Collect the edge segment factory to use for creating instances
+   * 
+   * @return edgeSegmentFactory to create edge segments for this container
    */
-  public abstract ES registerNew(final DirectedEdge parentEdge, final boolean directionAb, final boolean registerOnVertexAndEdge) throws PlanItException;  
-  
-  /**
-   * Return an edge segment by its Xml id
-   * 
-   * @param xmlId the XML id of the edge segment
-   * @return the specified edge segment instance
-   */
-  public abstract ES getByXmlId(String xmlId);    
-  
-  /**
-   * Return an edge segment by its external id
-   * 
-   * @param externalId the external id of the edge segment
-   * @return the specified edge segment instance
-   */  
-  public abstract ES getByExternalId(String externalId);  
-
-  /** copy the passed in edge segment and register it. 
-   * 
-   * @param edgeSegmentToCopy as is except for its ids which will be updated to make it uniquely identifiable
-   * @param newParent update the parent edge to passed in edge
-   * @return copy of edge segment now registered
-   */  
-  public abstract ES registerUniqueCopyOf(ES edgeSegmentToCopy, DirectedEdge newParent);
-
+  @Override
+  public default EdgeSegmentFactory<? extends ES> getFactory(){
+    /** override to change return type signature on interface, implementation must still
+     * implement this method to provide access to an actual instance */
+    Logger.getLogger(EdgeSegmentFactory.class.getCanonicalName()).warning("getFactory not implemented yet for edge segment implementation");
+    return null;
+  }    
 }
