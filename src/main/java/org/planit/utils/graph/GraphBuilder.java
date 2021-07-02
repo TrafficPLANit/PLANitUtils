@@ -1,6 +1,5 @@
 package org.planit.utils.graph;
 
-import org.planit.utils.exceptions.PlanItException;
 import org.planit.utils.id.IdGroupingToken;
 
 /**
@@ -19,16 +18,6 @@ public interface GraphBuilder<V extends Vertex, E extends Edge> {
   public V createVertex();
 
   /**
-   * Create a new link instance
-   * 
-   * @param vertexA the first vertex in this edge
-   * @param vertexB the second vertex in this edge
-   * @return created edge
-   * @throws PlanItException thrown if there is an error
-   */
-  public abstract E createEdge(final Vertex vertexA, final Vertex vertexB) throws PlanItException;
-
-  /**
    * Each builder needs a group if token to allow all underlying factory methods to generated ids uniquely tied to the group the entities belong to
    * 
    * @param groupId, contiguous id generation within this group for instances created with the factory methods
@@ -43,25 +32,10 @@ public interface GraphBuilder<V extends Vertex, E extends Edge> {
   public abstract IdGroupingToken getIdGroupingToken();
 
   /**
-   * recreate the ids for all passed in edges
-   * 
-   * @param edges to recreate ids for
-   */
-  public abstract void recreateIds(Edges<? extends E> edges);
-
-  /**
    * recreate the ids for all passed in vertices
    * 
    * @param vertices to recreate ids for
    */
   public abstract void recreateIds(Vertices<? extends V> vertices);
-
-  /**
-   * create a shallow copy of the passed in edge, albeit with unique internal ids
-   * 
-   * @param edgeToCopy the edge to copy
-   * @return new edge based on passed in edge
-   */
-  public abstract E createUniqueCopyOf(E edgeToCopy);
 
 }

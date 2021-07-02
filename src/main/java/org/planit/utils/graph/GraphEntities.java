@@ -2,8 +2,6 @@ package org.planit.utils.graph;
 
 import java.util.ArrayList;
 import java.util.Collection;
-
-import org.planit.utils.id.ExternalIdable;
 import org.planit.utils.wrapper.LongMapWrapper;
 
 /** Container class for any graph entities and a factory to create them
@@ -12,14 +10,28 @@ import org.planit.utils.wrapper.LongMapWrapper;
  *
  * @param <E> type of graph entity
  */
-public interface GraphEntities<E extends ExternalIdable> extends LongMapWrapper<E> {
+public interface GraphEntities<E extends GraphEntity> extends LongMapWrapper<E>, Cloneable {
 
   /** Factory to create instance of graph entity (for this container class)
    * 
    * @return entity factory
    */
-  public abstract GraphEntityFactory<? extends E> getFactory();
+  public abstract GraphEntityFactory<E> getFactory();
+    
+  /**
+   * recreate the ids for all registered entities
+   * 
+   * @param entities to recreate ids for
+   */
+  public abstract void recreateIds();  
   
+  /**
+   * Force clone implementation
+   * 
+   * @return clone of entities
+   */
+  public abstract GraphEntities<E> clone();  
+    
   /** Verify if present
    * 
    * @param id to verify
@@ -39,7 +51,7 @@ public interface GraphEntities<E extends ExternalIdable> extends LongMapWrapper<
    * @return the specified entity instance
    */
   public default E getByXmlId(String xmlId) {
-    return findFirst(entity -> xmlId.equals(((E) entity).getXmlId()));
+    return findFirst(entity -> xmlId.equals(entity.getXmlId()));
   }  
   
   /** Collect all entities based on a matching external id. Entities are not indexed by external id so this is

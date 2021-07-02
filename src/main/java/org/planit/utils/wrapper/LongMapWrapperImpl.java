@@ -10,7 +10,7 @@ import java.util.function.Function;
  *
  * @param <U> map value
  */
-public abstract class LongMapWrapperImpl<V> extends MapWrapperImpl<Long, V>{
+public abstract class LongMapWrapperImpl<V> extends MapWrapperImpl<Long, V> implements LongMapWrapper<V>{
  
   /** Constructor 
    * 
@@ -20,12 +20,21 @@ public abstract class LongMapWrapperImpl<V> extends MapWrapperImpl<Long, V>{
     super(mapToWrap, valueToKey);
   }
   
+  /** Copy constructor 
+   * 
+   * @param other to copy
+   */
+  public LongMapWrapperImpl(final LongMapWrapperImpl<V> other) {
+    super(other);
+  }  
+  
   /**
    * Remove value from map by its key
    * 
    * @param key to use
    * @return removed entry if any
    */  
+  @Override
   public V remove(final long key) {
     return getMap().remove(key);
   }  
@@ -35,6 +44,7 @@ public abstract class LongMapWrapperImpl<V> extends MapWrapperImpl<Long, V>{
    * 
    * @param key to use
    */ 
+  @Override  
   public V get(final long key) {
     return getMap().get(key);
   }

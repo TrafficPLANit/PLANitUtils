@@ -12,7 +12,7 @@ import org.planit.utils.id.IdGroupingToken;
  * @author markr
  *
  */
-public class BreakEdgeListenerImpl<V extends Vertex, E extends Edge> extends IdAbleImpl implements BreakEdgeListener<V,E> {
+public class BreakEdgeListenerImpl extends IdAbleImpl implements BreakEdgeListener {
   
   /**
    * Every instance implementing this interface should generate its id using this method to ensure that we have a unique id across all break edge listeners
@@ -29,15 +29,31 @@ public class BreakEdgeListenerImpl<V extends Vertex, E extends Edge> extends IdA
    */
   public BreakEdgeListenerImpl() {
     super(generateId());
+  }  
+
+  /**
+   * Copy constructor
+   * 
+   * @param breakEdgeListenerImpl to copy
+   */
+  public BreakEdgeListenerImpl(BreakEdgeListenerImpl breakEdgeListenerImpl) {
+    super(breakEdgeListenerImpl);
   }
-  
 
   /**
    * {@inheritDoc}
    */
   @Override
-  public void onBreakEdge(V vertex, E aToBreak, E breakToB) {
+  public void onBreakEdge(Vertex vertex, Edge aToBreak, Edge breakToB) {
     /* empty implementation */
+  }
+
+  /**
+   * {@inheritDoc}
+   */  
+  @Override
+  public BreakEdgeListenerImpl clone() {
+    return new BreakEdgeListenerImpl(this);
   }
 
 }

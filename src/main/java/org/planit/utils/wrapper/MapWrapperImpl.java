@@ -1,5 +1,6 @@
 package org.planit.utils.wrapper;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
@@ -7,6 +8,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.function.Function;
 import java.util.function.Predicate;
+import java.util.logging.Logger;
 
 /**
  * Abstract Wrapper class implemented for a map instance
@@ -17,6 +19,9 @@ import java.util.function.Predicate;
  * @param <U> map value
  */
 public abstract class MapWrapperImpl<K, V> implements MapWrapper<K, V>{
+  
+  /** logger to use */
+  private static final Logger LOGGER = Logger.getLogger(MapWrapperImpl.class.getCanonicalName());
 
   /**
    * Map storing all key value pairs
@@ -26,6 +31,14 @@ public abstract class MapWrapperImpl<K, V> implements MapWrapper<K, V>{
   /** mapping from value to key */
   private final Function<V, K> valueToKey;
   
+  /** Collect the function used to map value to key
+   * 
+   * @return valueToKey
+   */
+  public Function<V, K> getValueToKey() {
+    return valueToKey;
+  }
+
   /** Access to the wrapped map
    * 
    * @return wrapper map
@@ -50,6 +63,26 @@ public abstract class MapWrapperImpl<K, V> implements MapWrapper<K, V>{
     this.theMap = mapToWrap;
     this.valueToKey = valueToKey;
   }
+  
+  /** Copy constructor 
+   * 
+   * @param other to copy
+   */
+  @SuppressWarnings("unchecked")
+  public MapWrapperImpl(final MapWrapperImpl<K,V> other) {
+    this.valueToKey = other.valueToKey;
+    
+    Map<K, V> newMap = null;
+    try {
+      newMap = theMap.getClass().getConstructor().newInstance(); 
+    } catch (Exception e) {
+      LOGGER.warning("Unable to instantiate new instance of map signature in map wrapper in copy constructor");
+    }
+    if(newMap != null) {
+      newMap.putAll(other.getMap());
+      this.theMap = newMap;
+    }
+  }   
 
   /**
    * {@inheritDoc}

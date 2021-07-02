@@ -6,13 +6,15 @@ package org.planit.utils.id;
  * @author markr
  *
  */
-public class ExternalIdAbleImpl extends IdAbleImpl implements ExternalIdable {
+public class ExternalIdAbleImpl extends IdAbleImpl implements ExternalIdAble {
     
+  /** XML id */
   private String xmlId;
   
+  /** external id */
   private String externalId;
   
-  /** constructor 
+  /** Constructor 
    * 
    * @param id to use
    */
@@ -20,7 +22,7 @@ public class ExternalIdAbleImpl extends IdAbleImpl implements ExternalIdable {
     super(id);
     setXmlId(null);
     setExternalId(null);
-  }  
+  }    
   
   /** Copy constructor
    * 
@@ -64,6 +66,14 @@ public class ExternalIdAbleImpl extends IdAbleImpl implements ExternalIdable {
   public void setXmlId(String xmlId) {
     this.xmlId = xmlId;
   }
-    
+
+  /**
+   * {@inheritDoc}
+   */  
+  @Override
+  public ExternalIdAbleImpl clone() {
+    return new ExternalIdAbleImpl(this);
+  }
+      
 
 }

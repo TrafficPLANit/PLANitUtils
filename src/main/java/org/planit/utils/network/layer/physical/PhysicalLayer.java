@@ -1,5 +1,6 @@
 package org.planit.utils.network.layer.physical;
 
+import org.planit.utils.graph.UntypedDirectedGraph;
 import org.planit.utils.network.layer.TopologicalLayer;
 import org.planit.utils.network.layer.physical.Link;
 import org.planit.utils.network.layer.physical.LinkSegment;
@@ -14,7 +15,7 @@ import org.planit.utils.network.layer.physical.PhysicalLayer;
  *
  * @author markr
  */
-public interface PhysicalLayer<N extends Node, L extends Link, LS extends LinkSegment> extends TopologicalLayer {
+public interface PhysicalLayer<N extends Node, L extends Link, LS extends LinkSegment> extends TopologicalLayer, UntypedDirectedGraph<DirectedVertex, DirectedEdge, EdgeSegment> {
 
   /**
    * Collect the links

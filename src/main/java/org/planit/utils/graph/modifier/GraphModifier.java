@@ -35,7 +35,7 @@ public interface GraphModifier<V extends Vertex, E extends Edge> {
    * @param recreateIds      indicate if the ids of the graph entities are to be recreated, if false gaps will occur so it is expected to be handled by the user afterwards in this
    *                         case
    */
-  public abstract void removeSubGraph(Set<? extends V> subGraphToRemove, boolean recreateIds);
+  public abstract void removeSubGraph(Set<V> subGraphToRemove, boolean recreateIds);
   
   /**
    * remove the (sub)graph in which the passed in vertex resides. Apply reordering of internal ids of remaining network.
@@ -57,7 +57,7 @@ public interface GraphModifier<V extends Vertex, E extends Edge> {
    * @return affectedEdges the list of all result edges of the breaking of links by their original link id
    * @throws PlanItException thrown if error
    */
-  public abstract Map<Long, Set<E>> breakEdgesAt(List<? extends E> edgesToBreak, V vertexToBreakAt, CoordinateReferenceSystem crs) throws PlanItException;  
+  public abstract Map<Long, Set<E>> breakEdgesAt(List<E> edgesToBreak, V vertexToBreakAt, CoordinateReferenceSystem crs) throws PlanItException;  
 
   /**
    * this method will recreate all ids of the graph's main components, e.g., vertices, edges, and potentially other eligible components of derived graph implementations. Can be
@@ -70,28 +70,28 @@ public interface GraphModifier<V extends Vertex, E extends Edge> {
    * 
    * @param listener to register
    */
-  public abstract void registerRemoveSubGraphListener(RemoveSubGraphListener<V,E> listener);
+  public abstract void registerRemoveSubGraphListener(RemoveSubGraphListener listener);
   
   /**
    * unregister a listener that is currently registered
    * 
    * @param listener to unregister
    */  
-  public abstract void unregisterRemoveSubGraphListener(RemoveSubGraphListener<V,E> listener);  
+  public abstract void unregisterRemoveSubGraphListener(RemoveSubGraphListener listener);  
   
   /**
    * register a listener that will be invoked whenever a link is broken via {@link breakEdgesAt}
    * 
    * @param listener to register
    */  
-  public void unregisterBreakEdgeListener(BreakEdgeListener<V, E> listener);
+  public void unregisterBreakEdgeListener(BreakEdgeListener listener);
 
   /**
    * unregister a listener that is currently registered
    * 
    * @param listener to unregister
    */   
-  public void registerBreakEdgeListener(BreakEdgeListener<V, E> listener);  
+  public void registerBreakEdgeListener(BreakEdgeListener listener);  
 
   /**
    * remove any dangling sub graphs from the graph if they exist and reorder the ids if needed
@@ -112,7 +112,7 @@ public interface GraphModifier<V extends Vertex, E extends Edge> {
    * @return affectedEdges the list of all result edges of the breaking of links by their original link id
    * @throws PlanItException thrown if error
    */
-  public default Map<Long, Set<E>> breakEdgesAt(List<? extends E> edgesToBreak, V vertexToBreakAt) throws PlanItException{
+  public default Map<Long, Set<E>> breakEdgesAt(List<E> edgesToBreak, V vertexToBreakAt) throws PlanItException{
     return breakEdgesAt(edgesToBreak, vertexToBreakAt, PlanitJtsCrsUtils.CARTESIANCRS);
   }
   

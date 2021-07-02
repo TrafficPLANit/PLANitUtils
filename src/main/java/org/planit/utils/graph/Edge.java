@@ -9,7 +9,6 @@ import org.opengis.geometry.MismatchedDimensionException;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.TransformException;
 import org.planit.utils.exceptions.PlanItException;
-import org.planit.utils.id.ExternalIdable;
 
 /**
  * Edge interface connecting two vertices in a non-directional fashion.
@@ -17,7 +16,10 @@ import org.planit.utils.id.ExternalIdable;
  * @author markr
  *
  */
-public interface Edge extends Serializable, ExternalIdable {
+public interface Edge extends Serializable, GraphEntity {
+  
+  /** id class for generating ids */
+  public static final Class<Edge> EDGE_ID_CLASS = Edge.class;   
     
   /**
    * Collect the geometry of this line
@@ -120,6 +122,14 @@ public interface Edge extends Serializable, ExternalIdable {
    * @return true when valid, false otherwise
    */
   public abstract boolean validate();
+  
+  /**
+   * All edges use the EDGE_ID_CLASS to generate the unique internal ids
+   */
+  @Override
+  public default Class<Edge> getIdClass() {
+    return EDGE_ID_CLASS;
+  }   
   
   /** Verify if a name has been set
    * @return true when present, false otherwise

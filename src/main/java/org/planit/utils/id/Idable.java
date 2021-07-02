@@ -9,29 +9,19 @@ package org.planit.utils.id;
  * @author markr
  *
  */
-public interface Idable extends Comparable<Idable>, Cloneable {
+public interface IdAble extends Comparable<IdAble>, Cloneable {
   
   /** collect id of the entity
    * @return id
    */
-  public long getId();
+  public long getId();  
   
   /**
    * Create a shallow copy of this entity
    * 
    * @return shallow copy of entity
    */
-  public abstract Idable clone();
-
-  /** Generate an id based on provided token and class
-   * 
-   * @param idGroupingToken to use
-   * @param clazz to register for
-   * @return
-   */
-  public default long generateId(IdGroupingToken idGroupingToken, Class<? extends Idable> clazz) {
-    return IdGenerator.generateId(idGroupingToken, clazz);
-  }
+  public abstract IdAble clone();
 
   /**
    * equals based on id
@@ -45,12 +35,12 @@ public interface Idable extends Comparable<Idable>, Cloneable {
     if (this == o) {
       return true;
     }
-    if (!(o instanceof Idable)) {
+    if (!(o instanceof IdAble)) {
       return false;
     }
     
     if(o != null) {
-      return Long.valueOf(this.getId()).equals(Long.valueOf(((Idable)o).getId()));
+      return Long.valueOf(this.getId()).equals(Long.valueOf(((IdAble)o).getId()));
     }
     
     return false;
@@ -73,7 +63,7 @@ public interface Idable extends Comparable<Idable>, Cloneable {
    * @return compare result identical to Long.compare
    * @see java.lang.Comparable#compareTo(java.lang.Object)
    */
-  default int compareTo(Idable o) {
+  default int compareTo(IdAble o) {
     return Long.compare(this.getId(), o.getId());
   }  
    

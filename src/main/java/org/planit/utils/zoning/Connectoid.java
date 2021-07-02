@@ -6,7 +6,7 @@ import java.util.Set;
 
 import org.planit.utils.exceptions.PlanItException;
 import org.planit.utils.graph.DirectedVertex;
-import org.planit.utils.id.ExternalIdable;
+import org.planit.utils.id.ExternalIdAble;
 import org.planit.utils.mode.Mode;
 
 /**
@@ -21,7 +21,7 @@ import org.planit.utils.mode.Mode;
  * @author markr
  *
  */
-public interface Connectoid extends ExternalIdable, Iterable<Zone> {
+public interface Connectoid extends ExternalIdAble, Iterable<Zone> {
 
   /**
    * Default connectoid length in km

@@ -6,9 +6,8 @@ import org.planit.utils.exceptions.PlanItException;
  * 
  * @author markr
  *
- * @param <ES> type of edge segment
  */
-public interface EdgeSegmentFactory<ES extends EdgeSegment> extends GraphEntityFactory<ES> {
+public interface EdgeSegmentFactory extends GraphEntityFactory<EdgeSegment> {
 
   /**
    * Create edge segment
@@ -18,7 +17,7 @@ public interface EdgeSegmentFactory<ES extends EdgeSegment> extends GraphEntityF
    * @return the created edge segment
    * @throws PlanItException thrown if there is an error
    */
-  public abstract ES create(final DirectedEdge parentEdge, final boolean directionAB) throws PlanItException;
+  public abstract EdgeSegment create(final DirectedEdge parentEdge, final boolean directionAB) throws PlanItException;
   
   /**
    * Create directional edge segment and register it
@@ -29,7 +28,7 @@ public interface EdgeSegmentFactory<ES extends EdgeSegment> extends GraphEntityF
    * @return the created edge segment
    * @throws PlanItException thrown if there is an error
    */
-  public abstract ES registerNew(final DirectedEdge parentEdge, final boolean directionAb, final boolean registerOnVertexAndEdge) throws PlanItException;
+  public abstract EdgeSegment registerNew(final DirectedEdge parentEdge, final boolean directionAb, final boolean registerOnVertexAndEdge) throws PlanItException;
   
   /** copy the passed in edge segment and register it. 
    * 
@@ -37,6 +36,6 @@ public interface EdgeSegmentFactory<ES extends EdgeSegment> extends GraphEntityF
    * @param newParent update the parent edge to passed in edge
    * @return copy of edge segment now registered
    */  
-  public abstract ES registerUniqueCopyOf(ES edgeSegmentToCopy, DirectedEdge newParent);  
+  public abstract EdgeSegment registerUniqueCopyOf(EdgeSegment edgeSegmentToCopy, DirectedEdge newParent);  
   
 }

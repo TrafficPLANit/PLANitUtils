@@ -1,8 +1,6 @@
 package org.planit.utils.graph.modifier;
 
-import org.planit.utils.graph.Edge;
 import org.planit.utils.graph.EdgeSegment;
-import org.planit.utils.graph.Vertex;
 
 /**
  * A listener interface to be triggered whenever planit entities are removed from the network due to a sub graph being
@@ -11,11 +9,11 @@ import org.planit.utils.graph.Vertex;
  * @author markr
  *
  */
-public interface RemoveDirectedSubGraphListener<V extends Vertex, E extends Edge, ES extends EdgeSegment> extends RemoveSubGraphListener<V, E>{
+public interface RemoveDirectedSubGraphListener extends RemoveSubGraphListener{
   
   /** callback whenever an edge segment is removed from a subgraph it is part of
    * 
    * @param edgeSegment that is removed
    */
-  public void onRemoveSubGraphEdgeSegment(ES edgeSegment);  
+  public void onRemoveSubGraphEdgeSegment(EdgeSegment edgeSegment);  
 }

@@ -12,7 +12,7 @@ import org.planit.utils.id.IdGroupingToken;
  * @author markr
  *
  */
-public class RemoveSubGraphListenerImpl<V extends Vertex, E extends Edge> extends IdAbleImpl implements RemoveSubGraphListener<V,E>{
+public class RemoveSubGraphListenerImpl extends IdAbleImpl implements RemoveSubGraphListener{
   
   /**
    * Every instance implementing this interface should generate its id using this method to ensure that we have a unique id across all break edge listeners
@@ -30,12 +30,21 @@ public class RemoveSubGraphListenerImpl<V extends Vertex, E extends Edge> extend
   public RemoveSubGraphListenerImpl() {
     super(generateId());
   }
+  
+  /**
+   * Copy constructor
+   * 
+   * @param removeSubGraphListenerImpl to copy
+   */
+  public RemoveSubGraphListenerImpl(RemoveSubGraphListenerImpl removeSubGraphListenerImpl) {
+    super(removeSubGraphListenerImpl);
+  }  
 
   /**
    * {@inheritDoc}
    */
   @Override
-  public void onRemoveSubGraphEdge(E edge) {
+  public void onRemoveSubGraphEdge(Edge edge) {
     /* empty implementation */
   }
   
@@ -43,7 +52,7 @@ public class RemoveSubGraphListenerImpl<V extends Vertex, E extends Edge> extend
    * {@inheritDoc}
    */
   @Override
-  public void onRemoveSubGraphVertex(V vertex) {
+  public void onRemoveSubGraphVertex(Vertex vertex) {
     /* empty implementation */
   }
   
@@ -54,4 +63,12 @@ public class RemoveSubGraphListenerImpl<V extends Vertex, E extends Edge> extend
   public void onCompletion() {
     /* empty implementation */
   }
+  
+  /**
+   * {@inheritDoc}
+   */  
+  @Override
+  public RemoveSubGraphListenerImpl clone() {
+    return new RemoveSubGraphListenerImpl(this);
+  }  
 }

@@ -8,7 +8,7 @@ import org.planit.utils.exceptions.PlanItException;
  *
  * @param <E> type of directed edges
  */
-public interface DirectedEdgeFactory<E extends DirectedEdge> extends GraphEntityFactory<E> {
+public interface DirectedEdgeFactory extends GraphEntityFactory<DirectedEdge> {
 
   /**
    * Create and register new directed edge to graph identified via its id, (not registered on vertices)
@@ -18,7 +18,7 @@ public interface DirectedEdgeFactory<E extends DirectedEdge> extends GraphEntity
    * @return the created edge
    * @throws PlanItException thrown if there is an error
    */
-  public default E registerNew(final DirectedVertex vertexA, final DirectedVertex vertexB) throws PlanItException{
+  public default DirectedEdge registerNew(final DirectedVertex vertexA, final DirectedVertex vertexB) throws PlanItException{
     return registerNew(vertexA, vertexB, false);
   }
   
@@ -31,7 +31,7 @@ public interface DirectedEdgeFactory<E extends DirectedEdge> extends GraphEntity
    * @return the created edge
    * @throws PlanItException thrown if there is an error
    */
-  public abstract E registerNew(final DirectedVertex vertexA, final Vertex DirectedVertex, boolean registerOnVertices) throws PlanItException; 
+  public abstract DirectedEdge registerNew(final DirectedVertex vertexA, final DirectedVertex DirectedVertex, boolean registerOnVertices) throws PlanItException; 
 
   
 }

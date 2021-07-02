@@ -8,7 +8,7 @@ import org.planit.utils.exceptions.PlanItException;
  *
  * @param <E> type of edge
  */
-public interface EdgeFactory<E extends Edge> extends GraphEntityFactory<E> {
+public interface EdgeFactory extends GraphEntityFactory<Edge> {
 
   /**
    * Create new edge to graph identified via its id, (not registered on vertices)
@@ -18,7 +18,7 @@ public interface EdgeFactory<E extends Edge> extends GraphEntityFactory<E> {
    * @return the created edge
    * @throws PlanItException thrown if there is an error
    */
-  public default E registerNew(final Vertex vertexA, final Vertex vertexB) throws PlanItException{
+  public default Edge registerNew(final Vertex vertexA, final Vertex vertexB) throws PlanItException{
     return registerNew(vertexA, vertexB, false);
   }
   
@@ -31,13 +31,6 @@ public interface EdgeFactory<E extends Edge> extends GraphEntityFactory<E> {
    * @return the created edge
    * @throws PlanItException thrown if there is an error
    */
-  public abstract E registerNew(final Vertex vertexA, final Vertex vertexB, boolean registerOnVertices) throws PlanItException; 
-
-  /** copy the passed in edge and register it
-   * 
-   * @param edgeToCopy as is except for its ids which will be updated to make it uniquely identifiable
-   * @return copy of edge now registered
-   */
-  public abstract E registerUniqueCopyOf(final E edgeToCopy);  
+  public abstract Edge registerNew(final Vertex vertexA, final Vertex vertexB, boolean registerOnVertices) throws PlanItException; 
   
 }

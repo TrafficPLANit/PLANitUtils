@@ -1,6 +1,5 @@
 package org.planit.utils.graph;
 
-import org.planit.utils.id.ExternalIdable;
 import org.planit.utils.id.IdGroupingToken;
 
 /** A base abstract class for factories that create graph entities. 
@@ -12,7 +11,7 @@ import org.planit.utils.id.IdGroupingToken;
  *
  * @param <E> type the factory is creating instances for
  */
-public interface GraphEntityFactory<E extends ExternalIdable> {
+public interface GraphEntityFactory<E extends GraphEntity> {
 
   /**
    * Each factory needs a token to allow all underlying factory methods to generated ids uniquely tied to the group token the entities 
@@ -30,17 +29,18 @@ public interface GraphEntityFactory<E extends ExternalIdable> {
   public abstract IdGroupingToken getIdGroupingToken();
 
   /**
-   * recreate the ids for all passed in entities
-   * 
-   * @param entities to recreate ids for
-   */
-  public abstract void recreateIds(GraphEntities<E> entities);
-
-  /**
-   * create a shallow copy of the passed in entity, albeit with unique internal ids
+   * Create a shallow copy of the passed in entity, albeit with unique internal ids. Not registered
+   * on the container.
    * 
    * @param entityToCopy the entity to copy
    * @return new entity based on passed in entity
    */
-  public abstract E createUniqueCopyOf(E entityToCopy);  
+  public abstract E createUniqueCopyOf(GraphEntity entityToCopy); 
+  
+  /** same as {@code #createUniqueCopyOf(GraphEntity)} only now it is also registered on the container
+   * 
+   * @param entityToCopy the entity to copy
+   * @return new entity based on passed in entity also registered
+   */
+  public abstract E registerUniqueCopyOf(final GraphEntity entityToCopy);   
 }

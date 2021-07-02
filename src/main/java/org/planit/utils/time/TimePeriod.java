@@ -1,6 +1,6 @@
 package org.planit.utils.time;
 
-import org.planit.utils.id.ExternalIdable;
+import org.planit.utils.id.ExternalIdAble;
 
 /**
  * Represents a time period within the day. Used to determine the duration and start time of trips for example.
@@ -9,7 +9,7 @@ import org.planit.utils.id.ExternalIdable;
  * @author markr
  *
  */
-public interface TimePeriod extends ExternalIdable{
+public interface TimePeriod extends ExternalIdAble{
   
 
   /**

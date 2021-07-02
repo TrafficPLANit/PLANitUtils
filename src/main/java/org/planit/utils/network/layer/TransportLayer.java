@@ -2,7 +2,7 @@ package org.planit.utils.network.layer;
 
 import java.util.Collection;
 
-import org.planit.utils.id.ExternalIdable;
+import org.planit.utils.id.ExternalIdAble;
 import org.planit.utils.mode.Mode;
 
 /**
@@ -12,7 +12,7 @@ import org.planit.utils.mode.Mode;
  * @author markr
  *
  */
-public interface TransportLayer extends ExternalIdable {
+public interface TransportLayer extends ExternalIdAble {
 
   /**
    * create a string that can be used to prefix log statements for this layer to - in a unified way - identify this statement came from a particular layer

@@ -1,7 +1,7 @@
 package org.planit.utils.path;
 
 import org.planit.utils.graph.EdgeSegment;
-import org.planit.utils.id.ExternalIdable;
+import org.planit.utils.id.ExternalIdAble;
 
 /**
  * Path interface representing a path through the network on edge segment level
@@ -9,7 +9,7 @@ import org.planit.utils.id.ExternalIdable;
  * @author markr
  *
  */
-public interface DirectedPath extends ExternalIdable, Iterable<EdgeSegment> {
+public interface DirectedPath extends ExternalIdAble, Iterable<EdgeSegment> {
 
   /**
    * add an edge segment to the path by appending it

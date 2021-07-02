@@ -1,6 +1,6 @@
 package org.planit.utils.mode;
 
-import org.planit.utils.id.ExternalIdable;
+import org.planit.utils.id.ExternalIdAble;
 
 /**
  * Interface to represent a mode
@@ -8,7 +8,7 @@ import org.planit.utils.id.ExternalIdable;
  * @author markr
  *
  */
-public interface Mode extends ExternalIdable {
+public interface Mode extends ExternalIdAble {
   
   /**
    * Default max speed in km/h

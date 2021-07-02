@@ -1,7 +1,7 @@
 package org.planit.utils.zoning;
 
 import java.util.Collection;
-import org.planit.utils.id.ExternalIdable;
+import org.planit.utils.id.ExternalIdAble;
 
 /**
  * A group of transfer zones, can be used to represent for example train stations.
@@ -9,7 +9,7 @@ import org.planit.utils.id.ExternalIdable;
  * @author markr
  *
  */
-public interface TransferZoneGroup extends ExternalIdable, Iterable<TransferZone> {
+public interface TransferZoneGroup extends ExternalIdAble, Iterable<TransferZone> {
   
   /** Name of the group
    * @return name

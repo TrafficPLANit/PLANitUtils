@@ -2,8 +2,6 @@ package org.planit.utils.graph;
 
 import java.io.Serializable;
 
-import org.planit.utils.id.ExternalIdable;
-
 /**
  * EdgeSegment represents an edge in a particular (single) direction. Each edge
  * has either one or two edge segments where each edge segment may have a more
@@ -13,7 +11,10 @@ import org.planit.utils.id.ExternalIdable;
  * @author markr
  *
  */
-public interface EdgeSegment extends Serializable, ExternalIdable {
+public interface EdgeSegment extends Serializable, GraphEntity {
+  
+  /** id class for generating ids */
+  public static final Class<EdgeSegment> EDGE_SEGMENT_ID_CLASS = EdgeSegment.class;   
  
   /**
    * Remove the vertex from the edge segment if it is either the up or downstream vertex
@@ -88,6 +89,14 @@ public interface EdgeSegment extends Serializable, ExternalIdable {
    * @param parentEdge to set
    */
   public abstract void setParentEdge(DirectedEdge parentEdge);
+  
+  /**
+   * All edges use the EDGE_SEGMENT_ID_CLASS to generate the unique internal ids
+   */
+  @Override
+  public default Class<EdgeSegment> getIdClass() {
+    return EDGE_SEGMENT_ID_CLASS;
+  }   
   
   /**
    * Replace one of the vertices of the edge segment

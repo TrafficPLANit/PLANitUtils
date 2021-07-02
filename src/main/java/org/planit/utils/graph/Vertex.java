@@ -12,9 +12,6 @@ import org.locationtech.jts.geom.Point;
 import org.opengis.geometry.MismatchedDimensionException;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.TransformException;
-import org.planit.utils.id.ExternalIdable;
-import org.planit.utils.id.IdGenerator;
-import org.planit.utils.id.IdGroupingToken;
 
 /**
  * Vertex representation connected to one or more edges and/or edge segments
@@ -22,21 +19,14 @@ import org.planit.utils.id.IdGroupingToken;
  * @author markr
  *
  */
-public interface Vertex extends Serializable, ExternalIdable {
+public interface Vertex extends Serializable, GraphEntity {
   
   /** vertex logger */
   public static final Logger LOGGER = Logger.getLogger(Vertex.class.getCanonicalName());
   
-  /**
-   * generate unique vertex id
-   *
-   * @param groupId, contiguous id generation within this group for instances of this class
-   * @return vertex id generated
-   */
-  public static long generateVertexId(final IdGroupingToken tokenId) {
-    return IdGenerator.generateId(tokenId, Vertex.class);
-  }  
-  
+  /** id class for generating ids */
+  public static final Class<Vertex> VERTEX_ID_CLASS = Vertex.class;  
+    
   /**
    * Add a property from the original input that is not part of the readily available members
    *
@@ -96,6 +86,14 @@ public interface Vertex extends Serializable, ExternalIdable {
    * @return the cloned vertex
    */
   public abstract Vertex clone();
+  
+  /**
+   * All vertices use the VERTEX_ID_CLASS to generate the unique internal ids
+   */
+  @Override
+  public default Class<Vertex> getIdClass() {
+    return VERTEX_ID_CLASS;
+  }  
   
   /**
    * Verify if position is available

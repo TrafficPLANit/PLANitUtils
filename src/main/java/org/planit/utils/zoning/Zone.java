@@ -4,7 +4,7 @@ import java.util.logging.Logger;
 
 import org.locationtech.jts.geom.Envelope;
 import org.locationtech.jts.geom.Geometry;
-import org.planit.utils.id.ExternalIdable;
+import org.planit.utils.id.ExternalIdAble;
 
 /**
  * Zone represent a geographical area with a centroid which in turn represent the
@@ -13,7 +13,7 @@ import org.planit.utils.id.ExternalIdable;
  * @author markr
  *
  */
-public interface Zone extends ExternalIdable {
+public interface Zone extends ExternalIdAble {
   
   /** the logger */
   public static final Logger LOGGER = Logger.getLogger(Zone.class.getCanonicalName());

@@ -6,7 +6,7 @@ package org.planit.utils.id;
  * @author markr
  *
  */
-public class IdAbleImpl implements Idable {
+public abstract class IdAbleImpl implements IdAble {
   
   private long id;
   
@@ -16,8 +16,8 @@ public class IdAbleImpl implements Idable {
    */
   protected void setId(long id) {
    this.id = id;    
-  }  
-    
+  }    
+      
   /** constructor 
    * 
    * @param id to use
@@ -25,7 +25,7 @@ public class IdAbleImpl implements Idable {
   public IdAbleImpl(long id) {
     setId(id);
   }  
-  
+    
   /** Copy constructor
    * 
    * @param other to copy from
@@ -57,6 +57,12 @@ public class IdAbleImpl implements Idable {
   @Override
   public boolean equals(Object o) {
     return idEquals(o);
-  }   
-
+  }  
+  
+  /**
+   * {@inheritDoc}
+   */   
+  @Override
+  public abstract IdAble clone();
+  
 }

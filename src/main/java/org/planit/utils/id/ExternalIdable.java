@@ -11,7 +11,7 @@ package org.planit.utils.id;
  * @author markr
  *
  */
-public interface ExternalIdable extends Idable {
+public interface ExternalIdAble extends IdAble {
     
   /** get external id of the entity
    * @return external id

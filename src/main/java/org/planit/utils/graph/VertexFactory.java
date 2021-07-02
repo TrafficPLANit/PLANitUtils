@@ -4,21 +4,20 @@ package org.planit.utils.graph;
  * 
  * @author markr
  *
- * @param <E> type of edge
  */
-public interface VertexFactory<V extends Vertex> extends GraphEntityFactory<V> {
+public interface VertexFactory extends GraphEntityFactory<Vertex> {
 
   /** Create a new vertex (without registering on this class)
    * 
    * @return created vertex
    */
-  public abstract V createNew();
+  public abstract Vertex createNew();
   
   /**
    * Create and register new entity
    *
    * @return new node created
    */
-  public abstract V registerNew(); 
+  public abstract Vertex registerNew(); 
   
 }

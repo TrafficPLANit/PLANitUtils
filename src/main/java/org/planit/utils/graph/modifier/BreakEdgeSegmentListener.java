@@ -11,7 +11,7 @@ import org.planit.utils.graph.Vertex;
  * @author markr
  *
  */
-public interface BreakEdgeSegmentListener<V extends Vertex, E extends Edge, ES extends EdgeSegment> extends BreakEdgeListener<V,E>{
+public interface BreakEdgeSegmentListener extends BreakEdgeListener{
       
   /** invoked after an edge segment has been broken
    * 
@@ -19,6 +19,6 @@ public interface BreakEdgeSegmentListener<V extends Vertex, E extends Edge, ES e
    * @param brokenEdge edge that was broken before 
    * @param brokenEdgeSegment that has just been updated to reflect the fact it has a broken parent 
    */
-  public abstract void onBreakEdgeSegment(V vertex, E brokenEdge, ES brokenEdgeSegment);
+  public abstract void onBreakEdgeSegment(Vertex vertex, Edge brokenEdge, EdgeSegment brokenEdgeSegment);
 
 }

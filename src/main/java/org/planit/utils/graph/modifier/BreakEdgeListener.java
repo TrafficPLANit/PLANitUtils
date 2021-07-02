@@ -4,7 +4,7 @@ import org.planit.utils.graph.Edge;
 import org.planit.utils.graph.Vertex;
 import org.planit.utils.id.IdGenerator;
 import org.planit.utils.id.IdGroupingToken;
-import org.planit.utils.id.Idable;
+import org.planit.utils.id.IdAble;
 
 /**
  * A listener for whenever link s are broken on a graph. allows for exogenous classes to perform actions whenever
@@ -13,7 +13,7 @@ import org.planit.utils.id.Idable;
  * @author markr
  *
  */
-public interface BreakEdgeListener<V extends Vertex, E extends Edge> extends Idable {
+public interface BreakEdgeListener extends IdAble {
   
   /**
    * Every instance implementing this interface should generate its id using this method to ensure that we have a unique id across all break edge listeners
@@ -30,6 +30,6 @@ public interface BreakEdgeListener<V extends Vertex, E extends Edge> extends Ida
    * @param aToBreak edge 
    * @param breakToB edge
    */
-  void onBreakEdge(V vertex, E aToBreak, E breakToB);
+  void onBreakEdge(Vertex vertex, Edge aToBreak, Edge breakToB);
 
 }

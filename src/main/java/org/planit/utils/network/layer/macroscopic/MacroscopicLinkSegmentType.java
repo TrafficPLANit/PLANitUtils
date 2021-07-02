@@ -5,7 +5,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import org.planit.utils.id.ExternalIdable;
+import org.planit.utils.id.ExternalIdAble;
 import org.planit.utils.mode.Mode;
 
 /**
@@ -14,7 +14,7 @@ import org.planit.utils.mode.Mode;
  * @author markr
  *
  */
-public interface MacroscopicLinkSegmentType extends Cloneable, ExternalIdable {
+public interface MacroscopicLinkSegmentType extends Cloneable, ExternalIdAble {
 
   /**
    * Default capacity per lane (pcu/h)

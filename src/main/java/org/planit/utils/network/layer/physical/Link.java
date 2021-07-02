@@ -12,7 +12,19 @@ import org.planit.utils.graph.DirectedEdge;
  *
  */
 public interface Link extends DirectedEdge {
-
+  
+  /** id class for generating ids */
+  public static final Class<Link> LINK_ID_CLASS = Link.class;   
+  
+  /**
+   * Return class used to generate unique link ids via the id generator
+   * 
+   * @return class type
+   */
+  public default Class<? extends Link> getLinkIdClass(){
+    return LINK_ID_CLASS;
+  }
+  
   /**
    * Return id of this instance. This id is expected to be generated using the
    * org.planit.utils.misc.IdGenerator
