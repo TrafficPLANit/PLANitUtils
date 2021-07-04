@@ -88,7 +88,7 @@ public interface EdgeSegment extends Serializable, GraphEntity {
    * 
    * @param parentEdge to set
    */
-  public abstract void setParentEdge(DirectedEdge parentEdge);
+  public abstract void setParent(DirectedEdge parentEdge);
   
   /**
    * All edges use the EDGE_SEGMENT_ID_CLASS to generate the unique internal ids

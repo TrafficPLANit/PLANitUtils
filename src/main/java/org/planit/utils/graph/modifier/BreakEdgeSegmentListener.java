@@ -1,8 +1,8 @@
 package org.planit.utils.graph.modifier;
 
-import org.planit.utils.graph.Edge;
+import org.planit.utils.graph.DirectedEdge;
+import org.planit.utils.graph.DirectedVertex;
 import org.planit.utils.graph.EdgeSegment;
-import org.planit.utils.graph.Vertex;
 
 /**
  * A listener for whenever link s are broken on a graph. allows for exogenous classes to perform actions whenever
@@ -19,6 +19,6 @@ public interface BreakEdgeSegmentListener extends BreakEdgeListener{
    * @param brokenEdge edge that was broken before 
    * @param brokenEdgeSegment that has just been updated to reflect the fact it has a broken parent 
    */
-  public abstract void onBreakEdgeSegment(Vertex vertex, Edge brokenEdge, EdgeSegment brokenEdgeSegment);
+  public abstract void onBreakEdgeSegment(DirectedVertex vertex, DirectedEdge brokenEdge, EdgeSegment brokenEdgeSegment);
 
 }

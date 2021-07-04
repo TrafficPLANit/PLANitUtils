@@ -33,7 +33,7 @@ public interface TopologicalLayer extends TransportLayer {
    * @param listeners         to call back during removal of danlging subnetworks
    * @throws PlanItException thrown if error
    */
-  public abstract void removeDanglingSubnetworks(final Integer belowSize, Integer aboveSize, boolean alwaysKeepLargest, final Set<RemoveSubGraphListener<?, ?>> listeners)
+  public abstract void removeDanglingSubnetworks(final Integer belowSize, Integer aboveSize, boolean alwaysKeepLargest, final Set<RemoveSubGraphListener> listeners)
       throws PlanItException;
 
   /**

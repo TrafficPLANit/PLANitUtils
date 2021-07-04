@@ -9,7 +9,7 @@ package org.planit.utils.graph;
  * @param <E> edge type
  * @param <ES> edge segment type
  */
-public interface DirectedSubGraph<DirectedVertices, DirectedEdges, EdgeSegments> {
+public interface DirectedSubGraph<V extends DirectedVertices, E extends DirectedEdges, ES extends EdgeSegments> {
   
   /**
    * collect the id of this subgraph
@@ -18,10 +18,11 @@ public interface DirectedSubGraph<DirectedVertices, DirectedEdges, EdgeSegments>
    */
   public long getId();
 
-  /** the parent graph
+  /** The parent directed graph
+   * 
    * @return parent graph
    */
-  public UntypedDirectedGraph<DirectedVertices,DirectedEdges,EdgeSegments> getParentGraph();
+  public DirectedGraph<V,E,ES> getParentGraph();
   
   /** collect the root vertex
    * @return root vertex

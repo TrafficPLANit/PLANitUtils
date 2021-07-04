@@ -16,6 +16,18 @@ import org.planit.utils.exceptions.PlanItException;
 public interface DirectedEdge extends Edge {
 
   /**
+   * {@inheritDoc}
+   */
+  @Override
+  public abstract DirectedVertex getVertexA();
+
+  /**
+   * {@inheritDoc}
+   */  
+  @Override
+  public abstract DirectedVertex getVertexB();
+
+  /**
    * Register EdgeSegment.
    *
    * If there already exists an edgeSegment for that direction it is replaced and returned

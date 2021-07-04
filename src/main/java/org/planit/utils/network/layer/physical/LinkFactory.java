@@ -7,9 +7,8 @@ import org.planit.utils.graph.GraphEntityFactory;
  * 
  * @author markr
  *
- * @param <L> type of link
  */
-public interface LinkFactory<L extends Link> extends GraphEntityFactory<L>{
+public interface LinkFactory extends GraphEntityFactory<Link>{
 
   /**
    * Create new link on links container (not registered on nodes)
@@ -20,7 +19,7 @@ public interface LinkFactory<L extends Link> extends GraphEntityFactory<L>{
    * @return the created edge
    * @throws PlanItException thrown if there is an error
    */
-  default public L registerNew(final Node nodeA, final Node nodeB, double lengthKm) throws PlanItException{
+  default public Link registerNew(final Node nodeA, final Node nodeB, double lengthKm) throws PlanItException{
     return registerNew(nodeA, nodeB, lengthKm, false);
   }
   
@@ -34,5 +33,5 @@ public interface LinkFactory<L extends Link> extends GraphEntityFactory<L>{
    * @return the created link
    * @throws PlanItException thrown if there is an error
    */
-  public abstract L registerNew(final Node nodeA, final Node nodeB, double lengthKm, boolean registerOnNodes) throws PlanItException;     
+  public abstract Link registerNew(final Node nodeA, final Node nodeB, double lengthKm, boolean registerOnNodes) throws PlanItException;     
 }
