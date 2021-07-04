@@ -1,4 +1,6 @@
-package org.planit.utils.graph;
+package org.planit.utils.graph.directed;
+
+import org.planit.utils.graph.EdgeSegment;
 
 /**
  * A directed subgraph interface for a given parent graph by registering edge segments on it (and therefore vertices and edges)

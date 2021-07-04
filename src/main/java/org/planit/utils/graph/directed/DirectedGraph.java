@@ -1,4 +1,6 @@
-package org.planit.utils.graph;
+package org.planit.utils.graph.directed;
+
+import org.planit.utils.graph.UntypedDirectedGraph;
 
 /**
  * Interface for a directed graph with explicit container types rather than the base containers. This is

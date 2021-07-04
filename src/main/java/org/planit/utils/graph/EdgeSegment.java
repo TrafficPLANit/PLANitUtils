@@ -2,6 +2,9 @@ package org.planit.utils.graph;
 
 import java.io.Serializable;
 
+import org.planit.utils.graph.directed.DirectedEdge;
+import org.planit.utils.graph.directed.DirectedVertex;
+
 /**
  * EdgeSegment represents an edge in a particular (single) direction. Each edge
  * has either one or two edge segments where each edge segment may have a more

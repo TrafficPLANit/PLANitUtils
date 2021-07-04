@@ -1,5 +1,8 @@
 package org.planit.utils.graph;
 
+import org.planit.utils.graph.directed.DirectedEdge;
+import org.planit.utils.graph.directed.DirectedVertex;
+
 /**
  * Interface for a directed graph
  * 

@@ -1,6 +1,8 @@
-package org.planit.utils.graph;
+package org.planit.utils.graph.directed;
 
 import java.util.logging.Logger;
+
+import org.planit.utils.graph.GraphEntities;
 
 /**
  * Container class for directed vertices and creating instances within this container via factory.

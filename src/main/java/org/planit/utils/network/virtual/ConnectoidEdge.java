@@ -1,7 +1,7 @@
 package org.planit.utils.network.virtual;
 
 import org.planit.utils.exceptions.PlanItException;
-import org.planit.utils.graph.DirectedEdge;
+import org.planit.utils.graph.directed.DirectedEdge;
 
 /**
  * the connecting component between centroid and a first physical node in the network.

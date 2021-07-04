@@ -1,8 +1,8 @@
 package org.planit.utils.graph.modifier;
 
-import org.planit.utils.graph.DirectedEdge;
-import org.planit.utils.graph.DirectedVertex;
 import org.planit.utils.graph.EdgeSegment;
+import org.planit.utils.graph.directed.DirectedEdge;
+import org.planit.utils.graph.directed.DirectedVertex;
 
 /**
  * A listener for whenever link s are broken on a graph. allows for exogenous classes to perform actions whenever

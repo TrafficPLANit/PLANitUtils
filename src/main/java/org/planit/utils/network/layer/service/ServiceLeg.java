@@ -2,7 +2,7 @@ package org.planit.utils.network.layer.service;
 
 import java.util.Collection;
 
-import org.planit.utils.graph.DirectedEdge;
+import org.planit.utils.graph.directed.DirectedEdge;
 
 /**
  * Service leg interface which extends the Edge interface. A service leg comprises of one or more underlying physical links

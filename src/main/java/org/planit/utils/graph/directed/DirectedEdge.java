@@ -1,9 +1,11 @@
-package org.planit.utils.graph;
+package org.planit.utils.graph.directed;
 
 import java.util.ArrayList;
 import java.util.Collection;
 
 import org.planit.utils.exceptions.PlanItException;
+import org.planit.utils.graph.Edge;
+import org.planit.utils.graph.EdgeSegment;
 
 /**
  * Directed Edge interface connecting two vertices in a directional fashion. Each edge has one or

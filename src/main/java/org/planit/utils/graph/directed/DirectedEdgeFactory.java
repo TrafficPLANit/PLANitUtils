@@ -1,6 +1,7 @@
-package org.planit.utils.graph;
+package org.planit.utils.graph.directed;
 
 import org.planit.utils.exceptions.PlanItException;
+import org.planit.utils.graph.GraphEntityFactory;
 
 /** Factory interface for creating directed edges.
  * 

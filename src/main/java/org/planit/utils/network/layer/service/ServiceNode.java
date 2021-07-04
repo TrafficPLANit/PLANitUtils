@@ -3,8 +3,8 @@ package org.planit.utils.network.layer.service;
 import java.util.Collection;
 import java.util.Set;
 
-import org.planit.utils.graph.DirectedVertex;
 import org.planit.utils.graph.EdgeSegment;
+import org.planit.utils.graph.directed.DirectedVertex;
 
 /**
  * Service node is a vertex but not all vertices are service nodes.

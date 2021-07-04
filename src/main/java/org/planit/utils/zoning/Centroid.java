@@ -1,6 +1,6 @@
 package org.planit.utils.zoning;
 
-import org.planit.utils.graph.DirectedVertex;
+import org.planit.utils.graph.directed.DirectedVertex;
 
 /**
  * A centroid is a special type of vertex representing the location of departure/arrival of traffic

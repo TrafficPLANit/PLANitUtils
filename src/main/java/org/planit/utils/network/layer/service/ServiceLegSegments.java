@@ -1,6 +1,6 @@
 package org.planit.utils.network.layer.service;
 
-import org.planit.utils.graph.EdgeSegments;
+import org.planit.utils.graph.directed.EdgeSegments;
 
 /**
  * Wrapper around EdgeSegments interface to support ServiceLegSegments explicitly rather than EdgeSegments

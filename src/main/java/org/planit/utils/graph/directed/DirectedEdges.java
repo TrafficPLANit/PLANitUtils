@@ -1,6 +1,8 @@
-package org.planit.utils.graph;
+package org.planit.utils.graph.directed;
 
 import java.util.logging.Logger;
+
+import org.planit.utils.graph.GraphEntities;
 
 /**
  * Container and managing class for directed edges in a graph.

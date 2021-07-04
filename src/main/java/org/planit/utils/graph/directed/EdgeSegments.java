@@ -1,8 +1,10 @@
-package org.planit.utils.graph;
+package org.planit.utils.graph.directed;
 
 import java.util.logging.Logger;
 
 import org.planit.utils.exceptions.PlanItException;
+import org.planit.utils.graph.EdgeSegment;
+import org.planit.utils.graph.GraphEntities;
 
 /**
  * Container and factory class for edge segments in a graph, also to be used to create and register edge segments of any

@@ -1,6 +1,9 @@
-package org.planit.utils.graph;
+package org.planit.utils.graph.directed;
 
 import java.util.Set;
+
+import org.planit.utils.graph.EdgeSegment;
+import org.planit.utils.graph.Vertex;
 
 /**
  * Directed vertex representation connected to one or more edge segments that have direction. The vertex itself is of course not directional

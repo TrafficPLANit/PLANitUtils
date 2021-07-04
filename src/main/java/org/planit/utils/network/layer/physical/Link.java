@@ -2,7 +2,7 @@ package org.planit.utils.network.layer.physical;
 
 import java.util.Collection;
 
-import org.planit.utils.graph.DirectedEdge;
+import org.planit.utils.graph.directed.DirectedEdge;
 
 /**
  * Link interface which extends the Edge interface with a unique id (not all edges are links) as
