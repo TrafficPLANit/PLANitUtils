@@ -7,9 +7,7 @@ import org.planit.utils.graph.GraphEntities;
  * its dedicated factory class
  * 
  * @author markr
- *
- * @param <LS> link segment type
- */
+  */
 public interface LinkSegments extends GraphEntities<LinkSegment> {
   /* do not derive from EdgeSegments<E> since we require to override the factory method return type. This is only
    * allowed when the return type directly derives from the original return type. LinkSegmentsFactory cannot

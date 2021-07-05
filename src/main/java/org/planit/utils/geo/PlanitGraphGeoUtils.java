@@ -22,7 +22,7 @@ import org.locationtech.jts.linearref.LinearLocation;
 import org.planit.utils.exceptions.PlanItException;
 import org.planit.utils.graph.Edge;
 import org.planit.utils.graph.EdgeSegment;
-import org.planit.utils.graph.Edges;
+import org.planit.utils.graph.GraphEntities;
 import org.planit.utils.graph.Vertex;
 import org.planit.utils.math.Precision;
 import org.planit.utils.misc.Pair;
@@ -287,9 +287,9 @@ public class PlanitGraphGeoUtils {
    *  @param edgesCollection collections to add
    *  @return created quadtree instance
    */
-  public static <T extends Edge> Quadtree createSpatiallyIndexedPlanitEdges(Collection<Edges<T>> edgesCollection) {
+  public static <T extends Edge> Quadtree createSpatiallyIndexedPlanitEdges(Collection<GraphEntities<T>> edgesCollection) {
     Quadtree spatiallyIndexedEdges = new Quadtree();
-    for(Edges<T> edges : edgesCollection) {
+    for(GraphEntities<T> edges : edgesCollection) {
       edges.forEach(edge -> spatiallyIndexedEdges.insert(edge.getGeometry().getEnvelope().getEnvelopeInternal(),edge));
     }
     return spatiallyIndexedEdges;

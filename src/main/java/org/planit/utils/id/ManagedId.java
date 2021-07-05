@@ -11,11 +11,11 @@ package org.planit.utils.id;
 public interface ManagedId extends IdAble {
   
   /**
-   * recreate the internal id and set it
+   * recreate the internal id(s) and set them including the Idable id
    * 
    * @return
    */
-  public abstract long recreateId(IdGroupingToken tokenId);
+  public abstract long recreateManagedIds(IdGroupingToken tokenId);
   
   /**
    * Each managed id class is expected to generate its ids based on its class signature.

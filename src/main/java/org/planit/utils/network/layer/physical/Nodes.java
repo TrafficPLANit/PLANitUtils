@@ -26,5 +26,6 @@ public interface Nodes extends GraphEntities<Node> {
      * implement this method to provide access to an actual instance */
     Logger.getLogger(Nodes.class.getCanonicalName()).warning("getFactory not implemented yet for nodes implementation");
     return null;
-  }  
+  } 
+  
 }

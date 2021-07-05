@@ -9,7 +9,7 @@ import org.planit.utils.network.layer.physical.PhysicalLayer;
  * @author markr
  *
  */
-public interface PhysicalNetworkLayers<T extends PhysicalLayer<?,?,?>> extends TopologicalLayers<T> {
+public interface PhysicalNetworkLayers<T extends PhysicalLayer> extends TopologicalLayers<T> {
 
   /**
    * Number of nodes across all layers

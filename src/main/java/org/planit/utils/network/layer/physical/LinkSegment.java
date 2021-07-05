@@ -3,26 +3,38 @@ package org.planit.utils.network.layer.physical;
 import org.planit.utils.graph.EdgeSegment;
 
 /**
- * Interface for direction link segment part of non-directional link.
+ * Interface for link segments (directional) part of link (non-directional).
  * 
  * @author markr
  *
  */
 public interface LinkSegment extends EdgeSegment {
+  
+  /** id class for generating ids */
+  public static final Class<LinkSegment> LINK_SEGMENT_ID_CLASS = LinkSegment.class;   
+  
+  /**
+   * Return class used to generate unique link ids via the id generator
+   * 
+   * @return class type
+   */
+  public default Class<? extends LinkSegment> getLinkSegmentIdClass(){
+    return LINK_SEGMENT_ID_CLASS;
+  }  
 
   /**
    * Default number of lanes
    */
-  short DEFAULT_NUMBER_OF_LANES = 1;
+  public final short DEFAULT_NUMBER_OF_LANES = 1;
   /**
    * Default maximum speed on a link segment in km/h
    */
-  double DEFAULT_MAX_SPEED = 130;
+  public final double DEFAULT_MAX_SPEED = 130;
 
   /**
    * Default maximum link density in pcu/km
    */
-  double MAXIMUM_DENSITY = 180;
+  public final double MAXIMUM_DENSITY = 180;
 
   /**
    * Return id of this instance. This id is expected to be generated using the
