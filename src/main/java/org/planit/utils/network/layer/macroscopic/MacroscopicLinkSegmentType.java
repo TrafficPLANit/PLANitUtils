@@ -42,14 +42,6 @@ public interface MacroscopicLinkSegmentType extends Cloneable, ExternalIdAble, M
   public abstract MacroscopicLinkSegmentType clone();
 
   /**
-   * {@inheritDoc}
-   */
-  @Override
-  public default Class<? extends MacroscopicLinkSegmentType> getIdClass() {
-    return MACROSCOPIC_LINK_SEGMENT_TYPE_ID_CLASS;
-  }
-
-  /**
    * Return the name of this macroscopic link segment type
    * 
    * @return the name
@@ -123,6 +115,14 @@ public interface MacroscopicLinkSegmentType extends Cloneable, ExternalIdAble, M
    */
   public abstract Set<Mode> getAvailableModes();
   
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public default Class<? extends MacroscopicLinkSegmentType> getIdClass() {
+    return MACROSCOPIC_LINK_SEGMENT_TYPE_ID_CLASS;
+  }
+
   /** remove the mode properties for the passed in modes
    * 
    * @param toBeRemovedModes all the modes to make unavailable

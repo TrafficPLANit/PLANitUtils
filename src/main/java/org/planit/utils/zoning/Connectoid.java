@@ -7,6 +7,7 @@ import java.util.Set;
 import org.planit.utils.exceptions.PlanItException;
 import org.planit.utils.graph.directed.DirectedVertex;
 import org.planit.utils.id.ExternalIdAble;
+import org.planit.utils.id.ManagedId;
 import org.planit.utils.mode.Mode;
 
 /**
@@ -21,12 +22,15 @@ import org.planit.utils.mode.Mode;
  * @author markr
  *
  */
-public interface Connectoid extends ExternalIdAble, Iterable<Zone> {
+public interface Connectoid extends ExternalIdAble, ManagedId, Iterable<Zone> {
 
+  /** the class ot use for id generation */
+  public static final Class<Connectoid> CONNECTOID_ID_CLASS = Connectoid.class;
+  
   /**
    * Default connectoid length in km
    */
-  double DEFAULT_LENGTH_KM = 0.0;
+  public static double DEFAULT_LENGTH_KM = 0.0;
   
   /** default type is set to none */
   public static ConnectoidType DEFAULT_CONNECTOID_TYPE = ConnectoidType.NONE;  
@@ -134,6 +138,14 @@ public interface Connectoid extends ExternalIdAble, Iterable<Zone> {
    */
   public abstract DirectedVertex getAccessVertex();
   
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  default Class<Connectoid> getIdClass() {
+    return CONNECTOID_ID_CLASS;
+  }
+
   /** Verify if the connectoid has a name
    * 
    * @return true when present false otherwise

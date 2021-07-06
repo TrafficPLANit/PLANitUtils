@@ -12,7 +12,7 @@ import java.util.function.Predicate;
  * @param <K> key type
  * @param <V> value type
  */
-public interface MapWrapper<K, V> extends Iterable<V> {
+public interface MapWrapper<K, V> extends Iterable<V>, Cloneable {
 
   /**
    * Register on the internal container
@@ -69,5 +69,13 @@ public interface MapWrapper<K, V> extends Iterable<V> {
    * @return the retrieved traveler type, or null if no traveler type was found
    */
   public abstract V findFirst(Predicate<V> valuePredicate);
+
+  /**
+   * Each map wrapper should be cloneable where the contents are references of the original where possible
+   * but the underlying map itself is newly created
+   * 
+   * @return copy
+   */
+  public abstract MapWrapper<K, V> clone();
 
 }

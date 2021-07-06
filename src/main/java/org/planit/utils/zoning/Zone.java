@@ -5,6 +5,7 @@ import java.util.logging.Logger;
 import org.locationtech.jts.geom.Envelope;
 import org.locationtech.jts.geom.Geometry;
 import org.planit.utils.id.ExternalIdAble;
+import org.planit.utils.id.ManagedId;
 
 /**
  * Zone represent a geographical area with a centroid which in turn represent the
@@ -13,10 +14,13 @@ import org.planit.utils.id.ExternalIdAble;
  * @author markr
  *
  */
-public interface Zone extends ExternalIdAble {
+public interface Zone extends ExternalIdAble, ManagedId {
   
   /** the logger */
   public static final Logger LOGGER = Logger.getLogger(Zone.class.getCanonicalName());
+  
+  /** the class to use for the id generation */
+  public static final Class<Zone> ZONE_ID_CLASS = Zone.class;  
 
   /**
    * Add a property from the original input that is not part of the readily available members
@@ -32,7 +36,6 @@ public interface Zone extends ExternalIdAble {
    * @return property itself
    */
   public abstract Object getInputProperty(final String key);
-
   
   /**
    * Returns the centroid of this zone
@@ -64,6 +67,20 @@ public interface Zone extends ExternalIdAble {
    * @return name of the zone
    */
   public abstract String getName();
+  
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public abstract Zone clone();
+  
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public default Class<Zone> getIdClass() {
+    return ZONE_ID_CLASS;
+  }
   
   /** verify if the zone has a geometry
    * 

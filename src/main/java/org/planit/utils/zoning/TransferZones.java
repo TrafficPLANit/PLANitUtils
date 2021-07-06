@@ -1,0 +1,16 @@
+package org.planit.utils.zoning;
+
+/**
+ * Container class for TransferZone instances
+ * 
+ * @author markr
+ *
+ */
+public interface TransferZones extends Zones<TransferZone>{
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public abstract TransferZones clone();
+}

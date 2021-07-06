@@ -1,6 +1,5 @@
 package org.planit.utils.wrapper;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
@@ -30,6 +29,22 @@ public abstract class MapWrapperImpl<K, V> implements MapWrapper<K, V>{
   
   /** mapping from value to key */
   private final Function<V, K> valueToKey;
+  
+  /** Create an empty map of the same implementation using reflection, i.e., if the map is a TreeMap
+   * a TreeMap is used, same for hashmap etc.
+   *  
+   * @param mapToCopy
+   * @return created copy with the same underlying map implementation
+   */
+  @SuppressWarnings("unchecked")
+  protected static <U,L> Map<U,L> createEmptyInstance(Map<U,L> mapToCopy){
+    try {
+      return mapToCopy.getClass().getConstructor().newInstance(); 
+    } catch (Exception e) {
+      LOGGER.warning("Unable to instantiate new instance of map signature in map wrapper in copy constructor");
+    }
+    return null;
+  }
   
   /** Collect the function used to map value to key
    * 
@@ -63,21 +78,15 @@ public abstract class MapWrapperImpl<K, V> implements MapWrapper<K, V>{
     this.theMap = mapToWrap;
     this.valueToKey = valueToKey;
   }
-  
+    
   /** Copy constructor 
    * 
    * @param other to copy
    */
-  @SuppressWarnings("unchecked")
   public MapWrapperImpl(final MapWrapperImpl<K,V> other) {
     this.valueToKey = other.valueToKey;
     
-    Map<K, V> newMap = null;
-    try {
-      newMap = theMap.getClass().getConstructor().newInstance(); 
-    } catch (Exception e) {
-      LOGGER.warning("Unable to instantiate new instance of map signature in map wrapper in copy constructor");
-    }
+    Map<K, V> newMap = createEmptyInstance(theMap);    
     if(newMap != null) {
       newMap.putAll(other.getMap());
       this.theMap = newMap;
@@ -160,4 +169,10 @@ public abstract class MapWrapperImpl<K, V> implements MapWrapper<K, V>{
     }
     return null;
   }  
+  
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public abstract MapWrapperImpl<K,V> clone();
 }

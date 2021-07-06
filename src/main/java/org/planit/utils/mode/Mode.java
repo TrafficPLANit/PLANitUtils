@@ -1,6 +1,7 @@
 package org.planit.utils.mode;
 
 import org.planit.utils.id.ExternalIdAble;
+import org.planit.utils.id.ManagedId;
 
 /**
  * Interface to represent a mode
@@ -8,17 +9,20 @@ import org.planit.utils.id.ExternalIdAble;
  * @author markr
  *
  */
-public interface Mode extends ExternalIdAble {
+public interface Mode extends ExternalIdAble, ManagedId {
+  
+  /** id class for generating ids */
+  public static final Class<Mode> MODE_ID_CLASS = Mode.class;     
   
   /**
    * Default max speed in km/h
    */
-  double GLOBAL_DEFAULT_MAXIMUM_SPEED_KMH = 80;
+  public static final double GLOBAL_DEFAULT_MAXIMUM_SPEED_KMH = 80;
   
   /**
    * Default pcu in pcu
    */  
-  double GLOBAL_DEFAULT_PCU = 1;    
+  public static final double GLOBAL_DEFAULT_PCU = 1;    
   
   /**
    * If no mode is defined the default mode is assumed to have an XML id of 1 
@@ -30,55 +34,63 @@ public interface Mode extends ExternalIdAble {
    * 
    * @return pcu
    */
-  double getPcu();
+  public abstract double getPcu();
   
   /**
    * collect the physical features of this mode
    * 
    * @return the physical mode features
    */
-  PhysicalModeFeatures getPhysicalFeatures();
-  
-  /** Verify if physical features are available
-   * @return true if available, false otherwise
-   */
-  default boolean hasPhysicalFeatures() {
-    return getPhysicalFeatures()!=null;
-  }  
+  public abstract PhysicalModeFeatures getPhysicalFeatures();
   
   /**
    * collect the features of how this mode is used (public, private etc.)
    * 
    * @return the use features of this mode
    */
-  UsabilityModeFeatures getUseFeatures();  
+  public abstract UsabilityModeFeatures getUseFeatures();  
   
-  /** Verify if use features are available
-   * @return true if available, false otherwise
-   */
-  default boolean hasUseFeatures() {
-    return getUseFeatures()!=null;
-  }    
-
   /**
    * Name of this mode
    * 
    * @return the name
    */
-  String getName();
+  public abstract String getName();
   
 
   /** maximum speed for this mode 
    * 
    * @return maximum speed
    */
-  double getMaximumSpeedKmH();  
+  public abstract double getMaximumSpeedKmH();  
   
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public default Class<Mode> getIdClass() {
+    return MODE_ID_CLASS;
+  }
+
+  /** Verify if physical features are available
+   * @return true if available, false otherwise
+   */
+  public default boolean hasPhysicalFeatures() {
+    return getPhysicalFeatures()!=null;
+  }
+
+  /** Verify if use features are available
+   * @return true if available, false otherwise
+   */
+  public default boolean hasUseFeatures() {
+    return getUseFeatures()!=null;
+  }
+
   /** check if the mode is one of the PLANit predefined mode types or not
    * 
    * @return true when predefined, false, when custom
    */
-  default boolean isPredefinedModeType(){
+  public default boolean isPredefinedModeType(){
     return false;
   }
   
@@ -87,14 +99,14 @@ public interface Mode extends ExternalIdAble {
    * 
    * @return the type, set to CUSTOM when it is not one of the regular predefined modes
    */
-  default PredefinedModeType getPredefinedModeType() {
+  public default PredefinedModeType getPredefinedModeType() {
     return PredefinedModeType.CUSTOM;
   }
 
   /** Verify if mode has a name
    * @return true when present, false otherwise
    */
-  default boolean hasName() {
+  public default boolean hasName() {
     return getName()!=null && !getName().isBlank();
   }
 

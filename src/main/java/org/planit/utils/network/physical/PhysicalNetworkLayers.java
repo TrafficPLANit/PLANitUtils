@@ -9,7 +9,7 @@ import org.planit.utils.network.layer.physical.PhysicalLayer;
  * @author markr
  *
  */
-public interface PhysicalNetworkLayers<T extends PhysicalLayer> extends TopologicalLayers<T> {
+public interface PhysicalNetworkLayers extends TopologicalLayers<PhysicalLayer> {
 
   /**
    * Number of nodes across all layers
@@ -18,7 +18,7 @@ public interface PhysicalNetworkLayers<T extends PhysicalLayer> extends Topologi
    */
   public default long getNumberOfNodes() {
     long sum = 0;
-    for (T layer : this) {
+    for (PhysicalLayer layer : this) {
       sum += layer.getNumberOfNodes();
     }
     return sum;
@@ -31,7 +31,7 @@ public interface PhysicalNetworkLayers<T extends PhysicalLayer> extends Topologi
    */
   public default long getNumberOfLinks() {
     long sum = 0;
-    for (T layer : this) {
+    for (PhysicalLayer layer : this) {
       sum += layer.getNumberOfLinks();
     }
     return sum;
@@ -44,7 +44,7 @@ public interface PhysicalNetworkLayers<T extends PhysicalLayer> extends Topologi
    */
   public default long getNumberOfLinkSegments() {
     long sum = 0;
-    for (T layer : this) {
+    for (PhysicalLayer layer : this) {
       sum += layer.getNumberOfLinkSegments();
     }
     return sum;

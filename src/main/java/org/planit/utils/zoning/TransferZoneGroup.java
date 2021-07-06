@@ -2,6 +2,7 @@ package org.planit.utils.zoning;
 
 import java.util.Collection;
 import org.planit.utils.id.ExternalIdAble;
+import org.planit.utils.id.ManagedId;
 
 /**
  * A group of transfer zones, can be used to represent for example train stations.
@@ -9,7 +10,10 @@ import org.planit.utils.id.ExternalIdAble;
  * @author markr
  *
  */
-public interface TransferZoneGroup extends ExternalIdAble, Iterable<TransferZone> {
+public interface TransferZoneGroup extends ExternalIdAble, ManagedId, Iterable<TransferZone> {
+  
+  /** the class to use for the id generation */
+  public static final Class<TransferZoneGroup> TRANSFER_ZONE_GROUP_ID_CLASS = TransferZoneGroup.class;    
   
   /** Name of the group
    * @return name
@@ -55,6 +59,12 @@ public interface TransferZoneGroup extends ExternalIdAble, Iterable<TransferZone
    */
   public abstract Collection<TransferZone> getTransferZones();  
   
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public abstract TransferZoneGroup clone();
+  
   /** Collect first transfer zone that would be returned by the iterator
    * @return transfer zone
    */
@@ -84,5 +94,13 @@ public interface TransferZoneGroup extends ExternalIdAble, Iterable<TransferZone
     return !isEmpty();
   }
   
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public default Class<TransferZoneGroup> getIdClass() {
+    return TRANSFER_ZONE_GROUP_ID_CLASS;
+  }  
+    
 
 }

@@ -2,7 +2,8 @@ package org.planit.utils.graph;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import org.planit.utils.wrapper.LongMapWrapper;
+
+import org.planit.utils.id.ManagedIdEntities;
 
 /** Container class for any graph entities and a factory to create them
  * 
@@ -10,37 +11,23 @@ import org.planit.utils.wrapper.LongMapWrapper;
  *
  * @param <E> type of graph entity
  */
-public interface GraphEntities<E extends GraphEntity> extends LongMapWrapper<E>, Cloneable {
+public interface GraphEntities<E extends GraphEntity> extends ManagedIdEntities<E> {
 
   /** Factory to create instance of graph entity (for this container class)
    * 
    * @return entity factory
    */
+  @Override
   public abstract GraphEntityFactory<E> getFactory();
-    
-  /**
-   * recreate the ids for all registered entities
-   * 
-   * @param entities to recreate ids for
-   */
-  public abstract void recreateIds();  
-  
+      
   /**
    * Force clone implementation
    * 
    * @return clone of entities
    */
+  @Override  
   public abstract GraphEntities<E> clone();  
-    
-  /** Verify if present
-   * 
-   * @param id to verify
-   * @return true when present false otherwise
-   */
-  public default boolean contains(long id) {
-    return get(id) != null;
-  }
-  
+      
   /**
    * Return an entity by its XML id
    * 

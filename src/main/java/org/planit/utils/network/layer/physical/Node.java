@@ -19,6 +19,18 @@ import org.planit.utils.id.IdGroupingToken;
  */
 public interface Node extends DirectedVertex {
   
+  /** id class for generating ids */
+  public static final Class<Node> NODE_ID_CLASS = Node.class;   
+      
+  /**
+   * Return class used to generate unique link ids via the id generator
+   * 
+   * @return class type
+   */
+  public default Class<? extends Node> getNodeIdClass(){
+    return NODE_ID_CLASS;
+  }  
+  
   /**
    * generate unique node id
    *

@@ -8,10 +8,21 @@ package org.planit.utils.zoning;
  *
  */
 public interface UndirectedConnectoid extends Connectoid{
- 
+  
+  /** the class to use for the additional directed connectoid id generation */
+  public static final Class<UndirectedConnectoid> UNDIRECTED_CONNECTOID_ID_CLASS = UndirectedConnectoid.class;
+  
   
   /** collect the undirected connectoid id
    * @return undirected connectoid id
    */
-  long getUndirectedConnectoidId();
+  public abstract long getUndirectedConnectoidId();
+  
+  /** the class for undirected connectoid id generation
+   * 
+   * @return class to use
+   */
+  public default Class<UndirectedConnectoid> getUndirectedConnectoidIdClass(){
+    return UNDIRECTED_CONNECTOID_ID_CLASS;
+  }
 }

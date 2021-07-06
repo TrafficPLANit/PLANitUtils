@@ -11,6 +11,9 @@ import java.util.Set;
  */
 public interface TransferZone extends Zone {
   
+  /** the class to use for the id generation */
+  public static final Class<TransferZone> TRANSFER_ZONE_ID_CLASS = TransferZone.class;  
+  
   /**
    * default transfer zone type
    */
@@ -69,5 +72,19 @@ public interface TransferZone extends Zone {
    * remove this transfer zone from all groups it is registered on (and also update the group references
    */
   public abstract void removeFromAllTransferZoneGroups();
+  
+  
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public abstract TransferZone clone();
+  
+  /**
+   * {@inheritDoc}
+   */
+  public default Class<TransferZone> getTransferZoneIdClass() {
+    return TRANSFER_ZONE_ID_CLASS;
+  }
 
 }

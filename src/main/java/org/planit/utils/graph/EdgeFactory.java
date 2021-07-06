@@ -6,7 +6,6 @@ import org.planit.utils.exceptions.PlanItException;
  * 
  * @author markr
  *
- * @param <E> type of edge
  */
 public interface EdgeFactory extends GraphEntityFactory<Edge> {
 

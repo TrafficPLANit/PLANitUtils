@@ -48,4 +48,10 @@ public abstract class LongMapWrapperImpl<V> extends MapWrapperImpl<Long, V> impl
   public V get(final long key) {
     return getMap().get(key);
   }
+  
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public abstract LongMapWrapperImpl<V> clone();  
 }

@@ -7,11 +7,21 @@ package org.planit.utils.zoning;
  *
  */
 public interface OdZone extends Zone {
+  
+  /** the class to use for the additional od zone id generation */
+  public static final Class<OdZone> OD_ZONE_ID_CLASS = OdZone.class;    
 
   /** In addition to a zone id across all zones of any derived type, each Od zone also has a unique id
    * across the Od zones specifically
    * 
    * @return od zone specific id
    */
-  public long getOdZoneId();
+  public abstract long getOdZoneId();
+  
+  /**
+   * @return od zone id class for id generation
+   */
+  public default Class<OdZone> getOdZoneIdClass() {
+    return OD_ZONE_ID_CLASS;
+  }  
 }

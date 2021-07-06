@@ -1,9 +1,8 @@
 package org.planit.utils.mode;
 
-import java.util.Set;
+import java.util.logging.Logger;
 
-import org.planit.utils.exceptions.PlanItException;
-import org.planit.utils.wrapper.LongMapWrapper;
+import org.planit.utils.id.ManagedIdEntities;
 
 /**
  * container class and factory methods for modes with some
@@ -11,29 +10,8 @@ import org.planit.utils.wrapper.LongMapWrapper;
  * @author markr
  *
  */
-public interface Modes extends LongMapWrapper<Mode> {
-
-  /**
-   * Create and register new mode
-   *
-   * @param name           of the mode
-   * @param maxSpeed       maximum speed of the mode
-   * @param pcu           value for the mode
-   * @param physicalFeatures the physical features of this custom mode
-   * @param usabilityFeatures the usability features of this custom mode
-   * @return new mode created
-   */
-  public Mode registerNewCustomMode(final String name, final double maxSpeed, double pcu, PhysicalModeFeatures physicalFeatures, UsabilityModeFeatures usabilityFeatures);
-  
-  /**
-   * Create and register a new predefined mode. When it already exists, the existing entry is returned
-   *
-   * @param modeType the predefined mode type
-   * @return new mode created, or existing mode when already present
-   * @throws PlanItException thrown if error
-   */
-  public PredefinedMode registerNew(PredefinedModeType modeType) throws PlanItException;  
-  
+public interface Modes extends ManagedIdEntities<Mode> {
+    
   /** get predefined mode if it is registered 
    * 
    * @param modeType to collect
@@ -62,21 +40,25 @@ public interface Modes extends LongMapWrapper<Mode> {
    * @return the retrieved mode, or null if no mode was found
    */
   public Mode getByXmlId(String xmlId);
-  
-  /**
-   * Provide all modes as a set. This collection is a copy so any changes have no impact on the internally registered modes
-   * @return all registered modes
-   */
-  public abstract Set<Mode> copyOfValuesAsSet();
 
   /**
-   * Verify if mode is present
-   * 
-   * @param mode to verify for
-   * @return true when present, false otherwise (including when passed in mode is null)
+   * clone modes container
    */
-  public default boolean contains(Mode mode) {
-    return mode!= null ? get(mode.getId())!=null : false;
+  @Override
+  public abstract Modes clone();
+
+  /**
+   * Collect the edge factory to use for creating instances
+   * 
+   * @return edgeFactory to create edges for this container
+   */
+  @Override
+  public default ModeFactory getFactory(){
+    /** override to change return type signature on interface, implementation must still
+     * implement this method to provide access to an actual instance */
+    Logger.getLogger(Modes.class.getCanonicalName()).warning("getFactory not implemented yet for modes implementation");
+    return null;
   }
+  
 
 }

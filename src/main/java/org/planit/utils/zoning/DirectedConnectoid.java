@@ -16,6 +16,9 @@ import org.planit.utils.network.layer.physical.Node;
  */
 public interface DirectedConnectoid extends Connectoid{
   
+  /** the class to use for the additional directed connectoid id generation */
+  public static final Class<DirectedConnectoid> DIRECTED_CONNECTOID_ID_CLASS = DirectedConnectoid.class;
+  
   /** default node access is set to the downstream end of a link segment */
   public static boolean DEFAULT_NODE_ACCESS_DOWNSTREAM = true; 
   
@@ -51,6 +54,14 @@ public interface DirectedConnectoid extends Connectoid{
   public abstract boolean isNodeAccessDownstream();
     
   
+  /** the class for directed connectoid id generation
+   * 
+   * @return class to use
+   */
+  public default Class<DirectedConnectoid> getDirectedConnectoidIdClass(){
+    return DIRECTED_CONNECTOID_ID_CLASS;
+  }
+
   /** Based on the edge segment and the location (upstream/downstream) of the access point, collect
    * the access node
    * 

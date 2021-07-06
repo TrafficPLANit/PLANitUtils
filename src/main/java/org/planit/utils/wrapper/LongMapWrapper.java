@@ -14,6 +14,13 @@ public interface LongMapWrapper<V> extends MapWrapper<Long,V> {
    * @param value to remove
    * @return removed entry if any
    */
-  public abstract V remove(final long key);  
+  public abstract V remove(final long key); 
+  
+  /**
+   * Collect entry from container using primitive
+   * 
+   * @param key to use
+   */
+  public abstract V get(final long key);  
     
 }
