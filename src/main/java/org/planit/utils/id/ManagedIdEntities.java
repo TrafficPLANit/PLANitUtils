@@ -15,13 +15,14 @@ public interface ManagedIdEntities<E extends ManagedId> extends LongMapWrapper<E
    * @return entity factory
    */
   public abstract ContainerisedManagedIdEntityFactory<E> getFactory();
-    
+      
   /**
-   * recreate the ids for all registered entities with or without resetting 
+   * Recreate the ids for all registered entities with or without resetting 
    * 
-   * @param reset when true we rest the counter to zero, otherwise we recreate ids without resetting
+   * @param resetManagedIdClass when true we reset the managedId's counter to zero (via its id class) before recreating the ids, otherwise we simply recreate the managed id by 
+   * starting with the next available id without resetting
    */
-  public abstract void recreateIds(boolean reset);  
+  public abstract void recreateIds(boolean resetManagedIdClass);  
     
   /**
    * Force clone implementation
@@ -37,6 +38,13 @@ public interface ManagedIdEntities<E extends ManagedId> extends LongMapWrapper<E
    */
   public default boolean contains(long id) {
     return get(id) != null;
-  }    
+  }
+  
+  /**
+   * Identical to {@link #recreateIds(true)} 
+   */
+  public default void recreateIds() {
+    recreateIds(true);
+  }  
 
 }

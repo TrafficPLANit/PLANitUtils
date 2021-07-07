@@ -12,5 +12,11 @@ public interface OdZones extends Zones<OdZone>{
    * {@inheritDoc}
    */
   @Override
+  public abstract OdZoneFactory getFactory();
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
   public abstract OdZones clone();
 }

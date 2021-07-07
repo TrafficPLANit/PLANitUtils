@@ -287,7 +287,7 @@ public class PlanitGraphGeoUtils {
    *  @param edgesCollection collections to add
    *  @return created quadtree instance
    */
-  public static <T extends Edge> Quadtree createSpatiallyIndexedPlanitEdges(Collection<GraphEntities<T>> edgesCollection) {
+  public static <T extends Edge> Quadtree createSpatiallyIndexedPlanitEdges(Collection<? extends GraphEntities<T>> edgesCollection) {
     Quadtree spatiallyIndexedEdges = new Quadtree();
     for(GraphEntities<T> edges : edgesCollection) {
       edges.forEach(edge -> spatiallyIndexedEdges.insert(edge.getGeometry().getEnvelope().getEnvelopeInternal(),edge));

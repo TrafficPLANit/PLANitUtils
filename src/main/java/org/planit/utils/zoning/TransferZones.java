@@ -7,6 +7,12 @@ package org.planit.utils.zoning;
  *
  */
 public interface TransferZones extends Zones<TransferZone>{
+  
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public abstract TransferZoneFactory getFactory();
 
   /**
    * {@inheritDoc}

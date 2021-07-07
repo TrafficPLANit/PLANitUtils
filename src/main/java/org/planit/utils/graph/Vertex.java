@@ -79,12 +79,13 @@ public interface Vertex extends Serializable, GraphEntity {
    * 
    * @return Set of Edge objects
    */
-  public abstract Collection<? extends Edge> getEdges();  
+  public abstract Collection<Edge> getEdges();  
     
   /**
    * Clone the vertex
    * @return the cloned vertex
    */
+  @Override
   public abstract Vertex clone();
   
   /**

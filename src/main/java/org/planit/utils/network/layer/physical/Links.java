@@ -1,7 +1,5 @@
 package org.planit.utils.network.layer.physical;
 
-import java.util.logging.Logger;
-
 import org.planit.utils.graph.GraphEntities;
 
 /**
@@ -22,12 +20,7 @@ public interface Links extends GraphEntities<Link> {
    * {@inheritDoc}
    */
   @Override
-  public default LinkFactory getFactory() {
-    /** override to change return type signature on interface, implementation must still
-     * implement this method to provide access to an actual instance */
-    Logger.getLogger(Links.class.getCanonicalName()).warning("getFactory not implemented yet for links implementation");
-    return null;
-  }
+  public abstract LinkFactory getFactory();
 
   /**
    * {@inheritDoc}

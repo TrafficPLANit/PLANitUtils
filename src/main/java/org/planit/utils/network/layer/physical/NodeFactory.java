@@ -11,7 +11,7 @@ public interface NodeFactory extends GraphEntityFactory<Node> {
 
   /** Create a new node (without registering)
    * 
-   * @return created vertex
+   * @return created node
    */
   public abstract Node createNew();
   

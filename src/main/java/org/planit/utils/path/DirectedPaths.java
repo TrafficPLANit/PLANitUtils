@@ -14,7 +14,7 @@ public interface DirectedPaths extends ManagedIdEntities<DirectedPath>  {
    * Factory to create paths on this container
    */
   @Override
-  public abstract DirectedPathFactory getFactory();
+  public abstract ContainerisedDirectedPathFactory getFactory();
 
   /**
    * {@inheritDoc}

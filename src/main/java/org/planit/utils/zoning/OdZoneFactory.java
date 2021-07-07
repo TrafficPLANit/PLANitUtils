@@ -12,15 +12,14 @@ public interface OdZoneFactory extends ContainerisedManagedIdEntityFactory<OdZon
   /**
    * Create and register new OD zone
    *
-   *@param centroid to use
    * @return the new zone created
    */
-  public abstract OdZone registerNew(final Centroid centroid);
+  public abstract OdZone registerNew();
   
   /**
    * Create a new OD zone without registering
    *
    * @return the new zone created
    */
-  public abstract OdZone createNew(final Centroid centroid);  
+  public abstract OdZone createNew();  
 }

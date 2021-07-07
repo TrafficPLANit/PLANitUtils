@@ -3,8 +3,10 @@ package org.planit.utils.network.layer.service;
 import java.util.Collection;
 import java.util.Set;
 
+import org.planit.utils.graph.Edge;
 import org.planit.utils.graph.EdgeSegment;
 import org.planit.utils.graph.directed.DirectedVertex;
+import org.planit.utils.network.layer.physical.Node;
 
 /**
  * Service node is a vertex but not all vertices are service nodes.
@@ -17,51 +19,44 @@ import org.planit.utils.graph.directed.DirectedVertex;
 public interface ServiceNode extends DirectedVertex {
      
   /**
-   * It is expected that service nodes are used in conjunction with service legs. If so, this method will cast the edges of the service node to 
-   * a service leg collection for readability.
+   * Identical to {@link #getEdges()}
    * 
-   * @param <L> service leg type
-   * @return edges cast as collection of service legs
+   * @return legs 
    */
-  @SuppressWarnings("unchecked")
-  public default <L extends ServiceLeg> Collection<L> getLegs() {
-    return (Collection<L>) getEdges();
+  public default  Collection<? extends Edge> getLegs() {
+    return getEdges();
   }
   
   /**
-   * It is expected that service nodes are used in conjunction with leg segments. If so, this method will cast the leg segments of the service node 
-   * to leg segments for readability.
+   * Identical to {@link #getEntryEdgeSegments()}
+   * @return 
    * 
-   * @param <LS> leg segment type
-   * @return edgeSegments as collection of leg Segments
+   * @return entryLegSegments
    */
-  @SuppressWarnings("unchecked")  
-  public default <SLS extends ServiceLegSegment> Set<SLS> getEntryLegSegments() {
-    return (Set<SLS>) getEntryEdgeSegments();
+ 
+  public default  Set<EdgeSegment> getEntryLegSegments() {
+    return getEntryEdgeSegments();
   }
   
   /**
-   * It is expected that service nodes are used in conjunction with leg segments. If so, this method will cast the leg segments of the service node 
-   * to leg segments for readability.
+   * Identical to {@link #getExitEdgeSegments()}
+   * @return 
    * 
-   * @param <LS> leg segment type
-   * @return edgeSegments as collection of leg Segments
+   * @return exitLegSegments
    */
-  @SuppressWarnings("unchecked")  
-  public default <SLS extends ServiceLegSegment> Set<SLS> getExitLegSegments() {
-    return (Set<SLS>) getExitEdgeSegments();
+ 
+  public default Set<EdgeSegment> getExitLegSegments() {
+    return getExitEdgeSegments();
   }
 
 
-  /** Collect the first leg segment corresponding to the provided end node
+  /** Identical to {@code #getEdgeSegment(DirectedVertex)}
    * 
-   * @param <LS> leg segment type
    * @param endNode to use
    * @return first leg segment matching this signature
    */
-  @SuppressWarnings("unchecked")
-  public default <SLS extends ServiceLegSegment> SLS getLegSegment(ServiceNode endNode) {
-    return (SLS) getEdgeSegment(endNode);
+  public default ServiceLegSegment getLegSegment(ServiceNode endNode) {
+    return (ServiceLegSegment) getEdgeSegment(endNode);
   }
 
 
@@ -69,24 +64,27 @@ public interface ServiceNode extends DirectedVertex {
    * Collect the first available entry leg segment using the iterator internally. It is assumed
    * at least one entry is available
    * 
-   * @param <LS> leg segment type used
    * @return first entry available
    */
-  @SuppressWarnings("unchecked")
-  public default <SLS extends ServiceLegSegment> SLS getFirstEntryLegSegment(){
-    return (SLS) getEntryLegSegments().iterator().next();
+  public default ServiceLegSegment getFirstEntryLegSegment(){
+    return (ServiceLegSegment) getEntryLegSegments().iterator().next();
   }
   
   /**
    * Collect the first available exit link segment using the iterator internally. It is assumed
    * at least one entry is available
    * 
-   * @param <LS> link segment type used
    * @return first exit available
    */
-  @SuppressWarnings("unchecked")
-  public default <SLS extends EdgeSegment> SLS getFirstExitLegSegment(){
-    return (SLS) getExitLegSegments().iterator().next();
+  public default ServiceLegSegment getFirstExitLegSegment(){
+    return (ServiceLegSegment) getExitLegSegments().iterator().next();
   }  
+  
+  /**
+   * Provide access to the underlying network node
+   * 
+   * @return networkLayerNode
+   */
+  public abstract Node getNetworkLayerNode();
   
 }

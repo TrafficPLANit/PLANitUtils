@@ -49,8 +49,8 @@ public abstract class ManagedIdEntitiesImpl<E extends ManagedId> extends LongMap
    * {@inheritDoc}
    */
   @Override
-  public void recreateIds(boolean reset) {
-    if(reset == true) {
+  public void recreateIds(boolean resetManagedIdClass) {
+    if(resetManagedIdClass == true) {
       IdGenerator.reset(getFactory().getIdGroupingToken(), iterator().next().getIdClass() /* e.g. Edge.class, vertex.class etc. */);
     }
     

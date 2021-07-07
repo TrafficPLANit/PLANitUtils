@@ -9,7 +9,13 @@ import org.planit.utils.network.layer.physical.UntypedPhysicalLayer;
  *
  * @author markr
  */
-public interface MacroscopicPhysicalLayer extends UntypedPhysicalLayer<Nodes, Links, MacroscopicLinkSegments> {
+public interface MacroscopicNetworkLayer extends UntypedPhysicalLayer<Nodes, Links, MacroscopicLinkSegments> {
 
+  /**
+   * Provide access to registered macroscopic link segment types used across all macroscopic link segments
+   * 
+   * @return link segment types container class
+   */
+  public abstract MacroscopicLinkSegmentTypes getLinkSegmentTypes();
 
 }

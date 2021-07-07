@@ -23,7 +23,7 @@ public interface MacroscopicLinkSegmentTypeFactory extends ContainerisedManagedI
    * @return the link segment type
    * @throws PlanItException thrown if there is an error
    */
-  public MacroscopicLinkSegmentType createAndRegisterNew(final String name, final double capacityPcuPerHour, final double maximumDensityPcuPerKm,
+  public MacroscopicLinkSegmentType registerNew(final String name, final double capacityPcuPerHour, final double maximumDensityPcuPerKm,
       final Map<Mode, MacroscopicModeProperties> modeProperties) throws PlanItException;
   
   /**
@@ -35,6 +35,6 @@ public interface MacroscopicLinkSegmentTypeFactory extends ContainerisedManagedI
    * @return the link segment type
    * @throws PlanItException thrown if there is an error
    */
-  public abstract MacroscopicLinkSegmentType createAndRegisterNew(final String name, final double capacityPcuPerHour, final double maximumDensityPcuPerKm) throws PlanItException;
+  public abstract MacroscopicLinkSegmentType registerNew(final String name, final double capacityPcuPerHour, final double maximumDensityPcuPerKm) throws PlanItException;
 
 }

@@ -1,7 +1,5 @@
 package org.planit.utils.mode;
 
-import java.util.logging.Logger;
-
 import org.planit.utils.id.ManagedIdEntities;
 
 /**
@@ -48,17 +46,12 @@ public interface Modes extends ManagedIdEntities<Mode> {
   public abstract Modes clone();
 
   /**
-   * Collect the edge factory to use for creating instances
+   * Collect the mode factory to use for creating instances
    * 
-   * @return edgeFactory to create edges for this container
+   * @return modeFactory to create modes for this container
    */
   @Override
-  public default ModeFactory getFactory(){
-    /** override to change return type signature on interface, implementation must still
-     * implement this method to provide access to an actual instance */
-    Logger.getLogger(Modes.class.getCanonicalName()).warning("getFactory not implemented yet for modes implementation");
-    return null;
-  }
+  public abstract ModeFactory getFactory();
   
 
 }

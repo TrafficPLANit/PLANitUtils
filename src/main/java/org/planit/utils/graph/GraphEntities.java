@@ -47,7 +47,7 @@ public interface GraphEntities<E extends GraphEntity> extends ManagedIdEntities<
    * @param externalId to match
    * @return found matching links
    */  
-  public default Collection<? extends E> getByExternalId(String externalId) {
+  public default Collection<E> getByExternalId(String externalId) {
     ArrayList<E> matches = new ArrayList<E>(1);  
     for(E entity : this) {
       if(entity.getExternalId().equals(externalId)) {

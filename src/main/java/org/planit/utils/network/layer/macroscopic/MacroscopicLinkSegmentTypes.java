@@ -11,6 +11,12 @@ import org.planit.utils.id.ManagedIdEntities;
 public interface MacroscopicLinkSegmentTypes extends ManagedIdEntities<MacroscopicLinkSegmentType> {
    
   /**
+   * {@inheritDoc}
+   */
+  @Override
+  public abstract MacroscopicLinkSegmentTypeFactory getFactory();
+
+  /**
    * Return a MacroscopicLinkSegmentType by its Xml id
    * 
    * @param xmlId the XML id of the MacroscopicLinkSegmentType

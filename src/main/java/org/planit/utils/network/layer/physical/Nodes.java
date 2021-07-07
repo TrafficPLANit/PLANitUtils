@@ -1,7 +1,5 @@
 package org.planit.utils.network.layer.physical;
 
-import java.util.logging.Logger;
-
 import org.planit.utils.graph.GraphEntities;
 
 /**
@@ -21,11 +19,6 @@ public interface Nodes extends GraphEntities<Node> {
    * {@inheritDoc}
    */
   @Override
-  public default NodeFactory getFactory() {
-    /** override to change return type signature on interface, implementation must still
-     * implement this method to provide access to an actual instance */
-    Logger.getLogger(Nodes.class.getCanonicalName()).warning("getFactory not implemented yet for nodes implementation");
-    return null;
-  } 
+  public abstract NodeFactory getFactory();
   
 }

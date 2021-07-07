@@ -1,7 +1,7 @@
 package org.planit.utils.network.physical;
 
 import org.planit.utils.network.TopologicalLayers;
-import org.planit.utils.network.layer.physical.PhysicalLayer;
+import org.planit.utils.network.layer.physical.UntypedPhysicalLayer;
 
 /**
  * interface to manage topological layers, i.e., layers that contain a topologically meaningful representation in the form of nodes and links
@@ -9,7 +9,7 @@ import org.planit.utils.network.layer.physical.PhysicalLayer;
  * @author markr
  *
  */
-public interface PhysicalNetworkLayers extends TopologicalLayers<PhysicalLayer> {
+public interface PhysicalNetworkLayers<T extends UntypedPhysicalLayer<?,?,?>> extends TopologicalLayers<T> {
 
   /**
    * Number of nodes across all layers
@@ -18,7 +18,7 @@ public interface PhysicalNetworkLayers extends TopologicalLayers<PhysicalLayer> 
    */
   public default long getNumberOfNodes() {
     long sum = 0;
-    for (PhysicalLayer layer : this) {
+    for (T layer : this) {
       sum += layer.getNumberOfNodes();
     }
     return sum;
@@ -31,7 +31,7 @@ public interface PhysicalNetworkLayers extends TopologicalLayers<PhysicalLayer> 
    */
   public default long getNumberOfLinks() {
     long sum = 0;
-    for (PhysicalLayer layer : this) {
+    for (T layer : this) {
       sum += layer.getNumberOfLinks();
     }
     return sum;
@@ -44,7 +44,7 @@ public interface PhysicalNetworkLayers extends TopologicalLayers<PhysicalLayer> 
    */
   public default long getNumberOfLinkSegments() {
     long sum = 0;
-    for (PhysicalLayer layer : this) {
+    for (T layer : this) {
       sum += layer.getNumberOfLinkSegments();
     }
     return sum;

@@ -1,6 +1,5 @@
 package org.planit.utils.network.layer.physical;
 
-import org.planit.utils.exceptions.PlanItException;
 import org.planit.utils.graph.GraphEntityFactory;
 
 /** Factory interface for creating links.
@@ -17,9 +16,8 @@ public interface LinkFactory extends GraphEntityFactory<Link>{
    * @param nodeB the second vertex of this edge
    * @param lengthKm length of the link in km
    * @return the created edge
-   * @throws PlanItException thrown if there is an error
    */
-  default public Link registerNew(final Node nodeA, final Node nodeB, double lengthKm) throws PlanItException{
+  default public Link registerNew(final Node nodeA, final Node nodeB, double lengthKm){
     return registerNew(nodeA, nodeB, lengthKm, false);
   }
   
@@ -31,7 +29,6 @@ public interface LinkFactory extends GraphEntityFactory<Link>{
    * @param lengthKm length of the link in km
    * @param registerOnNodes choice to register new edge on the vertices or not
    * @return the created link
-   * @throws PlanItException thrown if there is an error
    */
-  public abstract Link registerNew(final Node nodeA, final Node nodeB, double lengthKm, boolean registerOnNodes) throws PlanItException;     
+  public abstract Link registerNew(final Node nodeA, final Node nodeB, double lengthKm, boolean registerOnNodes);     
 }

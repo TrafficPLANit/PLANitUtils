@@ -1,7 +1,5 @@
 package org.planit.utils.graph;
 
-import java.util.logging.Logger;
-
 /**
  * Container class for vertices and creating instances within this container via factory.
  * 
@@ -15,12 +13,7 @@ public interface Vertices extends GraphEntities<Vertex> {
    * @return vertexFactory to create edges for this container
    */
   @Override
-  public default VertexFactory getFactory(){
-    /** override to change return type signature on interface, implementation must still
-     * implement this method to provide access to an actual instance */
-    Logger.getLogger(Vertices.class.getCanonicalName()).warning("getFactory not implemented yet for vertices implementation");
-    return null;
-  }  
+  public abstract VertexFactory getFactory();  
   
   /**
    * clone vertices

@@ -63,7 +63,7 @@ public interface TransferZone extends Zone {
    */
   public abstract boolean removeFromTransferZoneGroup(TransferZoneGroup transferZoneGroup);
 
-  /** all transfer zone groups the transfer zone resides in (unmodifiable)
+  /** All transfer zone groups the transfer zone resides in (unmodifiable)
    * @return transfer zone groups of the transfer zone
    */
   public abstract Set<TransferZoneGroup> getTransferZoneGroups();

@@ -12,15 +12,14 @@ public interface TransferZoneFactory extends ContainerisedManagedIdEntityFactory
   /**
    * Create and register new transfer zone
    *
-   *@param centroid to use
    * @return the new zone created
    */
-  public abstract TransferZone registerNew(final Centroid centroid);
+  public abstract TransferZone registerNew();
   
   /**
    * Create a new transfer zone without registering
    *
    * @return the new zone created
    */
-  public abstract TransferZone createNew(final Centroid centroid); 
+  public abstract TransferZone createNew(); 
 }

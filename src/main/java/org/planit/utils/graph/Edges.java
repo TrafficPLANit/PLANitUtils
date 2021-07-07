@@ -1,7 +1,5 @@
 package org.planit.utils.graph;
 
-import java.util.logging.Logger;
-
 /**
  * Container and factory class for edges in a graph, also to be used to create and register edges of any
  * (derived) type
@@ -16,12 +14,7 @@ public interface Edges extends GraphEntities<Edge>{
    * @return edgeFactory to create edges for this container
    */
   @Override
-  public default EdgeFactory getFactory(){
-    /** override to change return type signature on interface, implementation must still
-     * implement this method to provide access to an actual instance */
-    Logger.getLogger(Edges.class.getCanonicalName()).warning("getFactory not implemented yet for edges implementation");
-    return null;
-  }
+  public abstract EdgeFactory getFactory();
   
   /**
    * clone edges

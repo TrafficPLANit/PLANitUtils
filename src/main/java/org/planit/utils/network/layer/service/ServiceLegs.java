@@ -1,14 +1,24 @@
 package org.planit.utils.network.layer.service;
 
-import org.planit.utils.graph.Edges;
+import org.planit.utils.graph.GraphEntities;
 
-/** Container around Edges especially designed for ServiceLegs rather than raw Edge instances
+/** Container around service legs with factory access 
  * 
  * @author markr
- *
- * @param <SL> type of service leg
  */
-public interface ServiceLegs<SL extends ServiceLeg> extends Edges<SL> {
+public interface ServiceLegs extends GraphEntities<ServiceLeg> {
+  
+  /* do not derive from Links since we require to override the factory method return type. This is only
+   * allowed when the return type directly derives from the original return type. ServiceLegFactory cannot
+   * derive from LinkFactory since the signature of the factory methods differs. Hence, we must derive from
+   * the base interface instead which has an empty dummy factory return type which one can always overwrite and
+   * the ServiceLegFactory is derived from */
+  
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public abstract ServiceLegFactory getFactory();  
 
   /**
    * verify if service leg is present

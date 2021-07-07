@@ -1,6 +1,7 @@
 package org.planit.utils.network.layer.physical;
 
 import org.planit.utils.graph.GraphEntities;
+import org.planit.utils.id.IdGroupingToken;
 import org.planit.utils.network.layer.TopologicalLayer;
 import org.planit.utils.network.layer.physical.UntypedPhysicalLayer;
 
@@ -13,6 +14,14 @@ import org.planit.utils.network.layer.physical.UntypedPhysicalLayer;
  */
 public interface UntypedPhysicalLayer<N extends GraphEntities<? extends Node>, L extends GraphEntities<? extends Link>, LS extends GraphEntities<? extends LinkSegment> > extends TopologicalLayer {
 
+  /**
+   * Collect the id grouping token used for all entities registered on the layer, i.e., this layer's specific identifier for generating ids unique and contiguous within this
+   * layer 
+   * 
+   * @return the layer id grouping token
+   */
+  public abstract IdGroupingToken getLayerIdGroupingToken();
+  
   /**
    * Collect the links
    * 
