@@ -1,6 +1,5 @@
 package org.planit.utils.graph.directed;
 
-import org.planit.utils.exceptions.PlanItException;
 import org.planit.utils.graph.EdgeSegment;
 import org.planit.utils.graph.GraphEntityFactory;
 
@@ -17,9 +16,8 @@ public interface EdgeSegmentFactory extends GraphEntityFactory<EdgeSegment> {
    * @param parentEdge  the parent edge of this edge segment
    * @param directionAB direction of travel
    * @return the created edge segment
-   * @throws PlanItException thrown if there is an error
    */
-  public abstract EdgeSegment create(final DirectedEdge parentEdge, final boolean directionAB) throws PlanItException;
+  public abstract EdgeSegment create(final DirectedEdge parentEdge, final boolean directionAB);
   
   /**
    * Create directional edge segment and register it
@@ -28,8 +26,7 @@ public interface EdgeSegmentFactory extends GraphEntityFactory<EdgeSegment> {
    * @param directionAb           direction of travel
    * @param registerOnVertexAndEdge option to register the new edge segment on the underlying edge and its vertices
    * @return the created edge segment
-   * @throws PlanItException thrown if there is an error
    */
-  public abstract EdgeSegment registerNew(final DirectedEdge parentEdge, final boolean directionAb, final boolean registerOnVertexAndEdge) throws PlanItException;
+  public abstract EdgeSegment registerNew(final DirectedEdge parentEdge, final boolean directionAb, final boolean registerOnVertexAndEdge);
     
 }

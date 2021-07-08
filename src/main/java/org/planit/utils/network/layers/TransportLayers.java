@@ -1,11 +1,11 @@
-package org.planit.utils.network;
+package org.planit.utils.network.layers;
 
 import java.util.ArrayList;
 import java.util.Collection;
 
+import org.planit.utils.id.ManagedIdEntities;
 import org.planit.utils.mode.Mode;
 import org.planit.utils.network.layer.TransportLayer;
-import org.planit.utils.wrapper.LongMapWrapper;
 
 /**
  * interface to manage transport layers.
@@ -13,29 +13,14 @@ import org.planit.utils.wrapper.LongMapWrapper;
  * @author markr
  *
  */
-public interface TransportLayers<T extends TransportLayer> extends LongMapWrapper<T> {
-
-  /**
-   * Create a new infrastructure layer (without registering on this class).
-   * 
-   * @return created transport layer
-   */
-  public abstract T createAndRegisterNew();
-
-  /**
-   * Create a new transport layer and registering on this class.
-   * 
-   * @return created transport layer
-   */
-  public abstract T registerNew();
-
-  /**
-   * Add to the container
-   *
-   * @param entity to be registered in this layer
-   * @return entity, in case it overrides an existing entry, the removed entry is returned
-   */
-  public abstract T register(final T entity);
+public interface TransportLayers<T extends TransportLayer> extends ManagedIdEntities<T> {
+  
+//  /**
+//   * Create a new transport layer and registering on this class.
+//   * 
+//   * @return created transport layer
+//   */
+//  public abstract T registerNew();
 
   /**
    * Find the layer that supports the passed in mode. Since a mode is only allowed to be supported by a single layer, this should yield the correct result. If multiple layers
@@ -102,5 +87,11 @@ public interface TransportLayers<T extends TransportLayer> extends LongMapWrappe
     }
     return layerList;
   }
+  
+  /**
+   * clone container
+   */
+  @Override
+  public abstract TransportLayers<T> clone();
 
 }

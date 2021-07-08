@@ -1,67 +1,61 @@
 package org.planit.utils.network.layer.physical;
 
 import org.planit.utils.graph.GraphEntities;
-import org.planit.utils.id.IdGroupingToken;
-import org.planit.utils.network.layer.TopologicalLayer;
+import org.planit.utils.network.layer.UntypedDirectedGraphLayer;
 import org.planit.utils.network.layer.physical.UntypedPhysicalLayer;
 
 /**
- * Physical topological Network consisting of containers with derived classes of Node, Link and LinkSegment. By using 
- * graphEntities instead of typed container classes such as Nodes, Links, LinkSegments, it can be used by other interfaces
- * without being restricted to using derived classes of typed containers. 
+ * Physical topological Network consisting of nodes, links and link segments 
  *
  * @author markr
  */
-public interface UntypedPhysicalLayer<N extends GraphEntities<? extends Node>, L extends GraphEntities<? extends Link>, LS extends GraphEntities<? extends LinkSegment> > extends TopologicalLayer {
+public interface UntypedPhysicalLayer<N extends Node, NE extends GraphEntities<N>, L extends Link, LE extends GraphEntities<L>, LS extends LinkSegment, LSE extends GraphEntities<LS>> extends UntypedDirectedGraphLayer<N, NE, L, LE, LS, LSE> {
 
-  /**
-   * Collect the id grouping token used for all entities registered on the layer, i.e., this layer's specific identifier for generating ids unique and contiguous within this
-   * layer 
-   * 
-   * @return the layer id grouping token
-   */
-  public abstract IdGroupingToken getLayerIdGroupingToken();
-  
   /**
    * Collect the links
    * 
    * @return the links
    */
-  public abstract L getLinks();
+  public abstract LE getLinks();
 
   /**
    * Collect the link segments
    * 
    * @return the linkSegments
    */
-  public abstract LS getLinkSegments();
+  public abstract LSE getLinkSegments();
 
   /**
    * Collect the nodes
    * 
    * @return the nodes
    */
-  public abstract N getNodes();
-  
+  public abstract NE getNodes();
+
   /**
    * Number of nodes
    * 
    * @return number of nodes
    */
-  public abstract long getNumberOfNodes();
+  public default long getNumberOfNodes() {
+    return getNodes().size();
+  }
 
   /**
    * Number of links
    * 
    * @return number of links
    */
-  public abstract long getNumberOfLinks();
+  public default long getNumberOfLinks() {
+    return getLinks().size();
+  }
 
   /**
    * Number of link segments
    * 
    * @return number of link segments
    */
-  public abstract long getNumberOfLinkSegments();  
-
+  public default long getNumberOfLinkSegments() {
+    return getLinkSegments().size();
+  }
 }

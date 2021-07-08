@@ -23,7 +23,7 @@ public class LoggingUtils {
    * are prefixed with the exact same string, i.e.  {@code [run id: <id> ]}
    * 
    * @param runId the run id
-   * @return runId Prefix
+   * @return runId prefix
    */
   public static String createRunIdPrefix(long runId) {
     return surroundwithBrackets(String.format("run id: %d", runId));
@@ -34,7 +34,7 @@ public class LoggingUtils {
    * are prefixed with the exact same string, i.e.  {@code [project id: <id> ]}
    * 
    * @param projectId the project id
-   * @return project Prefix
+   * @return project prefix
    */  
   public static String createProjectPrefix(long projectId) {
     return surroundwithBrackets(String.format("project id: %d", projectId));
@@ -45,7 +45,7 @@ public class LoggingUtils {
    * are prefixed with the exact same string, i.e.  {@code [network id: <id> ]}
    * 
    * @param networkId the network id
-   * @return network Prefix
+   * @return network prefix
    */    
   public static String createNetworkPrefix(long networkId) {
     return surroundwithBrackets(String.format("network id: %d", networkId));
@@ -56,7 +56,7 @@ public class LoggingUtils {
    * are prefixed with the exact same string, i.e.  {@code [zoning id: <id> ]}
    * 
    * @param zoningId the zoning id
-   * @return zoning Prefix
+   * @return zoning prefix
    */   
   public static String createZoningPrefix(long zoningId) {
     return surroundwithBrackets(String.format("zoning id: %d", zoningId));
@@ -67,18 +67,29 @@ public class LoggingUtils {
    * are prefixed with the exact same string, i.e.  {@code [demands id: <id> ]}
    * 
    * @param demandsId the demands id
-   * @return demands Prefix
+   * @return demands prefix
    */   
   public static String createDemandsPrefix(long demandsId) {
     return surroundwithBrackets(String.format("demands id: %d", demandsId));
   }  
   
   /**
+   * Create a prefix for the logger so that all logging items specific to a particular service network
+   * are prefixed with the exact same string, i.e.  {@code [services network id: <id> ]}
+   * 
+   * @param serviceNetworkId the id
+   * @return service network prefix
+   */    
+  public static String createServiceNetworkPrefix(long serviceNetworkId) {
+    return surroundwithBrackets(String.format("services network id: %d", serviceNetworkId));
+  }    
+  
+  /**
    * Create a prefix for the logger so that all logging items specific to a particular routed services
    * are prefixed with the exact same string, i.e.  {@code [routed services id: <id> ]}
    * 
    * @param routedServicesId the routed services id
-   * @return routed services Prefix
+   * @return routed services prefix
    */    
   public static String createRoutedServicesPrefix(long routedServicesId) {
     return surroundwithBrackets(String.format("routed services id: %d", routedServicesId));

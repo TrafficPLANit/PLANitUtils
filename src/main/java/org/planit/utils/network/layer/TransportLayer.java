@@ -3,6 +3,7 @@ package org.planit.utils.network.layer;
 import java.util.Collection;
 
 import org.planit.utils.id.ExternalIdAble;
+import org.planit.utils.id.ManagedId;
 import org.planit.utils.mode.Mode;
 
 /**
@@ -12,8 +13,19 @@ import org.planit.utils.mode.Mode;
  * @author markr
  *
  */
-public interface TransportLayer extends ExternalIdAble {
+public interface TransportLayer extends ExternalIdAble, ManagedId {
 
+  /** class used for managed id generation */
+  public static final Class<TransportLayer> TRANSPORT_LAYER_ID_CLASS = TransportLayer.class;
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  default Class<TransportLayer> getIdClass() {
+    return TRANSPORT_LAYER_ID_CLASS;
+  }
+  
   /**
    * create a string that can be used to prefix log statements for this layer to - in a unified way - identify this statement came from a particular layer
    * 

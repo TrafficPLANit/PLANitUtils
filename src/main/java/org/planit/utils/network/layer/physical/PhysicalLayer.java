@@ -10,7 +10,6 @@ import org.planit.utils.network.layer.physical.PhysicalLayer;
  *
  * @author markr
  */
-public interface PhysicalLayer extends UntypedPhysicalLayer<Nodes, Links, LinkSegments> {
-
+public interface PhysicalLayer extends UntypedPhysicalLayer<Node, Nodes, Link, Links, LinkSegment, LinkSegments> {
 
 }

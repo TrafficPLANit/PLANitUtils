@@ -3,7 +3,6 @@ package org.planit.utils.graph.directed;
 import java.util.ArrayList;
 import java.util.Collection;
 
-import org.planit.utils.exceptions.PlanItException;
 import org.planit.utils.graph.Edge;
 import org.planit.utils.graph.EdgeSegment;
 
@@ -32,14 +31,15 @@ public interface DirectedEdge extends Edge {
   /**
    * Register EdgeSegment.
    *
-   * If there already exists an edgeSegment for that direction it is replaced and returned
+   * If there already exists an edgeSegment for that direction it is replaced and returned. If the edge segment
+   * has no parent edge, this edge is set. If there is a discrepancy between the edge segment's parent edge and this edge
+   * a warning is issued and the edge segment is not registered
    *
    * @param edgeSegment the edgeSegment to be registered
    * @param directionAB direction of travel
    * @return replaced egeSegment (if any)
-   * @throws PlanItException thrown if there is an error
    */
-  public abstract EdgeSegment registerEdgeSegment(final EdgeSegment edgeSegment, final boolean directionAB) throws PlanItException;
+  public abstract EdgeSegment registerEdgeSegment(final EdgeSegment edgeSegment, final boolean directionAB);
   
   /**
    * Edge segment in the direction from A to B

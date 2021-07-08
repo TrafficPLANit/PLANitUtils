@@ -1,24 +1,25 @@
-package org.planit.utils.network.physical;
+package org.planit.utils.network.layers;
 
-import org.planit.utils.network.TopologicalLayers;
 import org.planit.utils.network.layer.physical.UntypedPhysicalLayer;
 
 /**
- * interface to manage topological layers, i.e., layers that contain a topologically meaningful representation in the form of nodes and links
+ * Interface to manage physical network layers, i.e., layers that contain a topologically meaningful representation in the form of nodes and links
+ * 
  * 
  * @author markr
  *
  */
-public interface PhysicalNetworkLayers<T extends UntypedPhysicalLayer<?,?,?>> extends TopologicalLayers<T> {
-
+public interface UntypedPhysicalNetworkLayers<L extends UntypedPhysicalLayer<?,?,?,?,?,?>> extends UntypedDirectedGraphLayers<L> {
+  
   /**
    * Number of nodes across all layers
    * 
    * @return number of nodes
    */
+  @SuppressWarnings("rawtypes")
   public default long getNumberOfNodes() {
     long sum = 0;
-    for (T layer : this) {
+    for (UntypedPhysicalLayer layer : this) {
       sum += layer.getNumberOfNodes();
     }
     return sum;
@@ -29,9 +30,10 @@ public interface PhysicalNetworkLayers<T extends UntypedPhysicalLayer<?,?,?>> ex
    * 
    * @return number of links
    */
+  @SuppressWarnings("rawtypes")
   public default long getNumberOfLinks() {
     long sum = 0;
-    for (T layer : this) {
+    for (UntypedPhysicalLayer layer : this) {
       sum += layer.getNumberOfLinks();
     }
     return sum;
@@ -42,12 +44,19 @@ public interface PhysicalNetworkLayers<T extends UntypedPhysicalLayer<?,?,?>> ex
    * 
    * @return number of link segments
    */
+  @SuppressWarnings("rawtypes")
   public default long getNumberOfLinkSegments() {
     long sum = 0;
-    for (T layer : this) {
+    for (UntypedPhysicalLayer layer : this) {
       sum += layer.getNumberOfLinkSegments();
     }
     return sum;
   }
+  
+  /**
+   * clone container
+   */
+  @Override
+  public abstract UntypedPhysicalNetworkLayers<L> clone();  
 
 }

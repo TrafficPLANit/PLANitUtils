@@ -1,4 +1,4 @@
-package org.planit.utils.network;
+package org.planit.utils.network.layers;
 
 import org.planit.utils.network.layer.TopologicalLayer;
 
@@ -10,4 +10,9 @@ import org.planit.utils.network.layer.TopologicalLayer;
  */
 public interface TopologicalLayers<T extends TopologicalLayer> extends TransportLayers<T> {
 
+  /**
+   * clone container
+   */
+  @Override
+  public abstract TopologicalLayers<T> clone();
 }
