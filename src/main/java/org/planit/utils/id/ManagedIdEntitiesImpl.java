@@ -51,6 +51,11 @@ public abstract class ManagedIdEntitiesImpl<E extends ManagedId> extends LongMap
   @Override
   public void recreateIds(boolean resetManagedIdClass) {
     if(resetManagedIdClass == true) {
+      //TODO: when no entries exist we should still be able to reset since it is expected to reset across the board for the idclass.
+      // If instances exist outside this container using the same idtoken then not resetting will have undesired behaviour.
+      // IDEA: add protected method to this class that provides the id class from its derived class. Since the derived class has the
+      // actual implementation class of the entity it can access the idclass at runtime without the need for an entity instance
+      // so remove getIdClass from the entity and move it to the entities instead!
       IdGenerator.reset(getFactory().getIdGroupingToken(), iterator().next().getIdClass() /* e.g. Edge.class, vertex.class etc. */);
     }
     
