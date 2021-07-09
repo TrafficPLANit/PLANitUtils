@@ -11,6 +11,18 @@ import org.planit.utils.graph.directed.DirectedEdge;
  *
  */
 public interface ConnectoidEdge extends DirectedEdge{
+  
+  /** additional id class for generating connectoid edge ids */
+  public static Class<ConnectoidEdge> CONNECTOID_EDGE_ID_CLASS = ConnectoidEdge.class;
+  
+  /**
+   * Return class used to generate unique connectoid edge ids via the id generator
+   * 
+   * @return class type
+   */
+  public default Class<ConnectoidEdge> getConnectoidSegmentIdClass(){
+    return CONNECTOID_EDGE_ID_CLASS;
+  }    
 
   /**
    * Register connectoidSegment.

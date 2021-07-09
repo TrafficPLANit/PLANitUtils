@@ -10,7 +10,7 @@ import org.planit.utils.graph.EdgeSegment;
  */
 public interface LinkSegment extends EdgeSegment {
   
-  /** id class for generating ids */
+  /** additional id class for generating link segment ids */
   public static final Class<LinkSegment> LINK_SEGMENT_ID_CLASS = LinkSegment.class;   
   
   /**
