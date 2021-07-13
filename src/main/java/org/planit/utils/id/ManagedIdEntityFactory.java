@@ -26,7 +26,7 @@ public interface ManagedIdEntityFactory<E extends ManagedId> {
    * 
    * @return idGroupingToken the id grouping token used by this builder
    */
-  public abstract IdGroupingToken getIdGroupingToken();
+  public abstract IdGroupingToken getIdGroupingToken();  
 
   /**
    * Create a shallow copy of the passed in entity, albeit with unique internal ids. Not registered

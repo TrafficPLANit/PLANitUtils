@@ -15,6 +15,13 @@ public interface ManagedIdEntities<E extends ManagedId> extends LongMapWrapper<E
    * @return entity factory
    */
   public abstract ContainerisedManagedIdEntityFactory<E> getFactory();
+  
+  /**
+   * Collect the class identifier used for the managed ids within the id group for instances of this class used in this container
+   * 
+   * @return managedIdClass for instances this factory creates
+   */
+  public abstract Class<? extends ManagedId> getManagedIdClass();  
       
   /**
    * Recreate the ids for all registered entities with or without resetting 

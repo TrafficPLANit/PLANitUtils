@@ -22,7 +22,7 @@ public interface UntypedDirectedGraph<V extends GraphEntities<? extends Directed
    */
   @Override
   public default boolean isEmpty() {
-    return UntypedGraph.super.isEmpty() && getEdgeSegments()!=null && !getEdgeSegments().isEmpty();
+    return UntypedGraph.super.isEmpty() && (getEdgeSegments()==null || getEdgeSegments().isEmpty());
   }  
 
   /**

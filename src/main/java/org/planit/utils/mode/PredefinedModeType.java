@@ -82,12 +82,12 @@ public enum PredefinedModeType {
     }
   }
   
-  /** collect all predefined mode types
+  /** Collect all predefined mode types
    * 
    * @param excludedModeTypes option to exclude predefined custom modes from the result
    * @return predefined mode types minus excluded types
    */
-  public static EnumSet<PredefinedModeType> getPredefinedModeTypes(PredefinedModeType... excludedModeTypes) {
+  public static EnumSet<PredefinedModeType> getPredefinedModeTypesWithout(PredefinedModeType... excludedModeTypes) {
     EnumSet<PredefinedModeType> allPredefinedModeTypes = getPredefinedModeTypes();
     for(int index=0; index< excludedModeTypes.length; ++index) {
       allPredefinedModeTypes.remove(excludedModeTypes[index]);

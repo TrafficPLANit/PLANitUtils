@@ -15,14 +15,20 @@ import org.planit.utils.wrapper.LongMapWrapperImpl;
  * @param <E> type of managed id entity
  */
 public abstract class ManagedIdEntitiesImpl<E extends ManagedId> extends LongMapWrapperImpl<E> implements ManagedIdEntities<E> {
-
+  
+  /** the class signature used for generating the managed id within the group defined by the token */
+  protected final Class<? extends ManagedId> managedIdClass;
+  
   /**
    * Constructor
    * 
    * @param valueToKey the mapping from key to value of the graph entity
+   * @param managedIdClass should reflect the class signature used for generating the managed id of this class when creating it via the factory
+   * of this container
    */
-  protected ManagedIdEntitiesImpl(Function<E, Long> valueToKey) {
+  protected ManagedIdEntitiesImpl(final Function<E, Long> valueToKey, final Class<? extends ManagedId> managedIdClass) {
     super(new TreeMap<Long, E>(), valueToKey);
+    this.managedIdClass = managedIdClass;
   }
 
   /**
@@ -32,6 +38,7 @@ public abstract class ManagedIdEntitiesImpl<E extends ManagedId> extends LongMap
    */
   protected ManagedIdEntitiesImpl(ManagedIdEntitiesImpl<E> other) {
     super(other);
+    this.managedIdClass = other.managedIdClass;
   }
 
   /**
@@ -49,14 +56,17 @@ public abstract class ManagedIdEntitiesImpl<E extends ManagedId> extends LongMap
    * {@inheritDoc}
    */
   @Override
+  public Class<? extends ManagedId> getManagedIdClass() {
+    return managedIdClass;
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
   public void recreateIds(boolean resetManagedIdClass) {
     if(resetManagedIdClass == true) {
-      //TODO: when no entries exist we should still be able to reset since it is expected to reset across the board for the idclass.
-      // If instances exist outside this container using the same idtoken then not resetting will have undesired behaviour.
-      // IDEA: add protected method to this class that provides the id class from its derived class. Since the derived class has the
-      // actual implementation class of the entity it can access the idclass at runtime without the need for an entity instance
-      // so remove getIdClass from the entity and move it to the entities instead!
-      IdGenerator.reset(getFactory().getIdGroupingToken(), iterator().next().getIdClass() /* e.g. Edge.class, vertex.class etc. */);
+      IdGenerator.reset(getFactory().getIdGroupingToken(), getManagedIdClass() /* e.g. Edge.class, vertex.class etc. */);
     }
     
     if (!isEmpty()) {
