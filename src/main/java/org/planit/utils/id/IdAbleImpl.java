@@ -8,6 +8,7 @@ package org.planit.utils.id;
  */
 public abstract class IdAbleImpl implements IdAble {
   
+  /** the id */
   private long id;
   
   /** set the id 

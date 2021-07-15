@@ -9,14 +9,15 @@ import org.planit.utils.exceptions.PlanItException;
 import org.planit.utils.geo.PlanitJtsCrsUtils;
 import org.planit.utils.graph.Edge;
 import org.planit.utils.graph.Vertex;
+import org.planit.utils.graph.modifier.event.GraphModifierEventProducer;
 
 /**
- * Modify graph elements .
+ * Modify graph elements
  * 
  * @author markr
  *
  */
-public interface GraphModifier<V extends Vertex, E extends Edge> {
+public interface GraphModifier<V extends Vertex, E extends Edge> extends GraphModifierEventProducer{
 
   /**
    * remove any dangling subgraphs below a given size from the graph if they exist and subsequently reorder the internal ids if needed
@@ -65,34 +66,6 @@ public interface GraphModifier<V extends Vertex, E extends Edge> {
    */
   public abstract void recreateIds();
   
-  /**
-   * register a listener that will be invoked whenever an entity of a subgraph is removed via {@link removeSubGraph}
-   * 
-   * @param listener to register
-   */
-  public abstract void registerRemoveSubGraphListener(RemoveSubGraphListener listener);
-  
-  /**
-   * unregister a listener that is currently registered
-   * 
-   * @param listener to unregister
-   */  
-  public abstract void unregisterRemoveSubGraphListener(RemoveSubGraphListener listener);  
-  
-  /**
-   * register a listener that will be invoked whenever a link is broken via {@link breakEdgesAt}
-   * 
-   * @param listener to register
-   */  
-  public void unregisterBreakEdgeListener(BreakEdgeListener listener);
-
-  /**
-   * unregister a listener that is currently registered
-   * 
-   * @param listener to unregister
-   */   
-  public void registerBreakEdgeListener(BreakEdgeListener listener);  
-
   /**
    * remove any dangling sub graphs from the graph if they exist and reorder the ids if needed
    * 
