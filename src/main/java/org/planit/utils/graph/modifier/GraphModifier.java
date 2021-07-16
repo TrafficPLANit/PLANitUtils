@@ -17,7 +17,7 @@ import org.planit.utils.graph.modifier.event.GraphModifierEventProducer;
  * @author markr
  *
  */
-public interface GraphModifier<V extends Vertex, E extends Edge> extends GraphModifierEventProducer{
+public interface GraphModifier<V extends Vertex, E extends Edge> extends GraphModifierEventProducer, TopologicalModifier{
 
   /**
    * remove any dangling subgraphs below a given size from the graph if they exist and subsequently reorder the internal ids if needed

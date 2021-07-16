@@ -1,5 +1,7 @@
 package org.planit.utils.event;
 
+import java.util.logging.Logger;
+
 import org.planit.utils.id.IdAbleImpl;
 import org.planit.utils.id.IdGenerator;
 import org.planit.utils.id.IdGroupingToken;
@@ -11,60 +13,73 @@ import org.planit.utils.id.IdGroupingToken;
  */
 public abstract class EventImpl extends IdAbleImpl implements Event{
   
-    /** Type of the event */
-    private final EventType type;
+  /** logger to use */
+  private static final Logger LOGGER = Logger.getLogger(EventImpl.class.getCanonicalName()); 
+  
+  /** Type of the event */
+  private final EventType type;
 
-    /** The content of the event */
-    private final Object content;
+  /** The content of the event */
+  private final Object content;
 
-    /** the source id of the event */
-    private final Object sourceId;
+  /** the source id of the event */
+  private final Object sourceId;
     
-    /**
-     * Access to the content for derived events
-     */
-    protected Object getContent() {
-      return content;
-    }
+  /**
+   * Access to the content for derived events
+   */
+  protected Object getContent() {
+    return content;
+  }
 
-    /**
-     * Constructor
-     * 
-     * @param type EventType of the Event
-     * @param source source of the event sender
-     * @param content content of the event
-     */
-    public EventImpl(final EventType type, final Object source, final Object content){
-      super(IdGenerator.generateId(IdGroupingToken.collectGlobalToken(), Event.class));
-      this.type = type;
-      this.sourceId = source;
-      this.content = content;
-    }
+  /**
+   * Constructor
+   * 
+   * @param type EventType of the Event
+   * @param source source of the event sender
+   * @param content content of the event
+   */
+  public EventImpl(final EventType type, final Object source, final Object content){
+    super(IdGenerator.generateId(IdGroupingToken.collectGlobalToken(), Event.class));
+    this.type = type;
+    this.sourceId = source;
+    this.content = content;
+  }
 
-    /** 
-     * {@inheritDoc} 
-     */
-    @Override
-    public final Object getSource(){
-      return this.sourceId;
-    }
+  /** 
+   * {@inheritDoc} 
+   */
+  @Override
+  public final Object getSource(){
+    return this.sourceId;
+  }
 
-    /** 
-     * {@inheritDoc} 
-     */
-    @Override
-    public final EventType getType(){
-      return this.type;
-    }
+  /** 
+   * {@inheritDoc} 
+   */
+  @Override
+  public final EventType getType(){
+    return this.type;
+  }
 
-    /** 
-     * {@inheritDoc} 
-     */
-    @Override
-    public String toString()
-    {
-        return ""+ this.getClass().getName() + "-" + this.getType() + "-id:"+this.getId();
-    }
+  /**
+   * While events are id able, they cannot be cloned. and null is always returned
+   * upon calling this method
+   */
+  @Override
+  public EventImpl clone() {
+    LOGGER.warning("IGNORED, Events are not cloneable");
+    return null;
+  }  
+
+  /** 
+   * {@inheritDoc} 
+   */
+  @Override
+  public String toString()
+  {
+      return ""+ this.getClass().getName() + "-" + this.getType() + "-id:"+this.getId();
+  }
 
 }
 

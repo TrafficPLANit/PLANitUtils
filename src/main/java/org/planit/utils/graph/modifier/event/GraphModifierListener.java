@@ -1,6 +1,6 @@
 package org.planit.utils.graph.modifier.event;
 
-import java.util.EventListener;
+import org.planit.utils.event.EventListener;
 
 /** To serve as base listener class for all graph modification events, where its onX method provides any
  *  graph modification event as parameter

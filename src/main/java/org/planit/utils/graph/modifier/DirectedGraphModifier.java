@@ -2,6 +2,7 @@ package org.planit.utils.graph.modifier;
 
 import org.planit.utils.graph.directed.DirectedEdge;
 import org.planit.utils.graph.directed.DirectedVertex;
+import org.planit.utils.graph.modifier.event.DirectedGraphModifierEventProducer;
 
 /**
  * Modify directed graph elements .
@@ -9,13 +10,6 @@ import org.planit.utils.graph.directed.DirectedVertex;
  * @author markr
  *
  */
-public interface DirectedGraphModifier extends GraphModifier<DirectedVertex, DirectedEdge>{
-
-  /** register listener for removing directed sub graphs
-   * @param subGraphRemovalListener to register
-   */
-  public abstract void registerRemoveSubGraphListener(RemoveDirectedSubGraphListener subGraphRemovalListener);
-   
-
+public interface DirectedGraphModifier extends GraphModifier<DirectedVertex, DirectedEdge>, DirectedGraphModifierEventProducer{
 
 }

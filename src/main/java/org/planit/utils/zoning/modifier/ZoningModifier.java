@@ -1,12 +1,14 @@
 package org.planit.utils.zoning.modifier;
 
+import org.planit.utils.zoning.modifier.event.ZoningModifierEventProducer;
+
 /**
  * zoning modifier takes care of modifications that comprise multiple components across the zoning in an integrated fashion
  * 
  * @author markr
  *
  */
-public interface ZoningModifier {
+public interface ZoningModifier extends ZoningModifierEventProducer{
 
   /**
    * recreate all internal ids fo all connectoids both od and transfer connectoids
