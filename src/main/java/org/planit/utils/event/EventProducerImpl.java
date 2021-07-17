@@ -48,10 +48,11 @@ public abstract class EventProducerImpl{
    * @param listener
    */
   protected final synchronized void addListener(final EventListener listener){
-      if(!listener.hasKnownSupportedEventTypes()) {
-        LOGGER.severe("IGNORED: unable to identify listener's supported event types, consider registering with explicit event types instead");
-      }
-      addListener(listener, listener.getKnownSupportedEventTypes());
+    if(!listener.hasKnownSupportedEventTypes()) {
+      LOGGER.severe("IGNORED: unable to identify listener's supported event types, "
+          + "consider registering with explicit event types, or provide supported types by implementing hasKnownSupportedEventTypes() on listener");
+    }
+    addListener(listener, listener.getKnownSupportedEventTypes());
   }     
   
   /**

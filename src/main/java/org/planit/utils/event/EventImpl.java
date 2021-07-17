@@ -20,7 +20,7 @@ public abstract class EventImpl extends IdAbleImpl implements Event{
   private final EventType type;
 
   /** The content of the event */
-  private final Object content;
+  private final Object[] content;
 
   /** the source id of the event */
   private final Object sourceId;
@@ -28,7 +28,7 @@ public abstract class EventImpl extends IdAbleImpl implements Event{
   /**
    * Access to the content for derived events
    */
-  protected Object getContent() {
+  protected Object[] getContent() {
     return content;
   }
 
@@ -37,14 +37,28 @@ public abstract class EventImpl extends IdAbleImpl implements Event{
    * 
    * @param type EventType of the Event
    * @param source source of the event sender
-   * @param content content of the event
+   * @param content content array of the event
    */
-  public EventImpl(final EventType type, final Object source, final Object content){
+  public EventImpl(final EventType type, final Object source, final Object[] content){
     super(IdGenerator.generateId(IdGroupingToken.collectGlobalToken(), Event.class));
     this.type = type;
     this.sourceId = source;
     this.content = content;
   }
+  
+  /**
+   * Constructor
+   * 
+   * @param type EventType of the Event
+   * @param source source of the event sender
+   * @param content single entry content of the event
+   */
+  public EventImpl(final EventType type, final Object source, final Object content){
+    super(IdGenerator.generateId(IdGroupingToken.collectGlobalToken(), Event.class));
+    this.type = type;
+    this.sourceId = source;
+    this.content = new Object[] {content};
+  }  
 
   /** 
    * {@inheritDoc} 

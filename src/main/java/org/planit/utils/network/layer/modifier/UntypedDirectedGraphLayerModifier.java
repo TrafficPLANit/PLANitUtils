@@ -68,7 +68,5 @@ public interface UntypedDirectedGraphLayerModifier<V extends DirectedVertex, VE 
    * @throws PlanItException thrown if error
    */
   public abstract Map<Long, Set<E>> breakAt(List<E> linksToBreak, V nodeToBreakAt, CoordinateReferenceSystem crs) throws PlanItException;
-
-  public abstract void removeAllListeners();  
   
 }
