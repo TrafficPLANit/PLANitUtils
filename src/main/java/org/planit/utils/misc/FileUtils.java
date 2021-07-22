@@ -119,5 +119,29 @@ public class FileUtils {
     
     return null;
   }
+  
+  /** Delete a directory by providing a file that represents a directory. In which case
+   * we recursively delete all files in the directory and then the directory itself.
+   * 
+   * @param directoryToDelete
+   * @return success of deletion
+   */
+  public static boolean deleteDirectory(final File directoryToDelete) {
+    if(!directoryToDelete.isDirectory()) {
+      return false;          
+    }
+    
+    File[] filesInDir = directoryToDelete.listFiles();
+    if(filesInDir != null){
+        for (File file : filesInDir) {
+          if(file.isDirectory()) {
+            deleteDirectory(file);
+          }else {
+            file.delete();
+          }
+        }
+    }
+    return directoryToDelete.delete();
+  }    
    
 }
