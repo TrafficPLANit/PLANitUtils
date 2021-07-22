@@ -131,4 +131,22 @@ public class UrlUtils {
     }
     return null;
   }
+  
+
+  /** converts to a Path. Has the benefit compared to using getPath() on the URL directly that this
+   * removes the preceding slash for local files, e.g. instead of getting "/C:/something" we obtain 
+   * "C:/something" which can be used directly as a local path or file etc.
+   * 
+   * @param url to convert to path
+   * @return created path, null if not possible
+   */
+  public static Path asLocalPath(URL url){
+    Path localPath = null;
+    try{
+      localPath = Paths.get(url.toURI());      
+    }catch(Exception e) {
+      LOGGER.warning(String.format("Unable to convert URL %s to local path", url.toString()));
+    }
+    return localPath;
+  }    
 }
