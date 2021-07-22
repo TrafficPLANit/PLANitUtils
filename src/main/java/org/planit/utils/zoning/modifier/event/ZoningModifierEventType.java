@@ -7,9 +7,7 @@ import org.planit.utils.event.EventType;
  * @author markr
  *
  */
-public class ZoningModifierEventType extends EventType {
-  
-  public static final ZoningModifierEventType test = new ZoningModifierEventType("TEST"); 
+public class ZoningModifierEventType extends EventType {  
 
   /** Constructor
    * 

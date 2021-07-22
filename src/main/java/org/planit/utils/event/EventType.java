@@ -24,8 +24,8 @@ public class EventType {
    * @param newType to register
    */
   private static final void registerEventType(final EventType newType){
-    boolean exists = eventTypes.add(newType);
-    if(exists) {
+    boolean newEntry = eventTypes.add(newType);
+    if(!newEntry) {
       throw new RuntimeException(String.format("EventType %s already exists, not allowed",newType.toString()));
     }
   }
