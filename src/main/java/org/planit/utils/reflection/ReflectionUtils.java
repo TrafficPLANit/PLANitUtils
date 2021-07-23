@@ -1,6 +1,6 @@
 package org.planit.utils.reflection;
 
-import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Constructor;
 import java.util.Arrays;
 import java.util.List;
 import java.util.logging.Logger;
@@ -39,24 +39,48 @@ public class ReflectionUtils {
    */
   public static Object createInstance(String className, Object...constructorParameters) throws PlanItException {
     Object createdInstance = null;
-    try {
-      if (constructorParameters != null) {
+    
+    /* constructor */
+    if (constructorParameters != null) {
+      Constructor<?> constructor = null;      
+      try {                         
         Class<?>[] parameterTypes = ReflectionUtils.getParameterTypes(constructorParameters);
-        createdInstance = Class.forName(className).getConstructor(parameterTypes).newInstance(constructorParameters);
-      } else {
-        createdInstance = Class.forName(className).getConstructor().newInstance();
+        constructor = Class.forName(className).getConstructor(parameterTypes);    
+      }catch ( 
+        IllegalArgumentException|
+        NoSuchMethodException |
+        SecurityException |
+        ClassNotFoundException e) {
+
+        //TODO: ideally we loop over all super types and interfaces and its permutations to try
+        //      and instantiate automatically via these instead to get around the limitation. No time
+        //      yet to implement this as it requires recursion etc.
+        LOGGER.severe(String.format(
+            "Unable to find constructor for given arguments when constructing instance of %s \n "
+            + "likely constructor either requires different number of arguments or it requires super types \n"
+            + "whereas provided arguments are implementations of this type \n"
+            + "and reflection is not able to infer this as a valid call, see also https://github.com/TrafficPLANit/PLANitUtils/issues/7", className));
+          
+        e.printStackTrace();
+        LOGGER.severe(e.getMessage());
+        throw new PlanItException("Unable to find appropriate constructor for type: "+ className, e);        
+      }      
+        
+      /* instance */
+      try {
+        createdInstance = constructor.newInstance(constructorParameters);
+      } catch (Exception e) {
+        throw new PlanItException("Unable to create instance of type: "+ className, e);
       }
-    } catch ( InstantiationException |
-              IllegalAccessException |
-              IllegalArgumentException|
-              InvocationTargetException|
-              NoSuchMethodException |
-              SecurityException |
-              ClassNotFoundException e) {
-      e.printStackTrace();
-      LOGGER.severe(e.getMessage());
-      throw new PlanItException("Unable to create instance of type: "+ className, e);    
-    }
+    } else {
+      
+      /* instance */
+      try {
+        createdInstance = Class.forName(className).getConstructor().newInstance();
+      } catch (Exception e) {
+        throw new PlanItException("Unable to create instance of type via default constructor: "+ className, e);
+      }
+    }          
     return createdInstance;    
   }
 
