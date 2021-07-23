@@ -102,7 +102,7 @@ public abstract class EventProducerImpl{
       Entry<EventType, List<EventListener>> entry = i.next();
       result = entry.getValue().remove(listener) || result;
       if (entry.getValue().isEmpty()){
-        this.listeners.remove(entry.getKey());
+        i.remove();
       }
     }      
     return result;
