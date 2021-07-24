@@ -6,6 +6,7 @@ import org.locationtech.jts.geom.Envelope;
 import org.locationtech.jts.geom.Geometry;
 import org.planit.utils.id.ExternalIdAble;
 import org.planit.utils.id.ManagedId;
+import org.planit.utils.misc.StringUtils;
 
 /**
  * Zone represent a geographical area with a centroid which in turn represent the
@@ -98,11 +99,12 @@ public interface Zone extends ExternalIdAble, ManagedId {
     return getCentroid() != null;
   }
   
-  /** verify if a name has been set
+  /** Verify if a name has been set
+   * 
    * @return true when present, false otherwise
    */
   public default boolean hasName() {
-    return getName() != null && !getName().isBlank();
+    return !StringUtils.isNullOrBlank(getName());
   }
   
   /** Verify if input property exists
