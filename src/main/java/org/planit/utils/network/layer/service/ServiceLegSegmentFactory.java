@@ -9,12 +9,23 @@ import org.planit.utils.graph.GraphEntityFactory;
  */
 public interface ServiceLegSegmentFactory extends GraphEntityFactory<ServiceLegSegment> {
 
-  /** create a new service leg segment and register it on the underlying container
+  /** create a new service leg segment and register it on the underlying container (without registering on service node and leg)
    * 
    * @param parentLeg of the segment
-   * @param directionAB direction of the segment
+   * @param directionAb direction of the segment
    * @return created segment
    */
-  public abstract ServiceLegSegment registerNew(final ServiceLeg parentLeg, boolean directionAB);
+  public default ServiceLegSegment registerNew(final ServiceLeg parentLeg, boolean directionAb) {
+    return registerNew(parentLeg, directionAb, false);
+  }
+
+  /** create a new service leg segment and register it on the underlying container and allow the user to let the factory register
+   * the newly create segment on both the parent leg and service nodes in the correct direction if desired 
+   * 
+   * @param parentLeg of the segment
+   * @param directionAb direction of the segment
+   * @return created segment
+   */  
+  ServiceLegSegment registerNew(ServiceLeg parentLeg, boolean directionAb, boolean registerOnServiceNodeAndLeg);
   
 }

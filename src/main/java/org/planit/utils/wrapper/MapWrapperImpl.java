@@ -17,7 +17,7 @@ import java.util.logging.Logger;
  * @param <T> map key
  * @param <U> map value
  */
-public abstract class MapWrapperImpl<K, V> implements MapWrapper<K, V>{
+public class MapWrapperImpl<K, V> implements MapWrapper<K, V>{
   
   /** logger to use */
   private static final Logger LOGGER = Logger.getLogger(MapWrapperImpl.class.getCanonicalName());
@@ -64,7 +64,7 @@ public abstract class MapWrapperImpl<K, V> implements MapWrapper<K, V>{
   
   /** Replace the wrapped map
    * 
-   * param replacement map to use as replacement
+   * @param replacement map to use as replacement
    */
   protected void setMap(final Map<K, V> replacement){
     this.theMap = replacement;
@@ -73,11 +73,36 @@ public abstract class MapWrapperImpl<K, V> implements MapWrapper<K, V>{
   /** Constructor 
    * 
    * @param mapToWrap the map to wrap
+   * @param valueToKey function to map values to their key
    */
   public MapWrapperImpl(final Map<K, V> mapToWrap, final Function<V, K> valueToKey) {
     this.theMap = mapToWrap;
     this.valueToKey = valueToKey;
   }
+  
+  /** Constructor 
+   * 
+   * @param mapToWrap the map to wrap
+   * @param valueToKey function to map values to their key
+   * @param populateWith values to populate the map to wrap with based on index function
+   */
+  public MapWrapperImpl(final Map<K, V> mapToWrap, final Function<V, K> valueToKey, final Collection<V> populateWith) {
+    this.theMap = mapToWrap;
+    this.valueToKey = valueToKey;
+    populateWith.forEach( value -> register(value));
+  }  
+  
+  /** Special copy(like) constructor allowing one to create a copy with a different index function
+   * 
+   * @param mapToWrap the map to wrap
+   * @param valueToKey function to map values to their key
+   * @param populateWith values to populate the map to wrap with based on provided index function
+   */
+  public <U> MapWrapperImpl(final Map<K, V> mapToWrap, final Function<V, K> valueToKey, final MapWrapper<U,V> populateWith) {
+    this.theMap = mapToWrap;
+    this.valueToKey = valueToKey;
+    populateWith.forEach( value -> register(value));
+  }   
     
   /** Copy constructor 
    * 
@@ -153,9 +178,9 @@ public abstract class MapWrapperImpl<K, V> implements MapWrapper<K, V>{
    * {@inheritDoc}
    */
   @Override
-  public Set<V> copyOfValuesAsSet() {
+  public Set<V> valuesAsNewSet() {
     return Set.copyOf(theMap.values());
-  }  
+  }       
   
   /**
    * {@inheritDoc}
@@ -174,5 +199,7 @@ public abstract class MapWrapperImpl<K, V> implements MapWrapper<K, V>{
    * {@inheritDoc}
    */
   @Override
-  public abstract MapWrapperImpl<K,V> clone();
+  public MapWrapperImpl<K,V> clone(){
+    return new MapWrapperImpl<K,V>(this);
+  }
 }

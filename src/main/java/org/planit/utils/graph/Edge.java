@@ -178,7 +178,7 @@ public interface Edge extends Serializable, GraphEntity {
    * 
    * @return envelope (bounding box) of this link based on its geometry
    */
-  public default Envelope getEnvelope() {
+  public default Envelope createEnvelope() {
     if(hasGeometry()) {
       return getGeometry().getEnvelopeInternal();
     }

@@ -60,13 +60,13 @@ public interface MapWrapper<K, V> extends Iterable<V>, Cloneable {
   /**
    * Create a copy of the map's distinct values as a set 
    */
-  public abstract Set<V> copyOfValuesAsSet();
-
+  public abstract Set<V> valuesAsNewSet();
+  
   /**
    * Find first entry that matches the predicate
    * 
    * @param function that checks a property of the value and the first which matches is returned
-   * @return the retrieved traveler type, or null if no traveler type was found
+   * @return the retrieved entry, or null if no traveler type was found
    */
   public abstract V findFirst(Predicate<V> valuePredicate);
 

@@ -12,18 +12,18 @@ public interface ServiceNodeFactory extends GraphEntityFactory<ServiceNode> {
  
   /** Create a new service node 
    * 
-   * @param networkNode this service node references on a physical layer 
+   * @param parentNetworkNode this service node references on a physical layer 
    * @return created service node
    */
-  public abstract ServiceNode createNew(Node networkNode);   
+  public abstract ServiceNode createNew(Node parentNetworkNode);   
   
  
   /** Create a new service node 
    * 
-   * @param networkNode this service node references on a physical layer 
+   * @param parentNetworkNode this service node references on a physical layer 
    * @return created service node
    */
-  public abstract ServiceNode registerNew(Node networkNode);   
+  public abstract ServiceNode registerNew(Node parentNetworkNode);   
 
 
   

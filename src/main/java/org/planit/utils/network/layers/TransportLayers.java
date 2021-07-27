@@ -15,13 +15,6 @@ import org.planit.utils.network.layer.TransportLayer;
  */
 public interface TransportLayers<T extends TransportLayer> extends ManagedIdEntities<T> {
   
-//  /**
-//   * Create a new transport layer and registering on this class.
-//   * 
-//   * @return created transport layer
-//   */
-//  public abstract T registerNew();
-
   /**
    * Find the layer that supports the passed in mode. Since a mode is only allowed to be supported by a single layer, this should yield the correct result. If multiple layers
    * support the same mode for some reason, this method returns the first layer that supports the mode
@@ -30,6 +23,14 @@ public interface TransportLayers<T extends TransportLayer> extends ManagedIdEnti
    * @return first matching layer
    */
   public abstract T get(final Mode mode);
+  
+  /**
+   * Find the layer based on non-indexed XML id rather than the managed internal id.
+   *
+   * @param xmlId to find the layer for
+   * @return first matching layer
+   */
+  public abstract T getByXmlId(final String xmlId);  
 
   /**
    * When there are no layers the instance is considered empty
