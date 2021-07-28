@@ -1,8 +1,10 @@
 package org.planit.utils.network.layer.service;
 
 import java.util.Collection;
+import java.util.List;
 
 import org.planit.utils.graph.directed.DirectedEdge;
+import org.planit.utils.network.layer.physical.Link;
 
 /**
  * Service leg interface which extends the Edge interface. A service leg comprises of one or more underlying physical links
@@ -100,5 +102,27 @@ public interface ServiceLeg extends DirectedEdge {
   public default <LS extends ServiceLegSegment> Collection<LS> getLegSegments(){
     return (Collection<LS>) getEdgeSegments();
   }
+  
+  /** Collect the links that make up this leg ordered and in direction from A to B
+   * 
+   * @return parent links this leg represents
+   */
+  public abstract List<Link> getParentLinks();
+  
+  /** Collect the first parent link
+   * 
+   * @return first parent link
+   */
+  public default Link getFirstParentLink() {
+    return getParentLinks().get(0);
+  }
+  
+  /** Collect the last parent link
+   * 
+   * @return last parent link
+   */
+  public default Link getLastParentLink() {
+    return getParentLinks().get(getParentLinks().size()-1);
+  }  
   
 }

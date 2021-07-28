@@ -85,6 +85,6 @@ public interface ServiceNode extends DirectedVertex {
    * 
    * @return networkLayerNode
    */
-  public abstract Node getNetworkLayerNode();
+  public abstract Node getParentNode();
   
 }
