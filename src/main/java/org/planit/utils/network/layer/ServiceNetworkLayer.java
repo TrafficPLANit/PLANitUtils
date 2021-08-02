@@ -14,7 +14,7 @@ import org.planit.utils.network.layer.service.ServiceNodes;
  * @author markr
  */
 public interface ServiceNetworkLayer extends UntypedDirectedGraphLayer<ServiceNode, ServiceNodes, ServiceLeg, ServiceLegs, ServiceLegSegment, ServiceLegSegments> {
-  
+    
   /**
    * Collect the parent layer of this service layer
    * 
@@ -42,5 +42,6 @@ public interface ServiceNetworkLayer extends UntypedDirectedGraphLayer<ServiceNo
    * @return the nodes
    */
   public abstract ServiceNodes getServiceNodes();
+
 
 }
