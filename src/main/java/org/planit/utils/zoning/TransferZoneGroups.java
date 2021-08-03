@@ -11,13 +11,6 @@ import org.planit.utils.zoning.modifier.event.ZoningModifierListener;
  */
 public interface TransferZoneGroups extends ManagedIdEntities<TransferZoneGroup>, ZoningModifierListener{
       
-  /** Collect first transfer zone that would be returned by the iterator
-   * @return transfer zone
-   */
-  public default TransferZoneGroup getFirst() {
-    return iterator().next();
-  }
-  
   /**
    * {@inheritDoc}
    */  

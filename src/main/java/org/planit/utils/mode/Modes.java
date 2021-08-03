@@ -25,13 +25,6 @@ public interface Modes extends ManagedIdEntities<Mode> {
   public boolean containsPredefinedMode(PredefinedModeType modeType);
       
   /**
-   * Collect the first registered mode
-   * 
-   * @return first registered mode if any
-   */
-  public Mode getFirst();
-
-  /**
    * Retrieve a Mode by its XML Id
    *  
    * @param xmlId the XML Id of the specified mode

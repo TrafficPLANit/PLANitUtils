@@ -17,12 +17,7 @@ public interface MacroscopicLinkSegmentTypes extends ManagedIdEntities<Macroscop
    * @return the specified MacroscopicLinkSegmentType instance
    */
   public abstract MacroscopicLinkSegmentType getByXmlId(String xmlId);  
-       
-  /** collect the first entry that would be returned by the iterator
-   * @return first entry
-   */
-  public abstract MacroscopicLinkSegmentType getFirst();
-  
+         
   /**
    * {@inheritDoc}
    */

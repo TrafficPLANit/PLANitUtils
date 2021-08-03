@@ -32,7 +32,9 @@ public class UnitUtils {
     case VEH_HOUR:
       return convert(Units.HOUR, Units.SECOND, value);  //inverse 
     case VEH_MINUTE:
-      return convert(Units.MINUTE, Units.SECOND, value);//inverse        
+      return convert(Units.MINUTE, Units.SECOND, value);//inverse
+    case VEH_SECOND:
+      return value;
     default:
       throw new PlanItException(
           String.format("conversion illegal or not supported yet from %s --> %s",Units.VEH_SECOND, to));
@@ -43,6 +45,8 @@ public class UnitUtils {
     switch (to) {
       case VEH_HOUR:
         return convert(Units.HOUR, Units.MINUTE, value);    //inverse
+      case VEH_MINUTE:
+        return value;
       case VEH_SECOND:
         return convert(Units.SECOND, Units.MINUTE, value);  //inverse       
       default:
@@ -53,6 +57,8 @@ public class UnitUtils {
   
   private static double convertVehiclesPerHourTo(Units to, double value) throws PlanItException {
     switch (to) {
+    case VEH_HOUR:
+      return value;
     case VEH_MINUTE:
       return convert(Units.MINUTE, Units.HOUR, value);  //inverse
     case VEH_SECOND:
@@ -64,11 +70,13 @@ public class UnitUtils {
   }  
   
   private static double convertSecondTo(Units to, double value) throws PlanItException {
-    switch (to) {
+    switch (to) {    
     case HOUR:
       return value * SECOND_2_HOUR;
     case MINUTE:
-      return value * SECOND_2_MINUTE;        
+      return value * SECOND_2_MINUTE;
+    case SECOND:
+      return value;
     default:
       throw new PlanItException(
           String.format("conversion illegal or not supported yet from %s --> %s",Units.SECOND, to));
@@ -77,6 +85,8 @@ public class UnitUtils {
 
   private static double convertMinuteTo(Units to, double value) throws PlanItException {
     switch (to) {
+    case MINUTE:
+      return value;
     case HOUR:
       return value * MINUTE_2_HOUR;
     case SECOND:
@@ -89,6 +99,8 @@ public class UnitUtils {
   
   private static double convertHourTo(Units to, double value) throws PlanItException {
     switch (to) {
+    case HOUR:
+      return value;    
     case MINUTE:
       return value * HOUR_2_MINUTE;
     case SECOND:
@@ -101,6 +113,8 @@ public class UnitUtils {
   
   private static double convertMeterTo(Units to, double value) throws PlanItException {
     switch (to) {
+    case METER:
+      return value;
     case KM:
       return value * METER_2_KM;       
     default:

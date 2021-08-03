@@ -58,18 +58,6 @@ public interface TransportLayers<T extends TransportLayer> extends ManagedIdEnti
   }
 
   /**
-   * Collect the first layer present based on the iterator
-   * 
-   * @return first available layer, null if no layers are present
-   */
-  public default T getFirst() {
-    if (iterator().hasNext()) {
-      return iterator().next();
-    }
-    return null;
-  }
-
-  /**
    * Allows you to collect all registered layers of a specific derived transport layer type
    * 
    * @param <U> derived type of type T

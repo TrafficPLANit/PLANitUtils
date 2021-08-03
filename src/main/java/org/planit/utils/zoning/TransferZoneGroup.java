@@ -69,7 +69,7 @@ public interface TransferZoneGroup extends ExternalIdAble, ManagedId, Iterable<T
    * @return transfer zone
    */
   public default TransferZone getFirst() {
-    return iterator().next();
+    return isEmpty() ? null : iterator().next();
   }
   
   /** check if no transfer zones are registered

@@ -77,5 +77,17 @@ public interface MapWrapper<K, V> extends Iterable<V>, Cloneable {
    * @return copy
    */
   public abstract MapWrapper<K, V> clone();
+  
+  /** collect the first entry based on the iterator's result, which is not necessarily the
+   * fist entry ordered by the key, it is just the first entry the iterator would provide
+   * 
+   * @return first iterable entry, null if empty
+   */
+  public default V getFirst() {
+    if(isEmpty()) {
+      return null;
+    }
+    return iterator().next();
+  }
 
 }
