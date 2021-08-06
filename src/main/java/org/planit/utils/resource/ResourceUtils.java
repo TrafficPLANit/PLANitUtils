@@ -114,7 +114,7 @@ public class ResourceUtils {
        * 1) IDE: all local files relative to current working dir of the project --> 
        *          current working dir can be used to create relative path and use file stream to parse as it is a regular file
        * 2) RUNNING JAR IN SAME DIR --> 
-       *          current working dir is jar dir s can be used to create relative path, but files are within jar so cannot create file input stream (they are in jar file system, not default file system and therefore are
+       *          current working dir is jar dir so can be used to create relative path, but files are within jar so cannot create file input stream (they are in jar file system, not default file system and therefore are
        *          not considered a regular file in Java, so FileInputStream does not work, use class loader stream instead
        * 3) RUNNING JAR from other dir -->
        *          current working dir is NOT jar dir, create relative path by first finding jar URI and then relative against that instead, also use class loader stream

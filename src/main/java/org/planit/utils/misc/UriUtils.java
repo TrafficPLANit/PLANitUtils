@@ -34,11 +34,16 @@ public class UriUtils {
   
   /** Find user dir URI of JVM, which is the current working dir unless overridden upon instantiation of the Jvm
    * 
-   * @return URI of JVM user dir property
+   * @return URI of JVM user dir property, null if this could not be found
    * @throws URISyntaxException thrown if error
    */
   public static URI getJvmUserDirUri() throws URISyntaxException {
-    return ClassLoader.getSystemClassLoader().getResource(".").toURI();
+    URL resource = ClassLoader.getSystemClassLoader().getResource(".");
+    if(resource==null) {
+      LOGGER.fine("Unable to find JVM user dir resource, was expected to be available");
+      return null;
+    }
+    return resource.toURI();
   }  
   
   /** Check if URI is contained within a JAR file
@@ -155,7 +160,7 @@ public class UriUtils {
   }
 
   /** Extract relative URI based on provided URI and the user.dir property set for the application.
-   * If there is no overlap copy of original URI is returned
+   * If there is no overlap or user dir could not be obtained, the original URI is returned
    * 
    * @param uri to relativise
    * @return created URI
@@ -163,6 +168,9 @@ public class UriUtils {
    */  
   public static URI asRelativeUriFromUserDir(URI uri) throws URISyntaxException {
     URI workingDirUri = getJvmUserDirUri();    
+    if(workingDirUri == null) {
+      return uri;
+    }
     return workingDirUri.relativize(uri);
   }
 
@@ -186,7 +194,7 @@ public class UriUtils {
     return jarLocationURIWithoutScheme.relativize(desiredUriWithoutScheme);
   }
 
-  /** Method that attempts to strip everything from the URI to make it a relative URI. this is useful if the URI points to a resource that should 
+  /** Method that attempts to strip everything from the URI to make it a relative URI. This is useful if the URI points to a resource that should 
    * be available within the application. Given that resources are to be streamed from a String, apply this method and convert to String afterward
    * to let Java search for the resource. Often we cannot provide the (absolute) URI because it does not work in case it, for example, points to non 
    * file like objects, or files contained within other file systems, such as jars. When providing the correct relative URI, Java can work around this
@@ -196,25 +204,42 @@ public class UriUtils {
    * against the URI jar file (if applicable). If none succeed, the original URI is returned
    * 
    * @param uri to convert
-   * @return relativised URI
+   * @return relativised URI, original uri if unable to create a relatives version
    * @throws URISyntaxException thrown if error
    */
   public static URI asRelativeUri(URI uri) throws URISyntaxException {
 
-    URI relativeResourceUri = asRelativeUriFromWorkingDir(uri);     
-    if(relativeResourceUri.getScheme()!=null) {        
+    URI relativeResourceUri = asRelativeUriFromWorkingDir(uri);
+    if(relativeResourceUri !=null && relativeResourceUri.getScheme()==null) {
+      /* relativisation succeeded, scheme removed, only relative path portion remains, set as result */
+      LOGGER.fine(relativeResourceUri.toString());
+      return relativeResourceUri;
+    }
+    
+    if(relativeResourceUri!=null && relativeResourceUri.getScheme()!=null) {        
       /* scheme present, so relativisation did not succeed, try to use JVM working dir instead, which might be overridden compared to overall application dir that instantiated this Java run */
-      relativeResourceUri = UriUtils.asRelativeUriFromUserDir(uri);
+      URI relativeURIFromUserDir = UriUtils.asRelativeUriFromUserDir(uri);
+      if(relativeURIFromUserDir!=null && relativeResourceUri.getScheme()==null) {
+        /* success use this result */
+        LOGGER.fine(relativeURIFromUserDir.toString());
+        return relativeURIFromUserDir;
+      }
     }      
     if(relativeResourceUri.getScheme()!=null && UriUtils.isInJar(uri)) {
       /* again did not work, so likely we are running this jar from other dir and user.dir was not overridden or not to a common location for resource 
        * last attempt is to see if resource is in a jar and when resources of this jar are available, we relativise against the jar location instead and hope
        * the resource can be located that way*/
-      relativeResourceUri = UriUtils.asRelativeUriFromJar(uri);
-      /* make sure that we search from root of jar since relativisation removes shared initial "/" as well, which is not what we want */
-      relativeResourceUri = UriUtils.asRelativeUriFromRoot(relativeResourceUri);
+      URI relativeURIFromJar = UriUtils.asRelativeUriFromJar(uri);
+      if(relativeURIFromJar!=null) { 
+        /* make sure that we search from root of jar since relativisation removes shared initial "/" as well, which is not what we want */
+        relativeURIFromJar = UriUtils.asRelativeUriFromRoot(relativeURIFromJar);
+        LOGGER.fine(relativeURIFromJar.toString());
+        return relativeURIFromJar;
+      }
     }
-    return relativeResourceUri;
+    
+    /* unable to relativise, so just return original uri */
+    return uri;
   }    
 
 }
