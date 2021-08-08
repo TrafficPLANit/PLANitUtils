@@ -13,7 +13,7 @@ import java.util.function.Predicate;
  * @param <V> value type
  */
 public interface MapWrapper<K, V> extends Iterable<V>, Cloneable {
-
+  
   /**
    * Register on the internal container
    * 
@@ -49,6 +49,13 @@ public interface MapWrapper<K, V> extends Iterable<V>, Cloneable {
    * @return true when empty false otherwise
    */
   public abstract boolean isEmpty();
+  
+  /** Check if value is already present
+   * 
+   * @param value to verify
+   * @return true if present, false otherwise
+   */
+  public abstract boolean contains(V value);
 
   /**
    * Collect values as unmodifiable collection
@@ -78,6 +85,13 @@ public interface MapWrapper<K, V> extends Iterable<V>, Cloneable {
    */
   public abstract MapWrapper<K, V> clone();
   
+  /** collect the key used for the given value
+   * 
+   * @param value to collect used key for
+   * @return key
+   */
+  public abstract K getKeyByValue(V value);
+    
   /** collect the first entry based on the iterator's result, which is not necessarily the
    * fist entry ordered by the key, it is just the first entry the iterator would provide
    * 
@@ -89,5 +103,14 @@ public interface MapWrapper<K, V> extends Iterable<V>, Cloneable {
     }
     return iterator().next();
   }
+
+  /** add all elements of iterable
+   * 
+   * @param iterable to add elements of
+   */
+  public default void addAll(Iterable<? extends V> iterable) {
+    iterable.forEach( v -> register(v));
+  }
+    
 
 }

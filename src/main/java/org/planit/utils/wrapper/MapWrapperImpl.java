@@ -131,7 +131,7 @@ public class MapWrapperImpl<K, V> implements MapWrapper<K, V>{
    */
   @Override
   public V register(final V value) {
-    return theMap.put(valueToKey.apply(value),value);
+    return theMap.put(getKeyByValue(value),value);
   }
   
   /**
@@ -139,7 +139,7 @@ public class MapWrapperImpl<K, V> implements MapWrapper<K, V>{
    */
   @Override
   public V remove(final V value) {
-    return theMap.remove(valueToKey.apply(value));
+    return theMap.remove(getKeyByValue(value));
   }  
 
   /**
@@ -201,5 +201,21 @@ public class MapWrapperImpl<K, V> implements MapWrapper<K, V>{
   @Override
   public MapWrapperImpl<K,V> clone(){
     return new MapWrapperImpl<K,V>(this);
+  }
+
+  /**
+   * {@inheritDoc}
+   */  
+  @Override
+  public boolean contains(V value) {
+    return getMap().containsKey(getKeyByValue(value));
+  }
+
+  /**
+   * {@inheritDoc}
+   */ 
+  @Override
+  public K getKeyByValue(V value) {
+    return valueToKey.apply(value);
   }
 }
