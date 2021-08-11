@@ -33,7 +33,7 @@ public class Configurator<T> {
    */
   private final Class<T> configuratorClassType;  
 
-  /** the methods to invoke on the to be configured object instance and their parameters.
+  /** The methods to invoke on the to be configured object instance and their parameters.
    * Since the same method could be called multiple times (with different parameters) we track a list per call */
   protected final Map<String, List<Object[]>> delayedMethodCalls;
 
@@ -135,6 +135,38 @@ public class Configurator<T> {
   }
 
   /**
+   * Register a method call to a setter that should be invoked on the to be configured object instance once it is available
+   * 
+   * @param methodName the method name
+   * @param parameters the parameters of the method
+   */
+  protected void registerDelayedMethodCall(String methodName, Object... parameters) {
+    List<Object[]> parametersPerCall = delayedMethodCalls.get(methodName);
+    if(parametersPerCall == null) {
+      parametersPerCall = new ArrayList<Object[]>();
+      delayedMethodCalls.put(methodName, parametersPerCall);  
+    }
+    parametersPerCall.add(parameters);    
+  }
+
+  /** Collect the first parameter submitted with (last) registered delayed method call of given signature. If not available null is returned.
+   * Useful to mimic getters for a given setter on configurator derived class.
+   * 
+   * @param methodName that reflects the delayed call
+   * @return first parameter of delay method name call
+   */
+  protected Object getFirstParameterOfDelayedMethodCall(String methodName) {
+    List<Object[]> parametersPerCall = delayedMethodCalls.get(methodName);
+    if(parametersPerCall!= null) {
+      Object[] parametersOfLastCall = parametersPerCall.get(parametersPerCall.size()-1);
+      if(parametersOfLastCall.length >= 1) {
+        return parametersOfLastCall[0];
+      }
+    }
+    return null;
+  }
+
+  /**
    * Constructor
    * 
    * @param instanceType the class type of the instance we are configuring
@@ -151,38 +183,6 @@ public class Configurator<T> {
     return configuratorClassType;
   }  
   
-  /**
-   * Register a method call to a setter that should be invoked on the to be configured object instance once it is available
-   * 
-   * @param methodName the method name
-   * @param parameters the parameters of the method
-   */
-  public void registerDelayedMethodCall(String methodName, Object... parameters) {
-    List<Object[]> parametersPerCall = delayedMethodCalls.get(methodName);
-    if(parametersPerCall == null) {
-      parametersPerCall = new ArrayList<Object[]>();
-      delayedMethodCalls.put(methodName, parametersPerCall);  
-    }
-    parametersPerCall.add(parameters);    
-  }  
-  
-  /** Collect the first parameter submitted with (last) registered delayed method call of given signature. If not available null is returned.
-   * Useful to mimic getters for a given setter on configurator derived class.
-   * 
-   * @param methodName that reflects the delayed call
-   * @return first parameter of delay method name call
-   */
-  public Object getFirstParameterOfDelayedMethodCall(String methodName) {
-    List<Object[]> parametersPerCall = delayedMethodCalls.get(methodName);
-    if(parametersPerCall!= null) {
-      Object[] parametersOfLastCall = parametersPerCall.get(parametersPerCall.size()-1);
-      if(parametersOfLastCall.length >= 1) {
-        return parametersOfLastCall[0];
-      }
-    }
-    return null;
-  }
-
   /**
    * Configure the passed in instance with the registered method calls
    * 
