@@ -11,6 +11,26 @@ public abstract class IdAbleImpl implements IdAble {
   /** the id */
   private long id;
   
+  /** Convenience method to generate an id using a unique class identifier and idToken which in turn delegates to
+   * the {@code IdGenerator.generateId()}
+   * 
+   * @param classIdentifier to use
+   * @param idtoken to use
+   */
+  protected static long generateId(final Class<?> classIdentifier, final IdGroupingToken idtoken) {
+    return IdGenerator.generateId(idtoken, classIdentifier);
+  }  
+  
+  /** Convenience method to generate and set the id using a unique class identifier and idToken which in turn delegates to
+   * the {@code IdGenerator.generateId()}
+   * 
+   * @param classIdentifier to use
+   * @param idtoken to use
+   */
+  protected void generateAndSetId(final Class<?> classIdentifier, final IdGroupingToken idtoken) {
+    setId(generateId(classIdentifier, idtoken));
+  }
+  
   /** set the id 
    * 
    * @param id to set
