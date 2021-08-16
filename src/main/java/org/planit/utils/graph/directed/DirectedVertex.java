@@ -148,7 +148,7 @@ public interface DirectedVertex extends Vertex {
    * 
    * @return number of entry edge segments
    */
-  public default int getNumberOfEntryEdgeSegments() {
+  public default int sizeOfEntryEdgeSegments() {
     return getEntryEdgeSegments().size();
   }
 
@@ -157,7 +157,7 @@ public interface DirectedVertex extends Vertex {
    * 
    * @return number of exit edge segments
    */
-  public default int getNumberOfExitEdgeSegments() {
+  public default int sizeOfExitEdgeSegments() {
     return getExitEdgeSegments().size();
   }
   

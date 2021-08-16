@@ -29,6 +29,21 @@ public interface DirectedPath extends ExternalIdAble, ManagedId, Iterable<EdgeSe
    * @param edgeSegment the edge segment to add
    * @return true as per Collection.add
    */
-  //public abstract Boolean addEdgeSegment(final EdgeSegment edgeSegment);
+  //public abstract Boolean addEdgeSegment(final EdgeSegment edgeSegment);  
+  
+  /** The size of the path is given by the number of edge segments it holds
+   * 
+   * @return size
+   */
+  public abstract long size();
+  
+  /**
+   * verify if the size of the path is zero (empty) or not
+   * 
+   * @return true when empty, false otherwise
+   */
+  public default boolean isEmpty() {
+    return size()<=0;
+  } 
 
 }

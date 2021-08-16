@@ -73,10 +73,46 @@ public interface LinkSegment extends EdgeSegment {
   public abstract double getPhysicalSpeedLimitKmH(); 
   
   /**
+   * {@inheritDoc}
+   */
+  @Override
+  public abstract Link getParentEdge();
+  
+  /**
+   * {@inheritDoc}
+   */
+  @Override  
+  public abstract Node getUpstreamVertex();
+  
+  /**
+   * {@inheritDoc}
+   */
+  @Override  
+  public abstract Node getDownstreamVertex();
+  
+  /**
    * Return the parent link of this link segment
    * 
    * @return Link object which is the parent of this link segment
    */
-  public abstract Link getParentLink();
+  public default Link getParentLink() {
+    return getParentEdge();
+  }
+
+  /** Collect upstream vertex as node
+   * 
+   * @return upstream node
+   */  
+  public default Node getUpstreamNode() {
+    return getUpstreamVertex();
+  }
+  
+  /** Collect downstream vertex as node
+   * 
+   * @return downstream node
+   */
+  public default Node getDownstreamNode() {
+    return getDownstreamVertex();
+  }  
 
 }
