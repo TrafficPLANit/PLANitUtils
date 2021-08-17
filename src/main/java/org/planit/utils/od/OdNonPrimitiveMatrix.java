@@ -17,6 +17,7 @@ import org.planit.utils.zoning.Zone;
 public abstract class OdNonPrimitiveMatrix<T> extends OdMatrixImpl<T, T[][]> {
 
   /** the logger */
+  @SuppressWarnings("unused")
   private static final Logger LOGGER = Logger.getLogger(OdNonPrimitiveMatrix.class.getCanonicalName());
 
   /**
@@ -49,12 +50,6 @@ public abstract class OdNonPrimitiveMatrix<T> extends OdMatrixImpl<T, T[][]> {
    */
   @Override
   public void setValue(Zone origin, Zone destination, T value) {
-    if (origin.getId() == destination.getId()) {
-      // demand or cost from any origin to itself must be zero
-      // matrixContents.set(originId, destinationId, 0.0);
-      LOGGER.warning(String.format("BEFORE WE WOULD SET THIS TO ZERO --> NOT GENERIC, SO COMMENTED OUT AND WE NOW SET %s", value));
-    }
-
     matrixContents[(int) origin.getId()][(int) destination.getId()] = value;
   }
 
