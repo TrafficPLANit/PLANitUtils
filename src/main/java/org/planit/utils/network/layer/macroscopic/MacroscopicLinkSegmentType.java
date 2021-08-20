@@ -1,7 +1,6 @@
 package org.planit.utils.network.layer.macroscopic;
 
 import java.util.Collection;
-import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -70,35 +69,34 @@ public interface MacroscopicLinkSegmentType extends Cloneable, ExternalIdAble, M
   public abstract double getMaximumDensityPerLane();
 
   /**
-   * Set the map of mode properties for this link
+   * Set the access properties, any pre-existing access properties for modes are overwritten by the given ones
    * 
-   * @param modeProperties map of mode properties for this link
+   * @param AccessProperties for one or more modes
    */
-  public abstract void setModeProperties(final Map<Mode, MacroscopicModeProperties> modeProperties);
+  public abstract void setAccessProperties(final Collection<AccessGroupProperties> AccessProperties);
   
   /**
-   * Add mode properties for this link segment
+   * set access properties for this link segment type, any modes with existing access properties are overwritten by the given 
+   * properties
    * 
-   * @param mode to add properties for
-   * @param modeProperties properties to set
-   * @return old mode properties for this key (if any) null otherwise
+   * @param accessProperties to set
    */
-  public abstract MacroscopicModeProperties addModeProperties(final Mode mode, final MacroscopicModeProperties modeProperties);
+  public abstract void setAccessProperties(final AccessGroupProperties accessProperties);
   
-  /** remove the mode properties for the passed in mode (if present)
+  /** Remove the mode properties for the passed in mode (if present)
    * 
    * @param toBeRemovedMode mode to remove properties for
-   * @return existing mode properties at this location tht were removed, null otherwise
+   * @return true when able to remove, false otherwise
    */
-  public abstract MacroscopicModeProperties removeModeProperties(final Mode toBeRemovedMode);
+  public abstract boolean removeModeAccess(final Mode toBeRemovedMode);
 
   /**
-   * Returns the mode properties for a specified mode along this link
+   * Returns the access properties for a specified mode along this link
    * 
    * @param mode the specified mode
    * @return the mode properties for this link and mode
    */
-  public abstract MacroscopicModeProperties getModeProperties(final Mode mode);
+  public abstract AccessGroupProperties getAccessProperties(final Mode mode);
   
   /**
    * Verify if mode is available on type
@@ -109,7 +107,7 @@ public interface MacroscopicLinkSegmentType extends Cloneable, ExternalIdAble, M
   public abstract boolean isModeAvailable(final Mode mode);   
   
   /**
-   * return the available modes for which mode properties have been registered
+   * return the available modes present in one of the access groups that have been registered
    * 
    * @return available modes
    */
@@ -123,12 +121,12 @@ public interface MacroscopicLinkSegmentType extends Cloneable, ExternalIdAble, M
     return MACROSCOPIC_LINK_SEGMENT_TYPE_ID_CLASS;
   }
 
-  /** remove the mode properties for the passed in modes
+  /** Remove mode access for the passed in modes
    * 
-   * @param toBeRemovedModes all the modes to make unavailable
+   * @param toBeRemovedModes all the modes to make i
    */
-  public default void removeModeProperties(final Set<Mode> toBeRemovedModes) {
-    toBeRemovedModes.forEach( mode -> removeModeProperties(mode));
+  public default void removeModeAccess(final Set<Mode> toBeRemovedModes) {
+    toBeRemovedModes.forEach( mode -> removeModeAccess(mode));
   }
 
   /** Method which identifies which of the passed in modes is unavailable on the link segment
@@ -152,11 +150,12 @@ public interface MacroscopicLinkSegmentType extends Cloneable, ExternalIdAble, M
    * @param modes to exclude from the available modes
    * @return collection which is a subset of the available modes, namely excludes the the passed in modes
    */
-  public default Set<Mode> getAvailableModesNotIn(Collection<Mode> modes){
+  public default Set<Mode> getAvailableModesNotIn(final Collection<Mode> modes){
     return getAvailableModes().stream().filter(mode -> !modes.contains(mode)).collect(Collectors.toSet());
   }  
   
-  /** verify if the link segment type has any modes available
+  /** Verify if the link segment type has any modes available
+   * 
    * @return true when at least one mode is available
    */
   public default boolean hasAvailableModes() {

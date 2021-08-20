@@ -18,6 +18,15 @@ public interface Zones<Z extends Zone> extends ManagedIdEntities<Z> {
   public default int getNumberOfCentroids() {
     return size();
   }
+  
+  /** Find the first entry with matching XML id, not efficient as not indexed by XML id, so use carefully
+   * 
+   * @param xmlId to find
+   * @return zone found, null if not present
+   */
+  public default Z getByXmlId(String xmlId) {
+    return findFirst(zone -> zone.getXmlId().equals(xmlId));
+  }
 
 
 }

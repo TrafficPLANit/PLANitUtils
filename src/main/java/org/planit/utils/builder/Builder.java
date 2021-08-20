@@ -61,7 +61,7 @@ public abstract class Builder<T> {
       try {
         this.configurator = createConfigurator();
       }catch(PlanItException e) {
-        LOGGER.severe(String.format("unable to create the appropriate configurator because: %s", e.getMessage()));
+        LOGGER.severe(String.format("Unable to create the appropriate configurator because: %s", e.getMessage()));
       }
     }
     return configurator;
