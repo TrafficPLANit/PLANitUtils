@@ -1,6 +1,7 @@
 package org.planit.utils.network.virtual;
 
 import org.planit.utils.graph.EdgeSegment;
+import org.planit.utils.pcu.PcuCapacitated;
 
 /**
  * Connectoid segment represents a directional virtual segment connecting a centroid and a physical
@@ -9,7 +10,7 @@ import org.planit.utils.graph.EdgeSegment;
  * @author markr
  *
  */
-public interface ConnectoidSegment extends EdgeSegment {
+public interface ConnectoidSegment extends EdgeSegment, PcuCapacitated {
 
   /** additional id class for generating connectoid segment ids */
   public static Class<ConnectoidSegment> CONNECTOID_SEGMENT_ID_CLASS = ConnectoidSegment.class;
@@ -29,5 +30,16 @@ public interface ConnectoidSegment extends EdgeSegment {
    * @return connectoid segment id
    */
   long getConnectoidSegmentId();
+
+  /**
+   * Connectoid segments are not capacity restricted by default, but can be used in conjunction with a capacitated network.
+   * Therefore, they by default return {@code Double.MAX_VALUE} as their capacity. We have no limitation on capacity to ensure that
+   * demand does not get "trapped" in zones, but can at least be loaded onto connectoid segments so it is present in the network during loading 
+   * 
+   */
+  @Override
+  public default double computeCapacityPcuH() {
+    return Double.MAX_VALUE;
+  }
 
 }

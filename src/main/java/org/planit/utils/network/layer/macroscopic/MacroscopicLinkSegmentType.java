@@ -73,16 +73,23 @@ public interface MacroscopicLinkSegmentType extends Cloneable, ExternalIdAble, M
    * 
    * @param AccessProperties for one or more modes
    */
-  public abstract void setAccessProperties(final Collection<AccessGroupProperties> AccessProperties);
+  public abstract void setAccessGroupProperties(final Collection<AccessGroupProperties> AccessProperties);
   
   /**
-   * set access properties for this link segment type, any modes with existing access properties are overwritten by the given 
-   * properties
+   * Set access properties for this link segment type, any modes with existing access properties are overwritten by the given 
+   * properties.
    * 
    * @param accessProperties to set
    */
-  public abstract void setAccessProperties(final AccessGroupProperties accessProperties);
-  
+  public abstract void setAccessGroupProperties(final AccessGroupProperties accessProperties);
+
+  /** add access group properties for the modes allowed by it. By adding instead of setting them, it is verified these properties do not yet exist, if they already exist
+   * they are not registered and a warning is issued. To make sure only new group access properties are registered use {@link #findEqualAccessPropertiesForAnyMode(AccessGroupProperties)
+   * 
+   * @param accessProperties to register
+   */  
+  public abstract void addAccessGroupProperties(AccessGroupProperties accessProperties);
+
   /** Remove the mode properties for the passed in mode (if present)
    * 
    * @param toBeRemovedMode mode to remove properties for
@@ -162,10 +169,12 @@ public interface MacroscopicLinkSegmentType extends Cloneable, ExternalIdAble, M
     return getAvailableModes()!=null && !getAvailableModes().isEmpty();
   }
 
-
-
-
-  
-
+  /** find group access properties that are equal to the ones that are passed in except for the allowed modes, i.e.,
+   * find existing access properties for any mode that match the ones provided. IF found they are returned, otherwise null is returned
+   * 
+   * @param accessProperties to match against
+   * @return access properties found matching, null if no match is found
+   */
+  public abstract AccessGroupProperties findEqualAccessPropertiesForAnyMode(AccessGroupProperties accessProperties);
 
 }

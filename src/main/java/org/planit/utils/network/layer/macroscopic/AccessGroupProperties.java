@@ -34,7 +34,7 @@ public interface AccessGroupProperties extends Cloneable {
    * 
    * @param maxSpeedKmH to set 
    */
-  public abstract void setMaximumSpeedKmH(double maxSpeedKmH);  
+  public abstract void setMaximumSpeedKmH(final double maxSpeedKmH);  
 
   /**
    * Collect the critical speed in km/h
@@ -48,7 +48,7 @@ public interface AccessGroupProperties extends Cloneable {
    * 
    * @param criticalSpeedKmH to set
    */
-  public abstract void setCriticalSpeedKmH(double criticalSpeedKmH);
+  public abstract void setCriticalSpeedKmH(final double criticalSpeedKmH);
   
   /** The access modes for this group
    * 
@@ -68,6 +68,19 @@ public interface AccessGroupProperties extends Cloneable {
    * @param toBeRemovedMode
    * @return true when success, false otherwise
    */
-  public abstract boolean removeAccessMode(Mode toBeRemovedMode); 
+  public abstract boolean removeAccessMode(final Mode toBeRemovedMode);
+
+  /** Verify if equal to given properties except for the allowed modes
+   * 
+   * @param accessProperties to compare against
+   * @return true when deemed equal, false otherwise
+   */
+  public abstract boolean isEqualExceptForModes(final AccessGroupProperties accessProperties);
+
+  /** Add a new access mode to the group
+   * 
+   * @param mode to add
+   */
+  public abstract void addAccessMode(final Mode mode); 
 
 }

@@ -6,6 +6,7 @@ import java.util.Set;
 
 import org.planit.utils.mode.Mode;
 import org.planit.utils.network.layer.physical.LinkSegment;
+import org.planit.utils.pcu.PcuCapacitated;
 
 /**
  * Macroscopic traffic modeling oriented link segment
@@ -13,7 +14,7 @@ import org.planit.utils.network.layer.physical.LinkSegment;
  * @author markr
  *
  */
-public interface MacroscopicLinkSegment extends LinkSegment {
+public interface MacroscopicLinkSegment extends LinkSegment, PcuCapacitated {
   
   /**
    * Returns whether vehicles of a specified mode are allowed through this link
@@ -29,13 +30,6 @@ public interface MacroscopicLinkSegment extends LinkSegment {
    * @return allowed modes
    */
   Set<Mode> getAllowedModes();    
-
-  /**
-   * Return the total link segment capacity in pcu/h
-   * 
-   * @return linkSegmentCapacity in PCU/h
-   */
-  double computeCapacityPcuH();
 
   /**
    * Compute the free flow travel time by mode, i.e. when the link's maximum speed
