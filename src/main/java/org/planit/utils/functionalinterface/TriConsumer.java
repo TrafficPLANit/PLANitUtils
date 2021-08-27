@@ -1,7 +1,5 @@
 package org.planit.utils.functionalinterface;
 
-import org.planit.utils.exceptions.PlanItException;
-
 /**
  * Function Interface which can process three input objects.
  * 
@@ -25,7 +23,6 @@ public interface TriConsumer<T, U, V> {
    * @param t first object to be processed
    * @param u second object to be processed
    * @param v third object to be processed
-   * @throws PlanItException thrown if there is an error
    */
-  public void accept(T t, U u, V v) throws PlanItException;
+  public void accept(T t, U u, V v);
 }
