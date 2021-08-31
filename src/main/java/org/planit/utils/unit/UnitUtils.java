@@ -27,7 +27,7 @@ public class UnitUtils {
   private static final double METER_2_KM = 1.0/KM_2_METER;  
 
    
-  private static double convertVehiclesPerSecondTo(Units to, double value) throws PlanItException {
+  public static double convertVehiclesPerSecondTo(Units to, double value) throws PlanItException {
     switch (to) {
     case VEH_HOUR:
       return convert(Units.HOUR, Units.SECOND, value);  //inverse 
@@ -41,7 +41,7 @@ public class UnitUtils {
     } 
   }
 
-  private static double convertVehiclesPerMinuteTo(Units to, double value) throws PlanItException {
+  public static double convertVehiclesPerMinuteTo(Units to, double value) throws PlanItException {
     switch (to) {
       case VEH_HOUR:
         return convert(Units.HOUR, Units.MINUTE, value);    //inverse
@@ -55,7 +55,7 @@ public class UnitUtils {
       }        
   }
   
-  private static double convertVehiclesPerHourTo(Units to, double value) throws PlanItException {
+  public static double convertVehiclesPerHourTo(Units to, double value) throws PlanItException {
     switch (to) {
     case VEH_HOUR:
       return value;
@@ -69,7 +69,7 @@ public class UnitUtils {
     }    
   }  
   
-  private static double convertSecondTo(Units to, double value) throws PlanItException {
+  public static double convertSecondTo(Units to, double value) throws PlanItException {
     switch (to) {    
     case HOUR:
       return value * SECOND_2_HOUR;
@@ -83,7 +83,7 @@ public class UnitUtils {
     }   
   }  
 
-  private static double convertMinuteTo(Units to, double value) throws PlanItException {
+  public static double convertMinuteTo(Units to, double value) throws PlanItException {
     switch (to) {
     case MINUTE:
       return value;
@@ -97,7 +97,7 @@ public class UnitUtils {
     }   
   }
   
-  private static double convertHourTo(Units to, double value) throws PlanItException {
+  public static double convertHourTo(Units to, double value) throws PlanItException {
     switch (to) {
     case HOUR:
       return value;    
@@ -111,7 +111,7 @@ public class UnitUtils {
     }  
   }    
   
-  private static double convertMeterTo(Units to, double value) throws PlanItException {
+  public static double convertMeterTo(Units to, double value) throws PlanItException {
     switch (to) {
     case METER:
       return value;
@@ -123,7 +123,7 @@ public class UnitUtils {
     }  
   }
 
-  private static double convertKmTo(Units to, double value) throws PlanItException {
+  public static double convertKmTo(Units to, double value) throws PlanItException {
     switch (to) {
     case METER:
       return value * KM_2_METER;       
@@ -133,7 +133,7 @@ public class UnitUtils {
     }  
   }  
   
-  private static double convertKmSecTo(Units to, double value) throws PlanItException {
+  public static double convertKmSecTo(Units to, double value) throws PlanItException {
     switch (to) {
     case KM_HOUR:
       return convert(Units.HOUR, Units.SECOND, value);    // inverse
@@ -151,7 +151,7 @@ public class UnitUtils {
     } 
   }   
 
-  private static double convertKmMinTo(Units to, double value) throws PlanItException {
+  public static double convertKmMinTo(Units to, double value) throws PlanItException {
     switch (to) {
     case KM_HOUR:
       return convert(Units.HOUR, Units.MINUTE, value); // inverse
@@ -169,7 +169,7 @@ public class UnitUtils {
     } 
   }
   
-  private static double convertKmHourTo(Units to, double value) throws PlanItException {
+  public static double convertKmHourTo(Units to, double value) throws PlanItException {
     switch (to) {
     case KM_MINUTE:
       return convert(Units.MINUTE, Units.HOUR, value); // inverse
@@ -187,7 +187,7 @@ public class UnitUtils {
     } 
   } 
   
-  private static double convertMeterHourTo(Units to, double value) throws PlanItException {
+  public static double convertMeterHourTo(Units to, double value) throws PlanItException {
     switch (to) {
     case KM_HOUR:
       return convert(Units.METER, Units.KM, value);   
@@ -205,7 +205,7 @@ public class UnitUtils {
     } 
   }
 
-  private static double convertMeterMinuteTo(Units to, double value) throws PlanItException {
+  public static double convertMeterMinuteTo(Units to, double value) throws PlanItException {
     switch (to) {
     case KM_HOUR:
       return convertKmMinTo(Units.KM_HOUR,convert(Units.METER, Units.KM, value));    
@@ -223,7 +223,7 @@ public class UnitUtils {
     } 
   }
 
-  private static double convertMeterSecondTo(Units to, double value) throws PlanItException {
+  public static double convertMeterSecondTo(Units to, double value) throws PlanItException {
     switch (to) {
     case KM_HOUR:
       return convertKmSecTo(Units.KM_HOUR,convert(Units.METER, Units.KM, value));     
@@ -241,7 +241,7 @@ public class UnitUtils {
     } 
   }  
   
-  private static double convertVehiclesPerMeterTo(Units to, double value) throws PlanItException {
+  public static double convertVehiclesPerMeterTo(Units to, double value) throws PlanItException {
     switch (to) {
     case VEH_KM:
       return convert(Units.KM, Units.METER, value); // inverse      
@@ -251,7 +251,7 @@ public class UnitUtils {
     } 
   }
 
-  private static double convertVehiclesPerKmTo(Units to, double value) throws PlanItException {
+  public static double convertVehiclesPerKmTo(Units to, double value) throws PlanItException {
     switch (to) {
     case VEH_METER:
       return convert(Units.METER, Units.KM, value); // inverse       

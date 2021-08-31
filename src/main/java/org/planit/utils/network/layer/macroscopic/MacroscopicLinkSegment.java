@@ -41,7 +41,7 @@ public interface MacroscopicLinkSegment extends LinkSegment, PcuCapacitated {
    * @param mode mode of travel
    * @return freeFlowTravelTime for this mode
    */
-  double computeFreeFlowTravelTime(Mode mode);
+  double computeFreeFlowTravelTimeHour(Mode mode);
   
   /**
    * Collect the maximum speed limit for the mode by taking the minimum of: (i) physical speed limit, (ii) mode's maximum speed limit, (iii) link segment type's mode specific speed
