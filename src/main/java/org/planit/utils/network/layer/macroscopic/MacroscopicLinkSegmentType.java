@@ -20,12 +20,12 @@ public interface MacroscopicLinkSegmentType extends Cloneable, ExternalIdAble, M
   public static final Class<MacroscopicLinkSegmentType> MACROSCOPIC_LINK_SEGMENT_TYPE_ID_CLASS = MacroscopicLinkSegmentType.class;   
 
   /**
-   * Default capacity per lane (pcu/h)
+   * Default capacity per lane (pcu/h/lane)
    */
   public static final double DEFAULT_CAPACITY_LANE = 1800.0;
   
   /**
-   * Default capacity per lane (pcu/h)
+   * Default capacity per lane (pcu/h/lane)
    */
   public static final double DEFAULT_MAX_DENSITY_LANE = 180.0;  
   
@@ -53,20 +53,54 @@ public interface MacroscopicLinkSegmentType extends Cloneable, ExternalIdAble, M
    * @param name the name
    */
   public abstract void setName(String name);
-
+  
   /**
    * Return the capacity per lane of this macroscopic link segment type
    * 
+   * @return capacity per lane in pcu/h/lane, null if not set
+   */
+  public abstract Double getCapacityPerLane();  
+
+  /**
+   * Return the capacity per lane of this macroscopic link segment type or the default if it has not been explicitly set
+   * 
    * @return capacity per lane in pcu/h/lane
    */
-  public abstract double getCapacityPerLane();
+  public default double getCapacityPerLaneOrDefault() {
+    return isCapacityPerLaneSet() ? getCapacityPerLane() : MacroscopicLinkSegmentType.DEFAULT_CAPACITY_LANE;
+  }
+  
+  /** Verify if capacity per lane is set explicitly or relies on default
+   * 
+   * @return true when set explicitly, false otherwise
+   */
+  public default boolean isCapacityPerLaneSet() {
+    return getCapacityPerLane()==null;
+  }
 
   /**
    * Return the maximum density per lane for this macroscopic link segment type
    * 
    * @return the maximum density per lane in pcu/km/lane
    */
-  public abstract double getMaximumDensityPerLane();
+  public abstract Double getMaximumDensityPerLane();
+  
+  /**
+   * Return the maximum density per lane  of this macroscopic link segment type or the default if it has not been explicitly set
+   * 
+   * @return the maximum density per lane in pcu/km/lane
+   */
+  public default double getMaximumDensityPerLaneOrDefault() {
+    return isMaximumDensityPerLaneSet() ? getMaximumDensityPerLane() : MacroscopicLinkSegmentType.DEFAULT_MAX_DENSITY_LANE;
+  }
+  
+  /** Verify if maximum density per lane is set explicitly or relies on default
+   * 
+   * @return true when set explicitly, false otherwise
+   */
+  public default boolean isMaximumDensityPerLaneSet() {
+    return getMaximumDensityPerLane()==null;
+  }  
 
   /**
    * Set the access properties, any pre-existing access properties for modes are overwritten by the given ones
@@ -120,22 +154,6 @@ public interface MacroscopicLinkSegmentType extends Cloneable, ExternalIdAble, M
    */
   public abstract Set<Mode> getAvailableModes();
   
-  /**
-   * {@inheritDoc}
-   */
-  @Override
-  public default Class<? extends MacroscopicLinkSegmentType> getIdClass() {
-    return MACROSCOPIC_LINK_SEGMENT_TYPE_ID_CLASS;
-  }
-
-  /** Remove mode access for the passed in modes
-   * 
-   * @param toBeRemovedModes all the modes to make i
-   */
-  public default void removeModeAccess(final Set<Mode> toBeRemovedModes) {
-    toBeRemovedModes.forEach( mode -> removeModeAccess(mode));
-  }
-
   /** Method which identifies which of the passed in modes is unavailable on the link segment
    * 
    * @param modes to verify
@@ -144,7 +162,7 @@ public interface MacroscopicLinkSegmentType extends Cloneable, ExternalIdAble, M
   public default Set<Mode> getUnAvailableModesFrom(final Collection<Mode> modes){
     return modes.stream().filter(mode -> !isModeAvailable(mode)).collect(Collectors.toSet());
   }
-  
+
   /** Method which identifies which of the passed in modes is available on the link segment
    * @param modes to verify
    * @return collection which is a subset of the passed in modes containing only the ones that are available
@@ -152,15 +170,15 @@ public interface MacroscopicLinkSegmentType extends Cloneable, ExternalIdAble, M
   public default Set<Mode> getAvailableModesFrom(final Collection<Mode> modes){
     return modes.stream().filter(mode -> isModeAvailable(mode)).collect(Collectors.toSet());
   }
-  
+
   /** Method which identifies which of the passed in modes is available on the link segment but not in the passed in collection of modes
    * @param modes to exclude from the available modes
    * @return collection which is a subset of the available modes, namely excludes the the passed in modes
    */
   public default Set<Mode> getAvailableModesNotIn(final Collection<Mode> modes){
     return getAvailableModes().stream().filter(mode -> !modes.contains(mode)).collect(Collectors.toSet());
-  }  
-  
+  }
+
   /** Verify if the link segment type has any modes available
    * 
    * @return true when at least one mode is available
@@ -176,5 +194,21 @@ public interface MacroscopicLinkSegmentType extends Cloneable, ExternalIdAble, M
    * @return access properties found matching, null if no match is found
    */
   public abstract AccessGroupProperties findEqualAccessPropertiesForAnyMode(AccessGroupProperties accessProperties);
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public default Class<? extends MacroscopicLinkSegmentType> getIdClass() {
+    return MACROSCOPIC_LINK_SEGMENT_TYPE_ID_CLASS;
+  }
+
+  /** Remove mode access for the passed in modes
+   * 
+   * @param toBeRemovedModes all the modes to make i
+   */
+  public default void removeModeAccess(final Set<Mode> toBeRemovedModes) {
+    toBeRemovedModes.forEach( mode -> removeModeAccess(mode));
+  }
 
 }
