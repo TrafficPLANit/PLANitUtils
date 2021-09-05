@@ -10,9 +10,16 @@ package org.planit.utils.pcu;
  */
 public interface PcuCapacitated {
 
-  /** Determine the capacity in PCU/hour
+  /** Collect the explicitly available/set capacity in PCU/hour. In case no explicit capacity is provided a default is to be returned
    * 
-   * @return capacity in PCY/h
+   * @return capacity in PCu/h
    */
-  public abstract double computeCapacityPcuH();
+  public abstract double getCapacityOrDefaultPcuH();
+  
+  /** Collect the explicitly available/set capacity in PCU/hour/lane. In case no explicit capacity is provided a default is to be returned
+   * 
+   * @return capacity in PCu/h
+   */
+  public abstract double getCapacityOrDefaultPcuHLane();
+      
 }

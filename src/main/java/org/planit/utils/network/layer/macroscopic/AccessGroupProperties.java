@@ -11,11 +11,6 @@ import org.planit.utils.mode.Mode;
  *
  */
 public interface AccessGroupProperties extends Cloneable {
-
-  /**
-   * Default critical speed, i.e. speed at capacity in km/h
-   */
-  public static double DEFAULT_CRITICAL_SPEED_KMH = 60;
   
   /**
    * Epsilon margin when comparing speeds (km/h)
@@ -27,28 +22,64 @@ public interface AccessGroupProperties extends Cloneable {
    * 
    * @return the maximum speed in km/h
    */
-  public abstract double getMaximumSpeedKmH();
+  public abstract Double getMaximumSpeedKmH();
+  
+  /**
+   * Verify if a maximum speed is set on this group
+   * 
+   * @return true when set, false otherwise
+   */
+  public default boolean isMaximumSpeedKmHSet() {
+    return getMaximumSpeedKmH()==null;
+  }
+  
+  /** Collect the maximum speed set, or otherwise the provided default
+   * 
+   * @param defaultMaximumSpeed to use
+   * @return maximum speed
+   */
+  public default double getMaximumSpeedOrDefaultKmH(double defaultMaximumSpeed) {
+    return isMaximumSpeedKmHSet() ? getMaximumSpeedKmH() : defaultMaximumSpeed;
+  }
   
   /**
    * set the maximum speed in km/h
    * 
    * @param maxSpeedKmH to set 
    */
-  public abstract void setMaximumSpeedKmH(final double maxSpeedKmH);  
+  public abstract void setMaximumSpeedKmH(final Double maxSpeedKmH);  
 
   /**
    * Collect the critical speed in km/h
    * 
    * @return the critical speed in km/h
    */
-  public abstract double getCriticalSpeedKmH();
+  public abstract Double getCriticalSpeedKmH();
+  
+  /**
+   * Verify if a critical speed is set on this group
+   * 
+   * @return true when set, false otherwise
+   */
+  public default boolean isCriticalSpeedKmHSet() {
+    return getMaximumSpeedKmH()==null;
+  }  
+  
+  /** Collect the critical speed set, or otherwise the provided default
+   * 
+   * @param defaultMaximumSpeed to use
+   * @return maximum speed
+   */
+  public default double getCriticalSpeedOrDefaultKmH(double defaultCriticalSpeed) {
+    return isCriticalSpeedKmHSet() ? getCriticalSpeedKmH() : defaultCriticalSpeed;
+  }  
   
   /**
    * set the critical speed in km/h
    * 
    * @param criticalSpeedKmH to set
    */
-  public abstract void setCriticalSpeedKmH(final double criticalSpeedKmH);
+  public abstract void setCriticalSpeedKmH(final Double criticalSpeedKmH);
   
   /** The access modes for this group
    * 

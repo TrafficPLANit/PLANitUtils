@@ -38,8 +38,17 @@ public interface ConnectoidSegment extends EdgeSegment, PcuCapacitated {
    * 
    */
   @Override
-  public default double computeCapacityPcuH() {
+  public default double getCapacityOrDefaultPcuH() {
     return Double.MAX_VALUE;
   }
+  
+  /**
+   * see {@link #getCapacityOrDefaultPcuH()} 
+   * 
+   */  
+  @Override
+  public default double getCapacityOrDefaultPcuHLane() {
+    return Double.MAX_VALUE;
+  }  
 
 }

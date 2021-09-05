@@ -30,6 +30,18 @@ public class ReflectionUtils {
     return parameterTypes.toArray(Class<?>[]::new);    
   }
   
+  /** delegates to {@link #createInstance(String, Object...)} only casts result to type provided
+   * 
+   * @param <T> type of the created instance
+   * @param className of the class to be instantiated
+   * @param constructorParameters parameters for constructor
+   * @return created instance
+   * @throws PlanItException when error occurs during instantiation
+   */
+  @SuppressWarnings("unchecked")
+  public static <T> T createTypedInstance(String className, Object...constructorParameters) throws PlanItException {
+    return (T) createInstance(className, constructorParameters);
+  }
   
   /** Create an instance of given class name and provided constructor parameters
    * @param className of the class to be instantiated

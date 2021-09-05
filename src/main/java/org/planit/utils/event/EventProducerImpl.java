@@ -6,9 +6,9 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
-
 import java.util.Set;
+import java.util.TreeMap;
+import java.util.TreeSet;
 import java.util.logging.Logger;
 
 /**
@@ -24,22 +24,46 @@ public abstract class EventProducerImpl{
   /** the logger to use */
   private static final Logger LOGGER = Logger.getLogger(EventProducerImpl.class.getCanonicalName());
   
-    /** The collection of interested listeners */
-    protected Map<EventType, List<EventListener>> listeners;
-    
-  /** add a listener for one or more event types that are presumably triggered by this producer 
+  /** The collection of interested listeners by event and priority */
+  protected Map<EventType, Map<EventListenerPriority, List<EventListener>>> listeners;
+  
+  /** Add a listener for one or more event types (collected from listener's known supported types) that are presumably triggered by this producer 
    * 
-   * @param listener
-   * @param eventTypes
+   * @param listener to register
+   * @param priority to apply for the combination of listener and event type(s)
+   * @param eventTypes to register the listener for
    */
-  protected final synchronized void addListener(final EventListener listener, final EventType... eventTypes){
+  protected final synchronized void addListener(final EventListener listener, EventListenerPriority priority){
+    if(!listener.hasKnownSupportedEventTypes()) {
+      LOGGER.severe("IGNORED: unable to identify listener's supported event types, "
+          + "consider registering with explicit event types, or provide supported types by implementing hasKnownSupportedEventTypes() on listener");
+    }
+    addListener(listener, priority, listener.getKnownSupportedEventTypes());
+  }    
+  
+  /** Add a listener for one or more event types that are presumably triggered by this producer 
+   * 
+   * @param listener to register
+   * @param priority to apply for the combination of listener and event type(s)
+   * @param eventTypes to register the listener for
+   */
+  protected final synchronized void addListener(final EventListener listener, EventListenerPriority priority, final EventType... eventTypes){
     for(int index=0;index<eventTypes.length;++index) {
       EventType type = eventTypes[index];
-      listeners.putIfAbsent(type, new ArrayList<EventListener>());
-      if(!listeners.get(type).contains(listener)) {
-        listeners.get(type).add(listener);
-      }
+      listeners.putIfAbsent(type, new TreeMap<EventListenerPriority, List<EventListener>>());
+      Map<EventListenerPriority, List<EventListener>> listenersByEventType = listeners.get(type);
+      listenersByEventType.putIfAbsent(priority, new ArrayList<EventListener>());
+      listenersByEventType.get(priority).add(listener);
     }
+  }  
+    
+  /** Add a listener for one or more event types that are presumably triggered by this producer, with the default priority (low) 
+   * 
+   * @param listener to register
+   * @param eventTypes to register the listener for
+   */
+  protected final synchronized void addListener(final EventListener listener, final EventType... eventTypes){
+    addListener(listener, EventListenerPriority.LOW, eventTypes);
   }    
   
   /** add a listener for one or more event types that are presumably triggered by this producer absed on its known supported types.
@@ -75,16 +99,22 @@ public abstract class EventProducerImpl{
         return false;
     }
     boolean result = false;
-    for (Iterator<EventListener> i = this.listeners.get(eventType).iterator(); i.hasNext();){
-      if (listener.equals(i.next())) {
-        i.remove();
-        result = true;
-        break;
+    Map<EventListenerPriority, List<EventListener>> listenersByEventType = this.listeners.get(eventType);
+    for(EventListenerPriority priority : listenersByEventType.keySet()) {
+      for (Iterator<EventListener> i = listenersByEventType.get(priority).iterator(); i.hasNext();){
+        if (listener.equals(i.next())) {
+          i.remove();
+          result = true;
+          break;
+        }
       }
+      if (listenersByEventType.get(priority).isEmpty()){
+          listenersByEventType.remove(priority);
+      } 
     }
     if (this.listeners.get(eventType).isEmpty()){
-        this.listeners.remove(eventType);
-    }
+      this.listeners.remove(eventType);
+    }     
     return result;
   }    
 
@@ -98,13 +128,10 @@ public abstract class EventProducerImpl{
       throw new IllegalArgumentException("listener cannot be null");
     }      
     boolean result = false;
-    for (Iterator<Entry<EventType, List<EventListener>>> i = this.listeners.entrySet().iterator(); i.hasNext();){
-      Entry<EventType, List<EventListener>> entry = i.next();
-      result = entry.getValue().remove(listener) || result;
-      if (entry.getValue().isEmpty()){
-        i.remove();
-      }
-    }      
+    List<EventType> registeredEventTypes = new ArrayList<EventType>(this.listeners.keySet());    
+    for(EventType eventType : registeredEventTypes) {
+      result = removeListener(listener, eventType) || result;
+    }
     return result;
   }
 
@@ -132,11 +159,15 @@ public abstract class EventProducerImpl{
     }
     
     if (this.listeners.containsKey(event.getType())){
-      // copy listeners in case removeListener() is called during this method processing
-      List<EventListener> listenerList = new ArrayList<>(this.listeners.get(event.getType()));
-      for (EventListener listener: listenerList){
-        this.fireEvent(listener, event);              
-      }
+      // copy containers while iterating in case removeListener() is called during this method processing
+      Map<EventListenerPriority, List<EventListener>> listenersForEventType = this.listeners.get(event.getType());
+      Set<EventListenerPriority> availablePriorities = new TreeSet<EventListenerPriority>(listenersForEventType.keySet());
+      for(EventListenerPriority priority : availablePriorities) {
+        ArrayList<EventListener> listenersForEventAndPriority = new ArrayList<EventListener>(listenersForEventType.get(priority));
+        for (EventListener listener: listenersForEventAndPriority){
+          this.fireEvent(listener, event);              
+        }  
+      }      
     }
   }
 
@@ -144,7 +175,7 @@ public abstract class EventProducerImpl{
    * Constructs a new EventProducer and checks for duplicate values in event types.
    */
   protected EventProducerImpl(){
-    this.listeners = new HashMap<EventType, List<EventListener>>();
+    this.listeners = new HashMap<EventType, Map<EventListenerPriority,List<EventListener>>>();
   }
 
   /**
@@ -152,7 +183,7 @@ public abstract class EventProducerImpl{
    */
   public synchronized void removeAllListeners(){
     this.listeners = null;
-    this.listeners = new HashMap<EventType, List<EventListener>>();
+    this.listeners = new HashMap<EventType, Map<EventListenerPriority,List<EventListener>>>();
   }
 
   /**

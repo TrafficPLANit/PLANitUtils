@@ -9,7 +9,7 @@ import org.planit.utils.network.layer.physical.LinkSegment;
 import org.planit.utils.pcu.PcuCapacitated;
 
 /**
- * Macroscopic traffic modeling oriented link segment
+ * Macroscopic traffic modeling oriented link segment. 
  * 
  * @author markr
  *
@@ -22,14 +22,14 @@ public interface MacroscopicLinkSegment extends LinkSegment, PcuCapacitated {
    * @param mode the specified mode
    * @return true if vehicles of this mode can drive along this link, false otherwise
    */
-  boolean isModeAllowed(Mode mode);
+  public abstract boolean isModeAllowed(Mode mode);
   
   /**
    * Returns the modes that are allowed on the link segment
    * 
    * @return allowed modes
    */
-  Set<Mode> getAllowedModes();    
+  public abstract Set<Mode> getAllowedModes();    
 
   /**
    * Compute the free flow travel time by mode, i.e. when the link's maximum speed
@@ -41,7 +41,7 @@ public interface MacroscopicLinkSegment extends LinkSegment, PcuCapacitated {
    * @param mode mode of travel
    * @return freeFlowTravelTime for this mode
    */
-  double computeFreeFlowTravelTimeHour(Mode mode);
+  public abstract double computeFreeFlowTravelTimeHour(Mode mode);
   
   /**
    * Collect the maximum speed limit for the mode by taking the minimum of: (i) physical speed limit, (ii) mode's maximum speed limit, (iii) link segment type's mode specific speed
@@ -62,27 +62,32 @@ public interface MacroscopicLinkSegment extends LinkSegment, PcuCapacitated {
    * @param mode to collect modelled maximum speed for
    * @return modelled speed limit, when mode is not allowed on link, 0 is returned
    */  
-  double getModelledSpeedLimitKmH(Mode mode);    
+  public default double getModelledSpeedLimitKmH(Mode mode) {  
+    if (!isModeAllowed(mode)) {
+      return 0.0;
+    }
+    return Math.min(getPhysicalSpeedLimitKmH(), getLinkSegmentType().getMaximumSpeedKmH(mode));
+  }
 
   /**
    * Set the link segment type this link segment adheres to
    * 
    * @param linkSegmentType the link segment type
    */
-  void setLinkSegmentType(MacroscopicLinkSegmentType linkSegmentType);
+  public abstract void setLinkSegmentType(MacroscopicLinkSegmentType linkSegmentType);
 
   /**
    * Collect the link segment type of the link segment
    * 
    * @return the link segment
    */
-  MacroscopicLinkSegmentType getLinkSegmentType();
+  public abstract MacroscopicLinkSegmentType getLinkSegmentType();
   
   /** Verify if link segment type is present on the link segment
    * 
    * @return true if present, false otherwise
    */
-  default boolean hasLinkSegmentType() {
+  public default boolean hasLinkSegmentType() {
     return getLinkSegmentType()!=null;
   }
 
@@ -100,6 +105,21 @@ public interface MacroscopicLinkSegment extends LinkSegment, PcuCapacitated {
     return allowedModes;
   }
   
-
+    
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public default double getCapacityOrDefaultPcuH() {
+    return getCapacityOrDefaultPcuHLane() * getNumberOfLanes();
+  }
+  
+  /**
+   * {@inheritDoc}
+   */  
+  @Override
+  public default double getCapacityOrDefaultPcuHLane() {
+    return getLinkSegmentType().getExplicitCapacityPerLaneOrDefault();
+  }
   
 }
