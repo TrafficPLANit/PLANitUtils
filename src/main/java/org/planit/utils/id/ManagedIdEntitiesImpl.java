@@ -75,11 +75,23 @@ public abstract class ManagedIdEntitiesImpl<E extends ManagedId> extends LongMap
       updateIdMapping();
     }
   }
+  
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public void reset() {
+    for(E entry : this) {
+      entry.resetChildManagedIdEntities();
+    }
+    clear();
+    IdGenerator.reset(getFactory().getIdGroupingToken(), getManagedIdClass());    
+  }  
 
   /**
    * {@inheritDoc}
    */
   @Override
   public abstract ManagedIdEntitiesImpl<E> clone();
-
+  
 }

@@ -36,5 +36,14 @@ public interface UntypedDirectedGraph<V extends GraphEntities<? extends Directed
     }
     return isValid;
   } 
+  
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public default void reset() {
+    UntypedGraph.super.reset();
+    getEdgeSegments().reset();
+  }  
 
 }

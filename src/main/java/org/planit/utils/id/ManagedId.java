@@ -25,5 +25,14 @@ public interface ManagedId extends IdAble {
    * @return idClass to use for generating ids for instances of this idable derived class
    */
   public abstract Class<? extends IdAble> getIdClass();   
+  
+  /**
+   * Each class that has a managed id, should be able to reset any children that themselves are managedIdEntity containers. 
+   * This ensures that when resetting such a container any child containers are also reset
+   */
+  public default void resetChildManagedIdEntities() {
+    // by default do nothing, yet if the entity contains ManagedIdEntities derived classes, it should reset those by overriding this method
+  }
+ 
 
 }

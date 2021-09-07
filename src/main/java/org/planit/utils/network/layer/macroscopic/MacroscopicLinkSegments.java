@@ -1,6 +1,7 @@
 package org.planit.utils.network.layer.macroscopic;
 
 import org.planit.utils.graph.GraphEntities;
+import org.planit.utils.mode.Mode;
 
 /**
  * Wrapper around GraphEntities interface to support MacroscopicLinkSegments explicitly and create them on the container via
@@ -21,4 +22,18 @@ public interface MacroscopicLinkSegments extends GraphEntities<MacroscopicLinkSe
    */
   @Override
   public abstract MacroscopicLinkSegmentFactory getFactory();  
+  
+  /** Create a raw array of all free flow travel times of the registered macroscopic link segments where the index in the array corresponds
+   * to the link segment id (not id). 
+   * 
+   * @param mode to use
+   * @return free flow travel times for all link segments for the given mode
+   */
+  public default double[] getFreeFlowTravelTimeHourPerLinkSegment(Mode mode) {
+    double[] linkSegmentFreeFlowTravelTimes = new double[size()];
+    for(MacroscopicLinkSegment linkSegment : this){
+      linkSegmentFreeFlowTravelTimes[(int) linkSegment.getLinkSegmentId()] = linkSegment.computeFreeFlowTravelTimeHour(mode);
+    }
+    return linkSegmentFreeFlowTravelTimes;
+  }  
 }

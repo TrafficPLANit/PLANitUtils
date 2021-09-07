@@ -42,6 +42,5 @@ public interface ServiceNetworkLayer extends UntypedDirectedGraphLayer<ServiceNo
    * @return the nodes
    */
   public abstract ServiceNodes getServiceNodes();
-
-
+  
 }

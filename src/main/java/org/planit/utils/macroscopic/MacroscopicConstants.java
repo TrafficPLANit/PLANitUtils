@@ -18,9 +18,9 @@ public class MacroscopicConstants {
   public static final double DEFAULT_EMPTY_DENSITY_PCU_HOUR_LANE = 0.0;
   
   /**
-   * Default backward wave speed (km/h)
+   * Default backward wave speed (km/h) (negative value)
    */
-  public static final double DEFAULT_BACKWARD_WAVE_SPEED_KM_HOUR = 12.5;
+  public static final double DEFAULT_BACKWARD_WAVE_SPEED_KM_HOUR = -12.5;
   
   
 }

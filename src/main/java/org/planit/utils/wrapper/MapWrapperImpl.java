@@ -218,4 +218,12 @@ public class MapWrapperImpl<K, V> implements MapWrapper<K, V>{
   public K getKeyByValue(V value) {
     return valueToKey.apply(value);
   }
+  
+  /**
+   * {@inheritDoc}
+   */ 
+  @Override
+  public void clear() {
+    this.theMap.clear();
+  }
 }

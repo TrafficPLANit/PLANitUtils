@@ -28,6 +28,12 @@ public interface MapWrapper<K, V> extends Iterable<V>, Cloneable {
    * @return removed entry if any
    */
   public abstract V remove(V value);
+  
+  /**
+   * Clear all entries from map
+   * 
+   */
+  public abstract void clear();  
 
   /**
    * Collect entry from container

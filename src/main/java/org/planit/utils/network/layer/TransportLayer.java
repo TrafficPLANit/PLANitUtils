@@ -86,7 +86,7 @@ public interface TransportLayer extends ExternalIdAble, ManagedId {
    * @param mode to verify
    * @return true when supporting, false otherwise
    */
-  default public boolean supports(Mode mode) {
+  public default boolean supports(Mode mode) {
     return getSupportedModes().contains(mode);
   }
   
@@ -95,7 +95,7 @@ public interface TransportLayer extends ExternalIdAble, ManagedId {
    * 
    * @return true when supporting a mode, false otherwise
    */
-  default public boolean hasSupportedModes() {
+  public default boolean hasSupportedModes() {
     return !getSupportedModes().isEmpty();
   }   
   
@@ -104,8 +104,13 @@ public interface TransportLayer extends ExternalIdAble, ManagedId {
    * 
    * @return first supported mode
    */
-  default public Mode getFirstSupportedMode() {
+  public default Mode getFirstSupportedMode() {
     return hasSupportedModes() ? getSupportedModes().iterator().next() : null;
-  }    
+  }
+
+  /**
+   * Reset the layer
+   */
+  public abstract void reset();    
 
 }

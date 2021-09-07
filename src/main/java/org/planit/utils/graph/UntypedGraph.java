@@ -70,5 +70,22 @@ public interface UntypedGraph<V extends GraphEntities<? extends Vertex>, E exten
       vertex.transformPosition(transformer);
     }
   } 
+  
+  /**
+   * Reset the graph
+   */
+  public default void reset() {
+    resetChildManagedIdEntities();
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public default void resetChildManagedIdEntities() {
+    ManagedId.super.resetChildManagedIdEntities();
+    getVertices().reset();
+    getEdges().reset();
+  }
 
 }
