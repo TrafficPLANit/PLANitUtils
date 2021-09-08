@@ -68,7 +68,7 @@ public interface MacroscopicLinkSegmentType extends Cloneable, ExternalIdAble, M
    * @return true when set explicitly, false otherwise
    */
   public default boolean isExplicitCapacityPerLaneSet() {
-    return getExplicitCapacityPerLane()==null;
+    return getExplicitCapacityPerLane()!=null;
   }
 
   /**
@@ -94,7 +94,7 @@ public interface MacroscopicLinkSegmentType extends Cloneable, ExternalIdAble, M
    * @return true when set explicitly, false otherwise
    */
   public default boolean isExplicitMaximumDensityPerLaneSet() {
-    return getExplicitMaximumDensityPerLane()==null;
+    return getExplicitMaximumDensityPerLane()!=null;
   }  
 
   /**

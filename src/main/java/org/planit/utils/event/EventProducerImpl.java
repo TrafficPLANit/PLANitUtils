@@ -38,7 +38,9 @@ public abstract class EventProducerImpl{
       LOGGER.severe("IGNORED: unable to identify listener's supported event types, "
           + "consider registering with explicit event types, or provide supported types by implementing hasKnownSupportedEventTypes() on listener");
     }
-    addListener(listener, priority, listener.getKnownSupportedEventTypes());
+    if(listener.getKnownSupportedEventTypes().length > 0) {
+      addListener(listener, priority, listener.getKnownSupportedEventTypes());
+    }
   }    
   
   /** Add a listener for one or more event types that are presumably triggered by this producer 

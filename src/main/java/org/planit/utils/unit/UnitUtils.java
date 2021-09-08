@@ -28,6 +28,9 @@ public class UnitUtils {
 
    
   public static double convertVehiclesPerSecondTo(Units to, double value) throws PlanItException {
+    if(to==null) {
+      throw new PlanItException(String.format("to unit null, conversion infeasible"));
+    }
     switch (to) {
     case VEH_HOUR:
       return convert(Units.HOUR, Units.SECOND, value);  //inverse 
@@ -42,6 +45,9 @@ public class UnitUtils {
   }
 
   public static double convertVehiclesPerMinuteTo(Units to, double value) throws PlanItException {
+    if(to==null) {
+      throw new PlanItException(String.format("to unit null, conversion infeasible"));
+    }
     switch (to) {
       case VEH_HOUR:
         return convert(Units.HOUR, Units.MINUTE, value);    //inverse
@@ -56,6 +62,9 @@ public class UnitUtils {
   }
   
   public static double convertVehiclesPerHourTo(Units to, double value) throws PlanItException {
+    if(to==null) {
+      throw new PlanItException(String.format("to unit null, conversion infeasible"));
+    }
     switch (to) {
     case VEH_HOUR:
       return value;
@@ -70,6 +79,9 @@ public class UnitUtils {
   }  
   
   public static double convertSecondTo(Units to, double value) throws PlanItException {
+    if(to==null) {
+      throw new PlanItException(String.format("to unit null, conversion infeasible"));
+    }
     switch (to) {    
     case HOUR:
       return value * SECOND_2_HOUR;
@@ -84,6 +96,9 @@ public class UnitUtils {
   }  
 
   public static double convertMinuteTo(Units to, double value) throws PlanItException {
+    if(to==null) {
+      throw new PlanItException(String.format("to unit null, conversion infeasible"));
+    }
     switch (to) {
     case MINUTE:
       return value;
@@ -98,6 +113,9 @@ public class UnitUtils {
   }
   
   public static double convertHourTo(Units to, double value) throws PlanItException {
+    if(to==null) {
+      throw new PlanItException(String.format("to unit null, conversion infeasible"));
+    }
     switch (to) {
     case HOUR:
       return value;    
@@ -112,6 +130,9 @@ public class UnitUtils {
   }    
   
   public static double convertMeterTo(Units to, double value) throws PlanItException {
+    if(to==null) {
+      throw new PlanItException(String.format("to unit null, conversion infeasible"));
+    }
     switch (to) {
     case METER:
       return value;
@@ -124,6 +145,9 @@ public class UnitUtils {
   }
 
   public static double convertKmTo(Units to, double value) throws PlanItException {
+    if(to==null) {
+      throw new PlanItException(String.format("to unit null, conversion infeasible"));
+    }
     switch (to) {
     case METER:
       return value * KM_2_METER;       
@@ -134,6 +158,9 @@ public class UnitUtils {
   }  
   
   public static double convertKmSecTo(Units to, double value) throws PlanItException {
+    if(to==null) {
+      throw new PlanItException(String.format("to unit null, conversion infeasible"));
+    }
     switch (to) {
     case KM_HOUR:
       return convert(Units.HOUR, Units.SECOND, value);    // inverse
@@ -152,6 +179,9 @@ public class UnitUtils {
   }   
 
   public static double convertKmMinTo(Units to, double value) throws PlanItException {
+    if(to==null) {
+      throw new PlanItException(String.format("to unit null, conversion infeasible"));
+    }
     switch (to) {
     case KM_HOUR:
       return convert(Units.HOUR, Units.MINUTE, value); // inverse
@@ -170,6 +200,9 @@ public class UnitUtils {
   }
   
   public static double convertKmHourTo(Units to, double value) throws PlanItException {
+    if(to==null) {
+      throw new PlanItException(String.format("to unit null, conversion infeasible"));
+    }
     switch (to) {
     case KM_MINUTE:
       return convert(Units.MINUTE, Units.HOUR, value); // inverse
@@ -188,6 +221,9 @@ public class UnitUtils {
   } 
   
   public static double convertMeterHourTo(Units to, double value) throws PlanItException {
+    if(to==null) {
+      throw new PlanItException(String.format("to unit null, conversion infeasible"));
+    }
     switch (to) {
     case KM_HOUR:
       return convert(Units.METER, Units.KM, value);   
@@ -206,6 +242,9 @@ public class UnitUtils {
   }
 
   public static double convertMeterMinuteTo(Units to, double value) throws PlanItException {
+    if(to==null) {
+      throw new PlanItException(String.format("to unit null, conversion infeasible"));
+    }
     switch (to) {
     case KM_HOUR:
       return convertKmMinTo(Units.KM_HOUR,convert(Units.METER, Units.KM, value));    
@@ -224,6 +263,9 @@ public class UnitUtils {
   }
 
   public static double convertMeterSecondTo(Units to, double value) throws PlanItException {
+    if(to==null) {
+      throw new PlanItException(String.format("to unit null, conversion infeasible"));
+    }
     switch (to) {
     case KM_HOUR:
       return convertKmSecTo(Units.KM_HOUR,convert(Units.METER, Units.KM, value));     
@@ -242,6 +284,9 @@ public class UnitUtils {
   }  
   
   public static double convertVehiclesPerMeterTo(Units to, double value) throws PlanItException {
+    if(to==null) {
+      throw new PlanItException(String.format("to unit null, conversion infeasible"));
+    }
     switch (to) {
     case VEH_KM:
       return convert(Units.KM, Units.METER, value); // inverse      
@@ -252,6 +297,9 @@ public class UnitUtils {
   }
 
   public static double convertVehiclesPerKmTo(Units to, double value) throws PlanItException {
+    if(to==null) {
+      throw new PlanItException(String.format("to unit null, conversion infeasible"));
+    }
     switch (to) {
     case VEH_METER:
       return convert(Units.METER, Units.KM, value); // inverse       
@@ -271,6 +319,9 @@ public class UnitUtils {
    * @throws PlanItException thrown if error
    */
   public static double convert(Units from, Units to, double value) throws PlanItException {
+    if(from==null) {
+      throw new PlanItException(String.format("from unit null, conversion infeasible"));
+    }
     switch (from) {
     case KM_HOUR:
       return convertKmHourTo(to, value);

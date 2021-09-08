@@ -30,7 +30,7 @@ public interface AccessGroupProperties extends Cloneable {
    * @return true when set, false otherwise
    */
   public default boolean isMaximumSpeedKmHSet() {
-    return getMaximumSpeedKmH()==null;
+    return getMaximumSpeedKmH()!=null;
   }
   
   /** Collect the maximum speed set, or otherwise the provided default
@@ -62,7 +62,7 @@ public interface AccessGroupProperties extends Cloneable {
    * @return true when set, false otherwise
    */
   public default boolean isCriticalSpeedKmHSet() {
-    return getMaximumSpeedKmH()==null;
+    return getCriticalSpeedKmH()!=null;
   }  
   
   /** Collect the critical speed set, or otherwise the provided default
