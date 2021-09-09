@@ -354,9 +354,34 @@ public class UnitUtils {
     case VEH_KM:
       return convertVehiclesPerKmTo(to, value);      
     case VEH_METER:
-      return convertVehiclesPerMeterTo(to, value);        
+      return convertVehiclesPerMeterTo(to, value);
+    case PCU_HOUR:
+      return convertPcuPerHourTo(to, value);
+    case PCU_MINUTE:
+      return convertPcuPerMinuteTo(to, value);
+    case PCU_SECOND:
+      return convertPcuPerSecondTo(to, value);      
+    case PCU_KM:
+      return convertPcuPerKmTo(to, value);      
+    case PCU_METER:
+      return convertPcuPerMeterTo(to, value);      
     default:
       throw new PlanItException(String.format("conversion illegal or not supported yet from %s --> %s",from, to));
+    }
+  }
+  
+  /** Check if conversion is supported
+   * 
+   * @param from from units
+   * @param to to units
+   * @return true when conversion is possible, false otherwise
+   */
+  public static boolean isConversionSupported(Units from, Units to) {
+    try {
+      convert(from, to, 1);
+      return true;
+    }catch(Exception e) {
+      return false;
     }
   }
   
