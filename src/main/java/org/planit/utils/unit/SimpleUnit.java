@@ -46,6 +46,23 @@ public abstract class SimpleUnit implements Unit {
   public String toString() {
     return unitType.getName();
   }
-  
+
+  /**
+   * {@inheritDoc}
+   */  
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) {
+        return true;
+    }
+    if (o == null) {
+        return false;
+    }
+    if (getClass() != o.getClass()) {
+      return false;
+    }      
+    SimpleUnit unit = (SimpleUnit) o;
+    return unit.unitType.equals(this.unitType);     
+  }  
 }
 

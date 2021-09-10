@@ -23,20 +23,29 @@ public class GroupUnit implements Unit {
   /**
    * track denominator units
    */  
-  private final List<SimpleUnit> denominatorsUnits = new ArrayList<SimpleUnit>();
+  private final List<SimpleUnit> denominatorsUnits;
   
-  /** constructor 
-   * @param numeratorUnits
+  /** Constructor
+   *  
+   * @param numeratorUnits to use
    */
   protected GroupUnit(SimpleUnit... numeratorUnits) {
     this.numeratorUnits = Arrays.asList(numeratorUnits);
+    this.denominatorsUnits = null;
   }
   
-  /** constructor 
-   * @param numeratorUnits
+  /** Constructor
+   *  
+   * @param other to copy numerator units from
+   * @param denominatorUnits to use
    */
   protected GroupUnit(GroupUnit other, SimpleUnit... denominatorUnits) {
     this.numeratorUnits = new ArrayList<SimpleUnit>(other.numeratorUnits);
+    if(denominatorUnits!=null) {
+      this.denominatorsUnits = List.of(denominatorUnits);
+    }else {
+      this.denominatorsUnits = null;
+    }
   }  
   
   /** Factory method to create a new groupUnit with this unit's numerator and additionally added denominator units, e.g., KM per Hour
@@ -80,13 +89,18 @@ public class GroupUnit implements Unit {
     GroupUnit toUnit = (GroupUnit)to;
     
     double numeratorMultiplier = 1;
-    for(SimpleUnit simpleUnit : getNumeratorUnitTypes()) {
-      numeratorMultiplier  *= simpleUnit.convertTo(toUnit, numeratorMultiplier );
-    }
+    Iterator<SimpleUnit> iter = getNumeratorUnitTypes().iterator();
+    Iterator<SimpleUnit> otherIter = toUnit.getNumeratorUnitTypes().iterator();
+    while(iter.hasNext()) {
+      numeratorMultiplier *= iter.next().convertTo(otherIter.next(),numeratorMultiplier);
+    }  
+    
     double denominatorMultiplier = 1;
-    for(SimpleUnit simpleUnit : getDenominatorUnitTypes()) {
-      denominatorMultiplier  *= simpleUnit.convertTo(toUnit, denominatorMultiplier );
-    }   
+    iter = getDenominatorUnitTypes().iterator();
+    otherIter = toUnit.getDenominatorUnitTypes().iterator();
+    while(iter.hasNext()) {
+      denominatorMultiplier *= iter.next().convertTo(otherIter.next(),denominatorMultiplier);
+    }     
     return (value * numeratorMultiplier)/denominatorMultiplier;
   }  
       
@@ -119,7 +133,42 @@ public class GroupUnit implements Unit {
       }
     } 
     return true;
-  }  
+  }
+  
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) {
+      return true;
+    }
+    if (o == null) {
+        return false;
+    }
+    if (getClass() != o.getClass()) {
+      return false;
+    }      
+    GroupUnit otherUnit = (GroupUnit) o;
+    if(!this.canConvertTo(otherUnit)) {
+      return false;
+    }
+    Iterator<SimpleUnit> iter = getDenominatorUnitTypes().iterator();
+    Iterator<SimpleUnit> otherIter = otherUnit.getDenominatorUnitTypes().iterator();
+    while(iter.hasNext()) {
+      if(!iter.next().equals(otherIter.next())) {
+        return false;
+      }
+    }
+    iter = getNumeratorUnitTypes().iterator();
+    otherIter = otherUnit.getNumeratorUnitTypes().iterator();
+    while(iter.hasNext()) {
+      if(!iter.next().equals(otherIter.next())) {
+        return false;
+      }
+    }    
+    return true;     
+  }
   
   /**
    * {@inheritDoc}

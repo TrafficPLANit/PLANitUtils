@@ -20,8 +20,8 @@ public class SrsUnit extends SimpleUnit{
    * 
    * @param unitType to use
    */
-  protected SrsUnit(UnitType unitType) {
-    super(unitType);
+  protected SrsUnit() {
+    super(UnitType.SRS);
     if(!unitType.group.equals(UnitGroup.SRS)) {
       LOGGER.warning(String.format("Invalid unit type %s for SRS based unit",unitType.name));
       unitType = UnitType.NONE;
@@ -33,7 +33,12 @@ public class SrsUnit extends SimpleUnit{
    */
   @Override
   public double convertTo(Unit to, double value) throws PlanItException {
-    throw new PlanItException("SRS units cannot yet be converted");   
+    if(!to.isCombinedUnit() && ((SrsUnit)to).unitType.equals(UnitType.SRS)) {
+      return value;
+    }else {
+      throw new PlanItException(
+          String.format("conversion illegal or not supported yet from %s --> %s",UnitType.SRS, to));
+    }   
   }
   
   /**

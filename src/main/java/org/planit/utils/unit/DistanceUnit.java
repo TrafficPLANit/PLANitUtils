@@ -55,7 +55,7 @@ public class DistanceUnit extends SimpleUnit{
       return value * METER_2_KM;       
     default:
       throw new PlanItException(
-          String.format("conversion illegal or not supported yet from %s --> %s",Units.METER, to));
+          String.format("conversion illegal or not supported yet from %s --> %s",UnitType.METER, to));
     }  
   }
 
@@ -74,7 +74,7 @@ public class DistanceUnit extends SimpleUnit{
       return value * KM_2_METER;       
     default:
       throw new PlanItException(
-          String.format("conversion illegal or not supported yet from %s --> %s",Units.KM, to));
+          String.format("conversion illegal or not supported yet from %s --> %s",UnitType.KM, to));
     }  
   }   
  

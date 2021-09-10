@@ -77,7 +77,7 @@ public class TimeUnit extends SimpleUnit{
       return value;
     default:
       throw new PlanItException(
-          String.format("conversion illegal or not supported yet from %s --> %s",Units.SECOND, to));
+          String.format("conversion illegal or not supported yet from %s --> %s",UnitType.SECOND, to));
     }   
   }  
 
@@ -100,7 +100,7 @@ public class TimeUnit extends SimpleUnit{
       return value * MINUTE_2_SECOND;        
     default:
       throw new PlanItException(
-          String.format("conversion illegal or not supported yet from %s --> %s",Units.MINUTE, to));
+          String.format("conversion illegal or not supported yet from %s --> %s",UnitType.MINUTE, to));
     }   
   }
   
@@ -123,7 +123,7 @@ public class TimeUnit extends SimpleUnit{
       return value * HOUR_2_SECOND;        
     default:
       throw new PlanItException(
-          String.format("conversion illegal or not supported yet from %s --> %s",Units.HOUR, to));
+          String.format("conversion illegal or not supported yet from %s --> %s",UnitType.HOUR, to));
     }  
   }      
   
