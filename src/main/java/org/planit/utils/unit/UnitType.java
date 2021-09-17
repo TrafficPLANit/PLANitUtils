@@ -9,7 +9,7 @@ public enum UnitType {
   METER(UnitGroup.DISTANCE,"M"),     
   HOUR(UnitGroup.TIME,"H"),
   SECOND(UnitGroup.TIME,"S"),
-  MINUTE(UnitGroup.TIME,"VEH"),
+  MINUTE(UnitGroup.TIME,"MIN"),
   SRS(UnitGroup.SRS,"SRS");
   
   protected UnitGroup group;
