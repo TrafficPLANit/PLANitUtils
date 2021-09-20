@@ -15,7 +15,7 @@ import org.planit.utils.id.ManagedId;
  * @author markr
  *
  */
-public interface UntypedGraph<V extends GraphEntities<? extends Vertex>, E extends GraphEntities<? extends Edge>> extends ManagedId {
+public interface UntypedGraph<V extends Vertex, E extends Edge> extends ManagedId {
   
   /** id class for generating ids */
   @SuppressWarnings("rawtypes")
@@ -24,12 +24,12 @@ public interface UntypedGraph<V extends GraphEntities<? extends Vertex>, E exten
   /** collect vertices of graph
    * @return vertices
    */
-  public abstract V getVertices();
+  public abstract GraphEntities<V> getVertices();
   
   /** collect edges of graph
    * @return edges
    */
-  public abstract E getEdges(); 
+  public abstract GraphEntities<E> getEdges(); 
   
   /** Verify if empty, empty when no nodes and edges exist
    * 

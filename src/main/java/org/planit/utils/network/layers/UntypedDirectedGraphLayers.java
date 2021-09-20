@@ -9,7 +9,7 @@ import org.planit.utils.network.layer.UntypedDirectedGraphLayer;
  * @author markr
  *
  */
-public interface UntypedDirectedGraphLayers<L extends UntypedDirectedGraphLayer<?,?,?,?,?,?>> extends TopologicalLayers<L> {
+public interface UntypedDirectedGraphLayers<L extends UntypedDirectedGraphLayer<?,?,?>> extends TopologicalLayers<L> {
   
   /**
    * clone container

@@ -7,7 +7,6 @@ import java.util.Set;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.planit.utils.exceptions.PlanItException;
 import org.planit.utils.graph.EdgeSegment;
-import org.planit.utils.graph.GraphEntities;
 import org.planit.utils.graph.directed.DirectedEdge;
 import org.planit.utils.graph.directed.DirectedVertex;
 import org.planit.utils.graph.modifier.event.GraphModifierEventProducer;
@@ -20,7 +19,7 @@ import org.planit.utils.network.layer.UntypedDirectedGraphLayer;
  *
  * @author markr
  */
-public interface UntypedDirectedGraphLayerModifier<V extends DirectedVertex, VE extends GraphEntities<V>, E extends DirectedEdge, EE extends GraphEntities<E>, S extends EdgeSegment, SE extends GraphEntities<S>> extends TopologicalLayerModifier, GraphModifierEventProducer {
+public interface UntypedDirectedGraphLayerModifier<V extends DirectedVertex, E extends DirectedEdge, S extends EdgeSegment> extends TopologicalLayerModifier, GraphModifierEventProducer {
     
   /**
    * Break the passed in link by inserting the passed in node in between. After completion the original links remain as (NodeA,NodeToBreakAt), and new links as inserted for

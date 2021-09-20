@@ -8,13 +8,13 @@ import org.planit.utils.graph.directed.DirectedVertex;
  * 
  * @author markr
  */
-public interface UntypedDirectedGraph<V extends GraphEntities<? extends DirectedVertex>, E extends GraphEntities<? extends DirectedEdge>, ES extends GraphEntities<? extends EdgeSegment>> extends UntypedGraph<V,E> {
+public interface UntypedDirectedGraph<V extends DirectedVertex, E extends DirectedEdge, ES extends EdgeSegment> extends UntypedGraph<V,E> {
 
 
   /** Collect edges segments of graph
    * @return edges segments
    */
-  ES getEdgeSegments();
+  public abstract GraphEntities<ES> getEdgeSegments();
     
   /** Verify if empty, empty when no nodes, edges, edge segments exist
    * 
@@ -31,7 +31,7 @@ public interface UntypedDirectedGraph<V extends GraphEntities<? extends Directed
   @Override
   default boolean validate() {
     boolean isValid = UntypedGraph.super.validate();
-    for(EdgeSegment edgeSegment : getEdgeSegments()) {
+    for(ES edgeSegment : getEdgeSegments()) {
       isValid = isValid && edgeSegment.validate();
     }
     return isValid;

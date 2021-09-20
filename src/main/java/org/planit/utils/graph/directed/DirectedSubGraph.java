@@ -11,7 +11,7 @@ import org.planit.utils.graph.EdgeSegment;
  * @param <E> edge type
  * @param <ES> edge segment type
  */
-public interface DirectedSubGraph<V extends DirectedVertices, E extends DirectedEdges, ES extends EdgeSegments> {
+public interface DirectedSubGraph<V extends DirectedVertex, E extends DirectedEdge, ES extends EdgeSegment> {
   
   /**
    * collect the id of this subgraph

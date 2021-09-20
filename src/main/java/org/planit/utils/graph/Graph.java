@@ -7,6 +7,6 @@ package org.planit.utils.graph;
  * 
  * @author markr
  */
-public interface Graph<V extends Vertices, E extends Edges> extends UntypedGraph<V,E> {
+public interface Graph<V extends Vertex, E extends Edge> extends UntypedGraph<V,E> {
     
 }

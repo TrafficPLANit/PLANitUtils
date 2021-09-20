@@ -1,8 +1,5 @@
 package org.planit.utils.network.layer.physical;
 
-import org.planit.utils.network.layer.physical.LinkSegments;
-import org.planit.utils.network.layer.physical.Links;
-import org.planit.utils.network.layer.physical.Nodes;
 import org.planit.utils.network.layer.physical.PhysicalLayer;
 
 /**
@@ -10,6 +7,6 @@ import org.planit.utils.network.layer.physical.PhysicalLayer;
  *
  * @author markr
  */
-public interface PhysicalLayer extends UntypedPhysicalLayer<Node, Nodes, Link, Links, LinkSegment, LinkSegments> {
+public interface PhysicalLayer extends UntypedPhysicalLayer<Node, Link, LinkSegment> {
 
 }

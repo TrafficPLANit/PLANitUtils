@@ -9,28 +9,28 @@ import org.planit.utils.network.layer.physical.UntypedPhysicalLayer;
  *
  * @author markr
  */
-public interface UntypedPhysicalLayer<N extends Node, NE extends GraphEntities<N>, L extends Link, LE extends GraphEntities<L>, LS extends LinkSegment, LSE extends GraphEntities<LS>> extends UntypedDirectedGraphLayer<N, NE, L, LE, LS, LSE> {
+public interface UntypedPhysicalLayer<N extends Node, L extends Link, LS extends LinkSegment> extends UntypedDirectedGraphLayer<N, L, LS> {
 
   /**
    * Collect the links
    * 
    * @return the links
    */
-  public abstract LE getLinks();
+  public abstract GraphEntities<L> getLinks();
 
   /**
    * Collect the link segments
    * 
    * @return the linkSegments
    */
-  public abstract LSE getLinkSegments();
+  public abstract GraphEntities<LS> getLinkSegments();
 
   /**
    * Collect the nodes
    * 
    * @return the nodes
    */
-  public abstract NE getNodes();
+  public abstract GraphEntities<N> getNodes();
 
   /**
    * Number of nodes

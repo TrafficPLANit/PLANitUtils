@@ -1,5 +1,6 @@
 package org.planit.utils.graph.directed;
 
+import org.planit.utils.graph.EdgeSegment;
 import org.planit.utils.graph.UntypedDirectedGraph;
 
 /**
@@ -9,7 +10,7 @@ import org.planit.utils.graph.UntypedDirectedGraph;
  * 
  * @author markr
  */
-public interface DirectedGraph<V extends DirectedVertices, E extends DirectedEdges, ES extends EdgeSegments> extends UntypedDirectedGraph<V,E,ES> {
+public interface DirectedGraph<V extends DirectedVertex, E extends DirectedEdge, ES extends EdgeSegment> extends UntypedDirectedGraph<V,E,ES> {
 
     
 }

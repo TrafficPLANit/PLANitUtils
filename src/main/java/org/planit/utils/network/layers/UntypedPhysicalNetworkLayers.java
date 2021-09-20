@@ -9,7 +9,7 @@ import org.planit.utils.network.layer.physical.UntypedPhysicalLayer;
  * @author markr
  *
  */
-public interface UntypedPhysicalNetworkLayers<L extends UntypedPhysicalLayer<?,?,?,?,?,?>> extends UntypedDirectedGraphLayers<L> {
+public interface UntypedPhysicalNetworkLayers<L extends UntypedPhysicalLayer<?,?,?>> extends UntypedDirectedGraphLayers<L> {
   
   /**
    * Number of nodes across all layers

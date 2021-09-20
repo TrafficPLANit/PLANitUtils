@@ -1,7 +1,6 @@
 package org.planit.utils.network.layer;
 
 import org.planit.utils.graph.EdgeSegment;
-import org.planit.utils.graph.GraphEntities;
 import org.planit.utils.graph.directed.DirectedEdge;
 import org.planit.utils.graph.directed.DirectedVertex;
 import org.planit.utils.id.IdGroupingToken;
@@ -15,7 +14,7 @@ import org.planit.utils.network.layer.modifier.UntypedDirectedGraphLayerModifier
  *
  * @author markr
  */
-public interface UntypedDirectedGraphLayer<V extends DirectedVertex, VE extends GraphEntities<V>, E extends DirectedEdge, EE extends GraphEntities<E>, S extends EdgeSegment, SE extends GraphEntities<S>> extends TopologicalLayer {
+public interface UntypedDirectedGraphLayer<V extends DirectedVertex, E extends DirectedEdge, S extends EdgeSegment> extends TopologicalLayer {
   
   /**
    * Collect the id grouping token used for all entities registered on the layer, i.e., this layer's specific identifier for generating ids unique and contiguous within this
@@ -29,6 +28,6 @@ public interface UntypedDirectedGraphLayer<V extends DirectedVertex, VE extends 
    * {@inheritDoc}
    */
   @Override
-  public abstract UntypedDirectedGraphLayerModifier<V,VE,E,EE,S,SE> getLayerModifier();  
+  public abstract UntypedDirectedGraphLayerModifier<V,E,S> getLayerModifier();  
     
 }
