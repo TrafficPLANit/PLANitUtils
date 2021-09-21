@@ -1,13 +1,13 @@
 package org.planit.utils.zoning;
 
-import org.planit.utils.id.ContainerisedManagedIdEntityFactory;
+import org.planit.utils.id.ManagedIdEntityFactory;
 
 /** Factory interface for directed connectoids
  * 
  * @author markr
  *
  */
-public interface TransferZoneFactory extends ContainerisedManagedIdEntityFactory<TransferZone>{
+public interface TransferZoneFactory extends ManagedIdEntityFactory<TransferZone>{
 
   /**
    * Create and register new transfer zone

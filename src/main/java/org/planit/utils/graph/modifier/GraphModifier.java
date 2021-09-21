@@ -33,10 +33,8 @@ public interface GraphModifier<V extends Vertex, E extends Edge> extends GraphMo
    * remove the subgraph identified by the passed in vertices
    * 
    * @param subGraphToRemove the one to remove
-   * @param recreateIds      indicate if the ids of the graph entities are to be recreated, if false gaps will occur so it is expected to be handled by the user afterwards in this
-   *                         case
    */
-  public abstract void removeSubGraph(Set<? extends V> subGraphToRemove, boolean recreateIds);
+  public abstract void removeSubGraph(Set<? extends V> subGraphToRemove);
   
   /**
    * remove the (sub)graph in which the passed in vertex resides. Apply reordering of internal ids of remaining network.
@@ -46,7 +44,7 @@ public interface GraphModifier<V extends Vertex, E extends Edge> extends GraphMo
    *                        case
    * @throws PlanItException thrown if error
    */
-  public abstract void removeSubGraphOf(V referenceVertex, boolean recreateIds) throws PlanItException;
+  public abstract void removeSubGraphOf(V referenceVertex) throws PlanItException;
 
   /**
    * Break the passed in edges by inserting the passed in vertex in between. After completion the original edges remain as (VertexA,VertexToBreakAt), and new edges are inserted for
@@ -58,13 +56,29 @@ public interface GraphModifier<V extends Vertex, E extends Edge> extends GraphMo
    * @return affectedEdges the list of all result edges of the breaking of links by their original link id
    * @throws PlanItException thrown if error
    */
-  public abstract <Ex extends E> Map<Long, Set<Ex>> breakEdgesAt(List<Ex> edgesToBreak, V vertexToBreakAt, CoordinateReferenceSystem crs) throws PlanItException;  
+  public abstract <Ex extends E> Map<Long, Set<Ex>> breakEdgesAt(final List<Ex> edgesToBreak, final V vertexToBreakAt, final CoordinateReferenceSystem crs) throws PlanItException;
+  
+  /**
+   * Break the passed in edge by inserting the passed in vertex in between. After completion the original edge remains as (VertexA,VertexToBreakAt), and new edges are inserted for
+   * (VertexToBreakAt,VertexB).
+   * 
+   * @param edgeToBreak    the link to break
+   * @param vertexToBreakAt the node to break at
+   * @param geoUtils required to update edge lengths
+   * @return newlyCreatedEdge 
+   * @throws PlanItException thrown if error
+   */
+  public abstract <Ex extends E> Ex breakEdgeAt(final V vertexToBreakAt, final Ex edgeToBreak, final PlanitJtsCrsUtils geoUtils) throws PlanItException;  
 
   /**
-   * this method will recreate all ids of the graph's main components, e.g., vertices, edges, and potentially other eligible components of derived graph implementations. Can be
-   * used in conjunctions with the removal of subgraphs in case the recreation of ids was switched off manually for some reason.
+   * This method will recreate all ids of the graph's components, e.g., vertices, edges, etc. but only when the containers used for them are the primary ManagedIdEntities containers, i.e., when the graph
+   * is responsible of uniquely tracking all entities by their managed id. If not, for example, if this is a subgraph reusing parts of the main graph, it will not recreate the ids. 
+   * <p>
+   * The reasoning is that if we would recreate ids of the container while the container does not contain all = let's say - vertices, their managedId is no longer guaranteed to be unique which can lead to issues
+   * <p> 
+   * Method can be used in conjunctions with the removal of parts of the graph and the result is required to have unique contiguous ids
    */
-  public abstract void recreateIds();
+  public abstract void recreateManagedEntitiesIds();
   
   /**
    * remove any dangling sub graphs from the graph if they exist and reorder the ids if needed

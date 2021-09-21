@@ -1,16 +1,17 @@
 package org.planit.utils.network.layer.macroscopic;
 
 import org.planit.utils.graph.GraphEntities;
+import org.planit.utils.id.ManagedIdEntities;
 import org.planit.utils.mode.Mode;
 
 /**
- * Wrapper around GraphEntities interface to support MacroscopicLinkSegments explicitly and create them on the container via
+ * Primary managed container for MacroscopicLinkSegments explicitly and create them on the container via
  * its dedicated factory class
  * 
  * @author markr
  *
  */
-public interface MacroscopicLinkSegments extends GraphEntities<MacroscopicLinkSegment> {
+public interface MacroscopicLinkSegments extends GraphEntities<MacroscopicLinkSegment>, ManagedIdEntities<MacroscopicLinkSegment> {
   /* do not derive from LinkSegments since we require to override the factory method return type. This is only
    * allowed when the return type directly derives from the original return type. MacroscopicLinkSegmentsFactory cannot
    * derive from LinkSegmentFactory since the signature of the factory methods differs. Hence, we must derive from
@@ -22,6 +23,12 @@ public interface MacroscopicLinkSegments extends GraphEntities<MacroscopicLinkSe
    */
   @Override
   public abstract MacroscopicLinkSegmentFactory getFactory();  
+  
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public abstract MacroscopicLinkSegments clone();    
   
   /** Create a raw array of all free flow travel times of the registered macroscopic link segments where the index in the array corresponds
    * to the link segment id (not id). 

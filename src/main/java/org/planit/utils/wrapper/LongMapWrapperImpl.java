@@ -29,10 +29,7 @@ public abstract class LongMapWrapperImpl<V> extends MapWrapperImpl<Long, V> impl
   }  
   
   /**
-   * Remove value from map by its key
-   * 
-   * @param key to use
-   * @return removed entry if any
+   * {@inheritDoc}
    */  
   @Override
   public V remove(final long key) {
@@ -40,14 +37,20 @@ public abstract class LongMapWrapperImpl<V> extends MapWrapperImpl<Long, V> impl
   }  
 
   /**
-   * Collect entry from container
-   * 
-   * @param key to use
-   */ 
+   * {@inheritDoc}
+   */
   @Override  
   public V get(final long key) {
     return getMap().get(key);
   }
+  
+  /**
+   * {@inheritDoc}
+   */
+  @Override  
+  public boolean containsKey(final long key) {
+    return getMap().containsKey(key);
+  }  
   
   /**
    * {@inheritDoc}

@@ -1,7 +1,7 @@
 package org.planit.utils.zoning;
 
 import org.planit.utils.exceptions.PlanItException;
-import org.planit.utils.id.ContainerisedManagedIdEntityFactory;
+import org.planit.utils.id.ManagedIdEntityFactory;
 import org.planit.utils.network.layer.physical.Node;
 
 /** Factory interface for undirected connectoids
@@ -9,7 +9,7 @@ import org.planit.utils.network.layer.physical.Node;
  * @author markr
  *
  */
-public interface UndirectedConnectoidFactory extends ContainerisedManagedIdEntityFactory<UndirectedConnectoid>{
+public interface UndirectedConnectoidFactory extends ManagedIdEntityFactory<UndirectedConnectoid>{
 
   /** factory method for undirected connectoid
    * 

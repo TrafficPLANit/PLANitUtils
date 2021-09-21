@@ -1,15 +1,15 @@
 package org.planit.utils.mode;
 
 import org.planit.utils.exceptions.PlanItException;
-import org.planit.utils.id.ContainerisedManagedIdEntityFactory;
 import org.planit.utils.id.IdGroupingToken;
+import org.planit.utils.id.ManagedIdEntityFactory;
 
 /** Factory interface for creating mode instances
  * 
  * @author markr
  *
  */
-public interface ModeFactory extends ContainerisedManagedIdEntityFactory<Mode> {
+public interface ModeFactory extends ManagedIdEntityFactory<Mode> {
 
   /**
    * Create and register new mode

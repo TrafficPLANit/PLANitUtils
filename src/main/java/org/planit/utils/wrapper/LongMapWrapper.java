@@ -21,6 +21,13 @@ public interface LongMapWrapper<V> extends MapWrapper<Long,V> {
    * 
    * @param key to use
    */
-  public abstract V get(final long key);  
+  public abstract V get(final long key);
+  
+  /**
+   * Verify if entry is present
+   * 
+   * @param key to use
+   */
+  public abstract boolean containsKey(final long key);
     
 }

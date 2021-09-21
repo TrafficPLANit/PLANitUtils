@@ -71,21 +71,4 @@ public interface UntypedGraph<V extends Vertex, E extends Edge> extends ManagedI
     }
   } 
   
-  /**
-   * Reset the graph
-   */
-  public default void reset() {
-    resetChildManagedIdEntities();
-  }
-
-  /**
-   * {@inheritDoc}
-   */
-  @Override
-  public default void resetChildManagedIdEntities() {
-    ManagedId.super.resetChildManagedIdEntities();
-    getVertices().reset();
-    getEdges().reset();
-  }
-
 }

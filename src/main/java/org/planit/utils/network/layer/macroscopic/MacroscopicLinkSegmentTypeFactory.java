@@ -1,6 +1,6 @@
 package org.planit.utils.network.layer.macroscopic;
 
-import org.planit.utils.id.ContainerisedManagedIdEntityFactory;
+import org.planit.utils.id.ManagedIdEntityFactory;
 import org.planit.utils.mode.Mode;
 
 /** Factory to create link segments and register them on its container
@@ -8,7 +8,7 @@ import org.planit.utils.mode.Mode;
  * @author markr
  *
  */
-public interface MacroscopicLinkSegmentTypeFactory extends ContainerisedManagedIdEntityFactory<MacroscopicLinkSegmentType>{
+public interface MacroscopicLinkSegmentTypeFactory extends ManagedIdEntityFactory<MacroscopicLinkSegmentType>{
       
   /**
    * Create and register new macroscopic link segment type on network. No mode properties will be set (null)

@@ -1,12 +1,13 @@
 package org.planit.utils.network.layer.service;
 
 import org.planit.utils.graph.GraphEntities;
+import org.planit.utils.id.ManagedIdEntities;
 
 /** Container around service legs with factory access 
  * 
  * @author markr
  */
-public interface ServiceLegs extends GraphEntities<ServiceLeg> {
+public interface ServiceLegs extends GraphEntities<ServiceLeg>, ManagedIdEntities<ServiceLeg> {
   
   /* do not derive from Links since we require to override the factory method return type. This is only
    * allowed when the return type directly derives from the original return type. ServiceLegFactory cannot
@@ -18,7 +19,13 @@ public interface ServiceLegs extends GraphEntities<ServiceLeg> {
    * {@inheritDoc}
    */
   @Override
-  public abstract ServiceLegFactory getFactory();  
+  public abstract ServiceLegFactory getFactory();
+  
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public abstract ServiceLegs clone();   
 
   /**
    * verify if service leg is present
@@ -27,7 +34,7 @@ public interface ServiceLegs extends GraphEntities<ServiceLeg> {
    * @return true when present false otherwise
    */
   public default boolean hasServiceLeg(long id) {
-    return contains(id);
+    return containsKey(id);
   }
 
 }

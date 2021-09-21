@@ -35,15 +35,6 @@ public interface UntypedDirectedGraph<V extends DirectedVertex, E extends Direct
       isValid = isValid && edgeSegment.validate();
     }
     return isValid;
-  } 
-  
-  /**
-   * {@inheritDoc}
-   */
-  @Override
-  public default void reset() {
-    UntypedGraph.super.reset();
-    getEdgeSegments().reset();
   }  
 
 }

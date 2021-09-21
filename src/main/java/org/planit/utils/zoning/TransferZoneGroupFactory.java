@@ -1,6 +1,6 @@
 package org.planit.utils.zoning;
 
-import org.planit.utils.id.ContainerisedManagedIdEntityFactory;
+import org.planit.utils.id.ManagedIdEntityFactory;
 
 /**
  * A Factory for transfer zone groups to register on container 
@@ -8,7 +8,7 @@ import org.planit.utils.id.ContainerisedManagedIdEntityFactory;
  * @author markr
  *
  */
-public interface TransferZoneGroupFactory extends ContainerisedManagedIdEntityFactory<TransferZoneGroup>{
+public interface TransferZoneGroupFactory extends ManagedIdEntityFactory<TransferZoneGroup>{
     
   /**
    * create and register a new transferZoneGroup

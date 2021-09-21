@@ -1,6 +1,6 @@
 package org.planit.utils.network.layers;
 
-import org.planit.utils.id.ContainerisedManagedIdEntityFactory;
+import org.planit.utils.id.ManagedIdEntityFactory;
 import org.planit.utils.network.layer.MacroscopicNetworkLayer;
 import org.planit.utils.network.layer.ServiceNetworkLayer;
 
@@ -9,7 +9,7 @@ import org.planit.utils.network.layer.ServiceNetworkLayer;
  * @author markr
  *
  */
-public interface ServiceNetworkLayerFactory extends ContainerisedManagedIdEntityFactory<ServiceNetworkLayer> {
+public interface ServiceNetworkLayerFactory extends ManagedIdEntityFactory<ServiceNetworkLayer> {
  
   /** Create a new service network layer  
    * 

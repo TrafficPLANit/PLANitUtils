@@ -3,7 +3,7 @@ package org.planit.utils.graph;
 import java.util.ArrayList;
 import java.util.Collection;
 
-import org.planit.utils.id.ManagedIdEntities;
+import org.planit.utils.wrapper.LongMapWrapper;
 
 /** Container class for any graph entities and a factory to create them
  * 
@@ -11,13 +11,12 @@ import org.planit.utils.id.ManagedIdEntities;
  *
  * @param <E> type of graph entity
  */
-public interface GraphEntities<E extends GraphEntity> extends ManagedIdEntities<E> {
+public interface GraphEntities<E extends GraphEntity> extends LongMapWrapper<E>, Cloneable  {
 
   /** Factory to create instance of graph entity (for this container class)
    * 
    * @return entity factory
    */
-  @Override
   public abstract GraphEntityFactory<E> getFactory();
       
   /**

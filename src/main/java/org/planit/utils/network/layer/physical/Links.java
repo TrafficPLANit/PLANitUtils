@@ -1,15 +1,16 @@
 package org.planit.utils.network.layer.physical;
 
 import org.planit.utils.graph.GraphEntities;
+import org.planit.utils.id.ManagedIdEntities;
 
 /**
- * Container class for links with access to factory capable of creating new links and registering them on the container
+ *rimary managed container class for links with access to factory capable of creating new links and registering them on the container
  * directly
  * 
  * @author markr
  *
  */
-public interface Links extends GraphEntities<Link> {
+public interface Links extends GraphEntities<Link>, ManagedIdEntities<Link> {
   /* do not derive from DirectedEdges<E> since we require to override the factory method return type. This is only
    * allowed when the return type directly derives from the original return type. LinkFactory cannot
    * derive from DirectedEdgeFactory since the signature of the factory methods differs. Hence, we must derive from
@@ -35,7 +36,7 @@ public interface Links extends GraphEntities<Link> {
    * @return true when present false otherwise
    */
   public default boolean hasLink(long id) {
-    return contains(id);
+    return containsKey(id);
   }
 
 }

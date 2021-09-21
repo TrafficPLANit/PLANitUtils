@@ -14,7 +14,7 @@ public interface ManagedIdEntities<E extends ManagedId> extends LongMapWrapper<E
    * 
    * @return entity factory
    */
-  public abstract ContainerisedManagedIdEntityFactory<E> getFactory();
+  public abstract ManagedIdEntityFactory<E> getFactory();
   
   /**
    * Collect the class identifier used for the managed ids within the id group for instances of this class used in this container
@@ -43,7 +43,7 @@ public interface ManagedIdEntities<E extends ManagedId> extends LongMapWrapper<E
    * @param id to verify
    * @return true when present false otherwise
    */
-  public default boolean contains(long id) {
+  public default boolean containsKey(long id) {
     return get(id) != null;
   }
   

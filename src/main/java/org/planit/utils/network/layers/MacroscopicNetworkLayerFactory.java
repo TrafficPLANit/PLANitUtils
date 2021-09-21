@@ -1,6 +1,6 @@
 package org.planit.utils.network.layers;
 
-import org.planit.utils.id.ContainerisedManagedIdEntityFactory;
+import org.planit.utils.id.ManagedIdEntityFactory;
 import org.planit.utils.mode.Mode;
 import org.planit.utils.network.layer.MacroscopicNetworkLayer;
 
@@ -9,7 +9,7 @@ import org.planit.utils.network.layer.MacroscopicNetworkLayer;
  * @author markr
  *
  */
-public interface MacroscopicNetworkLayerFactory extends ContainerisedManagedIdEntityFactory<MacroscopicNetworkLayer> {
+public interface MacroscopicNetworkLayerFactory extends ManagedIdEntityFactory<MacroscopicNetworkLayer> {
  
   /** Create a new macroscopic network layer instance 
    *  

@@ -3,14 +3,14 @@ package org.planit.utils.path;
 import java.util.Deque;
 
 import org.planit.utils.graph.EdgeSegment;
-import org.planit.utils.id.ContainerisedManagedIdEntityFactory;
+import org.planit.utils.id.ManagedIdEntityFactory;
 
 /** Factory interface for directed paths
  * 
  * @author markr
  *
  */
-public interface ContainerisedDirectedPathFactory extends ContainerisedManagedIdEntityFactory<DirectedPath>, DirectedPathFactory{
+public interface ContainerisedDirectedPathFactory extends ManagedIdEntityFactory<DirectedPath>, DirectedPathFactory{
 
   /**
    * Create new path

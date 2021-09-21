@@ -1,7 +1,7 @@
 package org.planit.utils.zoning;
 
 import org.planit.utils.exceptions.PlanItException;
-import org.planit.utils.id.ContainerisedManagedIdEntityFactory;
+import org.planit.utils.id.ManagedIdEntityFactory;
 import org.planit.utils.network.layer.physical.LinkSegment;
 
 /** Factory interface for directed connectoids
@@ -9,7 +9,7 @@ import org.planit.utils.network.layer.physical.LinkSegment;
  * @author markr
  *
  */
-public interface DirectedConnectoidFactory extends ContainerisedManagedIdEntityFactory<DirectedConnectoid>{
+public interface DirectedConnectoidFactory extends ManagedIdEntityFactory<DirectedConnectoid>{
 
   /** Create a new directed connectoid
    *  
