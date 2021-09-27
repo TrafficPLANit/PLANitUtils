@@ -18,24 +18,27 @@ public interface DirectedSubGraph<V extends DirectedVertex, E extends DirectedEd
    * 
    * @return sub graph id
    */
-  public long getId();
-
-  /** The parent directed graph
-   * 
-   * @return parent graph
-   */
-  public DirectedGraph<V,E,ES> getParentGraph();
-  
-  /** collect the root vertex
-   * @return root vertex
-   */
-  public DirectedVertex getRootVertex();
+  public abstract long getId(); 
   
   /** register an edge segment on the subgraph
    * 
    * @param edgeSegment to add
-   * @return true when successful, false otherwise (for example when the edge segment is not present on the parent graph)
    */
-  public boolean addEdgeSegment(EdgeSegment edgeSegment);
+  public abstract void addEdgeSegment(EdgeSegment edgeSegment);
+  
+  /** Verify if given edge segment is registered on this subgraph
+   * 
+   * @param edgeSegment to verify
+   * @return true when registered, false otherwise
+   */
+  public abstract boolean containsEdgeSegment(EdgeSegment edgeSegment);
+  
+  /**
+   * Based on the registered edge segments, the number of vertices is automatically determined. This method provides the number of vertices corresponding to these registered edge
+   * segments
+   * 
+   * @return
+   */
+  public abstract long getNumberOfVertices();  
   
 }
