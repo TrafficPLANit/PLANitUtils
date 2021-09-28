@@ -1,6 +1,7 @@
 package org.planit.utils.graph.directed;
 
 import org.planit.utils.graph.EdgeSegment;
+import org.planit.utils.id.IdAble;
 
 /**
  * A directed subgraph interface for a given parent graph by registering edge segments on it (and therefore vertices and edges)
@@ -8,15 +9,8 @@ import org.planit.utils.graph.EdgeSegment;
  * @author markr
  *
  */
-public interface DirectedSubGraph {
-  
-  /**
-   * Collect the id of this subgraph
-   * 
-   * @return sub graph id
-   */
-  public abstract long getId(); 
-  
+public interface DirectedSubGraph extends IdAble {
+    
   /** Register an edge segment on the subgraph
    * 
    * @param edgeSegment to add
@@ -43,5 +37,11 @@ public interface DirectedSubGraph {
    * @return
    */
   public abstract long getNumberOfVertices();  
+  
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public abstract DirectedSubGraph clone();  
   
 }

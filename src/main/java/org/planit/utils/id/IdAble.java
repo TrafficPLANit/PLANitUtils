@@ -3,18 +3,26 @@ package org.planit.utils.id;
 /**
  * A class implementing this interface signals that it is id-able
  * 
- * TODO: refactor so that id becomes internal id, and xmlId becomes the defacto available id
- * used to communicate with users
  * 
  * @author markr
  *
  */
 public interface IdAble extends Comparable<IdAble>, Cloneable {
   
+  /** Convenience method to generate an id using a unique class identifier and idToken which in turn delegates to
+   * the {@code IdGenerator.generateId()}
+   * 
+   * @param classIdentifier to use
+   * @param idtoken to use
+   */
+  public static long generateId(final Class<?> classIdentifier, final IdGroupingToken idtoken) {
+    return IdGenerator.generateId(idtoken, classIdentifier);
+  }   
+  
   /** collect id of the entity
    * @return id
    */
-  public long getId();  
+  public abstract long getId();  
   
   /**
    * Create a shallow copy of this entity
@@ -31,7 +39,7 @@ public interface IdAble extends Comparable<IdAble>, Cloneable {
    * @see java.lang.Comparable#compareTo(java.lang.Object)
    */
   @SuppressWarnings("unused")
-  default boolean idEquals(Object o) {
+  public default boolean idEquals(Object o) {
     if (this == o) {
       return true;
     }
@@ -52,7 +60,7 @@ public interface IdAble extends Comparable<IdAble>, Cloneable {
    * @return id based hash code
    * @see java.lang.Comparable#compareTo(java.lang.Object)
    */
-  default int idHashCode() {
+  public default int idHashCode() {
     return Long.valueOf(this.getId()).hashCode();
   }  
   
@@ -63,7 +71,7 @@ public interface IdAble extends Comparable<IdAble>, Cloneable {
    * @return compare result identical to Long.compare
    * @see java.lang.Comparable#compareTo(java.lang.Object)
    */
-  default int compareTo(IdAble o) {
+  public default int compareTo(IdAble o) {
     return Long.compare(this.getId(), o.getId());
   }  
    
