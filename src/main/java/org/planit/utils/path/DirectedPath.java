@@ -1,5 +1,7 @@
 package org.planit.utils.path;
 
+import java.util.Collection;
+
 import org.planit.utils.graph.EdgeSegment;
 import org.planit.utils.id.ExternalIdAble;
 import org.planit.utils.id.ManagedId;
@@ -22,15 +24,7 @@ public interface DirectedPath extends ExternalIdAble, ManagedId, Iterable<EdgeSe
   public default Class<DirectedPath> getIdClass() {
     return PATH_ID_CLASS;
   }  
-  
-  /**
-   * add an edge segment to the path by appending it
-   * 
-   * @param edgeSegment the edge segment to add
-   * @return true as per Collection.add
-   */
-  //public abstract Boolean addEdgeSegment(final EdgeSegment edgeSegment);  
-  
+    
   /** The size of the path is given by the number of edge segments it holds
    * 
    * @return size
@@ -44,6 +38,13 @@ public interface DirectedPath extends ExternalIdAble, ManagedId, Iterable<EdgeSe
    */
   public default boolean isEmpty() {
     return size()<=0;
-  } 
+  }
+
+  /** Verify if the path contains the provided subpath. It is only a subpath of the subpath is present continguously
+   * 
+   * @param subPath to verify
+   * @return true when it contains the subpath, false otherwise.
+   */
+  public abstract boolean containsSubPath(Collection<? extends EdgeSegment> subPath); 
 
 }

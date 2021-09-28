@@ -7,24 +7,27 @@ import org.planit.utils.graph.EdgeSegment;
  * 
  * @author markr
  *
- * @param <V> vertex type
- * @param <E> edge type
- * @param <ES> edge segment type
  */
-public interface DirectedSubGraph<V extends DirectedVertex, E extends DirectedEdge, ES extends EdgeSegment> {
+public interface DirectedSubGraph {
   
   /**
-   * collect the id of this subgraph
+   * Collect the id of this subgraph
    * 
    * @return sub graph id
    */
   public abstract long getId(); 
   
-  /** register an edge segment on the subgraph
+  /** Register an edge segment on the subgraph
    * 
    * @param edgeSegment to add
    */
   public abstract void addEdgeSegment(EdgeSegment edgeSegment);
+  
+  /** Remove an edge segment on the subgraph
+   * 
+   * @param edgeSegment to remove
+   */
+  public abstract void removeEdgeSegment(EdgeSegment edgeSegment);  
   
   /** Verify if given edge segment is registered on this subgraph
    * 
