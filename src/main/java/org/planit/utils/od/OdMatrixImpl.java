@@ -2,6 +2,7 @@ package org.planit.utils.od;
 
 import java.util.logging.Logger;
 
+import org.planit.utils.id.IdAble;
 import org.planit.utils.id.IdGroupingToken;
 import org.planit.utils.zoning.OdZones;
 
@@ -30,7 +31,7 @@ public abstract class OdMatrixImpl<T, U> extends OdDataImpl<T> implements OdMatr
    * @param zones          holder for zones considered in the matrix
    * @param matrixContents container for the matrix contents
    */
-  public OdMatrixImpl(Class<?> idTokenClass, IdGroupingToken idToken, OdZones zones, U matrixContents) {
+  public OdMatrixImpl(Class<? extends IdAble> idTokenClass, IdGroupingToken idToken, OdZones zones, U matrixContents) {
     super(idTokenClass, idToken, zones);
     this.matrixContents = matrixContents;
   }

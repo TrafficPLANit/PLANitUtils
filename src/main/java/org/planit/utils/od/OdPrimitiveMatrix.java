@@ -3,6 +3,7 @@ package org.planit.utils.od;
 import java.util.logging.Logger;
 
 import org.ojalgo.array.Array2D;
+import org.planit.utils.id.IdAble;
 import org.planit.utils.id.IdGroupingToken;
 import org.planit.utils.zoning.OdZones;
 import org.planit.utils.zoning.Zone;
@@ -27,7 +28,7 @@ public abstract class OdPrimitiveMatrix<T extends Number> extends OdMatrixImpl<T
    * @param zones          holder for zones considered in the matrix
    * @param matrixContents container for the matrix contents
    */
-  public OdPrimitiveMatrix(Class<?> idTokenClass, IdGroupingToken idToken, OdZones zones, Array2D<T> matrixContents) {
+  public OdPrimitiveMatrix(Class<? extends IdAble> idTokenClass, IdGroupingToken idToken, OdZones zones, Array2D<T> matrixContents) {
     super(idTokenClass, idToken, zones, matrixContents);
   }
 

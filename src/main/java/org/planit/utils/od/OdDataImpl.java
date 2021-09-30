@@ -1,5 +1,6 @@
 package org.planit.utils.od;
 
+import org.planit.utils.id.IdAble;
 import org.planit.utils.id.IdAbleImpl;
 import org.planit.utils.id.IdGroupingToken;
 import org.planit.utils.zoning.OdZones;
@@ -34,8 +35,8 @@ public abstract class OdDataImpl<T> extends IdAbleImpl implements OdData<T> {
    * @param idToken      to use for id generation
    * @param zones        zones considered in the matrix
    */
-  public OdDataImpl(final Class<?> idTokenClass, IdGroupingToken idToken, final OdZones zones) {
-    super(generateId(idTokenClass, idToken));
+  public OdDataImpl(final Class<? extends IdAble> idTokenClass, IdGroupingToken idToken, final OdZones zones) {
+    super(generateId(idToken, idTokenClass));
     this.zones = zones;
   }
 

@@ -3,6 +3,7 @@ package org.planit.utils.od;
 import java.util.Arrays;
 import java.util.HashMap;
 
+import org.planit.utils.id.IdAble;
 import org.planit.utils.id.IdGroupingToken;
 import org.planit.utils.zoning.OdZones;
 import org.planit.utils.zoning.Zone;
@@ -27,7 +28,7 @@ public abstract class OdHashedImpl<T> extends OdDataImpl<T> implements OdHashed<
    * @param groupId contiguous id generation within this group for instances of this class
    * @param zones   the zones being used
    */
-  public OdHashedImpl(Class<?> idClass, final IdGroupingToken groupId, final OdZones zones) {
+  public OdHashedImpl(Class<? extends IdAble> idClass, final IdGroupingToken groupId, final OdZones zones) {
     super(idClass, groupId, zones);
     this.odHashed = new HashMap<Integer, T>();
   }

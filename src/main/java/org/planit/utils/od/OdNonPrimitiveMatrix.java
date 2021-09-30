@@ -2,6 +2,7 @@ package org.planit.utils.od;
 
 import java.util.logging.Logger;
 
+import org.planit.utils.id.IdAble;
 import org.planit.utils.id.IdGroupingToken;
 import org.planit.utils.zoning.OdZones;
 import org.planit.utils.zoning.Zone;
@@ -28,7 +29,7 @@ public abstract class OdNonPrimitiveMatrix<T> extends OdMatrixImpl<T, T[][]> {
    * @param zones          holder for zones considered in the matrix
    * @param matrixContents container for the matrix contents
    */
-  public OdNonPrimitiveMatrix(final Class<?> idTokenClass, final IdGroupingToken idToken, final OdZones zones, final T[][] matrixContents) {
+  public OdNonPrimitiveMatrix(final Class<? extends IdAble> idTokenClass, final IdGroupingToken idToken, final OdZones zones, final T[][] matrixContents) {
     super(idTokenClass, idToken, zones, matrixContents);
   }
 
