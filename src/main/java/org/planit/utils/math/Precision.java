@@ -117,6 +117,14 @@ public class Precision {
    */
   public static boolean isGreater(double d1, double d2) {
     return isGreater(d1,d2,EPSILON_6);
+  }
+
+  /** Verify if positive with Precision.EPSILON_6
+   * @param d1 double 1
+   * @return true when {@code d1 > EPSILON_6} 
+   */
+  public static boolean isPositive(double d1) {
+    return isGreater(d1,0,EPSILON_6);
   }    
 
 }
