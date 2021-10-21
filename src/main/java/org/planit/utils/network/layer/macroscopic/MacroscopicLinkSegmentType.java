@@ -231,5 +231,5 @@ public interface MacroscopicLinkSegmentType extends Cloneable, ExternalIdAble, M
   public default void removeModeAccess(final Set<Mode> toBeRemovedModes) {
     toBeRemovedModes.forEach( mode -> removeModeAccess(mode));
   }
-
+  
 }
