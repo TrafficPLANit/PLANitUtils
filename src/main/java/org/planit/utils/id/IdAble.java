@@ -73,7 +73,6 @@ public interface IdAble extends Comparable<IdAble>, Cloneable {
    */
   public default int compareTo(IdAble o) {
     return Long.compare(this.getId(), o.getId());
-  }  
-   
+  }    
     
 }

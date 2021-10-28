@@ -2,7 +2,9 @@ package org.planit.utils.graph;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.function.Consumer;
 
+import org.planit.utils.id.IdAble;
 import org.planit.utils.wrapper.LongMapWrapper;
 
 /** Container class for any graph entities and a factory to create them
@@ -54,5 +56,14 @@ public interface GraphEntities<E extends GraphEntity> extends LongMapWrapper<E>,
     }
     return matches;
   }    
+  
+  /** Apply provided consumer to each element in values as long as that element is registered under the same id.
+   * 
+   * @param values to apply consumer to when they are registered in this wrapper
+   * @param consumer to apply
+   */
+  public default <T extends IdAble> void forEachMatchingIdIn(final Collection<T> values, final Consumer<T> consumer) {
+    values.forEach( (v) -> { if(containsKey(v.getId())){consumer.accept(v);};});
+  }  
 
 }

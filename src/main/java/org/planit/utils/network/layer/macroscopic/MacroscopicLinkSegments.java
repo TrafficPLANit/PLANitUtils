@@ -1,5 +1,8 @@
 package org.planit.utils.network.layer.macroscopic;
 
+import java.util.Set;
+
+import org.planit.utils.graph.EdgeSegment;
 import org.planit.utils.graph.GraphEntities;
 import org.planit.utils.id.ManagedIdEntities;
 import org.planit.utils.mode.Mode;
@@ -42,5 +45,6 @@ public interface MacroscopicLinkSegments extends GraphEntities<MacroscopicLinkSe
       linkSegmentFreeFlowTravelTimes[(int) linkSegment.getLinkSegmentId()] = linkSegment.computeFreeFlowTravelTimeHour(mode);
     }
     return linkSegmentFreeFlowTravelTimes;
-  }  
+  }
+
 }

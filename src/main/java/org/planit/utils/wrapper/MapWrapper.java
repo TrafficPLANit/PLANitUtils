@@ -2,7 +2,10 @@ package org.planit.utils.wrapper;
 
 import java.util.Collection;
 import java.util.Set;
+import java.util.function.Consumer;
 import java.util.function.Predicate;
+
+import org.planit.utils.graph.EdgeSegment;
 
 /**
  * Wrap a map as a named class
@@ -116,6 +119,15 @@ public interface MapWrapper<K, V> extends Iterable<V>, Cloneable {
    */
   public default void addAll(Iterable<? extends V> iterable) {
     iterable.forEach( v -> register(v));
+  }
+  
+  /** apply provided consumer to each element in values as long as that element is registered on this wrapper
+   * 
+   * @param values to apply consumer to when they are registered in this wrapper
+   * @param consumer to apply
+   */
+  public default <T extends V> void forEachIn(final Collection<T> values, final Consumer<T> consumer) {
+    values.forEach( (v) -> { if(contains(v)){consumer.accept(v);};});
   }
     
 
