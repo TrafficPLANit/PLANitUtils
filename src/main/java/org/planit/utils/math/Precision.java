@@ -8,6 +8,14 @@ import java.text.DecimalFormat;
  */
 public class Precision {
   
+  public static final double EPSILON_18 = 0.000000000000000001;
+  
+  public static final double EPSILON_15 = 0.000000000000001;
+  
+  public static final double EPSILON_12 = 0.000000000001;
+  
+  public static final double EPSILON_9 = 0.000000001;
+  
   /** the default Epsilon unless indicated otherwise */
   public static final double EPSILON_6 = 0.000001;
   
@@ -125,6 +133,16 @@ public class Precision {
    */
   public static boolean isPositive(double d1) {
     return isGreater(d1,0,EPSILON_6);
+  }
+
+  /** Opposite of {@link #isEqual(double, double)}
+   * 
+   * @param d1 to use
+   * @param d2 to use
+   * @return true when not equal, false otherwise
+   */
+  public static boolean isNotEqual(double d1, double d2) {
+    return !isEqual(d1, d2);
   }    
 
 }
