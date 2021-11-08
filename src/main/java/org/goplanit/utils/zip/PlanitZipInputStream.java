@@ -20,7 +20,6 @@ public class PlanitZipInputStream extends ZipInputStream{
   
   /** Constructor 
    * 
-   * @param zipInputStream to use
    * @param bis to use
    * @param fis to use
    */

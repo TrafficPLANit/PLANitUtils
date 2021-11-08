@@ -29,7 +29,6 @@ public interface ServiceNode extends DirectedVertex {
   
   /**
    * Identical to {@link #getEntryEdgeSegments()}
-   * @return 
    * 
    * @return entryLegSegments
    */
@@ -40,7 +39,6 @@ public interface ServiceNode extends DirectedVertex {
   
   /**
    * Identical to {@link #getExitEdgeSegments()}
-   * @return 
    * 
    * @return exitLegSegments
    */

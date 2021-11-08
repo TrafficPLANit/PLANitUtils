@@ -59,6 +59,7 @@ public interface GraphEntities<E extends GraphEntity> extends LongMapWrapper<E>,
   
   /** Apply provided consumer to each element in values as long as that element is registered under the same id.
    * 
+   * @param <T> values type
    * @param values to apply consumer to when they are registered in this wrapper
    * @param consumer to apply
    */

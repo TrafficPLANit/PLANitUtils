@@ -16,7 +16,7 @@ public interface OdHashed<T> extends OdData<T> {
    * 
    * @param originZoneId      to use
    * @param destinationZoneId to use
-   * @return
+   * @return generated combined hash key
    */
   public static int generateHashKey(long originZoneId, long destinationZoneId) {
     return HashUtils.createCombinedHashCode(originZoneId, destinationZoneId);

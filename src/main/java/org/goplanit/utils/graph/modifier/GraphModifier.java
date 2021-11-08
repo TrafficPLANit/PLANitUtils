@@ -40,8 +40,6 @@ public interface GraphModifier<V extends Vertex, E extends Edge> extends GraphMo
    * remove the (sub)graph in which the passed in vertex resides. Apply reordering of internal ids of remaining network.
    * 
    * @param referenceVertex to identify subnetwork by
-   * @param recreateIds     indicate if the ids of the graph entities are to be recreated, if false gaps will occur so it is expected to be handled by the user afterwards in this
-   *                        case
    * @throws PlanItException thrown if error
    */
   public abstract void removeSubGraphOf(V referenceVertex) throws PlanItException;
@@ -50,6 +48,7 @@ public interface GraphModifier<V extends Vertex, E extends Edge> extends GraphMo
    * Break the passed in edges by inserting the passed in vertex in between. After completion the original edges remain as (VertexA,VertexToBreakAt), and new edges are inserted for
    * (VertexToBreakAt,VertexB).
    * 
+   * @param <Ex> edge type
    * @param edgesToBreak    the links to break
    * @param vertexToBreakAt the node to break at
    * @param crs required to update edge lengths
@@ -61,7 +60,8 @@ public interface GraphModifier<V extends Vertex, E extends Edge> extends GraphMo
   /**
    * Break the passed in edge by inserting the passed in vertex in between. After completion the original edge remains as (VertexA,VertexToBreakAt), and new edges are inserted for
    * (VertexToBreakAt,VertexB).
-   * 
+   *
+   * @param <Ex> edge type
    * @param edgeToBreak    the link to break
    * @param vertexToBreakAt the node to break at
    * @param geoUtils required to update edge lengths
@@ -94,6 +94,7 @@ public interface GraphModifier<V extends Vertex, E extends Edge> extends GraphMo
    * Break the passed in edges by inserting the passed in vertex in between. After completion the original edges remain as (VertexA,VertexToBreakAt), and new edges are inserted for
    * (VertexToBreakAt,VertexB). No coordinate reference system provided, so we assume cartesian coordinates
    * 
+   * @param <Ex> edge type
    * @param edgesToBreak    the links to break
    * @param vertexToBreakAt the node to break at
    * @return affectedEdges the list of all result edges of the breaking of links by their original link id

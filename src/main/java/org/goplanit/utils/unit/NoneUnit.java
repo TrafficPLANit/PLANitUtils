@@ -18,7 +18,7 @@ public class NoneUnit extends SimpleUnit {
   }
 
   /** Constructor 
-   * @param unitType to use
+   * 
    */
   protected NoneUnit () {
     super(UnitType.NONE);

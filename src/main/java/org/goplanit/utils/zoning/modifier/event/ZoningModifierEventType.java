@@ -11,7 +11,7 @@ public class ZoningModifierEventType extends EventType {
 
   /** Constructor
    * 
-   * @param eventTypeName
+   * @param eventTypeName to use
    */
   public ZoningModifierEventType(String eventTypeName) {
     super(eventTypeName);

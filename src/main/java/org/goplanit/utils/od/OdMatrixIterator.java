@@ -50,6 +50,7 @@ public abstract class OdMatrixIterator<T, U> implements OdDataIterator<T> {
   /**
    * Collect contents as type
    * 
+   * @return matrix content value
    */
   protected U getMatrixContent() {
     return matrixContents;

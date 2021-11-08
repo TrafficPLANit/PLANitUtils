@@ -26,9 +26,10 @@ public interface MacroscopicLinkSegmentTypeFactory extends ManagedIdEntityFactor
    * @param name                   name of the link segment type
    * @param capacityPcuPerHour     capacity of the link segment type
    * @param maximumDensityPcuPerKm maximum density of the link segment type
+   * @param allowedMode the allowed mode
    * @return the link segment type
    */  
-  public abstract MacroscopicLinkSegmentType registerNew(final String name, final double capacityPcuPerHour, final double maximumDensityPcuPerKm, Mode allowedMode);
+  public abstract MacroscopicLinkSegmentType registerNew(final String name, final double capacityPcuPerHour, final double maximumDensityPcuPerKm, final Mode allowedMode);
   
   /**
    * Create and register new macroscopic link segment type on network without explicitly setting capacity, max density, nor access group properties.

@@ -23,7 +23,7 @@ public interface LinkSegmentFactory extends GraphEntityFactory<LinkSegment>{
   /**
    * Create link segment and register it
    *
-   * @param parentEdge            the parent of this segment
+   * @param parentLink            the parent of this segment
    * @param directionAb           direction of travel
    * @param registerOnNodeAndLink option to register the new segment on the underlying link and its nodes
    * @return the created segment

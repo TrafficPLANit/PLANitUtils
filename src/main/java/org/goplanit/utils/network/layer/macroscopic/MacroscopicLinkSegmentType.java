@@ -112,8 +112,8 @@ public interface MacroscopicLinkSegmentType extends Cloneable, ExternalIdAble, M
    */
   public abstract void setAccessGroupProperties(final AccessGroupProperties accessProperties);
 
-  /** add access group properties for the modes allowed by it. By adding instead of setting them, it is verified these properties do not yet exist, if they already exist
-   * they are not registered and a warning is issued. To make sure only new group access properties are registered use {@link #findEqualAccessPropertiesForAnyMode(AccessGroupProperties)
+  /** Add access group properties for the modes allowed by it. By adding instead of setting them, it is verified these properties do not yet exist, if they already exist
+   * they are not registered and a warning is issued. To make sure only new group access properties are registered use {@link #findEqualAccessPropertiesForAnyMode(AccessGroupProperties)}
    * 
    * @param accessProperties to register
    */  
@@ -195,6 +195,7 @@ public interface MacroscopicLinkSegmentType extends Cloneable, ExternalIdAble, M
    * and the restricted speed of the type for this mode
    * 
    * @param mode to use
+   * @return the maximum speed in km/h
    */
   public default Double getMaximumSpeedKmH(final Mode mode) {
     if(!isModeAllowed(mode)) {
@@ -208,6 +209,7 @@ public interface MacroscopicLinkSegmentType extends Cloneable, ExternalIdAble, M
    * and the restricted critical speed of the type for this mode
    * 
    * @param mode to use
+   * @return the critical speed in km/h
    */
   public default Double getCriticalSpeedKmH(final Mode mode) {
     if(!isModeAllowed(mode)) {

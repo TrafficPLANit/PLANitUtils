@@ -39,7 +39,7 @@ public class StringUtils {
   /** Remove the given string from the end of the string if present and return result
    * 
    * @param theString to alter
-   * @param initialString to remove if present
+   * @param endString to remove if present
    * @return altered string
    */
   public static String removeEndingStringWhenPresent(String theString, String endString) {

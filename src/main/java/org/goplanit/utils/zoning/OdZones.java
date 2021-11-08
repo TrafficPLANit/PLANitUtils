@@ -22,10 +22,10 @@ public interface OdZones extends Zones<OdZone>{
   @Override
   public abstract OdZones clone();
   
-  /** Loop over all origin destination combinations possible given the registed zones and apply the 
+  /** Loop over all origin destination combinations possible given the registered zones and apply the 
    * provided consumer
    * 
-   * @param consumer
+   * @param consumer to apply to each od
    */
   public default void forEachOriginDestination(final BiConsumer<OdZone, OdZone> consumer) {
     /* origin */

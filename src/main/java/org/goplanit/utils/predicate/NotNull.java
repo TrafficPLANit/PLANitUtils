@@ -6,10 +6,12 @@ import java.util.function.Predicate;
  * 
  * @author markr
  *
- * @param <T> type to check
  */
 public class NotNull implements Predicate<Object>{
 
+  /**
+   * {@inheritDoc}
+   */
   @Override
   public boolean test(Object t) {
     return t != null;

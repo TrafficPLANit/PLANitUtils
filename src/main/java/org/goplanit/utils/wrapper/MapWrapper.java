@@ -5,8 +5,6 @@ import java.util.Set;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 
-import org.goplanit.utils.graph.EdgeSegment;
-
 /**
  * Wrap a map as a named class
  * 
@@ -21,6 +19,7 @@ public interface MapWrapper<K, V> extends Iterable<V>, Cloneable {
    * Register on the internal container
    * 
    * @param value to register
+   * @return old value if any
    */
   public abstract V register(V value);
 
@@ -42,6 +41,7 @@ public interface MapWrapper<K, V> extends Iterable<V>, Cloneable {
    * Collect entry from container
    * 
    * @param key to use
+   * @return value for key
    */
   public abstract V get(K key);
 
@@ -75,13 +75,15 @@ public interface MapWrapper<K, V> extends Iterable<V>, Cloneable {
 
   /**
    * Create a copy of the map's distinct values as a set 
+   * 
+   * @return copt of values as set
    */
   public abstract Set<V> valuesAsNewSet();
   
   /**
    * Find first entry that matches the predicate
    * 
-   * @param function that checks a property of the value and the first which matches is returned
+   * @param valuePredicate that checks a property of the value and the first which matches is returned
    * @return the retrieved entry, or null if no traveler type was found
    */
   public abstract V findFirst(Predicate<V> valuePredicate);
@@ -123,6 +125,7 @@ public interface MapWrapper<K, V> extends Iterable<V>, Cloneable {
   
   /** apply provided consumer to each element in values as long as that element is registered on this wrapper
    * 
+   * @param <T> type of values
    * @param values to apply consumer to when they are registered in this wrapper
    * @param consumer to apply
    */

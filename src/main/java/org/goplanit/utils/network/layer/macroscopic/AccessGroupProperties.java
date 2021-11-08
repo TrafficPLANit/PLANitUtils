@@ -67,8 +67,8 @@ public interface AccessGroupProperties extends Cloneable {
   
   /** Collect the critical speed set, or otherwise the provided default
    * 
-   * @param defaultMaximumSpeed to use
-   * @return maximum speed
+   * @param defaultCriticalSpeed to use
+   * @return critical speed
    */
   public default double getCriticalSpeedOrDefaultKmH(double defaultCriticalSpeed) {
     return isCriticalSpeedKmHSet() ? getCriticalSpeedKmH() : defaultCriticalSpeed;
@@ -96,7 +96,7 @@ public interface AccessGroupProperties extends Cloneable {
 
   /** Remove access mode 
    * 
-   * @param toBeRemovedMode
+   * @param toBeRemovedMode the to be removed mode
    * @return true when success, false otherwise
    */
   public abstract boolean removeAccessMode(final Mode toBeRemovedMode);

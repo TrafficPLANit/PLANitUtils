@@ -11,7 +11,7 @@ public class GraphModifierEventType extends EventType {
   
   /** Constructor
    * 
-   * @param eventTypeName
+   * @param eventTypeName to use
    */
   public GraphModifierEventType(String eventTypeName) {
     super(eventTypeName);

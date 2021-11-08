@@ -14,7 +14,6 @@ public enum EventListenerPriority {
   
   /** Verify if the priority is the lowest priority available
    * 
-   * @param priority to verify
    * @return true when lowest, false otherwise
    */
   public boolean isLowest() {
@@ -23,7 +22,6 @@ public enum EventListenerPriority {
 
   /** Verify if the priority is the highest priority available
    * 
-   * @param priority to verify
    * @return true when lowest, false otherwise
    */  
   public boolean isHighest() {

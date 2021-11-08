@@ -15,7 +15,6 @@ public interface GraphModifierEventProducer extends EventProducer{
    * Register listener for all its supported types fired by the graph modifier
    * 
    *  @param listener to register
-   *  @param eventType to register listener for
    */
   public abstract void addListener(GraphModifierListener listener);
 
@@ -39,7 +38,6 @@ public interface GraphModifierEventProducer extends EventProducer{
    * Remove listener for all event types it is registered for
    * 
    *  @param listener to remove
-   *  @param eventType to unregister listener for
    */
   public abstract void removeListener(GraphModifierListener listener);   
   

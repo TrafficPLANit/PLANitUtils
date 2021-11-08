@@ -400,8 +400,9 @@ public class PlanitGraphGeoUtils {
   
   /** Extract the JTS line segment from the edge segment that is closest to the reference geometry in its intended direction.
    * 
+   * @param <T> edge segment type
    * @param referenceGeometry to determine closeness criteria on  
-   * @param linkSegment to extract line segment from
+   * @param edgeSegment to extract line segment from
    * @param geoUtils for distance calculations
    * @return line segment if found
    * @throws PlanItException  thrown if error

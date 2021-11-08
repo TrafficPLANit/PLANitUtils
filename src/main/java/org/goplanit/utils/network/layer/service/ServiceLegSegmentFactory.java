@@ -24,6 +24,7 @@ public interface ServiceLegSegmentFactory extends GraphEntityFactory<ServiceLegS
    * 
    * @param parentLeg of the segment
    * @param directionAb direction of the segment
+   * @param registerOnServiceNodeAndLeg flag indicating whether or not to regsiter the created leg segment on node and leg
    * @return created segment
    */  
   ServiceLegSegment registerNew(ServiceLeg parentLeg, boolean directionAb, boolean registerOnServiceNodeAndLeg);

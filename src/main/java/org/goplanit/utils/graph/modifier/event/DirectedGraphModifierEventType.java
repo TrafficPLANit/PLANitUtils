@@ -9,7 +9,7 @@ public class DirectedGraphModifierEventType extends GraphModifierEventType {
   
   /** Constructor
    * 
-   * @param eventTypeName
+   * @param eventTypeName to use
    */
   public DirectedGraphModifierEventType(String eventTypeName) {
     super(eventTypeName);

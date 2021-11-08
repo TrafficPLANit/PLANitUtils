@@ -14,8 +14,8 @@ import java.util.logging.Logger;
  * 
  * @author markr
  *
- * @param <T> map key
- * @param <U> map value
+ * @param <K> map key
+ * @param <V> map value
  */
 public class MapWrapperImpl<K, V> implements MapWrapper<K, V>{
   
@@ -33,7 +33,9 @@ public class MapWrapperImpl<K, V> implements MapWrapper<K, V>{
   /** Create an empty map of the same implementation using reflection, i.e., if the map is a TreeMap
    * a TreeMap is used, same for hashmap etc.
    *  
-   * @param mapToCopy
+   * @param <U> map to copy key type
+   * @param <L> map to copy value type 
+   * @param mapToCopy the map to copy
    * @return created copy with the same underlying map implementation
    */
   @SuppressWarnings("unchecked")
@@ -94,6 +96,7 @@ public class MapWrapperImpl<K, V> implements MapWrapper<K, V>{
   
   /** Special copy(like) constructor allowing one to create a copy with a different index function
    * 
+   * @param <U> key type of map with values to populate this wrapper with
    * @param mapToWrap the map to wrap
    * @param valueToKey function to map values to their key
    * @param populateWith values to populate the map to wrap with based on provided index function

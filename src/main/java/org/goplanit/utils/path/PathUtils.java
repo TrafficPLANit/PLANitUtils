@@ -17,6 +17,7 @@ public class PathUtils {
   /**
    * Returns the path as a String of comma-separated node Ids using the id mapper
    *
+   * @param path to extract from 
    * @param idMapper lambda function to get the required Id value
    * @return the path as a String of comma-separated node Id or external Id values
    */
@@ -39,6 +40,7 @@ public class PathUtils {
   /**
    * Returns the path as a String of comma-separated edge segment Id or external Id values
    *
+   * @param path to extract from
    * @param idGetter lambda function to get the required Id value
    * @return the path as a String of comma-separated link segment Id or external Id values
    */

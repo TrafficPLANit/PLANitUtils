@@ -27,6 +27,8 @@ public abstract class EventImpl extends IdAbleImpl implements Event{
     
   /**
    * Access to the content for derived events
+   * 
+   * @return content object array
    */
   protected Object[] getContent() {
     return content;

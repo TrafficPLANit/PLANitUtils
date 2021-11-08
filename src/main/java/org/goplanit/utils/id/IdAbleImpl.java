@@ -16,6 +16,7 @@ public abstract class IdAbleImpl implements IdAble {
    * 
    * @param classIdentifier to use
    * @param idtoken to use
+   * @return generated and set id
    */
   protected long generateAndSetId(final Class<?> classIdentifier, final IdGroupingToken idtoken) {
     long newId = IdAble.generateId(classIdentifier, idtoken);
@@ -28,7 +29,7 @@ public abstract class IdAbleImpl implements IdAble {
    * 
    * @param idGroupingToken to use
    * @param clazz           to register for
-   * @return
+   * @return generated id
    */
   protected static long generateId(IdGroupingToken idGroupingToken, Class<? extends IdAble> clazz) {
     return IdGenerator.generateId(idGroupingToken, clazz);

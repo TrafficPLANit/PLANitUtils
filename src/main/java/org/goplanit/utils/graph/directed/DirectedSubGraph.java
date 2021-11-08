@@ -34,7 +34,7 @@ public interface DirectedSubGraph extends IdAble {
    * Based on the registered edge segments, the number of vertices is automatically determined. This method provides the number of vertices corresponding to these registered edge
    * segments
    * 
-   * @return
+   * @return number of vertices
    */
   public abstract long getNumberOfVertices();  
   

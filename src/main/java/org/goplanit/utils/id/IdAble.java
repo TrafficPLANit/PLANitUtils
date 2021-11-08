@@ -14,13 +14,15 @@ public interface IdAble extends Comparable<IdAble>, Cloneable {
    * 
    * @param classIdentifier to use
    * @param idtoken to use
+   * @return generated id
    */
   public static long generateId(final Class<?> classIdentifier, final IdGroupingToken idtoken) {
     return IdGenerator.generateId(idtoken, classIdentifier);
   }   
   
-  /** collect id of the entity
-   * @return id
+  /** Collect id of the entity
+   * 
+   * @return id found
    */
   public abstract long getId();  
   

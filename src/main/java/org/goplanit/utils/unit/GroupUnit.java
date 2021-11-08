@@ -50,7 +50,7 @@ public class GroupUnit implements Unit {
   
   /** Factory method to create a new groupUnit with this unit's numerator and additionally added denominator units, e.g., KM per Hour
    * 
-   * @param denominatorUnits
+   * @param denominatorUnits to use
    * @return newly combined group unit
    */
   public GroupUnit per(SimpleUnit... denominatorUnits) {

@@ -48,7 +48,7 @@ public interface ManagedIdEntities<E extends ManagedId> extends LongMapWrapper<E
   }
   
   /**
-   * Identical to {@link #recreateIds(true)} 
+   * Identical to {@link #recreateIds(boolean)}
    */
   public default void recreateIds() {
     recreateIds(true);

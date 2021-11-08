@@ -65,7 +65,7 @@ public abstract class OdPrimitiveMatrix<T extends Number> extends OdMatrixImpl<T
   }
 
   /**
-   * {@inheritDoc
+   * {@inheritDoc}
    */
   @Override
   public abstract OdPrimitiveMatrix<T> clone();

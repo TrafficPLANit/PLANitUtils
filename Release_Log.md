@@ -2,6 +2,16 @@
 
 PLANitUtils release log.
 
+## 0.3.0
+
+* support stops, platforms and other PT related infrastructure in PLANit memory model via service network and transfer zone interfaces (PLANitOSM/#8)
+* added clone utility so we can deep copy objects of any type using serialisation mechanism #4
+* items that are (external)idable now have: long id, String xmlId, (String externalId) #3
+* update artifact id to conform with how this generally is setup, i.e. <application>-<subrepo> #6
+* units reimplemented to support combined units #8
+* update packages to conform to new domain org.goplanit.* #9
+
+
 ## 0.2.0
 
 * Rename everything related to routes to path in the memory model for consistency reasons (PlanitUtils/#1)

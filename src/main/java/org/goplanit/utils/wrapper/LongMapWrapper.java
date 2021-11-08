@@ -11,7 +11,7 @@ public interface LongMapWrapper<V> extends MapWrapper<Long,V> {
   /**
    * Remove value from map by the long key
    * 
-   * @param value to remove
+   * @param key to remove
    * @return removed entry if any
    */
   public abstract V remove(final long key); 
@@ -20,6 +20,7 @@ public interface LongMapWrapper<V> extends MapWrapper<Long,V> {
    * Collect entry from container using primitive
    * 
    * @param key to use
+   * @return value found
    */
   public abstract V get(final long key);
   
@@ -27,6 +28,7 @@ public interface LongMapWrapper<V> extends MapWrapper<Long,V> {
    * Verify if entry is present
    * 
    * @param key to use
+   * @return true when present, false otherwise
    */
   public abstract boolean containsKey(final long key);
     

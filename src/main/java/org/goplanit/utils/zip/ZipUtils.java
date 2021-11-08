@@ -50,7 +50,7 @@ public class ZipUtils {
   
   /** Create a zip file from a URL
    * 
-   * @param zipUrl
+   * @param zipUrl to create zip file for
    * @return created zip file
    * @throws ZipException thrown if error
    * @throws IOException thrown if error
@@ -100,7 +100,7 @@ public class ZipUtils {
   
   /** Move the passed in zip input stream to the starting point of the given zip file entry.
    * 
-   * @param zipFileLocation of the zip file
+   * @param zipInputStream to use
    * @param zipEntryFileName of the file within the zip
    * @return true when successfully positioned the input stream, false otherwise
    */

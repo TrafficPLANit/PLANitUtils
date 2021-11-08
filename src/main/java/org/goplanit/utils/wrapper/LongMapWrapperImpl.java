@@ -8,13 +8,14 @@ import java.util.function.Function;
  * 
  * @author markr
  *
- * @param <U> map value
+ * @param <V> map value
  */
 public abstract class LongMapWrapperImpl<V> extends MapWrapperImpl<Long, V> implements LongMapWrapper<V>{
  
   /** Constructor 
    * 
    * @param mapToWrap the map to wrap
+   * @param valueToKey function to map a value to its key
    */
   public LongMapWrapperImpl(final Map<Long, V> mapToWrap, final Function<V, Long> valueToKey) {
     super(mapToWrap, valueToKey);

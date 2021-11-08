@@ -18,7 +18,6 @@ public class SrsUnit extends SimpleUnit{
   
   /** Constructor
    * 
-   * @param unitType to use
    */
   protected SrsUnit() {
     super(UnitType.SRS);

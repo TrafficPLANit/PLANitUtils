@@ -31,7 +31,6 @@ public abstract class EventProducerImpl{
    * 
    * @param listener to register
    * @param priority to apply for the combination of listener and event type(s)
-   * @param eventTypes to register the listener for
    */
   protected final synchronized void addListener(final EventListener listener, EventListenerPriority priority){
     if(!listener.hasKnownSupportedEventTypes()) {
@@ -71,7 +70,7 @@ public abstract class EventProducerImpl{
   /** add a listener for one or more event types that are presumably triggered by this producer absed on its known supported types.
    *  If no known types are not available the listener will not be added and a warning is issued
    * 
-   * @param listener
+   * @param listener to add
    */
   protected final synchronized void addListener(final EventListener listener){
     if(!listener.hasKnownSupportedEventTypes()) {
@@ -149,8 +148,8 @@ public abstract class EventProducerImpl{
 
   /**
    * Transmit an event to all interested listeners.
-   * @param event EventInterface; the event
-   * @return the event
+   * 
+   * @param event the event fired
    */
   protected synchronized void fireEvent(final Event event){
     if(event==null) {

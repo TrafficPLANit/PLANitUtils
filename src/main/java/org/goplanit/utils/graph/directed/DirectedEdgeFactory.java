@@ -7,7 +7,6 @@ import org.goplanit.utils.graph.GraphEntityFactory;
  * 
  * @author markr
  *
- * @param <E> type of directed edges
  */
 public interface DirectedEdgeFactory extends GraphEntityFactory<DirectedEdge> {
 
@@ -32,7 +31,7 @@ public interface DirectedEdgeFactory extends GraphEntityFactory<DirectedEdge> {
    * @return the created edge
    * @throws PlanItException thrown if there is an error
    */
-  public abstract DirectedEdge registerNew(final DirectedVertex vertexA, final DirectedVertex DirectedVertex, boolean registerOnVertices) throws PlanItException; 
+  public abstract DirectedEdge registerNew(final DirectedVertex vertexA, final DirectedVertex vertexB, boolean registerOnVertices) throws PlanItException; 
 
   
 }
