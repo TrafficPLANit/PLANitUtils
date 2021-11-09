@@ -2,13 +2,13 @@ package org.goplanit.utils.network.layer.modifier;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import org.goplanit.utils.exceptions.PlanItException;
 import org.goplanit.utils.graph.EdgeSegment;
 import org.goplanit.utils.graph.directed.DirectedEdge;
 import org.goplanit.utils.graph.directed.DirectedVertex;
 import org.goplanit.utils.graph.modifier.event.GraphModifierEventProducer;
+import org.goplanit.utils.misc.Pair;
 import org.goplanit.utils.network.layer.UntypedDirectedGraphLayer;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
@@ -33,7 +33,7 @@ public interface UntypedDirectedGraphLayerModifier<V extends DirectedVertex, E e
    * @return the broken edges for each original edge's id
    * @throws PlanItException thrown if error
    */
-  public default Map<Long, Set<E>> breakAt(E linkToBreak, V nodeToBreakAt, CoordinateReferenceSystem crs) throws PlanItException {
+  public default Map<Long, Pair<E,E>> breakAt(E linkToBreak, V nodeToBreakAt, CoordinateReferenceSystem crs) throws PlanItException {
     return breakAt(List.of(linkToBreak), nodeToBreakAt, crs);
   }
 
@@ -50,7 +50,7 @@ public interface UntypedDirectedGraphLayerModifier<V extends DirectedVertex, E e
    * @return the broken edges for each original edge's id
    * @throws PlanItException thrown if error
    */
-  public default Map<Long, Set<E>> breakLinksAt(List<E> linksToBreak, V nodeToBreakAt, CoordinateReferenceSystem crs) throws PlanItException {
+  public default Map<Long, Pair<E,E>> breakLinksAt(List<E> linksToBreak, V nodeToBreakAt, CoordinateReferenceSystem crs) throws PlanItException {
     return breakAt(linksToBreak, nodeToBreakAt, crs);
   }
 
@@ -66,6 +66,6 @@ public interface UntypedDirectedGraphLayerModifier<V extends DirectedVertex, E e
    * @return the broken edges for each original edge's id
    * @throws PlanItException thrown if error
    */
-  public abstract Map<Long, Set<E>> breakAt(List<E> linksToBreak, V nodeToBreakAt, CoordinateReferenceSystem crs) throws PlanItException;
+  public abstract Map<Long, Pair<E,E>> breakAt(List<E> linksToBreak, V nodeToBreakAt, CoordinateReferenceSystem crs) throws PlanItException;
   
 }

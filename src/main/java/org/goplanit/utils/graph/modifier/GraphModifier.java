@@ -9,6 +9,7 @@ import org.goplanit.utils.geo.PlanitJtsCrsUtils;
 import org.goplanit.utils.graph.Edge;
 import org.goplanit.utils.graph.Vertex;
 import org.goplanit.utils.graph.modifier.event.GraphModifierEventProducer;
+import org.goplanit.utils.misc.Pair;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 /**
@@ -55,7 +56,7 @@ public interface GraphModifier<V extends Vertex, E extends Edge> extends GraphMo
    * @return affectedEdges the list of all result edges of the breaking of links by their original link id
    * @throws PlanItException thrown if error
    */
-  public abstract <Ex extends E> Map<Long, Set<Ex>> breakEdgesAt(final List<Ex> edgesToBreak, final V vertexToBreakAt, final CoordinateReferenceSystem crs) throws PlanItException;
+  public abstract <Ex extends E> Map<Long, Pair<Ex, Ex>> breakEdgesAt(final List<Ex> edgesToBreak, final V vertexToBreakAt, final CoordinateReferenceSystem crs) throws PlanItException;
   
   /**
    * Break the passed in edge by inserting the passed in vertex in between. After completion the original edge remains as (VertexA,VertexToBreakAt), and new edges are inserted for
@@ -100,7 +101,7 @@ public interface GraphModifier<V extends Vertex, E extends Edge> extends GraphMo
    * @return affectedEdges the list of all result edges of the breaking of links by their original link id
    * @throws PlanItException thrown if error
    */
-  public default <Ex extends E> Map<Long, Set<Ex>> breakEdgesAt(List<Ex> edgesToBreak, V vertexToBreakAt) throws PlanItException{
+  public default <Ex extends E> Map<Long, Pair<Ex,Ex>> breakEdgesAt(List<Ex> edgesToBreak, V vertexToBreakAt) throws PlanItException{
     return breakEdgesAt(edgesToBreak, vertexToBreakAt, PlanitJtsCrsUtils.CARTESIANCRS);
   }
   
