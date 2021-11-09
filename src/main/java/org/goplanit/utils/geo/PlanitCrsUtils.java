@@ -21,8 +21,10 @@ public class PlanitCrsUtils {
    * BEFORE it is loaded, otherwise it is too late
    */
   protected static void silenceHsqlLogging() {
-    Logger.getLogger("org.hsqldb").setLevel(Level.WARNING);
+    Logger.getLogger("org.hsqldb").setLevel(Level.SEVERE);
     System.setProperty("hsqldb.reconfig_logging", "false");
+    /* also ignore intermediate warnings while searching for EPSG matches */
+    Logger.getLogger("org.geotools.referencing.factory").setLevel(Level.SEVERE);    
   }
   
   /**
@@ -43,8 +45,13 @@ public class PlanitCrsUtils {
     CoordinateReferenceSystem crs = null;
     if (code != null) {
       try {
+        
         /* decode lookup is performed using the gt hsql database which is loaded as dependency in pom */
         crs = CRS.decode(code);
+
+        if(crs==null) {
+          LOGGER.warning(String.format("Unable to decode CRS %s to coordinate reference system",code));
+        }
       } catch (Exception e1) {
         try {
           crs = CRS.decode(code, true);
