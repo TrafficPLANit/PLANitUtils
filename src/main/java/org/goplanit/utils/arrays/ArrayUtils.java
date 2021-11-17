@@ -4,6 +4,8 @@ import java.util.Arrays;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
+import org.goplanit.utils.math.Precision;
+
 /**
  * General methods for arrays
  * 
@@ -42,6 +44,58 @@ public class ArrayUtils {
       destination[index] += addToDestination[index];
     }
   }  
+  
+  /** divide each entry in array by given diviser. When divisor is zero, all entries are set to divideByZeroResult
+   * 
+   * @param destination array to apply to
+   * @param diviser to divide by
+   * @param divideByZeroResult result if provided division value is zero
+   */
+  public static void divideBy(final double[] destination, double diviser, double divideByZeroResult) {
+    if (Precision.isPositive(diviser)) {
+      for (int index = 0; index < destination.length; ++index) {
+        destination[index] /= diviser;
+      }
+    } else {
+      for (int index = 0; index < destination.length; ++index) {
+        destination[index] = divideByZeroResult;
+      }
+    }
+  }
+  
+  /** multiply each entry in array by given multiplicator.
+   * 
+   * @param destination array to apply to
+   * @param multiplicator to multiply with
+   */
+  public static void multiplyBy(final double[] destination, double multiplicator) {
+    for (int index = 0; index < destination.length; ++index) {
+      destination[index] *= multiplicator;
+    }
+  }  
+
+  /** divide each entry in array by the sum of the entries. When divisor is zero, all entries are set to divideByZeroResult
+   * 
+   * @param destination array to apply to
+   * @param divideByZeroResult result if provided division value is zero
+   */
+  public static void divideBySum(double[] destination, int divideByZeroResult) {
+    divideBy(destination, sumOf(destination), divideByZeroResult);
+  }
+
+  /** sum of each entry in array
+   * 
+   * @param destination array to apply to
+   * @param diviser to divide by
+   * @param divideByZeroResult result if provided division value is zero
+   */
+  public static double sumOf(final double[] array) {
+    double sum = 0;
+    for (int index = 0; index < array.length; ++index) {
+      sum += array[index];
+    }
+    return sum;
+  }
 
   /**
    * Return the dot product of two arrays
