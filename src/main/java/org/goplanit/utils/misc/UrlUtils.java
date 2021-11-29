@@ -29,8 +29,13 @@ public class UrlUtils {
    * @return true when local, false otherwise
    */
   public static boolean isLocal(URL url) {
-    String scheme = url.getProtocol();
-    return !hasHost(url) && PROTOCOL_FILE.equalsIgnoreCase(scheme);
+    try {
+      String scheme = url.getProtocol();
+      return !hasHost(url) && PROTOCOL_FILE.equalsIgnoreCase(scheme);
+    }catch(Exception e) {
+      LOGGER.severe(String.format("Unable to verify if URL %s is local", url != null ? url.toString() : ""));
+      return false;
+    }      
   }
   
   /** Test if URL is a local file
@@ -48,7 +53,7 @@ public class UrlUtils {
    * @return true when local, false otherwise
    */
   public static boolean isLocalDirectory(URL url) {
-    return isLocal(url) && new File(url.getFile()).isDirectory();
+      return isLocal(url) && new File(url.getFile()).isDirectory();
   }  
   
   /** Test if URL is a local file
@@ -127,7 +132,7 @@ public class UrlUtils {
 
         return new URI(baseUri.getScheme(),baseUri.getAuthority(),combinedRawPath,baseUri.getQuery(),baseUri.getFragment()).toURL();
     } catch (Exception e) {
-      LOGGER.warning(String.format("Unable to append relativePath %s to base URL %s",relativePath, baseUrl.toString()));
+      LOGGER.warning(String.format("Unable to append relativePath %s to base URL %s",relativePath != null ? relativePath : "", baseUrl!=null ? baseUrl.toString() : ""));
     }
     return null;
   }
@@ -145,7 +150,7 @@ public class UrlUtils {
     try{
       localPath = Paths.get(url.toURI());      
     }catch(Exception e) {
-      LOGGER.warning(String.format("Unable to convert URL %s to local path", url.toString()));
+      LOGGER.warning(String.format("Unable to convert URL %s to local path", url!=null ? url.toString() : ""));
     }
     return localPath;
   }    
