@@ -85,9 +85,8 @@ public class ArrayUtils {
 
   /** sum of each entry in array
    * 
-   * @param destination array to apply to
-   * @param diviser to divide by
-   * @param divideByZeroResult result if provided division value is zero
+   * @param array to apply to
+   * @return computed sum
    */
   public static double sumOf(final double[] array) {
     double sum = 0;
