@@ -31,7 +31,7 @@ public class PlanitXmlWriterUtils {
   
   /** xml versin 1.0 string */
   public static final String XML_V1= "1.0";
-
+  
   /**
    * create an xml stream writer for the given path
    * @param xmlFilePath to create the writer for
