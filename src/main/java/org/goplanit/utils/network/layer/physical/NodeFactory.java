@@ -20,6 +20,6 @@ public interface NodeFactory extends GraphEntityFactory<Node> {
    *
    * @return new node created
    */
-  public abstract Node registerNew(); 
+  public abstract Node registerNew();      
   
 }

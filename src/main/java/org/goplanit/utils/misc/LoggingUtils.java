@@ -147,7 +147,7 @@ public class LoggingUtils {
    * @return the string (de)activated :  {@code <simple class name>}
    */
   public static String logActiveStateByClassName(Object item, boolean activate) {
-    return (activate ? "activated: " : "deactivated :") + item.getClass().getSimpleName();
+    return (activate ? "activated: " : "deactivated:") + item.getClass().getSimpleName();
   }
   
   /** create a string that gets the class simple name and surrounds them with brackets

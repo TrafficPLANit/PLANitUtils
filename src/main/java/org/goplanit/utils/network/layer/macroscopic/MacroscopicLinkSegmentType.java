@@ -21,9 +21,19 @@ public interface MacroscopicLinkSegmentType extends Cloneable, ExternalIdAble, M
   public static final Class<MacroscopicLinkSegmentType> MACROSCOPIC_LINK_SEGMENT_TYPE_ID_CLASS = MacroscopicLinkSegmentType.class;   
   
   /**
-   * If no macroscopic link segment type is defined the default takes on an XML id of 1 
+   * If no macroscopic link segment type is defined the default takes on "default" 
    */
-  public static final String DEFAULT_XML_ID = "1";   
+  public static final String DEFAULT_XML_ID = "default";
+  
+  /**
+   * Default capacity per lane if not set is 1800 pcu/lane/hour
+   */
+  public static final double DEFAULT_CAPACITY_PER_LANE = MacroscopicConstants.DEFAULT_CAPACITY_PCU_HOUR_LANE;
+
+  /**
+   * Default capacity per lane if not set is 180 pcu/lane/km
+   */
+  public static final double DEFAULT_MAX_DENSITY_PER_LANE = MacroscopicConstants.DEFAULT_MAX_DENSITY_PCU_KM_LANE;
 
   /**
    * {@inheritDoc}

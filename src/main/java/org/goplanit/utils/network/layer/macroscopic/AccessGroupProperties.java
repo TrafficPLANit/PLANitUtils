@@ -5,7 +5,7 @@ import java.util.Set;
 import org.goplanit.utils.mode.Mode;
 
 /**
- * Contains the properties of a mode specific to a link segment type
+ * Contains the properties of a mode group specific to a link segment type
  * 
  * @author markr
  *
