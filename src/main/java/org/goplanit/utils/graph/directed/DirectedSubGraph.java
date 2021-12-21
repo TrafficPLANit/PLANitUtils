@@ -38,6 +38,23 @@ public interface DirectedSubGraph extends IdAble {
    */
   public abstract long getNumberOfVertices();  
   
+  /** collect the number of exit or entry edgesegments that are present in the subgraph for the given vertex on the parent graph
+   *  
+   * @param vertex to verify
+   * @param exitSegments flag, when true check exit segments, when false check entry segments
+   * @return number of subgraph entry or exit edge segments
+   */
+  public default int getNumberOfEdgeSegments(DirectedVertex vertex, boolean exitSegments) {
+    var segments = exitSegments ? vertex.getExitEdgeSegments() : vertex.getEntryEdgeSegments();
+    int numSubGraphVertexSegments = 0;
+    for(var segment : segments) {
+      if(containsEdgeSegment(segment)) {
+        ++numSubGraphVertexSegments;
+      }
+    }
+    return numSubGraphVertexSegments;
+  }
+  
   /**
    * {@inheritDoc}
    */
