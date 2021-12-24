@@ -42,6 +42,26 @@ public interface DirectedEdge extends Edge {
   public abstract EdgeSegment registerEdgeSegment(final EdgeSegment edgeSegment, final boolean directionAB);
   
   /**
+   * Remove edge segments from this edge. Be careful doing this as it because it might affect the contiguous ids if the edge segment is garbage collected
+   */
+  public default void removeEdgeSegments() {
+    removeEdgeSegmentAb();
+    removeEdgeSegmentBa();
+  }
+
+  /**
+   * Remove edge segmentAb from this edge. Be careful doing this as it because it might affect the contiguous ids if the edge segment is garbage collected
+   * @return removed edge segment
+   */
+  public abstract EdgeSegment removeEdgeSegmentAb();
+  
+  /**
+   * Remove edge segmentAb from this edge. Be careful doing this as it because it might affect the contiguous ids if the edge segment is garbage collected
+   * @return removed edge segment
+   */
+  public abstract EdgeSegment removeEdgeSegmentBa();
+
+  /**
    * Edge segment in the direction from A to B
    * 
    * @return edge segment AB

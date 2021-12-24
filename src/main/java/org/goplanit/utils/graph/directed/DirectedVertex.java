@@ -1,9 +1,10 @@
 package org.goplanit.utils.graph.directed;
 
-import java.util.Set;
+import java.util.Collection;
 
 import org.goplanit.utils.graph.EdgeSegment;
 import org.goplanit.utils.graph.Vertex;
+import org.goplanit.utils.misc.IterableUtils;
 
 /**
  * Directed vertex representation connected to one or more edge segments that have direction. The vertex itself is of course not directional
@@ -12,99 +13,32 @@ import org.goplanit.utils.graph.Vertex;
  *
  */
 public interface DirectedVertex extends Vertex {
-  
+   
   /**
-   * Add edgeSegment, do not invoke when parsing networks, this connection is
-   * auto-populated before the assignment starts based on the edge segment
-   * vertices that have been registered.
+   * Returns a collection of DirectedEdge objects (unmodifiable)
    * 
-   * @param edgeSegment EdgeSegment object to be added
-   * @return true when added, false when already present (and not added)
+   * @return Set of DirectedEdge objects
    */
-  public boolean addEdgeSegment(EdgeSegment edgeSegment);
+  @Override
+  public abstract Collection<? extends DirectedEdge> getEdges();
+  
 
-  /**
-   * Remove edgeSegment on either entry or exit side of vertex
-   * 
-   * @param edgeSegment EdgeSegment object to be removed
-   * @return true when removed, false when not present (and not removed)
-   */
-  public default boolean removeEdgeSegment(EdgeSegment edgeSegment) {
-    return removeEntryEdgeSegment(edgeSegment) || removeExitEdgeSegment(edgeSegment);
-  }
-  
-  /**
-   * Remove entry edgeSegment
-   * 
-   * @param edgeSegment EdgeSegment object to be removed
-   * @return true when removed, false when not present (and not removed)
-   */
-  public boolean removeEntryEdgeSegment(EdgeSegment edgeSegment);
-  
-  /**
-   * Remove exit edgeSegment
-   * 
-   * @param edgeSegment EdgeSegment object to be removed
-   * @return true when removed, false when not present (and not removed)
-   */
-  public boolean removeExitEdgeSegment(EdgeSegment edgeSegment);  
   
   /**
    * Collect the entry edge segments of this vertex (unmodifiable)
    * 
    * @return edgeSegments
    */
-  public Set<EdgeSegment> getEntryEdgeSegments();
+  public Iterable<EdgeSegment> getEntryEdgeSegments();
 
   /**
    * Collect the exit edge segments of this vertex (unmodifiable)
    * 
    * @return edgeSegments
    */
-  public Set<EdgeSegment> getExitEdgeSegments();  
+  public Iterable<EdgeSegment> getExitEdgeSegments();  
   
-  /** replace edge segment
-   * @param edgeSegmentToReplace to replace
-   * @param edgeSegmentToReplaceWith to replace with
-   * @param forceInsert when edge segment to replace cannot be found, replacement is still inserted when true, when false not
-   * @return true when replacement/insert was successful
-   */
-  default public boolean replace(EdgeSegment edgeSegmentToReplace, EdgeSegment edgeSegmentToReplaceWith, boolean forceInsert) {
-    if(removeEdgeSegment(edgeSegmentToReplace) || forceInsert) {
-      return addEdgeSegment(edgeSegmentToReplaceWith);
-    }
-    return false;
-  }
-  
-  /** Identical to replace, only now we consider solely the exist segments for the replacing (in case the to replace segment could be
-   * an entry segment that we must keep)
-   * 
-   * @param edgeSegmentToReplace to replace
-   * @param edgeSegmentToReplaceWith to replace with
-   * @param forceInsert when edge segment to replace cannot be found, replacement is still inserted when true, when false not
-   * @return true when replacement/insert was successful
-   */
-  default public boolean replaceExitSegment(EdgeSegment edgeSegmentToReplace, EdgeSegment edgeSegmentToReplaceWith, boolean forceInsert) {
-    if(removeExitEdgeSegment(edgeSegmentToReplace) || forceInsert) {
-      return addEdgeSegment(edgeSegmentToReplaceWith);
-    }
-    return false;    
-  }
-  
-  /** Identical to replace, only now we consider solely the exist segments for the replacing (in case the to replace segment could be
-   * an entry segment that we must keep)
-   * 
-   * @param edgeSegmentToReplace to replace
-   * @param edgeSegmentToReplaceWith to replace with
-   * @param forceInsert when edge segment to replace cannot be found, replacement is still inserted when true, when false not
-   * @return true when replacement/insert was successful
-   */
-  default public boolean replaceEntrySegment(EdgeSegment edgeSegmentToReplace, EdgeSegment edgeSegmentToReplaceWith, boolean forceInsert) {
-    if(removeEntryEdgeSegment(edgeSegmentToReplace) || forceInsert) {
-      return addEdgeSegment(edgeSegmentToReplaceWith);
-    }
-    return false;    
-  }  
+
   
   /** collect the first edge segment corresponding to the provided other vertex
    * 
@@ -131,7 +65,7 @@ public interface DirectedVertex extends Vertex {
    * @return true if no exit edge segments have been registered, false otherwise
    */
   public default boolean hasExitEdgeSegments() {
-    return getExitEdgeSegments()!=null && !getExitEdgeSegments().isEmpty(); 
+    return getExitEdgeSegments().iterator().hasNext(); 
   }
   
   /**
@@ -140,25 +74,29 @@ public interface DirectedVertex extends Vertex {
    * @return true if no entry edge segments have been registered, false otherwise
    */
   public default boolean hasEntryEdgeSegments() {
-    return getEntryEdgeSegments()!=null && !getEntryEdgeSegments().isEmpty();
+    return getEntryEdgeSegments().iterator().hasNext();
   }
   
   /**
    * Collect the number of entry edge segments of this vertex
+   * <p>
+   * slow method because it requires iterating over the underlying iterable since it is not a collection we are obtain the count from
    * 
    * @return number of entry edge segments
    */
   public default int sizeOfEntryEdgeSegments() {
-    return getEntryEdgeSegments().size();
+    return (int) IterableUtils.sizeOfUsingLoop(getEntryEdgeSegments());
   }
 
   /**
    * Collect the number of exit edge segments of this vertex
+   * <p>
+   * slow method because it requires iterating over the underlying iterable since it is not a collection we are obtain the count from
    * 
    * @return number of exit edge segments
    */
   public default int sizeOfExitEdgeSegments() {
-    return getExitEdgeSegments().size();
+    return (int) IterableUtils.sizeOfUsingLoop(getExitEdgeSegments());
   }
   
 }

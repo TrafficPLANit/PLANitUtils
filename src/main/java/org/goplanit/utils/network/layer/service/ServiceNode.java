@@ -1,7 +1,6 @@
 package org.goplanit.utils.network.layer.service;
 
 import java.util.Collection;
-import java.util.Set;
 
 import org.goplanit.utils.graph.Edge;
 import org.goplanit.utils.graph.EdgeSegment;
@@ -33,7 +32,7 @@ public interface ServiceNode extends DirectedVertex {
    * @return entryLegSegments
    */
  
-  public default  Set<EdgeSegment> getEntryLegSegments() {
+  public default  Iterable<EdgeSegment> getEntryLegSegments() {
     return getEntryEdgeSegments();
   }
   
@@ -43,7 +42,7 @@ public interface ServiceNode extends DirectedVertex {
    * @return exitLegSegments
    */
  
-  public default Set<EdgeSegment> getExitLegSegments() {
+  public default Iterable<EdgeSegment> getExitLegSegments() {
     return getExitEdgeSegments();
   }
 

@@ -63,8 +63,8 @@ public interface GraphEntities<E extends GraphEntity> extends LongMapWrapper<E>,
    * @param values to apply consumer to when they are registered in this wrapper
    * @param consumer to apply
    */
-  public default <T extends IdAble> void forEachMatchingIdIn(final Collection<T> values, final Consumer<T> consumer) {
+  public default <T extends IdAble> void forEachMatchingIdIn(final Iterable<T> values, final Consumer<T> consumer) {
     values.forEach( (v) -> { if(containsKey(v.getId())){consumer.accept(v);};});
-  }  
-
+  }
+  
 }

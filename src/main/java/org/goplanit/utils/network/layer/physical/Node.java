@@ -1,7 +1,6 @@
 package org.goplanit.utils.network.layer.physical;
 
 import java.util.Collection;
-import java.util.Set;
 
 import org.goplanit.utils.graph.Edge;
 import org.goplanit.utils.graph.EdgeSegment;
@@ -82,8 +81,8 @@ public interface Node extends DirectedVertex {
    * @return edgeSegments as collection of linkSegments
    */
   @SuppressWarnings("unchecked")  
-  public default <LS extends EdgeSegment> Set<LS> getEntryLinkSegments() {
-    return (Set<LS>) getEntryEdgeSegments();
+  public default <LS extends EdgeSegment> Iterable<LS> getEntryLinkSegments() {
+    return (Iterable<LS>) getEntryEdgeSegments();
   }
   
   /**
@@ -94,8 +93,8 @@ public interface Node extends DirectedVertex {
    * @return edgeSegments as collection of linkSegments
    */
   @SuppressWarnings("unchecked")  
-  public default <LS extends EdgeSegment> Set<LS> getExitLinkSegments() {
-    return (Set<LS>) getExitEdgeSegments();
+  public default <LS extends EdgeSegment> Iterable<LS> getExitLinkSegments() {
+    return (Iterable<LS>) getExitEdgeSegments();
   }
 
 
