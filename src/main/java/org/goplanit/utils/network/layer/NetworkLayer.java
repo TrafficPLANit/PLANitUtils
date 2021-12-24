@@ -13,17 +13,17 @@ import org.goplanit.utils.mode.Mode;
  * @author markr
  *
  */
-public interface TransportLayer extends ExternalIdAble, ManagedId {
+public interface NetworkLayer extends ExternalIdAble, ManagedId {
 
   /** class used for managed id generation */
-  public static final Class<TransportLayer> TRANSPORT_LAYER_ID_CLASS = TransportLayer.class;
+  public static final Class<NetworkLayer> NETWORK_LAYER_ID_CLASS = NetworkLayer.class;
 
   /**
    * {@inheritDoc}
    */
   @Override
-  default Class<TransportLayer> getIdClass() {
-    return TRANSPORT_LAYER_ID_CLASS;
+  default Class<NetworkLayer> getIdClass() {
+    return NETWORK_LAYER_ID_CLASS;
   }
   
   /**
@@ -32,7 +32,7 @@ public interface TransportLayer extends ExternalIdAble, ManagedId {
    * @param layer to use
    * @return String "[layer: xmlID ]"
    */
-  public static String createLayerLogPrefix(TransportLayer layer) {
+  public static String createLayerLogPrefix(NetworkLayer layer) {
     return String.format("[LAYER: %s ]", layer.getXmlId());
   }
 

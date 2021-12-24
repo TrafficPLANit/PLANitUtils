@@ -12,7 +12,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
  * @author markr
  *
  */
-public interface TopologicalLayer extends TransportLayer {
+public interface TopologicalLayer extends NetworkLayer {
 
   /**
    * transform all underlying geometries in the layer from the given crs to the new crs
