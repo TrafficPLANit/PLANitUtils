@@ -19,43 +19,25 @@ public interface EdgeSegment extends Serializable, GraphEntity {
   /** id class for generating ids */
   public static final Class<EdgeSegment> EDGE_SEGMENT_ID_CLASS = EdgeSegment.class;   
  
-  /**
-   * Remove the vertex from the edge segment if it is either the up or downstream vertex
-   * 
-   * @param vertex to remove
-   * @return true when successful, false otherwise
-   */
-  public abstract  boolean remove(DirectedVertex vertex);  
-  
-  /**
-   * Set another upstream vertex.
-   * 
-   * @param vertexToReplaceWith to use
-   */
-  public abstract  void setUpstreamVertex(DirectedVertex vertexToReplaceWith);
-   
 
   /**
    * Get the segment's upstream vertex
    * 
    * @return upstream vertex
    */
-  public abstract  DirectedVertex getUpstreamVertex();
+  public default DirectedVertex getUpstreamVertex() {
+    return isDirectionAb() ? getParentEdge().getVertexA() : getParentEdge().getVertexB();
+  }
 
   /**
    * Get the segment's downstream vertex
    * 
    * @return downstream vertex
    */
-  public abstract  DirectedVertex getDownstreamVertex();
+  public default DirectedVertex getDownstreamVertex() {
+    return isDirectionAb() ? getParentEdge().getVertexB() : getParentEdge().getVertexA();
+  }
   
-  /**
-   * Set another downstream vertex.
-   * 
-   * @param vertexToReplaceWith to use
-   */
-  public abstract  void setDownstreamVertex(DirectedVertex vertexToReplaceWith);  
-
   /**
    * Collect the parent edge of the segment
    * 
@@ -101,28 +83,28 @@ public interface EdgeSegment extends Serializable, GraphEntity {
     return EDGE_SEGMENT_ID_CLASS;
   }   
   
-  /**
-   * Replace one of the vertices of the edge segment
-   * 
-   * @param vertexToReplace the vertex to replace
-   * @param vertexToReplaceWith the vertex to replace with
-   * @return true when replaced, false otherwise
-   */  
-  public default boolean replace(DirectedVertex vertexToReplace, DirectedVertex vertexToReplaceWith) {
-    boolean vertexReplaced = false;
-    
-    /* replace vertices on edge segment */
-    if (vertexToReplaceWith != null) {
-      if (getUpstreamVertex() != null && vertexToReplace.getId() == getUpstreamVertex().getId()) {
-        vertexReplaced = remove(vertexToReplace);
-        setUpstreamVertex(vertexToReplaceWith);
-      } else if (getDownstreamVertex() != null && vertexToReplace.getId() == getDownstreamVertex().getId()) {
-        vertexReplaced = remove(vertexToReplace);
-        setDownstreamVertex(vertexToReplaceWith);
-      }
-    }
-    return vertexReplaced;
-  } 
+//  /**
+//   * Replace one of the vertices of the edge segment
+//   * 
+//   * @param vertexToReplace the vertex to replace
+//   * @param vertexToReplaceWith the vertex to replace with
+//   * @return true when replaced, false otherwise
+//   */  
+//  public default boolean replace(DirectedVertex vertexToReplace, DirectedVertex vertexToReplaceWith) {
+//    boolean vertexReplaced = false;
+//    
+//    /* replace vertices on edge segment */
+//    if (vertexToReplaceWith != null) {
+//      if (getUpstreamVertex() != null && vertexToReplace.getId() == getUpstreamVertex().getId()) {
+//        vertexReplaced = remove(vertexToReplace);
+//        setUpstreamVertex(vertexToReplaceWith);
+//      } else if (getDownstreamVertex() != null && vertexToReplace.getId() == getDownstreamVertex().getId()) {
+//        vertexReplaced = remove(vertexToReplace);
+//        setDownstreamVertex(vertexToReplaceWith);
+//      }
+//    }
+//    return vertexReplaced;
+//  } 
   
   /** verify if parent (edge) has a name
    * 

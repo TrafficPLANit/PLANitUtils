@@ -68,10 +68,10 @@ public class ReflectionUtils {
         //      and instantiate automatically via these instead to get around the limitation. No time
         //      yet to implement this as it requires recursion etc.
         LOGGER.severe(String.format(
-            "Unable to find constructor for given arguments when constructing instance of %s \n "
+            "Unable to find constructor for given arguments when constructing instance of %s with constructor parameters %s\n "
             + "likely constructor either requires different number of arguments or it requires super types \n"
             + "whereas provided arguments are implementations of this type \n"
-            + "and reflection is not able to infer this as a valid call, see also https://github.com/TrafficPLANit/PLANitUtils/issues/7", className));
+            + "and reflection is not able to infer this as a valid call, see also https://github.com/TrafficPLANit/PLANitUtils/issues/7", className, Arrays.toString(constructorParameters)));
           
         e.printStackTrace();
         LOGGER.severe(e.getMessage());
