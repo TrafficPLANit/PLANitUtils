@@ -13,7 +13,9 @@ public class IterableUtils {
    * Collect the number of entry edge segments of this vertex
    * <p>
    * slow method because it requires iterating over the underlying iterable since it is not a collection we are obtain the count from
-   * 
+   *
+   * @param <T> iterable type
+   * @param iterable to count number of entries on by looping over the entire iterable
    * @return number of entry edge segments
    */
   public static <T> long  sizeOfUsingStream(Iterable<T> iterable) {
@@ -24,7 +26,9 @@ public class IterableUtils {
    * Collect the number of entry edge segments of this vertex
    * <p>
    * slow method because it requires iterating over the underlying iterable since it is not a collection we are obtain the count from
-   * 
+   *
+   * @param <T> iterable type
+   * @param iterable to count number of entries on by looping over the entire iterable
    * @return number of entry edge segments
    */
   public static <T> long sizeOfUsingLoop(Iterable<T> iterable) {
