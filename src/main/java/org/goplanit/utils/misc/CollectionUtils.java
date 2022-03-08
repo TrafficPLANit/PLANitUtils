@@ -2,6 +2,8 @@ package org.goplanit.utils.misc;
 
 import java.util.Collection;
 
+import org.goplanit.utils.graph.EdgeSegment;
+
 /**
  * Lightweight collection utilities
  * 
@@ -17,5 +19,24 @@ public class CollectionUtils {
    */
   public static boolean nullOrEmpty(Collection<?> c) {
     return c==null || c.isEmpty();
+  }
+
+  /** Check equality on elements of collection and array by calling equals on each synchronised entry
+   * 
+   * @param <T> type of collection and array entries
+   * @param collection to use
+   * @param array to use
+   * @return true when equal false otherwise
+   */
+  public static  <T> boolean equals(final Collection<T> collection, T[] array) {
+    if(array.length != collection.size()) {
+      return false;
+    }
+    var iter = collection.iterator();
+    int index = 0;
+    while(iter.hasNext() && iter.next().equals(array[index++])) {      
+    }
+    
+    return !iter.hasNext();
   }
 }
