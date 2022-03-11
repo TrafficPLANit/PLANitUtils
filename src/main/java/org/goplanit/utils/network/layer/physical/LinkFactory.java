@@ -8,19 +8,7 @@ import org.goplanit.utils.graph.GraphEntityFactory;
  *
  */
 public interface LinkFactory extends GraphEntityFactory<Link>{
-
-  /**
-   * Create new link on links container (not registered on nodes)
-   *
-   * @param nodeA the first vertex of this edge
-   * @param nodeB the second vertex of this edge
-   * @param lengthKm length of the link in km
-   * @return the created edge
-   */
-  default public Link registerNew(final Node nodeA, final Node nodeB, double lengthKm){
-    return registerNew(nodeA, nodeB, lengthKm, false);
-  }
-  
+ 
   /**
    * Create new link on links container, allow to be registered on nodes if indicated)
    *

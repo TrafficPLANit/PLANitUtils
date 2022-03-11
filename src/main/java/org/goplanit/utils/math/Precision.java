@@ -135,6 +135,15 @@ public class Precision {
     return greater(d1,0,EPSILON_6);
   }
   
+  /** Verify if positive with Precision.EPSILON_6
+   * @param d1 double 1
+   * @param epsilon to consider
+   * @return true when {@code d1 > epsilon} 
+   */
+  public static boolean positive(double d1, double epsilon) {
+    return greater(d1,0,epsilon);
+  }  
+  
   /** Verify if negative with Precision.EPSILON_6
    * @param d1 double 1
    * @return true when {@code d1 < -EPSILON_6} 
@@ -161,6 +170,17 @@ public class Precision {
   public static boolean notEqual(double d1, double d2) {
     return !equal(d1, d2);
   }
+  
+  /** Opposite of {@link #equal(double, double, epsilon)}
+   * 
+   * @param d1 to use
+   * @param d2 to use
+   * @param epsilon to use
+   * @return true when not equal, false otherwise
+   */
+  public static boolean notEqual(double d1, double d2, double epsilon) {
+    return !equal(d1, d2, epsilon);
+  }  
 
 
 }

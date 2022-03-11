@@ -1,6 +1,7 @@
 package org.goplanit.utils.misc;
 
 import java.util.Objects;
+import java.util.function.Consumer;
 
 /**
  * Custom pair class similar to C++. By default we compare based on the first
@@ -47,6 +48,7 @@ public class Pair<A, B> {
   public static <A,B> Pair<A, B> of(A valueA, B valueB) {
     return new Pair<A,B>(valueA, valueB);
   }  
+  
 
   /**
    * @see java.lang.Object#hashCode()
@@ -133,6 +135,17 @@ public class Pair<A, B> {
     }else {
       return second();
     }
+  }
+
+  /** Apply consumer to both entries. Throws ClassCastException when pair contains entries not compatible with type parameter of consumer
+   * 
+   * @param <T> consumer type assumed to be compatible with both pair entries
+   * @param pairEntryConsumer to apply
+   */
+  @SuppressWarnings("unchecked")
+  public <T> void both(Consumer<T> pairEntryConsumer) {
+    pairEntryConsumer.accept( (T) first);
+    pairEntryConsumer.accept( (T) second);
   }  
    
 }
