@@ -25,7 +25,7 @@ public class LoggingUtils {
    * @param runId the run id
    * @return runId prefix
    */
-  public static String createRunIdPrefix(long runId) {
+  public static String runIdPrefix(long runId) {
     return surroundwithBrackets(String.format("run id: %d", runId));
   }
   
@@ -36,7 +36,7 @@ public class LoggingUtils {
    * @param projectId the project id
    * @return project prefix
    */  
-  public static String createProjectPrefix(long projectId) {
+  public static String projectPrefix(long projectId) {
     return surroundwithBrackets(String.format("project id: %d", projectId));
   }
   
@@ -47,7 +47,7 @@ public class LoggingUtils {
    * @param networkId the network id
    * @return network prefix
    */    
-  public static String createNetworkPrefix(long networkId) {
+  public static String networkPrefix(long networkId) {
     return surroundwithBrackets(String.format("network id: %d", networkId));
   }   
   
@@ -58,7 +58,7 @@ public class LoggingUtils {
    * @param zoningId the zoning id
    * @return zoning prefix
    */   
-  public static String createZoningPrefix(long zoningId) {
+  public static String zoningPrefix(long zoningId) {
     return surroundwithBrackets(String.format("zoning id: %d", zoningId));
   }  
   
@@ -69,7 +69,7 @@ public class LoggingUtils {
    * @param demandsId the demands id
    * @return demands prefix
    */   
-  public static String createDemandsPrefix(long demandsId) {
+  public static String demandsPrefix(long demandsId) {
     return surroundwithBrackets(String.format("demands id: %d", demandsId));
   }  
   
@@ -80,7 +80,7 @@ public class LoggingUtils {
    * @param serviceNetworkId the id
    * @return service network prefix
    */    
-  public static String createServiceNetworkPrefix(long serviceNetworkId) {
+  public static String serviceNetworkPrefix(long serviceNetworkId) {
     return surroundwithBrackets(String.format("services network id: %d", serviceNetworkId));
   }    
   
@@ -91,7 +91,7 @@ public class LoggingUtils {
    * @param routedServicesId the routed services id
    * @return routed services prefix
    */    
-  public static String createRoutedServicesPrefix(long routedServicesId) {
+  public static String routedServicesPrefix(long routedServicesId) {
     return surroundwithBrackets(String.format("routed services id: %d", routedServicesId));
   }  
   
@@ -102,7 +102,7 @@ public class LoggingUtils {
    * @param odPathSetsId the odPathSets id
    * @return od path sets Prefix
    */     
-  public static String createOdPathSetsPrefix(long odPathSetsId) {
+  public static String odPathSetsPrefix(long odPathSetsId) {
     return surroundwithBrackets(String.format("od path sets id: %d", odPathSetsId));
   }  
   
@@ -113,7 +113,7 @@ public class LoggingUtils {
    * @param outputFormatterId the output formatter id
    * @return output formatter prefix
    */     
-  public static String createOutputFormatterPrefix(long outputFormatterId) {
+  public static String outputFormatterPrefix(long outputFormatterId) {
     return surroundwithBrackets(String.format("output formatter id: %d", outputFormatterId));
   }  
   
@@ -125,7 +125,7 @@ public class LoggingUtils {
    * @param timePeriod the time period to create it for
    * @return time period prefix
    */
-  public static String createTimePeriodPrefix(TimePeriod timePeriod) {
+  public static String timePeriodPrefix(TimePeriod timePeriod) {
     String timePeriodReference = timePeriod.hasExternalId() ? "external id: " + timePeriod.getExternalId() : (timePeriod.hasXmlId() ? "xml id: "+timePeriod.getXmlId() : "");
     return surroundwithBrackets(String.format("time period: %s (id %d)", timePeriodReference, timePeriod.getId()));
   }  
@@ -137,7 +137,7 @@ public class LoggingUtils {
    * @param iterationIndex the iteration index
    * @return iteration prefix
    */  
-  public static String createIterationPrefix(int iterationIndex) {
+  public static String iterationPrefix(int iterationIndex) {
     return surroundwithBrackets(String.format("iteration: %d", iterationIndex));
   }  
   
@@ -157,5 +157,26 @@ public class LoggingUtils {
   public static String getClassNameWithBrackets(Object item) {
     return surroundwithBrackets(item.getClass().getSimpleName());
   }
+
+  /** surround the string with repetitions of given character
+   * 
+   * @param theString to surround
+   * @param c character to us
+   * @param repeat num reptitions on either side
+   * @return created string
+   */
+  public static String surround(String theString, char c, int repeat) {
+    var sb = new StringBuilder();
+    for(int i = 0 ; i < repeat ; i++) {
+      sb.append(c);
+    }
+    sb.append(" ").append(theString).append(" ");
+    for(int i = 0 ; i < repeat ; i++) {
+      sb.append(c);
+    }
+    
+    return sb.toString();
+  }
+  
 
 }

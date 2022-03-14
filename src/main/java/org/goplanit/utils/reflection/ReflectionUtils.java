@@ -1,8 +1,13 @@
 package org.goplanit.utils.reflection;
 
 import java.lang.reflect.Constructor;
+import java.lang.reflect.Field;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.function.BiFunction;
+import java.util.function.Function;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
@@ -96,4 +101,56 @@ public class ReflectionUtils {
     return createdInstance;    
   }
 
+  /** Collect all declared fields of instance in Map in name, value format
+   * 
+   * @param settingsClazzInstance to collect from
+   * @param modifierFilter applied to the fields of the class, when false we exclude the field, when true we keep it
+   * @return map with entries, or empty if none could be found or something went wrong
+   */
+  public static Map<String,Object> declaredFieldsNameValueMap(Object settingsClazzInstance, Function<Integer,Boolean> modifierFilter) {    
+    /* value is the field value regardless of accessibility */
+    BiFunction<Field, Object, Object> biFunction = (field, object) -> {
+      Object value = null; 
+      try {
+          var old = field.canAccess(object);
+          field.setAccessible(true);
+          value = field.get(object);
+          field.setAccessible(old);
+        }catch (Exception e) {
+        // do nothing
+        };
+        return value;        
+      };
+    
+    /* key is field name */
+    return declaredFieldsToMap(settingsClazzInstance, Field::getName, biFunction, modifierFilter);
+  }   
+  
+  /** Collect all declared fields of instance in Map based on functions passed in 
+   * 
+   *
+   * @param <K> key in result map
+   * @param <V> value in result map
+   * @param keyFunction transforms field to key entry in map
+   * @param valueFunction transforms field to value entry in map 
+   * @param settingsClazzInstance to collect from
+   * @param modifierFilter applied to the fields of the class, when false we exclude the field, when true we keep it
+   * @return map with entries, or empty if none could be found or something went wrong
+   */
+  public static <K,V> Map<K,V> declaredFieldsToMap(Object settingsClazzInstance, Function<Field,K> keyFunction,  BiFunction<Field,Object,V> ValueFunction, Function<Integer,Boolean> modifierFilter) {    
+    var fields = settingsClazzInstance.getClass().getDeclaredFields();
+    Map<K,V> fieldValueMap = new HashMap<>();    
+    for (int index = 0; index < fields.length; ++index) {
+      var field = fields[index];
+      try {
+        if(modifierFilter.apply(field.getModifiers())) {
+          fieldValueMap.put(keyFunction.apply(field),ValueFunction.apply(field, settingsClazzInstance));
+        }        
+      }catch (Exception e) {
+        // do nothing
+      }
+    }
+    
+    return fieldValueMap;
+  }   
 }

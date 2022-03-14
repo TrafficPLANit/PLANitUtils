@@ -2,8 +2,6 @@ package org.goplanit.utils.misc;
 
 import java.util.Collection;
 
-import org.goplanit.utils.graph.EdgeSegment;
-
 /**
  * Lightweight collection utilities
  * 
