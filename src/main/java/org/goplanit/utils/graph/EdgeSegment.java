@@ -126,6 +126,14 @@ public interface EdgeSegment extends Serializable, GraphEntity {
       return getParentEdge().getName();
     }
     return null;
-  }  
+  }
+
+  /** Collect the opposite direction segment of this edge segment (if any)
+   * 
+   * @return opposite direction segment, null if not present
+   */
+  public default EdgeSegment getOppositeDirectionSegment() {
+    return this==getParentEdge().getEdgeSegmentAb() ? getParentEdge().getEdgeSegmentBa() : getParentEdge().getEdgeSegmentAb();  
+  }
 
 }

@@ -1,7 +1,7 @@
 package org.goplanit.utils.locale;
 
 /**
- * Country names that can be converted into ISO2 codes (work in progress, currently only left hand drive countries present)
+ * Country names that can be converted into ISO2 codes (work in progress, currently mainly left hand drive countries present)
  * 
  * @author markr
  *
@@ -144,6 +144,8 @@ public class CountryNames {
   /* right hand drive starts here */
 
   public static final String GERMANY = "Germany";
+  
+  public static final String UNITED_STATES_OF_AMERICA = "United States";
   
   public static final String NETHERLANDS = "Netherlands";                       
 }
