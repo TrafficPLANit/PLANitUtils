@@ -1,6 +1,7 @@
 package org.goplanit.utils.time;
 
 import org.goplanit.utils.id.ExternalIdAble;
+import org.goplanit.utils.misc.StringUtils;
 
 /**
  * Represents a time period within the day. Used to determine the duration and start time of trips for example.
@@ -32,5 +33,13 @@ public interface TimePeriod extends ExternalIdAble{
    * @return description of this TimePeriod
    */
   public abstract String getDescription();
+    
+  /** Verify if time period has a description
+   * 
+   * @return true when description present, false otherwise
+   */
+  public default boolean hasDescription() {
+    return !StringUtils.isNullOrBlank(getDescription());
+  }
 
 }
