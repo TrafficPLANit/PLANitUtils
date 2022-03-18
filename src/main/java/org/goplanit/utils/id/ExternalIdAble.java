@@ -38,7 +38,16 @@ public interface ExternalIdAble extends IdAble {
    * @param xmlId to set
    */
   public abstract void setXmlId(final String xmlId);
-    
+  
+  /**
+   * set the external id
+   * 
+   * @param xmlId to set
+   */
+  public default void setXmlId(final long xmlId) {
+    setXmlId(String.valueOf(xmlId));
+  }
+      
   /** check if external id is available or not
    * 
    * @return true when not null, false otherwise

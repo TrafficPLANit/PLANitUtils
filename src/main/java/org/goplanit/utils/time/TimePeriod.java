@@ -42,4 +42,12 @@ public interface TimePeriod extends ExternalIdAble{
     return !StringUtils.isNullOrBlank(getDescription());
   }
 
+  /** Get the duration in hours
+   * 
+   * @return duration in hours
+   */
+  public default Double getDurationHours() {
+    return getDurationSeconds()/3600.0;
+  }
+
 }
