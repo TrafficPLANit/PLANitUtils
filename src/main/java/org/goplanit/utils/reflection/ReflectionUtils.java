@@ -131,20 +131,21 @@ public class ReflectionUtils {
    *
    * @param <K> key in result map
    * @param <V> value in result map
+   * 
+   * @param settingsClazzInstance to collect from
    * @param keyFunction transforms field to key entry in map
    * @param valueFunction transforms field to value entry in map 
-   * @param settingsClazzInstance to collect from
    * @param modifierFilter applied to the fields of the class, when false we exclude the field, when true we keep it
    * @return map with entries, or empty if none could be found or something went wrong
    */
-  public static <K,V> Map<K,V> declaredFieldsToMap(Object settingsClazzInstance, Function<Field,K> keyFunction,  BiFunction<Field,Object,V> ValueFunction, Function<Integer,Boolean> modifierFilter) {    
+  public static <K,V> Map<K,V> declaredFieldsToMap(Object settingsClazzInstance, Function<Field,K> keyFunction,  BiFunction<Field,Object,V> valueFunction, Function<Integer,Boolean> modifierFilter) {    
     var fields = settingsClazzInstance.getClass().getDeclaredFields();
     Map<K,V> fieldValueMap = new HashMap<>();    
     for (int index = 0; index < fields.length; ++index) {
       var field = fields[index];
       try {
         if(modifierFilter.apply(field.getModifiers())) {
-          fieldValueMap.put(keyFunction.apply(field),ValueFunction.apply(field, settingsClazzInstance));
+          fieldValueMap.put(keyFunction.apply(field),valueFunction.apply(field, settingsClazzInstance));
         }        
       }catch (Exception e) {
         // do nothing

@@ -171,7 +171,7 @@ public class Precision {
     return !equal(d1, d2);
   }
   
-  /** Opposite of {@link #equal(double, double, epsilon)}
+  /** Opposite of {@link #equal(double, double, double)}
    * 
    * @param d1 to use
    * @param d2 to use
