@@ -5,8 +5,6 @@ import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.logging.Logger;
 
-import org.goplanit.utils.math.Precision;
-
 /**
  * General methods for arrays
  * 
@@ -66,7 +64,7 @@ public class ArrayUtils {
    * @param divideByZeroResult result if provided division value is zero
    */
   public static void divideBy(final double[] destination, double diviser, double divideByZeroResult) {
-    if (Precision.nonZero(diviser)) {
+    if (diviser>0) {
       for (int index = 0; index < destination.length; ++index) {
         destination[index] /= diviser;
       }
@@ -91,7 +89,7 @@ public class ArrayUtils {
     }    
     for (int index = 0; index < destination.length; ++index) {
       double divisor = diviserArray[index];
-      destination[index] = Precision.nonZero(divisor) ? destination[index]/diviserArray[index] : divideByZeroResult;
+      destination[index] = divisor>0 ? destination[index]/diviserArray[index] : divideByZeroResult;
     }
   }
 
