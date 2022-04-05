@@ -55,15 +55,17 @@ public interface LinkSegment extends EdgeSegment {
    * Set the number of lanes
    * 
    * @param numberOfLanes to set
+   * @return this link segment
    */
-  public abstract void setNumberOfLanes(int numberOfLanes);
+  public abstract LinkSegment setNumberOfLanes(int numberOfLanes);
   
   /**
    * This is the maximum speed that is physically present and a driver can observe from the signs on the road (km/h)
    * 
    * @param maximumSpeedKmH to set
+   * @return this linkSegment
    */
-  public abstract  void setPhysicalSpeedLimitKmH(double maximumSpeedKmH);
+  public abstract  LinkSegment setPhysicalSpeedLimitKmH(double maximumSpeedKmH);
 
   /**
    * This is the maximum speed (Km/h) that is physically present and a driver can observe from the signs on the road
