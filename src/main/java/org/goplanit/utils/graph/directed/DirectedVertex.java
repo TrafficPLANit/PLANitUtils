@@ -1,8 +1,8 @@
 package org.goplanit.utils.graph.directed;
 
 import java.util.Collection;
+import java.util.function.Function;
 
-import org.goplanit.utils.graph.EdgeSegment;
 import org.goplanit.utils.graph.Vertex;
 import org.goplanit.utils.misc.IterableUtils;
 
@@ -13,7 +13,22 @@ import org.goplanit.utils.misc.IterableUtils;
  *
  */
 public interface DirectedVertex extends Vertex {
-   
+  
+  /** Function collecting entry edge segments for vertex */
+  public static final Function<DirectedVertex, Iterable<EdgeSegment>> getEntryEdgeSegments = v -> v.getEntryEdgeSegments();
+
+  /** Function collecting exit edge segments for vertex */
+  public static final Function<DirectedVertex, Iterable<EdgeSegment>> getExitEdgeSegments = v -> v.getExitEdgeSegments();
+  
+  /** Collect lambda function that collects either up or downstream edge segments
+   * 
+   * @param entrySegments flag indicating if entry segments lambda to collect for a given vertex
+   * @return lambda function
+   */
+  public static Function<DirectedVertex, Iterable<EdgeSegment>> getEdgeSegmentsForVertexLambda(boolean entrySegments) {
+    return entrySegments ? getEntryEdgeSegments : getExitEdgeSegments;
+  }
+     
   /**
    * Returns a collection of DirectedEdge objects (unmodifiable)
    * 

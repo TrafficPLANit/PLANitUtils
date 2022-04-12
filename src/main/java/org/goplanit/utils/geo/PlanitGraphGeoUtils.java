@@ -12,9 +12,9 @@ import java.util.logging.Logger;
 
 import org.goplanit.utils.exceptions.PlanItException;
 import org.goplanit.utils.graph.Edge;
-import org.goplanit.utils.graph.EdgeSegment;
 import org.goplanit.utils.graph.GraphEntities;
 import org.goplanit.utils.graph.Vertex;
+import org.goplanit.utils.graph.directed.EdgeSegment;
 import org.goplanit.utils.math.Precision;
 import org.goplanit.utils.misc.Pair;
 import org.goplanit.utils.zoning.Zone;

@@ -1,6 +1,6 @@
 package org.goplanit.utils.network.layer.physical;
 
-import org.goplanit.utils.graph.EdgeSegment;
+import org.goplanit.utils.graph.directed.EdgeSegment;
 
 /**
  * Interface for link segments (directional) part of link (non-directional).

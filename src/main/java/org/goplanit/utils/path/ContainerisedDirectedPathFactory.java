@@ -2,7 +2,7 @@ package org.goplanit.utils.path;
 
 import java.util.Deque;
 
-import org.goplanit.utils.graph.EdgeSegment;
+import org.goplanit.utils.graph.directed.EdgeSegment;
 import org.goplanit.utils.id.ManagedIdEntityFactory;
 
 /** Factory interface for directed paths

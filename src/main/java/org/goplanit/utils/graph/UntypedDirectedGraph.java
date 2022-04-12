@@ -2,6 +2,7 @@ package org.goplanit.utils.graph;
 
 import org.goplanit.utils.graph.directed.DirectedEdge;
 import org.goplanit.utils.graph.directed.DirectedVertex;
+import org.goplanit.utils.graph.directed.EdgeSegment;
 
 /**
  * Interface for a directed graph

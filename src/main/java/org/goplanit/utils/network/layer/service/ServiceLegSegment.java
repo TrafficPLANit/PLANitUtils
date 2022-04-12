@@ -1,6 +1,6 @@
 package org.goplanit.utils.network.layer.service;
 
-import org.goplanit.utils.graph.EdgeSegment;
+import org.goplanit.utils.graph.directed.EdgeSegment;
 
 /**
  * Interface for directed ServiceLegSegment part of non-directional ServiceLeg.

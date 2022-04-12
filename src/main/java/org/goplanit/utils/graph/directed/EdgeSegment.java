@@ -1,9 +1,9 @@
-package org.goplanit.utils.graph;
+package org.goplanit.utils.graph.directed;
 
 import java.io.Serializable;
+import java.util.function.Function;
 
-import org.goplanit.utils.graph.directed.DirectedEdge;
-import org.goplanit.utils.graph.directed.DirectedVertex;
+import org.goplanit.utils.graph.GraphEntity;
 
 /**
  * EdgeSegment represents an edge in a particular (single) direction. Each edge
@@ -17,9 +17,23 @@ import org.goplanit.utils.graph.directed.DirectedVertex;
 public interface EdgeSegment extends Serializable, GraphEntity {
   
   /** id class for generating ids */
-  public static final Class<EdgeSegment> EDGE_SEGMENT_ID_CLASS = EdgeSegment.class;   
- 
+  public static final Class<EdgeSegment> EDGE_SEGMENT_ID_CLASS = EdgeSegment.class;
+  
+  /** Function collecting upstream vertex for edge segment */
+  public static final Function<EdgeSegment, DirectedVertex> getUpstreamVertex = e -> e.getUpstreamVertex();
 
+  /** Function collecting downstream vertex for edge segment */
+  public static final Function<EdgeSegment, DirectedVertex> getDownstreamVertex = e -> e.getDownstreamVertex();
+  
+  /** Collect vertex of given edge segment lambda
+   * 
+   * @param upstreamVertex when true collect upstream vertex, downstream vertex otherwise
+   * @return lambda function
+   */
+  public static Function<EdgeSegment, DirectedVertex> getVertexForEdgeSegmentLambda(boolean upstreamVertex) {
+    return upstreamVertex ? getUpstreamVertex : getDownstreamVertex;
+  }   
+ 
   /**
    * Get the segment's upstream vertex
    * 

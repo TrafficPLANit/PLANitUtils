@@ -2,8 +2,8 @@ package org.goplanit.utils.path;
 
 import java.util.function.Function;
 
-import org.goplanit.utils.graph.EdgeSegment;
 import org.goplanit.utils.graph.Vertex;
+import org.goplanit.utils.graph.directed.EdgeSegment;
 import org.goplanit.utils.network.layer.physical.Node;
 
 /**

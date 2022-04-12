@@ -3,8 +3,8 @@ package org.goplanit.utils.network.layer.service;
 import java.util.Collection;
 
 import org.goplanit.utils.graph.Edge;
-import org.goplanit.utils.graph.EdgeSegment;
 import org.goplanit.utils.graph.directed.DirectedVertex;
+import org.goplanit.utils.graph.directed.EdgeSegment;
 import org.goplanit.utils.network.layer.physical.Node;
 
 /**

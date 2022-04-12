@@ -1,6 +1,5 @@
 package org.goplanit.utils.graph.directed;
 
-import org.goplanit.utils.graph.EdgeSegment;
 import org.goplanit.utils.id.IdAble;
 
 /**

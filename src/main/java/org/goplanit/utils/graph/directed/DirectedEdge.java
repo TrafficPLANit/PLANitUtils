@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 import org.goplanit.utils.graph.Edge;
-import org.goplanit.utils.graph.EdgeSegment;
 
 /**
  * Directed Edge interface connecting two vertices in a directional fashion. Each edge has one or
