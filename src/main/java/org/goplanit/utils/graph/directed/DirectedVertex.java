@@ -99,7 +99,7 @@ public interface DirectedVertex extends Vertex {
    * 
    * @return number of entry edge segments
    */
-  public default int sizeOfEntryEdgeSegments() {
+  public default int getNumberOfEntryEdgeSegments() {
     return (int) IterableUtils.sizeOfUsingLoop(getEntryEdgeSegments());
   }
 
@@ -110,7 +110,7 @@ public interface DirectedVertex extends Vertex {
    * 
    * @return number of exit edge segments
    */
-  public default int sizeOfExitEdgeSegments() {
+  public default int getNumberOfExitEdgeSegments() {
     return (int) IterableUtils.sizeOfUsingLoop(getExitEdgeSegments());
   }
   
