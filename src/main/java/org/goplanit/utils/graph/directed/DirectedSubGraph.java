@@ -30,7 +30,7 @@ public interface DirectedSubGraph extends IdAble {
   public abstract boolean containsEdgeSegment(EdgeSegment edgeSegment);
   
   /**
-   * Based on the registered edge segments, the number of vertices is automatically determined. This method provides the number of vertices corresponding to these registered edge
+   * The number of registered vertices. This method provides the number of vertices corresponding to these registered edge
    * segments
    * 
    * @return number of vertices
@@ -52,6 +52,14 @@ public interface DirectedSubGraph extends IdAble {
       }
     }
     return numSubGraphVertexSegments;
+  }
+  
+  /** Check if no vertices (and therefore not edge segments are present on this sub graph
+   * 
+   * @return true when empty, false otherwise
+   */
+  public default boolean isEmpty() {
+    return getNumberOfVertices() <= 0;
   }
   
   /**

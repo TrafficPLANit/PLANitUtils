@@ -77,4 +77,5 @@ public abstract class OdPrimitiveMatrix<T extends Number> extends OdMatrixImpl<T
    */
   @Override
   public abstract OdMatrixIterator<T, Array2D<T>> iterator();
+  
 }
