@@ -92,7 +92,7 @@ public interface Vertex extends Serializable, GraphEntity {
    * All vertices use the VERTEX_ID_CLASS to generate the unique internal ids
    */
   @Override
-  public default Class<Vertex> getIdClass() {
+  public default Class<? extends Vertex> getIdClass() {
     return VERTEX_ID_CLASS;
   }  
   
@@ -121,7 +121,7 @@ public interface Vertex extends Serializable, GraphEntity {
    * @param otherVertex that defines the edge(s)
    * @return edges for which this holds, if none hold an empty set is returned
    */
-  public default Set<Edge> getEdges(Vertex otherVertex) {
+  public default Set<? extends Edge> getEdges(Vertex otherVertex) {
     Set<Edge> edges = new HashSet<Edge>();
     for (Edge edge : getEdges()) {
       if (edge.getVertexA().getId() == this.getId() && edge.getVertexB().getId() == otherVertex.getId()) {

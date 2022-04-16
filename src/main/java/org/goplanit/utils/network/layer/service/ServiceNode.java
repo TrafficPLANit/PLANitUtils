@@ -32,7 +32,7 @@ public interface ServiceNode extends DirectedVertex {
    * @return entryLegSegments
    */
  
-  public default  Iterable<EdgeSegment> getEntryLegSegments() {
+  public default  Iterable<? extends EdgeSegment> getEntryLegSegments() {
     return getEntryEdgeSegments();
   }
   
@@ -42,7 +42,7 @@ public interface ServiceNode extends DirectedVertex {
    * @return exitLegSegments
    */
  
-  public default Iterable<EdgeSegment> getExitLegSegments() {
+  public default Iterable<? extends EdgeSegment> getExitLegSegments() {
     return getExitEdgeSegments();
   }
 

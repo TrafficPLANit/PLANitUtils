@@ -127,7 +127,7 @@ public interface Edge extends Serializable, GraphEntity {
    * All edges use the EDGE_ID_CLASS to generate the unique internal ids
    */
   @Override
-  public default Class<Edge> getIdClass() {
+  public default Class<? extends Edge> getIdClass() {
     return EDGE_ID_CLASS;
   }   
   

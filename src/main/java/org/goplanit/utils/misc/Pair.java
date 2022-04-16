@@ -81,8 +81,16 @@ public class Pair<A, B> {
    * 
    * @see java.lang.Object#toString()
    */
+  @Override
   public String toString() {
     return "(" + first + ", " + second + ")";
+  }
+  
+  /** shallow copy of this pair
+   * @return shallow copy
+   */
+  public Pair<A,B> copy(){
+    return Pair.of(first, second);
   }
 
   // Getters

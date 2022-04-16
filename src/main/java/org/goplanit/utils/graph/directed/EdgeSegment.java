@@ -93,33 +93,10 @@ public interface EdgeSegment extends Serializable, GraphEntity {
    * All edges use the EDGE_SEGMENT_ID_CLASS to generate the unique internal ids
    */
   @Override
-  public default Class<EdgeSegment> getIdClass() {
+  public default Class<? extends EdgeSegment> getIdClass() {
     return EDGE_SEGMENT_ID_CLASS;
   }   
-  
-//  /**
-//   * Replace one of the vertices of the edge segment
-//   * 
-//   * @param vertexToReplace the vertex to replace
-//   * @param vertexToReplaceWith the vertex to replace with
-//   * @return true when replaced, false otherwise
-//   */  
-//  public default boolean replace(DirectedVertex vertexToReplace, DirectedVertex vertexToReplaceWith) {
-//    boolean vertexReplaced = false;
-//    
-//    /* replace vertices on edge segment */
-//    if (vertexToReplaceWith != null) {
-//      if (getUpstreamVertex() != null && vertexToReplace.getId() == getUpstreamVertex().getId()) {
-//        vertexReplaced = remove(vertexToReplace);
-//        setUpstreamVertex(vertexToReplaceWith);
-//      } else if (getDownstreamVertex() != null && vertexToReplace.getId() == getDownstreamVertex().getId()) {
-//        vertexReplaced = remove(vertexToReplace);
-//        setDownstreamVertex(vertexToReplaceWith);
-//      }
-//    }
-//    return vertexReplaced;
-//  } 
-  
+   
   /** verify if parent (edge) has a name
    * 
    * @return true when present, false otherwise
