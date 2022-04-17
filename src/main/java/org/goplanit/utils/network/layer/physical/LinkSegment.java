@@ -1,6 +1,8 @@
 package org.goplanit.utils.network.layer.physical;
 
 import org.goplanit.utils.graph.directed.EdgeSegment;
+import org.goplanit.utils.id.IdGenerator;
+import org.goplanit.utils.id.IdGroupingToken;
 
 /**
  * Interface for link segments (directional) part of link (non-directional).
@@ -20,6 +22,16 @@ public interface LinkSegment extends EdgeSegment {
    */
   public default Class<? extends LinkSegment> getLinkSegmentIdClass(){
     return LINK_SEGMENT_ID_CLASS;
+  }  
+  
+  /**
+   * Generate unique link segment id
+   * 
+   * @param groupId, contiguous id generation within this group for instances of this class
+   * @return id of this link segment
+   */
+  public default long generateLinkSegmentId(final IdGroupingToken groupId) {
+    return IdGenerator.generateId(groupId, getLinkSegmentIdClass());
   }  
 
   /**
@@ -78,7 +90,7 @@ public interface LinkSegment extends EdgeSegment {
    * {@inheritDoc}
    */
   @Override
-  public abstract Link getParentEdge();
+  public abstract Link getParent();
   
   /**
    * {@inheritDoc}
@@ -98,7 +110,7 @@ public interface LinkSegment extends EdgeSegment {
    * @return Link object which is the parent of this link segment
    */
   public default Link getParentLink() {
-    return getParentEdge();
+    return getParent();
   }
 
   /** Collect upstream vertex as node

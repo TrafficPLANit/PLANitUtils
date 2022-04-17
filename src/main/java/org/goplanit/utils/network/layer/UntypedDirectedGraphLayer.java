@@ -29,5 +29,5 @@ public interface UntypedDirectedGraphLayer<V extends DirectedVertex, E extends D
    */
   @Override
   public abstract UntypedDirectedGraphLayerModifier<V,E,S> getLayerModifier();  
-    
+      
 }

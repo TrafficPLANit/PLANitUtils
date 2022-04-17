@@ -409,15 +409,15 @@ public class PlanitGraphGeoUtils {
    */
   public static <T extends EdgeSegment> LineSegment extractClosestLineSegmentTo(Geometry referenceGeometry, T edgeSegment, PlanitJtsCrsUtils geoUtils) throws PlanItException {
     
-    LineString linkSegmentGeometry = edgeSegment.getParentEdge().getGeometry();
+    LineString linkSegmentGeometry = edgeSegment.getParent().getGeometry();
     if(linkSegmentGeometry == null) {
       throw new PlanItException("Geometry not available on edge segment %d (external id %s), unable to determine closest line segment to reference geometry, this shouldn't happen", edgeSegment.getId(), edgeSegment.getExternalId());
     }
     
     LinearLocation linearLocation = geoUtils.getClosestGeometryExistingCoordinateToProjectedLinearLocationOnLineString(referenceGeometry, linkSegmentGeometry);
-    boolean reverseLinearLocationGeometry = edgeSegment.isDirectionAb()!=edgeSegment.getParentEdge().isGeometryInAbDirection();
+    boolean reverseLinearLocationGeometry = edgeSegment.isDirectionAb()!=edgeSegment.getParent().isGeometryInAbDirection();
     
-    LineSegment lineSegment = linearLocation.getSegment(edgeSegment.getParentEdge().getGeometry());
+    LineSegment lineSegment = linearLocation.getSegment(edgeSegment.getParent().getGeometry());
     if(reverseLinearLocationGeometry) {
       lineSegment.reverse();
     }

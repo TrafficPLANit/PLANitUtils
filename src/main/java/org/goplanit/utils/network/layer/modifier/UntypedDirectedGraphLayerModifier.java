@@ -15,7 +15,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 /**
  * Modifier with additional functionality related to modifications to layers derived from {@link UntypedDirectedGraphLayer}. Since it wraps
  * an untyped directed graph it exposes the event listener functionality to the end user by implementing the GraphModifierEventProducer interface
- * allowing users tor egister listeners for the events fired when breaking links or removing subnetworks (subgraphs)
+ * allowing users to register listeners for the events fired when breaking links or removing subnetworks (subgraphs)
  *
  * @author markr
  */

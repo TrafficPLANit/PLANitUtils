@@ -69,6 +69,6 @@ public interface ConjugateDirectedEdge extends DirectedEdge {
    *  
    * @return directed original adjacent edge pair
    */
-  public abstract Pair<DirectedEdge,DirectedEdge> getOriginalEdges(); 
+  public abstract Pair<? extends DirectedEdge,? extends DirectedEdge> getOriginalAdjacentEdges(); 
   
 }

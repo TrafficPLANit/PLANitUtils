@@ -40,7 +40,7 @@ public interface EdgeSegment extends Serializable, GraphEntity {
    * @return upstream vertex
    */
   public default DirectedVertex getUpstreamVertex() {
-    return isDirectionAb() ? getParentEdge().getVertexA() : getParentEdge().getVertexB();
+    return isDirectionAb() ? getParent().getVertexA() : getParent().getVertexB();
   }
 
   /**
@@ -49,7 +49,7 @@ public interface EdgeSegment extends Serializable, GraphEntity {
    * @return downstream vertex
    */
   public default DirectedVertex getDownstreamVertex() {
-    return isDirectionAb() ? getParentEdge().getVertexB() : getParentEdge().getVertexA();
+    return isDirectionAb() ? getParent().getVertexB() : getParent().getVertexA();
   }
   
   /**
@@ -57,7 +57,7 @@ public interface EdgeSegment extends Serializable, GraphEntity {
    * 
    * @return parentEdge
    */
-  public abstract  DirectedEdge getParentEdge();
+  public abstract DirectedEdge getParent();
   
   /**
    * remove the parent edge from this edge segment
@@ -102,8 +102,8 @@ public interface EdgeSegment extends Serializable, GraphEntity {
    * @return true when present, false otherwise
    */
   public default boolean hasParentName() {
-    if(getParentEdge()!=null) {
-      return getParentEdge().hasName();
+    if(getParent()!=null) {
+      return getParent().hasName();
     }
     return false;
   }
@@ -113,8 +113,8 @@ public interface EdgeSegment extends Serializable, GraphEntity {
    * @return true when present, false otherwise
    */
   public default String getParentName() {
-    if(getParentEdge()!=null) {
-      return getParentEdge().getName();
+    if(getParent()!=null) {
+      return getParent().getName();
     }
     return null;
   }
@@ -124,7 +124,7 @@ public interface EdgeSegment extends Serializable, GraphEntity {
    * @return opposite direction segment, null if not present
    */
   public default EdgeSegment getOppositeDirectionSegment() {
-    return this==getParentEdge().getEdgeSegmentAb() ? getParentEdge().getEdgeSegmentBa() : getParentEdge().getEdgeSegmentAb();  
+    return this==getParent().getEdgeSegmentAb() ? getParent().getEdgeSegmentBa() : getParent().getEdgeSegmentAb();  
   }
 
 }

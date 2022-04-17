@@ -46,5 +46,11 @@ public interface MacroscopicNetworkLayer extends UntypedPhysicalLayer<Node, Link
    * @return link segment types container class
    */
   public abstract MacroscopicLinkSegmentTypes getLinkSegmentTypes();
+  
+  /** Create a conjugate version of this layer, also known as the edge-to-vertex-dual representation, where all edges become vertices and all two adjacent edges (turns) become the edges on the conjugate version
+   * 
+   * @return conjugate version of this layer
+   */
+  public abstract ConjugateMacroscopicNetworkLayer createConjugate();
 
 }

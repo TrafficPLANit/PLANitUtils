@@ -41,13 +41,9 @@ public interface ConjugateDirectedVertex extends DirectedVertex{
    }
 
 
-  /** Original edge segment in original directed graph in AB direction
-   * @return original edge segment Ab
+  /** Original edge in original directed graph this conjugate represents
+   * @return original edge 
    */
-  public abstract EdgeSegment getOriginalEdgeSegmentAb();
-  
-  /** Original edge segment in original directed graph in BA direction
-   * @return original edge segment Ba
-   */
-  public abstract EdgeSegment getOriginalEdgeSegmentBa();  
+  public abstract DirectedEdge getOriginalEdge();
+    
 }

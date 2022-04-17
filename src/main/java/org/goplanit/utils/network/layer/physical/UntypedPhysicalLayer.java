@@ -58,4 +58,5 @@ public interface UntypedPhysicalLayer<N extends Node, L extends Link, LS extends
   public default long getNumberOfLinkSegments() {
     return getLinkSegments().size();
   }
+  
 }

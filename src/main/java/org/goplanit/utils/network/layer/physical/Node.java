@@ -36,8 +36,8 @@ public interface Node extends DirectedVertex {
    * @param tokenId contiguous id generation within this group for instances of this class
    * @return nodeId
    */
-  public static long generateNodeId(final IdGroupingToken tokenId) {
-    return IdGenerator.generateId(tokenId, Node.class);
+  public default long generateNodeId(final IdGroupingToken tokenId) {
+    return IdGenerator.generateId(tokenId, getNodeIdClass());
   }  
  
   /**
