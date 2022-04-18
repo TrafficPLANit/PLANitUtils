@@ -12,5 +12,6 @@ public interface ConjugateNode extends ConjugateDirectedVertex {
   
   /** id class for generating ids */
   public static final Class<ConjugateNode> CONJUGATE_NODE_ID_CLASS = ConjugateNode.class; 
+   
        
 }
