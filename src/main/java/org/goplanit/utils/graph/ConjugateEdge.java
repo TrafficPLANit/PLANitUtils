@@ -1,5 +1,8 @@
 package org.goplanit.utils.graph;
 
+import java.util.Collection;
+
+import org.goplanit.utils.graph.directed.EdgeSegment;
 import org.goplanit.utils.misc.Pair;
 
 /**
@@ -32,16 +35,8 @@ public interface ConjugateEdge extends Edge {
    * 
    * @return copy of this edge
    */
-  public abstract ConjugateEdge clone();
-   
-  /**
-   * All edges use the CONJUGATE_EDGE_ID_CLASS to generate the unique internal ids
-   */
-  @Override
-  public default Class<? extends ConjugateEdge> getIdClass() {
-    return CONJUGATE_EDGE_ID_CLASS;
-  }   
-   
+  public abstract ConjugateEdge clone();   
+     
   /**
    * Edges in original graph representing this conjugate
    * @return edges pair 

@@ -2,6 +2,7 @@ package org.goplanit.utils.graph.directed.acyclic;
 
 import java.util.Deque;
 import java.util.Iterator;
+import java.util.Set;
 
 import org.goplanit.utils.graph.directed.DirectedSubGraph;
 import org.goplanit.utils.graph.directed.DirectedVertex;
@@ -25,11 +26,18 @@ import org.goplanit.utils.graph.directed.EdgeSegment;
 public interface UntypedACyclicSubGraph<V extends DirectedVertex, E extends EdgeSegment> extends DirectedSubGraph<V, E>, Iterable<V> {
 
   /**
-   * Root vertex of this acyclic graph. root can either be a starting point or end point depending on the direction of the dag
+   * Root vertices of this acyclic graph. Roots can either be a starting point or end point depending on the direction of the dag
    * 
-   * @return root vertex
+   * @return root vertices
    */
-  public abstract V getRootVertex();
+  public abstract Set<V> getRootVertices();
+  
+  /**
+   * Add a new root vertex
+   * 
+   * @param rootVertex to add
+   */
+  public abstract void addRootVertex(V rootVertex);  
 
   /**
    * Indicates if the direction of the graph is inverted, i.e., when inverted the root vertex is the final vertex and all other vertices precede it, otherwise it is a starting

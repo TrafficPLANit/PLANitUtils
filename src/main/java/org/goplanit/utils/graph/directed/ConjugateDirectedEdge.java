@@ -1,5 +1,7 @@
 package org.goplanit.utils.graph.directed;
 
+import java.util.Collection;
+
 import org.goplanit.utils.graph.EdgeUtils;
 import org.goplanit.utils.misc.Pair;
 
@@ -62,6 +64,15 @@ public interface ConjugateDirectedEdge extends DirectedEdge {
   @Override
   public default ConjugateEdgeSegment getEdgeSegment(boolean directionAb) {
     return directionAb ? getEdgeSegmentAb() : getEdgeSegmentBa();
+  }
+  
+  /**
+   * {@inheritDoc}
+   */  
+  @SuppressWarnings("unchecked")
+  @Override
+  public default Collection<? extends ConjugateEdgeSegment> getEdgeSegments(){
+    return (Collection<? extends ConjugateEdgeSegment>) DirectedEdge.super.getEdgeSegments();
   }
   
   /* NEW methods */

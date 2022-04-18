@@ -16,11 +16,11 @@ public interface ConjugateLink extends ConjugateDirectedEdge {
   public static final Class<ConjugateLink> CONJUGATE_LINK_ID_CLASS = ConjugateLink.class;     
     
   /**
-   * Return class used to generate unique link ids via the id generator
+   * Return class used to generate unique conjugate link ids via the id generator
    * 
    * @return class type
    */
-  public default Class<? extends ConjugateLink> getLinkIdClass(){
+  public default Class<? extends ConjugateLink> getConjugateLinkIdClass(){
     return CONJUGATE_LINK_ID_CLASS;
   }
   
@@ -39,12 +39,6 @@ public interface ConjugateLink extends ConjugateDirectedEdge {
     return (LS) getEdgeSegment(directionAb);
   }   
   
-  /** collect edgeSegment Ab as something extending LinkSegment which is to be expected for any link. Convenience method
-   * for readability
-   * 
-   * @param <LS> link segment type
-   * @return link segment in given direction
-   */
   public default <LS extends ConjugateLinkSegment> LS getConjugateLinkSegmentAb() {
     return getConjugateLinkSegment(true);
   }   
