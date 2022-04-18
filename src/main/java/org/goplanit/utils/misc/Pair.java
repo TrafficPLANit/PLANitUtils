@@ -127,6 +127,13 @@ public class Pair<A, B> {
     return first()!=null && second()!=null;
   }
 
+  /** check if any values are null
+   * @return true when any are null, false otherwise
+   */  
+  public boolean anyIsNull() {
+    return !bothNotNull();
+  }
+
   /**
    * @return true when exactly one of the two is not null
    */

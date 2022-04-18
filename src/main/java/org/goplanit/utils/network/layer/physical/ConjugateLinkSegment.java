@@ -1,6 +1,7 @@
 package org.goplanit.utils.network.layer.physical;
 
 import org.goplanit.utils.graph.directed.ConjugateEdgeSegment;
+import org.goplanit.utils.misc.Pair;
 
 /**
  * Interface for a turn, i.e. conjugate link segment.
@@ -42,6 +43,15 @@ public interface ConjugateLinkSegment extends ConjugateEdgeSegment {
   @Override
   public default ConjugateNode getDownstreamVertex() {
     return (ConjugateNode) ConjugateEdgeSegment.super.getDownstreamVertex();
+  }
+  
+  /**
+   * {@inheritDoc}
+   */
+  @SuppressWarnings("unchecked")
+  @Override
+  public default Pair<? extends LinkSegment,? extends LinkSegment> getOriginalAdjcentEdgeSegments(){
+    return (Pair<? extends LinkSegment, ? extends LinkSegment>) ConjugateEdgeSegment.super.getOriginalAdjcentEdgeSegments();
   }
   
 

@@ -20,21 +20,7 @@ public interface Edge extends Serializable, GraphEntity {
   
   /** id class for generating ids */
   public static final Class<Edge> EDGE_ID_CLASS = Edge.class;   
-    
-  /** Collect shared vertex between two edges if any exists
-   * @param edge1 to check
-   * @param edge2 to check
-   * @return shared vertex, null if none is found
-   */
-  public static Vertex getSharedVertex(Edge edge1, Edge edge2) {
-    if(edge1.getVertexA() == edge2.getVertexA() || edge1.getVertexA() == edge2.getVertexB()) {
-      return edge1.getVertexA();
-    }else if(edge1.getVertexB() == edge2.getVertexA() || edge1.getVertexB() == edge2.getVertexB()) {
-      return edge1.getVertexB();
-    }
-    return null;
-  }
-  
+      
   /** Verify if passed in vertex is the same object reference as vertex A
    * 
    * @param vertex to check

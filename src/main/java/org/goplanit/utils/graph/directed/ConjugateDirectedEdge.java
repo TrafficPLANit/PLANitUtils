@@ -1,5 +1,6 @@
 package org.goplanit.utils.graph.directed;
 
+import org.goplanit.utils.graph.EdgeUtils;
 import org.goplanit.utils.misc.Pair;
 
 /**
@@ -70,5 +71,20 @@ public interface ConjugateDirectedEdge extends DirectedEdge {
    * @return directed original adjacent edge pair
    */
   public abstract Pair<? extends DirectedEdge,? extends DirectedEdge> getOriginalAdjacentEdges(); 
+  
+  /** Collect original pair of edge segments that this conjugate in given direction makes up for
+   * @param directionAb conjugate direction to use
+   * @return pair of original edge segments (can be partially empty/null if combination does not exist)
+   */
+  public default Pair<? extends EdgeSegment, ? extends EdgeSegment> getOriginalAdjacentEdgeSegments(boolean directionAb){
+    DirectedEdge startEdge = directionAb ? getVertexA().getOriginalEdge() : getVertexB().getOriginalEdge();
+    DirectedEdge endEdge = directionAb ? getVertexB().getOriginalEdge() : getVertexA().getOriginalEdge();
+    var sharedVertex = EdgeUtils.getSharedVertex(startEdge, endEdge);
+  
+    var startEdgeSegment = startEdge.isVertexA(sharedVertex) ? startEdge.getEdgeSegmentBa() : startEdge.getEdgeSegmentAb();
+    var endEdgeSegment = endEdge.isVertexA(sharedVertex) ? startEdge.getEdgeSegmentAb() : startEdge.getEdgeSegmentBa();
+  
+    return Pair.of(startEdgeSegment, endEdgeSegment);
+  }
   
 }
