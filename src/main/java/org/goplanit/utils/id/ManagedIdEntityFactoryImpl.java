@@ -22,6 +22,14 @@ public abstract class ManagedIdEntityFactoryImpl<E extends ManagedId> implements
   protected ManagedIdEntityFactoryImpl(IdGroupingToken groupIdToken) {
     this.groupIdToken = groupIdToken;
   }
+  
+  /**
+   * Constructor. Do not use unless it is guaranteed that the ManagedId entity is able to (re)create its id without relying on a group id token
+   * 
+   */
+  protected ManagedIdEntityFactoryImpl() {
+    this.groupIdToken = null;
+  }  
 
   /**
    * {@inheritDoc}

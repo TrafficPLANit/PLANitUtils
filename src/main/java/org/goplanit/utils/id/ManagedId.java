@@ -13,7 +13,7 @@ public interface ManagedId extends IdAble {
   /**
    * recreate the internal id(s) and set them including the Idable id
    * 
-   * @param tokenId to use
+   * @param tokenId to use (may be null in case managed id entity does not rely on token to recreate its maanged id(s))
    * @return the updated internal id
    */
   public abstract long recreateManagedIds(IdGroupingToken tokenId);

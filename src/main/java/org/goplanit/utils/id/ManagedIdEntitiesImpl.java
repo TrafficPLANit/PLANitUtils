@@ -30,6 +30,17 @@ public abstract class ManagedIdEntitiesImpl<E extends ManagedId> extends LongMap
     super(new TreeMap<Long, E>(), valueToKey);
     this.managedIdClass = managedIdClass;
   }
+  
+  /**
+   * Constructor. while not recommended it is allowed to create managed ids that do not rely on id generation of the class itself. It can be that they rely on child
+   * ids or synced ids of other internal referenced classes. In that case this constructor can be used directly. this however should generally be avoided.
+   * 
+   * @param valueToKey the mapping from key to value of the graph entity
+   */
+  protected ManagedIdEntitiesImpl(final Function<E, Long> valueToKey) {
+    super(new TreeMap<Long, E>(), valueToKey);
+    this.managedIdClass = null;
+  }  
 
   /**
    * copy constructor
@@ -65,7 +76,7 @@ public abstract class ManagedIdEntitiesImpl<E extends ManagedId> extends LongMap
    */
   @Override
   public void recreateIds(boolean resetManagedIdClass) {
-    if(resetManagedIdClass == true) {
+    if(resetManagedIdClass == true && managedIdClass!=null) {
       IdGenerator.reset(getFactory().getIdGroupingToken(), getManagedIdClass() /* e.g. Edge.class, vertex.class etc. */);
     }
     
@@ -85,7 +96,10 @@ public abstract class ManagedIdEntitiesImpl<E extends ManagedId> extends LongMap
       entry.resetChildManagedIdEntities();
     }
     clear();
-    IdGenerator.reset(getFactory().getIdGroupingToken(), getManagedIdClass());    
+    
+    if(managedIdClass != null) {
+      IdGenerator.reset(getFactory().getIdGroupingToken(), getManagedIdClass());
+    }
   }  
 
   /**
