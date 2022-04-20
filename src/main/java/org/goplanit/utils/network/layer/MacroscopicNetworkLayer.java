@@ -9,6 +9,7 @@ import org.goplanit.utils.network.layer.physical.Links;
 import org.goplanit.utils.network.layer.physical.Node;
 import org.goplanit.utils.network.layer.physical.Nodes;
 import org.goplanit.utils.network.layer.physical.UntypedPhysicalLayer;
+import org.goplanit.utils.network.virtual.ConjugateVirtualNetwork;
 
 /**
  * Macroscopic physical network layer consisting of nodes, links and macroscopic link segments 
@@ -53,8 +54,9 @@ public interface MacroscopicNetworkLayer extends UntypedPhysicalLayer<Node, Link
    *  that all conjugate vertices, edges, edge segments are numbered uniquely within the context.   
    * 
    * @param idToken to use for generating ids within the layer
+   * @param conjugateVirtualNetwork to use for encountered connections to zones, when null connectoid edges/edge segments are ignored 
    * @return conjugate version of this layer
    */
-  public abstract ConjugateMacroscopicNetworkLayer createConjugate(final IdGroupingToken idToken);
+  public abstract ConjugateMacroscopicNetworkLayer createConjugate(final IdGroupingToken idToken, final ConjugateVirtualNetwork conjugateVirtualNetwork);
 
 }

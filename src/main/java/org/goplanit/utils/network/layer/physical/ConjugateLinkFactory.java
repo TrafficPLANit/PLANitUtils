@@ -1,6 +1,7 @@
 package org.goplanit.utils.network.layer.physical;
 
 import org.goplanit.utils.graph.GraphEntityFactory;
+import org.goplanit.utils.graph.directed.ConjugateDirectedVertex;
 
 /** Factory interface for creating undirected turns, i.e., conjugate links
  * 
@@ -19,5 +20,5 @@ public interface ConjugateLinkFactory extends GraphEntityFactory<ConjugateLink>{
    * @param originalLink2   second of two links this conjugate link represents
    * @return the created undirected turn, i.e. conjugated directed edge
    */
-  public abstract ConjugateLink registerNew(final ConjugateNode a, final ConjugateNode b, boolean registerOnNodes, final Link originalLink1, final Link originalLink2);     
+  public abstract ConjugateLink registerNew(final ConjugateDirectedVertex a, final ConjugateDirectedVertex b, boolean registerOnNodes, final Link originalLink1, final Link originalLink2);     
 }
