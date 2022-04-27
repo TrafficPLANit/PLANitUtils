@@ -8,6 +8,10 @@ public class EdgeUtils {
    * @return shared vertex, null if none is found
    */
   public static Vertex getSharedVertex(Edge edge1, Edge edge2) {
+    if(edge1 == null || edge2 == null) {
+      return null;
+    }
+    
     if(edge1.getVertexA() == edge2.getVertexA() || edge1.getVertexA() == edge2.getVertexB()) {
       return edge1.getVertexA();
     }else if(edge1.getVertexB() == edge2.getVertexA() || edge1.getVertexB() == edge2.getVertexB()) {
