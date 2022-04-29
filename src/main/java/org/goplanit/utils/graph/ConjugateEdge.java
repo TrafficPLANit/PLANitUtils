@@ -1,8 +1,5 @@
 package org.goplanit.utils.graph;
 
-import java.util.Collection;
-
-import org.goplanit.utils.graph.directed.EdgeSegment;
 import org.goplanit.utils.misc.Pair;
 
 /**
