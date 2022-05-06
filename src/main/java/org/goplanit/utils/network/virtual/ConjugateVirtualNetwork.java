@@ -3,7 +3,6 @@ package org.goplanit.utils.network.virtual;
 import java.util.Collection;
 import java.util.Map;
 
-import org.goplanit.utils.network.layer.physical.ConjugateNode;
 import org.goplanit.utils.zoning.Centroid;
 
 /**
@@ -19,6 +18,20 @@ public interface ConjugateVirtualNetwork {
    * @return conjugate connectoid nodes
    */
   public abstract ConjugateConnectoidNodes getConjugateConnectoidNodes();
+  
+  /**
+   * Access to conjugate edges
+   * 
+   * @return conjugate connectoid edges
+   */
+  public abstract ConjugateConnectoidEdges getConjugateConnectoidEdges();
+  
+  /**
+   * Access to conjugate edge segments
+   * 
+   * @return conjugate connectoid edge segments
+   */
+  public abstract ConjugateConnectoidSegments getConjugateConnectoidEdgeSegments();    
 
   /**
    * free up memory by clearing contents for garbage collection
@@ -35,10 +48,10 @@ public interface ConjugateVirtualNetwork {
    */
   public abstract VirtualNetwork getOriginalVirtualNetwork();
 
-  /** Extract mapping from original network centroid's to conjugate node(s)
-   * @return mapping from centroid to its conjugate node(s) original edge(segment)(s)
+  /** Extract mapping from original network centroid's to conjugate (dummy) node
+   * @return mapping from centroid to its conjugate dummy noderepresenting the non-existing entry into the movement from centroid to any connected edge
    */
-  public abstract Map<Centroid, Collection<ConjugateConnectoidNode>> createCentroidToConjugateNodeMapping();
+  public abstract Map<Centroid, ConjugateConnectoidNode> createCentroidToConjugateNodeMapping();
 
 
 }

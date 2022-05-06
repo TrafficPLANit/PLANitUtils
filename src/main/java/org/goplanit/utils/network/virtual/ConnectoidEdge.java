@@ -2,6 +2,7 @@ package org.goplanit.utils.network.virtual;
 
 import org.goplanit.utils.exceptions.PlanItException;
 import org.goplanit.utils.graph.directed.DirectedEdge;
+import org.goplanit.utils.zoning.Centroid;
 
 /**
  * the connecting component between centroid and a first physical node in the network.
@@ -20,7 +21,7 @@ public interface ConnectoidEdge extends DirectedEdge{
    * 
    * @return class type
    */
-  public default Class<ConnectoidEdge> getConnectoidSegmentIdClass(){
+  public default Class<ConnectoidEdge> getConnectoidEdgeIdClass(){
     return CONNECTOID_EDGE_ID_CLASS;
   }    
 
@@ -35,8 +36,7 @@ public interface ConnectoidEdge extends DirectedEdge{
    * @return replaced ConnectoidSegment
    * @throws PlanItException thrown if there is an error
    */
-  ConnectoidSegment registerConnectoidSegment(ConnectoidSegment connectoidSegment, boolean directionAB)
-      throws PlanItException;
+  public abstract ConnectoidSegment registerConnectoidSegment(ConnectoidSegment connectoidSegment, boolean directionAB) throws PlanItException;
 
   /**
    * 
@@ -44,6 +44,19 @@ public interface ConnectoidEdge extends DirectedEdge{
    * 
    * @return id of this connectoid edge
    */
-  long getConnectoidEdgeId();
+  public abstract long getConnectoidEdgeId();
+
+  /** Collect the centroid vertex attached to the connectoid, which should always exist and only be a single one
+   * @return centroid found, null if not found
+   */
+  public default Centroid getCentroidVertex() {
+    if(getVertexA() instanceof Centroid) {
+      return (Centroid) getVertexA();
+    }else if (getVertexB() instanceof Centroid) {
+      return (Centroid) getVertexB();
+    }else {
+      return null;
+    }
+  }
 
 }

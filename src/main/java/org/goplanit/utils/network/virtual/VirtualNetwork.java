@@ -1,5 +1,7 @@
 package org.goplanit.utils.network.virtual;
 
+import org.goplanit.utils.id.IdGroupingToken;
+
 /**
  * Model free virtual network interface which is part of the zoning and holds all the virtual infrastructure connecting the zones to the physical road network.
  * 
@@ -33,13 +35,14 @@ public interface VirtualNetwork {
 
   /**
    * Create a conjugate version of this virtual network, also known as the edge-to-vertex-dual representation, where all connectoidedges/edge segments become (dangling) conjugate
-   * vertices. conjugate vertex ids are based on the original edge ids so do not require any token based id generation.
+   * vertices.
    * <p>
    * It is recommended to first create the conjugate of this virtual network BEFORE creating conjugates of network layers. The latter takes a conjugate zoning as input such that it
    * can connect the conjugate virtual nodes to the conjugate network layer where appropriate, otherwise these connections are ignored
    * 
+   * @param idToken to use for conjugate entity creation 
    * @return conjugate version of this virtual network's edges/edgesgments
    */
-  public abstract ConjugateVirtualNetwork createConjugate();
+  public abstract ConjugateVirtualNetwork createConjugate(IdGroupingToken idToken);
 
 }
