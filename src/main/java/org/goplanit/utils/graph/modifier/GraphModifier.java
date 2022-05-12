@@ -26,9 +26,8 @@ public interface GraphModifier<V extends Vertex, E extends Edge> extends GraphMo
    * @param belowSize         remove subgraphs below the given size
    * @param aboveSize         remove subgraphs above the given size (typically set to maximum value)
    * @param alwaysKeepLargest indicate if the largest of the subgraphs is always to be kept even if it does not match the criteria
-   * @throws PlanItException thrown if error
    */
-  public abstract void removeDanglingSubGraphs(Integer belowSize, Integer aboveSize, boolean alwaysKeepLargest) throws PlanItException;
+  public abstract void removeDanglingSubGraphs(Integer belowSize, Integer aboveSize, boolean alwaysKeepLargest);
 
   /**
    * remove the subgraph identified by the passed in vertices
@@ -54,9 +53,8 @@ public interface GraphModifier<V extends Vertex, E extends Edge> extends GraphMo
    * @param vertexToBreakAt the node to break at
    * @param crs required to update edge lengths
    * @return affectedEdges the list of all result edges of the breaking of links by their original link id
-   * @throws PlanItException thrown if error
    */
-  public abstract <Ex extends E> Map<Long, Pair<Ex, Ex>> breakEdgesAt(final List<Ex> edgesToBreak, final V vertexToBreakAt, final CoordinateReferenceSystem crs) throws PlanItException;
+  public abstract <Ex extends E> Map<Long, Pair<Ex, Ex>> breakEdgesAt(final List<Ex> edgesToBreak, final V vertexToBreakAt, final CoordinateReferenceSystem crs);
   
   /**
    * Break the passed in edge by inserting the passed in vertex in between. After completion the original edge remains as (VertexA,VertexToBreakAt), and new edges are inserted for
@@ -67,9 +65,8 @@ public interface GraphModifier<V extends Vertex, E extends Edge> extends GraphMo
    * @param vertexToBreakAt the node to break at
    * @param geoUtils required to update edge lengths
    * @return newlyCreatedEdge 
-   * @throws PlanItException thrown if error
    */
-  public abstract <Ex extends E> Ex breakEdgeAt(final V vertexToBreakAt, final Ex edgeToBreak, final PlanitJtsCrsUtils geoUtils) throws PlanItException;  
+  public abstract <Ex extends E> Ex breakEdgeAt(final V vertexToBreakAt, final Ex edgeToBreak, final PlanitJtsCrsUtils geoUtils);  
 
   /**
    * This method will recreate all ids of the graph's components, e.g., vertices, edges, etc. but only when the containers used for them are the primary ManagedIdEntities containers, i.e., when the graph
@@ -84,9 +81,8 @@ public interface GraphModifier<V extends Vertex, E extends Edge> extends GraphMo
   /**
    * remove any dangling sub graphs from the graph if they exist and reorder the ids if needed
    * 
-   * @throws PlanItException thrown if error
    */
-  public default void removeDanglingSubGraphs() throws PlanItException {
+  public default void removeDanglingSubGraphs(){
     boolean alwaysKeepLargest = true;
     removeDanglingSubGraphs(Integer.MAX_VALUE, Integer.MAX_VALUE, alwaysKeepLargest);
   }
@@ -99,9 +95,8 @@ public interface GraphModifier<V extends Vertex, E extends Edge> extends GraphMo
    * @param edgesToBreak    the links to break
    * @param vertexToBreakAt the node to break at
    * @return affectedEdges the list of all result edges of the breaking of links by their original link id
-   * @throws PlanItException thrown if error
    */
-  public default <Ex extends E> Map<Long, Pair<Ex,Ex>> breakEdgesAt(List<Ex> edgesToBreak, V vertexToBreakAt) throws PlanItException{
+  public default <Ex extends E> Map<Long, Pair<Ex,Ex>> breakEdgesAt(List<Ex> edgesToBreak, V vertexToBreakAt){
     return breakEdgesAt(edgesToBreak, vertexToBreakAt, PlanitJtsCrsUtils.CARTESIANCRS);
   }
   

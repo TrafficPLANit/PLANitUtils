@@ -64,8 +64,7 @@ public interface UntypedDirectedGraphLayerModifier<V extends DirectedVertex, E e
    * @param nodeToBreakAt      the node to break at
    * @param crs                to use to recompute link lengths of broken links
    * @return the broken edges for each original edge's id
-   * @throws PlanItException thrown if error
    */
-  public abstract Map<Long, Pair<E,E>> breakAt(List<E> linksToBreak, V nodeToBreakAt, CoordinateReferenceSystem crs) throws PlanItException;
+  public abstract Map<Long, Pair<E,E>> breakAt(List<E> linksToBreak, V nodeToBreakAt, CoordinateReferenceSystem crs);
   
 }

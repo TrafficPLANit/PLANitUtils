@@ -1,6 +1,5 @@
 package org.goplanit.utils.network.virtual;
 
-import java.util.Collection;
 import java.util.Map;
 
 import org.goplanit.utils.zoning.Centroid;

@@ -3,7 +3,6 @@ package org.goplanit.utils.graph;
 import java.io.Serializable;
 
 import org.geotools.geometry.jts.JTS;
-import org.goplanit.utils.exceptions.PlanItException;
 import org.locationtech.jts.geom.Envelope;
 import org.locationtech.jts.geom.LineString;
 import org.opengis.geometry.MismatchedDimensionException;
@@ -116,9 +115,8 @@ public interface Edge extends Serializable, GraphEntity {
    * @param vertextoReplace the vertex to replace
    * @param vertexToReplaceWith the vertex to replace with
    * @return true when replaced, false otherwise
-   * @throws PlanItException thrown if error
    */
-  public abstract boolean replace(final Vertex vertextoReplace, final Vertex vertexToReplaceWith) throws PlanItException;
+  public abstract boolean replace(final Vertex vertextoReplace, final Vertex vertexToReplaceWith);
   
   /**
    * Clone the edge as is, all shared members are shallow copied, fully owned members are deep copied

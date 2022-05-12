@@ -11,6 +11,7 @@ import java.util.TreeSet;
 import java.util.logging.Logger;
 
 import org.goplanit.utils.exceptions.PlanItException;
+import org.goplanit.utils.exceptions.PlanItRunTimeException;
 import org.goplanit.utils.graph.Edge;
 import org.goplanit.utils.graph.GraphEntities;
 import org.goplanit.utils.graph.Vertex;
@@ -88,9 +89,8 @@ public class PlanitGraphGeoUtils {
    * @param planitEntity to check against using their geometries
    * @param geoUtils to compute projected distances
    * @return planitEntity closest and distance in meters, null if none matches criteria
-   * @throws PlanItException thrown if error
    */  
-  protected static <T> Double findPlanitEntityDistance(Point referencePoint, T planitEntity, PlanitJtsCrsUtils geoUtils) throws PlanItException {
+  protected static <T> Double findPlanitEntityDistance(Point referencePoint, T planitEntity, PlanitJtsCrsUtils geoUtils){
     if(planitEntity instanceof Zone) {
       Coordinate closestCoordinate = geoUtils.getClosestProjectedCoordinateOnGeometry(referencePoint,  ((Zone)planitEntity).getGeometry());
       return geoUtils.getDistanceInMetres(referencePoint.getCoordinate(), closestCoordinate);
@@ -111,9 +111,8 @@ public class PlanitGraphGeoUtils {
    * @param planitEntities to check against using their geometries
    * @param geoUtils to compute projected distances
    * @return planitEntity closest and distance in meters, null if none matches criteria
-   * @throws PlanItException thrown if error
    */  
-  protected static <T> Map<T,Double> findPlanitEntitiesDistance(Point referencePoint, Collection<? extends T> planitEntities, PlanitJtsCrsUtils geoUtils) throws PlanItException {
+  protected static <T> Map<T,Double> findPlanitEntitiesDistance(Point referencePoint, Collection<? extends T> planitEntities, PlanitJtsCrsUtils geoUtils){
     Map<T,Double> distanceMap = new TreeMap<T,Double>();
     for(T entity : planitEntities) {
       distanceMap.put(entity, findPlanitEntityDistance(referencePoint, entity, geoUtils));
@@ -130,9 +129,8 @@ public class PlanitGraphGeoUtils {
    * @param planitEntities to check against using their geometries
    * @param geoUtils to compute projected distances
    * @return planitEntity closest and distance in meters, null if none matches criteria
-   * @throws PlanItException thrown if error
    */   
-  protected static <T> Map<T,Double> findPlanitEntitiesDistance(LineString lineString, Collection<? extends T> planitEntities, PlanitJtsCrsUtils geoUtils) throws PlanItException {
+  protected static <T> Map<T,Double> findPlanitEntitiesDistance(LineString lineString, Collection<? extends T> planitEntities, PlanitJtsCrsUtils geoUtils){
     Map<T,Double> distanceMap = null;     
     int numCoordinates = lineString.getCoordinates().length;
     for(int index=0; index<numCoordinates; ++index) {
@@ -245,9 +243,8 @@ public class PlanitGraphGeoUtils {
    * @param edges to check against
    * @param geoUtils used to compute distances
    * @return closest edge found
-   * @throws PlanItException thrown if error
    */  
-  public static Edge findEdgeClosest(Geometry geometry, Collection<? extends Edge> edges, PlanitJtsCrsUtils geoUtils) throws PlanItException {
+  public static Edge findEdgeClosest(Geometry geometry, Collection<? extends Edge> edges, PlanitJtsCrsUtils geoUtils){
     Pair<? extends Edge,Set<? extends Edge>> result = findEdgesClosest(geometry, edges,0,geoUtils);
     return result!=null ? result.first() : null;   
   }
@@ -260,9 +257,8 @@ public class PlanitGraphGeoUtils {
    * @param marginToClosestMeters margin used to collect all edges within this margin from the closest edge
    * @param geoUtils used to compute distances
    * @return closest edge found and the edges within the given margin, null if none
-   * @throws PlanItException thrown if error
    */  
-  public static Pair<? extends Edge,Set<? extends Edge>> findEdgesClosest(Geometry geometry, Collection<? extends Edge> edges, double marginToClosestMeters, PlanitJtsCrsUtils geoUtils) throws PlanItException {
+  public static Pair<? extends Edge,Set<? extends Edge>> findEdgesClosest(Geometry geometry, Collection<? extends Edge> edges, double marginToClosestMeters, PlanitJtsCrsUtils geoUtils){
     if(geometry==null || edges==null || geoUtils==null) {
       return null;
     }
@@ -330,9 +326,8 @@ public class PlanitGraphGeoUtils {
    * @param bufferDistanceMeters margin used to collect all edges with distance smaller or equal to buffer (distance to closest edge + this margin)
    * @param geoUtils used to compute distances
    * @return closest edge found and edges within margin
-   * @throws PlanItException thrown if error
    */   
-  public static Pair<? extends Edge,Set<? extends Edge>> findEdgesClosestToLineString(LineString lineString, Collection<? extends Edge> edges, double bufferDistanceMeters, PlanitJtsCrsUtils geoUtils) throws PlanItException {
+  public static Pair<? extends Edge,Set<? extends Edge>> findEdgesClosestToLineString(LineString lineString, Collection<? extends Edge> edges, double bufferDistanceMeters, PlanitJtsCrsUtils geoUtils){
     return findEdgesClosestToGeometry(lineString, edges, bufferDistanceMeters, geoUtils);   
   }   
   
@@ -345,9 +340,8 @@ public class PlanitGraphGeoUtils {
    * @param bufferDistanceMeters margin used to collect all edges with distance smaller or equal to buffer (distance to closest edge + this margin)
    * @param geoUtils used to compute distances
    * @return closest edge found and all other edges within the given margin
-   * @throws PlanItException thrown if error
    */    
-  public static Pair<? extends Edge,Set<? extends Edge>> findEdgesClosestToPoint(Point point, Collection<? extends Edge> edges, double bufferDistanceMeters, PlanitJtsCrsUtils geoUtils) throws PlanItException {
+  public static Pair<? extends Edge,Set<? extends Edge>> findEdgesClosestToPoint(Point point, Collection<? extends Edge> edges, double bufferDistanceMeters, PlanitJtsCrsUtils geoUtils){
    return findEdgesClosestToGeometry(point, edges, bufferDistanceMeters, geoUtils); 
   }   
   
@@ -360,9 +354,8 @@ public class PlanitGraphGeoUtils {
    * @param bufferDistanceMeters margin used to collect all edges with distance smaller or equal to buffer (distance to closest edge + this margin)
    * @param geoUtils used to compute distances
    * @return closest edge found and all other edges within the given margin
-   * @throws PlanItException thrown if error
    */    
-  public static Pair<? extends Edge,Set<? extends Edge>> findEdgesClosestToGeometry(Geometry geometry, Collection<? extends Edge> edges, double bufferDistanceMeters, PlanitJtsCrsUtils geoUtils) throws PlanItException {
+  public static Pair<? extends Edge,Set<? extends Edge>> findEdgesClosestToGeometry(Geometry geometry, Collection<? extends Edge> edges, double bufferDistanceMeters, PlanitJtsCrsUtils geoUtils){
     /* collect entity distances */
     Map<Edge, Double> result = null;
     if(geometry instanceof Point) {
@@ -372,7 +365,7 @@ public class PlanitGraphGeoUtils {
     }else if(geometry instanceof Polygon) {
       result = findPlanitEntitiesDistance((LineString)((Polygon)geometry).getExteriorRing(), edges, geoUtils);
     }else {
-      throw new PlanItException("Unsupported geometry encountered when finding edges closest to geometry");
+      throw new PlanItRunTimeException("Unsupported geometry encountered when finding edges closest to geometry");
     }
     
     /* find minimum entry */

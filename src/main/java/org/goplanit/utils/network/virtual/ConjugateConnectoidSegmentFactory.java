@@ -1,6 +1,5 @@
 package org.goplanit.utils.network.virtual;
 
-import org.goplanit.utils.exceptions.PlanItException;
 import org.goplanit.utils.graph.GraphEntityFactory;
 
 /** Factory interface for onjugate connectoid segments

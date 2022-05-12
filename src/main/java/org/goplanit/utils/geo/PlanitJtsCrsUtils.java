@@ -8,6 +8,7 @@ import org.geotools.referencing.GeodeticCalculator;
 import org.geotools.referencing.crs.DefaultGeographicCRS;
 import org.geotools.referencing.factory.epsg.CartesianAuthorityFactory;
 import org.goplanit.utils.exceptions.PlanItException;
+import org.goplanit.utils.exceptions.PlanItRunTimeException;
 import org.goplanit.utils.graph.Vertex;
 import org.goplanit.utils.math.Precision;
 import org.locationtech.jts.geom.Coordinate;
@@ -93,9 +94,8 @@ public class PlanitJtsCrsUtils {
    * @param point reference
    * @param geometry to check against, explore all its coordinates
    * @return closest coordinate distance
-   * @throws PlanItException thrown if error
    */
-  public double getClosestExistingCoordinateDistanceInMeters(Point point, Geometry geometry) throws PlanItException {
+  public double getClosestExistingCoordinateDistanceInMeters(Point point, Geometry geometry){
     if(geometry !=null ){      
       return getDistanceInMetres(getClosestExistingCoordinateToPoint(point, geometry), point.getCoordinate());
     }
@@ -108,9 +108,8 @@ public class PlanitJtsCrsUtils {
    * @param point reference
    * @param geometry to check against, explore all its coordinates
    * @return closest coordinate distance
-   * @throws PlanItException thrown if error
    */
-  public Coordinate getClosestExistingCoordinateToPoint(Point point, Geometry geometry) throws PlanItException {
+  public Coordinate getClosestExistingCoordinateToPoint(Point point, Geometry geometry){
     double minDistanceMetersToCoordinate = Double.POSITIVE_INFINITY;
     Coordinate closestCoordinate = null;
     if(geometry !=null ){      
@@ -135,9 +134,8 @@ public class PlanitJtsCrsUtils {
    * @param referenceGeometry to use
    * @param lineString to verify closest coordinate
    * @return closest existing coordinate on line string to find coordinate on
-   * @throws PlanItException thrown if error
    */
-  public <T extends LineString> Coordinate getClosestExistingLineStringCoordinateToGeometry(Geometry referenceGeometry, T lineString) throws PlanItException {
+  public <T extends LineString> Coordinate getClosestExistingLineStringCoordinateToGeometry(Geometry referenceGeometry, T lineString){
     double minDistanceMetersToCoordinate = Double.POSITIVE_INFINITY;
     Coordinate closestCoordinate = null;
     for(int index = 0; index < lineString.getNumPoints() ; ++index) {
@@ -158,9 +156,8 @@ public class PlanitJtsCrsUtils {
    * @param referenceGeometry to use
    * @param polygon to verify closest coordinate
    * @return closest existing coordinate on polygon to find coordinate on
-   * @throws PlanItException thrown if error
    */  
-  private Coordinate getClosestExistingPolygonCoordinateToGeometry(Geometry referenceGeometry, Polygon polygon) throws PlanItException {
+  private Coordinate getClosestExistingPolygonCoordinateToGeometry(Geometry referenceGeometry, Polygon polygon){
     LinearRing exteriorGeometry = polygon.getExteriorRing();
     return getClosestExistingLineStringCoordinateToGeometry(referenceGeometry, exteriorGeometry);    
   }   
@@ -172,17 +169,16 @@ public class PlanitJtsCrsUtils {
    * @param referencePoint the reference point
    * @param geometry to find closest distance to point to
    * @return linearLocation found
-   * @throws PlanItException thrown if error
    */  
-  public LinearLocation getClosestProjectedLinearLocationOnGeometry(Point referencePoint, Geometry geometry) throws PlanItException {    
+  public LinearLocation getClosestProjectedLinearLocationOnGeometry(Point referencePoint, Geometry geometry){    
     if(geometry instanceof Point) {
-      throw new PlanItException("Cannot create linear Location from a single point");
+      throw new PlanItRunTimeException("Cannot create linear Location from a single point");
     }else if(geometry instanceof LineString ) {
         return getClosestProjectedLinearLocationOnLineString(referencePoint.getCoordinate(), (LineString)geometry);  
     }else if(geometry instanceof Polygon) {
       return getClosestProjectedLinearLocationOnPolygon(referencePoint.getCoordinate(), (Polygon)geometry);
     }else {
-      throw new PlanItException("Method getClosestLinearLocationOnGeometry not supported for provided geometry type %s",geometry.getClass().getName());
+      throw new PlanItRunTimeException("Method getClosestLinearLocationOnGeometry not supported for provided geometry type %s",geometry.getClass().getName());
     }      
   }   
   
@@ -193,9 +189,8 @@ public class PlanitJtsCrsUtils {
    * @param referenceCoordinate the reference point
    * @param lineString to find closest distance to point to (must be a linear geometry)
    * @return linearLocation found
-   * @throws PlanItException thrown if error
-   */  
-  public LinearLocation getClosestProjectedLinearLocationOnLineString(Coordinate referenceCoordinate, LineString lineString) throws PlanItException {
+     */  
+  public LinearLocation getClosestProjectedLinearLocationOnLineString(Coordinate referenceCoordinate, LineString lineString){
     LocationIndexedLine locIndexedLine = new LocationIndexedLine(lineString);
     return locIndexedLine.project(referenceCoordinate);
   } 
@@ -207,12 +202,11 @@ public class PlanitJtsCrsUtils {
    * @param referenceCoordinate the reference point
    * @param polygon to find closest distance to point to (must be a linear geometry)
    * @return linearLocation found
-   * @throws PlanItException thrown if error
    */  
-  public LinearLocation getClosestProjectedLinearLocationOnPolygon(Coordinate referenceCoordinate, Polygon polygon) throws PlanItException {
-    PlanItException.throwIfNull(referenceCoordinate, "Provided coordinate is null when computing closest location to given coordinate");
-    PlanItException.throwIfNull(polygon, "Provided polygon is null when computing closest location to given coordinate");
-    PlanItException.throwIfNull(polygon.getNumPoints()<2, "Provided polygon has too few coordinates");
+  public LinearLocation getClosestProjectedLinearLocationOnPolygon(Coordinate referenceCoordinate, Polygon polygon){
+    PlanItRunTimeException.throwIfNull(referenceCoordinate, "Provided coordinate is null when computing closest location to given coordinate");
+    PlanItRunTimeException.throwIfNull(polygon, "Provided polygon is null when computing closest location to given coordinate");
+    PlanItRunTimeException.throwIfNull(polygon.getNumPoints()<2, "Provided polygon has too few coordinates");
     
     double minDistanceMeters = Double.POSITIVE_INFINITY;
     LinearLocation closestLinearLocation = null;
@@ -268,9 +262,8 @@ public class PlanitJtsCrsUtils {
    * @param referencePoint the reference point
    * @param geometry to find closest distance to point to
    * @return distance found in meters
-   * @throws PlanItException thrown if error
    */  
-  public Coordinate getClosestProjectedCoordinateOnGeometry(Point referencePoint, Geometry geometry) throws PlanItException {
+  public Coordinate getClosestProjectedCoordinateOnGeometry(Point referencePoint, Geometry geometry){
     if(geometry instanceof Point) {
       return ((Point)geometry).getCoordinate();
     }else if(geometry instanceof LineString ) {
@@ -278,7 +271,7 @@ public class PlanitJtsCrsUtils {
     }else if(geometry instanceof Polygon) {
       return getClosestPojectedCoordinateOnPolygon(referencePoint, (Polygon)geometry);
     }else {
-      throw new PlanItException("Method getClosestProjectedCoordinateTo not supported for provided geometry type %s",geometry.getClass().getName());
+      throw new PlanItRunTimeException("Method getClosestProjectedCoordinateTo not supported for provided geometry type %s",geometry.getClass().getName());
     }     
   }  
   
@@ -290,9 +283,8 @@ public class PlanitJtsCrsUtils {
    * @param referencePoint the reference point
    * @param lineString to find closest distance to point to
    * @return distance found in meters
-   * @throws PlanItException thrown if error
    */  
-  public Coordinate getClosestProjectedCoordinateOnLineString(Point referencePoint, LineString lineString) throws PlanItException {
+  public Coordinate getClosestProjectedCoordinateOnLineString(Point referencePoint, LineString lineString){
     return getClosestProjectedLinearLocationOnGeometry(referencePoint, lineString).getCoordinate(lineString); 
   }   
   
@@ -303,9 +295,8 @@ public class PlanitJtsCrsUtils {
    * @param referencePoint the reference point
    * @param polygon to find closest distance to point to using its exterior ring
    * @return linearLocation found
-   * @throws PlanItException thrown if error
    */  
-  public Coordinate getClosestPojectedCoordinateOnPolygon(Point referencePoint, Polygon polygon) throws PlanItException {
+  public Coordinate getClosestPojectedCoordinateOnPolygon(Point referencePoint, Polygon polygon){
     /* collect linear location and from that reconstruct the line string to extract the projected coordinate from */
     LinearLocation linearLocation = getClosestProjectedLinearLocationOnPolygon(referencePoint.getCoordinate(), polygon);
     int lineSegmentIndex = linearLocation.getSegmentIndex();
@@ -320,9 +311,8 @@ public class PlanitJtsCrsUtils {
    * @param referencePoint the reference point
    * @param geometry to find closest distance to point to
    * @return distance found in meters
-   * @throws PlanItException thrown if error
    */
-  public double getClosestProjectedDistanceInMetersToLineString(Point referencePoint, LineString geometry) throws PlanItException {
+  public double getClosestProjectedDistanceInMetersToLineString(Point referencePoint, LineString geometry){
     return getDistanceInMetres(referencePoint.getCoordinate(), getClosestProjectedCoordinateOnLineString(referencePoint, geometry));      
   }  
       
@@ -333,9 +323,8 @@ public class PlanitJtsCrsUtils {
    * @param referencePoint the reference point
    * @param geometry to find closest distance to point to
    * @return distance found in meters
-   * @throws PlanItException thrown if error
    */  
-  public double getClosestDistanceInMetersMultiLineString(Point referencePoint, MultiLineString geometry) throws PlanItException {
+  public double getClosestDistanceInMetersMultiLineString(Point referencePoint, MultiLineString geometry){
     double minDistanceInMetersForLineSegment = Double.POSITIVE_INFINITY;
     for(int index=0;index<geometry.getNumGeometries();++index) {       
       LineString currLineString = (LineString)geometry.getGeometryN(index);
@@ -350,9 +339,8 @@ public class PlanitJtsCrsUtils {
    * @param referencePoint the reference point
    * @param geometry to find closest distance to point to
    * @return distance found in meters
-   * @throws PlanItException thrown if error
    */
-  public double getClosestDistanceInMetersToPolygon(Point referencePoint, Polygon geometry) throws PlanItException {
+  public double getClosestDistanceInMetersToPolygon(Point referencePoint, Polygon geometry){
     double minDistanceInMetersForLineSegment = Double.POSITIVE_INFINITY;
     /* explore line segments and project location to find closest distance for each segment */
     Coordinate[] coords = ((Polygon)geometry).getCoordinates();
@@ -374,9 +362,8 @@ public class PlanitJtsCrsUtils {
    * @param referencePoint the reference point
    * @param geometry to find closest distance to point to
    * @return distance found in meters
-   * @throws PlanItException thrown if error
    */
-  public double getClosestDistanceInMeters(Point referencePoint, Geometry geometry) throws PlanItException {
+  public double getClosestDistanceInMeters(Point referencePoint, Geometry geometry){
     if(geometry instanceof Point ) {
       return getClosestExistingCoordinateDistanceInMeters(referencePoint, geometry);
     }else if(geometry instanceof LineString) {
@@ -386,7 +373,7 @@ public class PlanitJtsCrsUtils {
     }else if(geometry instanceof Polygon){
       return getClosestDistanceInMetersToPolygon(referencePoint, (Polygon)geometry);
     }else {
-      throw new PlanItException("unsupported geometry provided for fiding closest distance to point");
+      throw new PlanItRunTimeException("Unsupported geometry provided for fiding closest distance to point");
     }              
   }
 
@@ -408,9 +395,8 @@ public class PlanitJtsCrsUtils {
    * @param startCoordinate location of the start point
    * @param endCoordinate   location of the end point
    * @return distance in metres between the points
-   * @throws PlanItException thrown if there is an error
    */
-  public double getDistanceInMetres(Coordinate startCoordinate, Coordinate endCoordinate) throws PlanItException {
+  public double getDistanceInMetres(Coordinate startCoordinate, Coordinate endCoordinate){
     try {
       if (crs.equals(CARTESIANCRS)) {
         // cartesian in meters
@@ -422,7 +408,7 @@ public class PlanitJtsCrsUtils {
       }
     } catch (Exception e) {
       LOGGER.severe(e.getMessage());
-      throw new PlanItException("Error when computing distance in meters between two Positions in JtsUtils", e);
+      throw new PlanItRunTimeException("Error when computing distance in meters between two Positions in JtsUtils", e);
     }
   }
 
@@ -527,9 +513,8 @@ public class PlanitJtsCrsUtils {
    * 
    * @param geometry to extract length from
    * @return length in km
-   * @throws PlanItException thrown if error
    */
-  public double getDistanceInKilometres(LineString geometry) throws PlanItException {
+  public double getDistanceInKilometres(LineString geometry){
     Coordinate[] coordinates = geometry.getCoordinates();
     int numberOfCoords = coordinates.length;
 
@@ -545,7 +530,7 @@ public class PlanitJtsCrsUtils {
 
       return computedLengthInMetres / 1000.0;
     }
-    throw new PlanItException("unable to compute distance for less than two points");
+    throw new PlanItRunTimeException("Unable to compute distance for less than two points");
   }
   
   /** extend the given line segment in one or two directions with a given distance in meters. One can also extend on both sides at the same time.
@@ -645,9 +630,8 @@ public class PlanitJtsCrsUtils {
    * @param boundingBox to consider
    * @param maxDistanceMeters to consider
    * @return true when within maximum distance of bounding box, false otherwise
-   * @throws PlanItException thrown if error
    */
-  public boolean isGeometryNearBoundingBox(Geometry geometry, Envelope boundingBox, double maxDistanceMeters) throws PlanItException {
+  public boolean isGeometryNearBoundingBox(Geometry geometry, Envelope boundingBox, double maxDistanceMeters){
     Polygon boundingBoxGeometry = PlanitJtsUtils.create2DPolygon(boundingBox);
     double distanceMeters  = Double.POSITIVE_INFINITY;
     if(geometry instanceof Point) {
@@ -659,7 +643,7 @@ public class PlanitJtsCrsUtils {
       Coordinate closestCoordinate = getClosestExistingPolygonCoordinateToGeometry(boundingBoxGeometry, Polygon.class.cast(geometry));
       distanceMeters = getClosestDistanceInMeters(PlanitJtsUtils.createPoint(closestCoordinate), boundingBoxGeometry );
     }else {
-      throw new PlanItException("Unsupported geometry type provided when checking if it is near bounding box");
+      throw new PlanItRunTimeException("Unsupported geometry type provided when checking if it is near bounding box");
     }
     return (distanceMeters + Precision.EPSILON_6) <= maxDistanceMeters;
   }

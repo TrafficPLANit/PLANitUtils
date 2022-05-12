@@ -28,9 +28,8 @@ public interface MacroscopicLinkSegmentFactory extends GraphEntityFactory<Macros
    * @param parentLink            the parent of this segment
    * @param registerOnLink option to register the new segment on the underlying link
    * @return the created segments as a pair with direction (Ab,Ba)
-   * @throws PlanItException thrown if error
    */
-  public Pair<MacroscopicLinkSegment,MacroscopicLinkSegment> registerNew(Link parentLink, boolean registerOnLink) throws PlanItException;  
+  public Pair<MacroscopicLinkSegment,MacroscopicLinkSegment> registerNew(Link parentLink, boolean registerOnLink);  
 
   /**
    * Create a macroscopic link segment and register it
@@ -39,9 +38,8 @@ public interface MacroscopicLinkSegmentFactory extends GraphEntityFactory<Macros
    * @param directionAb           direction of travel
    * @param registerOnLink option to register the new segment on the underlying link
    * @return the created segment
-   * @throws PlanItException thrown if error
    */
-  public MacroscopicLinkSegment registerNew(Link parentLink, boolean directionAb, boolean registerOnLink) throws PlanItException;
+  public MacroscopicLinkSegment registerNew(Link parentLink, boolean directionAb, boolean registerOnLink);
   
   /**
    * Create a macroscopic link segment and register it
@@ -51,8 +49,7 @@ public interface MacroscopicLinkSegmentFactory extends GraphEntityFactory<Macros
    * @param directionAb           direction of travel
    * @param registerOnLink option to register the new segment on the underlying link
    * @return the created segment
-   * @throws PlanItException thrown if error
    */
-  public MacroscopicLinkSegment registerNew(Link parentLink, MacroscopicLinkSegmentType type, boolean directionAb, boolean registerOnLink) throws PlanItException;  
+  public MacroscopicLinkSegment registerNew(Link parentLink, MacroscopicLinkSegmentType type, boolean directionAb, boolean registerOnLink);  
 
 }

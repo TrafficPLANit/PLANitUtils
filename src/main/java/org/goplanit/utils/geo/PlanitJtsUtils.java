@@ -12,6 +12,7 @@ import java.util.stream.Collectors;
 import org.geotools.geometry.jts.JTSFactoryFinder;
 import org.geotools.referencing.CRS;
 import org.goplanit.utils.exceptions.PlanItException;
+import org.goplanit.utils.exceptions.PlanItRunTimeException;
 import org.goplanit.utils.misc.Pair;
 import org.locationtech.jts.algorithm.RobustDeterminant;
 import org.locationtech.jts.geom.Coordinate;
@@ -117,10 +118,9 @@ public class PlanitJtsUtils {
    * 
    * @param coordinateList source
    * @return created line string
-   * @throws PlanItException thrown if error
    */
-  public static LineString createLineString(List<Double> coordinateList) throws PlanItException {
-    PlanItException.throwIf(coordinateList.size() % 2 != 0, "coordinate list must contain an even number of entries to correctly identify (x,y) pairs");
+  public static LineString createLineString(List<Double> coordinateList){
+    PlanItRunTimeException.throwIf(coordinateList.size() % 2 != 0, "coordinate list must contain an even number of entries to correctly identify (x,y) pairs");
     Iterator<Double> iter = coordinateList.iterator();
     Coordinate[] coordinateArray = new Coordinate[coordinateList.size() / 2];
     int index = 0;
@@ -137,16 +137,15 @@ public class PlanitJtsUtils {
    * @param ts    tuple separating character
    * @param cs    comma separating character
    * @return the LineString created from the String
-   * @throws PlanItException thrown if error
    */
-  public static LineString createLineString(String value, char ts, char cs) throws PlanItException {
+  public static LineString createLineString(String value, char ts, char cs){
     List<Double> coordinateDoubleList = new ArrayList<Double>();
     String[] tupleString = value.split("[" + ts + "]");
     for (int index = 0; index < tupleString.length; ++index) {
       String xyCoordinateString = tupleString[index];
       String[] coordinateString = xyCoordinateString.split("[" + cs + "]");
       if (coordinateString.length != 2) {
-        throw new PlanItException(String.format("invalid coordinate encountered, expected two coordinates in tuple, but found %d", coordinateString.length));
+        throw new PlanItRunTimeException(String.format("invalid coordinate encountered, expected two coordinates in tuple, but found %d", coordinateString.length));
       }
       coordinateDoubleList.add(Double.parseDouble(coordinateString[0]));
       coordinateDoubleList.add(Double.parseDouble(coordinateString[1]));
@@ -159,9 +158,8 @@ public class PlanitJtsUtils {
    * 
    * @param coordinates source
    * @return created line string
-   * @throws PlanItException thrown if error
    */
-  public static LineString createLineString(Coordinate... coordinates) throws PlanItException {
+  public static LineString createLineString(Coordinate... coordinates){
     return jtsGeometryFactory.createLineString(coordinates);
   }
 
@@ -172,12 +170,11 @@ public class PlanitJtsUtils {
    * @param ts    tuple separating string (which must be a a character)
    * @param cs    comma separating string (which must be a a character)
    * @return the LineString created from the String
-   * @throws PlanItException thrown if error
    */
-  public static LineString createLineStringFromCsvString(String value, String ts, String cs) throws PlanItException {
+  public static LineString createLineStringFromCsvString(String value, String ts, String cs){
     if (ts.length() > 1 || cs.length() > 1) {
-      PlanItException.throwIf(ts.length() > 1, String.format("tuple separating string to create LineString is not a single character but %s", ts));
-      PlanItException.throwIf(cs.length() > 1, String.format("comma separating string to create LineString is not a single character but %s", cs));
+      PlanItRunTimeException.throwIf(ts.length() > 1, String.format("tuple separating string to create LineString is not a single character but %s", ts));
+      PlanItRunTimeException.throwIf(cs.length() > 1, String.format("comma separating string to create LineString is not a single character but %s", cs));
     }
     return createLineString(value, ts.charAt(0), cs.charAt(0));
   }
@@ -347,18 +344,17 @@ public class PlanitJtsUtils {
    * @param position to use
    * @param geometry linestring
    * @return the line string created
-   * @throws PlanItException thrown if position could not be located
    */
-  public static LineString createCopyWithoutCoordinatesBefore(Point position, LineString geometry) throws PlanItException {
+  public static LineString createCopyWithoutCoordinatesBefore(Point position, LineString geometry){
     Optional<Integer> offset = findFirstCoordinatePosition(position.getCoordinate(), geometry);
 
     if (!offset.isPresent()) {
-      throw new PlanItException(String.format("point (%s) does not exist on line string (%s), unable to create copy from this location", position.toString(), geometry.toString()));
+      throw new PlanItRunTimeException(String.format("Point (%s) does not exist on line string (%s), unable to create copy from this location", position.toString(), geometry.toString()));
     }
 
     Coordinate[] coordinates = copyCoordinatesFrom(offset.get(), geometry);
     if(coordinates.length == 1) {
-      throw new PlanItException(String.format("linestring (%s) without coordinates before %s results in single coordinate, unable to create linestring", geometry.toString(), position.toString()));
+      throw new PlanItRunTimeException(String.format("Linestring (%s) without coordinates before %s results in single coordinate, unable to create linestring", geometry.toString(), position.toString()));
     }
 
     return createLineString(coordinates);
@@ -383,15 +379,14 @@ public class PlanitJtsUtils {
    * Remove all coordinates in the line string after but not including the passed in position. In case the position cannot be found, an exception will be thrown
    * 
    * @param position first location of this position in geometry is the last entry in the copied geometry
-   * @param geometry linestring
+   * @param geometry line string
    * @return copy of the line string without indicated coordinates
-   * @throws PlanItException thrown if position could not be located
    */
-  public static LineString createCopyWithoutCoordinatesAfter(Point position, LineString geometry) throws PlanItException {
+  public static LineString createCopyWithoutCoordinatesAfter(Point position, LineString geometry){
     Optional<Integer> offset = findFirstCoordinatePosition(position.getCoordinate(), geometry);
 
     if (!offset.isPresent()) {
-      throw new PlanItException(String.format("point (%s) does not exist on line string %s, unable to create copy from this location", position.toString(), geometry.toString()));
+      throw new PlanItRunTimeException(String.format("Point (%s) does not exist on line string %s, unable to create copy from this location", position.toString(), geometry.toString()));
     }
 
     Coordinate[] coordinates = copyCoordinatesUpToNotIncluding(offset.get() + 1, geometry);
@@ -486,9 +481,8 @@ public class PlanitJtsUtils {
    * @param offset   to start at
    * @param geometry to copy from
    * @return coordinate array, when offset is out of bounds null is returned
-   * @throws PlanItException thrown if error
    */
-  public static Coordinate[] copyCoordinatesFrom(int offset, LineString geometry) throws PlanItException {
+  public static Coordinate[] copyCoordinatesFrom(int offset, LineString geometry){
     return copyCoordinatesFromUpToNotIncluding(offset, geometry.getNumPoints(), geometry);
   }
 
@@ -498,9 +492,8 @@ public class PlanitJtsUtils {
    * @param untilPoint to stop (not included)
    * @param geometry   to copy from
    * @return coordinate array, when offset is out of bounds null is returned
-   * @throws PlanItException thrown if error
    */
-  public static Coordinate[] copyCoordinatesUpToNotIncluding(int untilPoint, LineString geometry) throws PlanItException {
+  public static Coordinate[] copyCoordinatesUpToNotIncluding(int untilPoint, LineString geometry){
     return copyCoordinatesFromUpToNotIncluding(0, untilPoint, geometry);
   }
 
@@ -511,10 +504,9 @@ public class PlanitJtsUtils {
    * @param untilPoint to end with (not included)
    * @param geometry   to copy from
    * @return coordinate array, when offset is out of bounds empty coordinate array is returned
-   * @throws PlanItException thrown if error
    */
-  public static Coordinate[] copyCoordinatesFromUpToNotIncluding(int offset, int untilPoint, LineString geometry) throws PlanItException {
-    PlanItException.throwIfNull(geometry, "provided geometry to copy coordinates from is null");
+  public static Coordinate[] copyCoordinatesFromUpToNotIncluding(int offset, int untilPoint, LineString geometry){
+    PlanItRunTimeException.throwIfNull(geometry, "Provided geometry to copy coordinates from is null");
 
     int numCoordinates = geometry.getNumPoints();
     if (offset > untilPoint || untilPoint > numCoordinates) {

@@ -87,7 +87,7 @@ public interface ConjugateDirectedEdge extends DirectedEdge {
    * @param directionAb conjugate direction to use
    * @return pair of original edge segments (can be partially empty/null if combination does not exist)
    */
-  public default Pair<? extends EdgeSegment, ? extends EdgeSegment> getOriginalAdjacentEdgeSegments(boolean directionAb){
+  public default Pair<? extends EdgeSegment, ? extends EdgeSegment> getOriginalAdjacentEdgeSegments(boolean directionAb){    
     DirectedEdge startEdge = directionAb ? getVertexA().getOriginalEdge() : getVertexB().getOriginalEdge();
     DirectedEdge endEdge = directionAb ? getVertexB().getOriginalEdge() : getVertexA().getOriginalEdge();
     var sharedVertex = EdgeUtils.getSharedVertex(startEdge, endEdge);

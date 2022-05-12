@@ -1,8 +1,6 @@
 package org.goplanit.utils.network.virtual;
 
-import org.goplanit.utils.exceptions.PlanItException;
 import org.goplanit.utils.graph.GraphEntityFactory;
-import org.goplanit.utils.graph.directed.ConjugateDirectedVertex;
 
 /** Factory interface for connectoid conjugate edges
  * 
