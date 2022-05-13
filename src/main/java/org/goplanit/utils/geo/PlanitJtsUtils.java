@@ -96,9 +96,8 @@ public class PlanitJtsUtils {
    * @param xCoordinate X-coordinate (longitude assumed)
    * @param yCoordinate Y-coordinate (latitude assumed)
    * @return point object representing the location
-   * @throws PlanItException thrown if there is an error during processing
    */
-  public static Point createPoint(Number xCoordinate, Number yCoordinate) throws PlanItException {
+  public static Point createPoint(Number xCoordinate, Number yCoordinate) {
     Coordinate coordinate = new Coordinate(xCoordinate.doubleValue(), yCoordinate.doubleValue());
     return createPoint(coordinate);
   }
@@ -626,12 +625,11 @@ public class PlanitJtsUtils {
   }
 
   /** collect the index of the given coordinate from the array
-   * @param coordinate to colelct index for
+   * @param coordinate to collect index for
    * @param coordinates to collect from
    * @return index, -1 if nto found
-   * @throws PlanItException thrown if error
    */
-  public static int getCoordinateIndexOf(Coordinate coordinate, Coordinate[] coordinates) throws PlanItException {
+  public static int getCoordinateIndexOf(Coordinate coordinate, Coordinate[] coordinates) {
     for(int coordinateIndex = 1; coordinateIndex < coordinates.length-1; ++coordinateIndex) {
       Point internalPoint = createPoint(coordinates[coordinateIndex]);
       if(internalPoint.getCoordinate().equals2D(coordinate)) {
