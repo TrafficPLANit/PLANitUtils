@@ -4,8 +4,6 @@ Utilities for PLANit and interfaces that allow one to provide custom implementat
 
 For more information on PLANit such as the user the manual, licensing, installation, getting started, reference documentation, and more, please visit [www.goPLANit.org](http://www.goplanit.org)
 
-## Development
-
 ### Maven build
 
 PLANit utils has the following PLANit specific dependencies (See pom.xml):
