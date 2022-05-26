@@ -1,7 +1,7 @@
 # PLANitUtils
 
-![Master Branch](https://github.com/TrafficPLANit/PLANitUtils/actions/workflows/maven.yml/badge.svg?branch=master)
-![Develop Branch](https://github.com/TrafficPLANit/PLANitUtils/actions/workflows/maven.yml/badge.svg?branch=develop)
+![Master Branch](https://github.com/TrafficPLANit/PLANitUtils/actions/workflows/maven_master.yml/badge.svg?branch=master)
+![Develop Branch](https://github.com/TrafficPLANit/PLANitUtils/actions/workflows/maven_develop.yml/badge.svg?branch=develop)
 
 Utilities for PLANit and interfaces that allow one to provide custom implementations of network entities other than the ones available in the PLANit (core) project.
 
