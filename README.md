@@ -17,32 +17,6 @@ PLANit utils has the following PLANit specific dependencies (See pom.xml):
 
 Dependencies will be automatically downloaded from the PLANit website, (www.repository.goplanit.org)[http://repository.goplanit.org], or alternatively can be checked-out locally for local development. The shared PLANit Maven configuration can be found in planit-parent-pom which is defined as the parent pom of each PLANit repository.
 
-To let Maven find the parent pom, either:
-
-* localy clone the parent pom repo and run mvn install on it before conducting a Maven build, or
-* add the parent pom repository to your maven (user) settings.xml by adding it to a profile like the following
-
-```xml
-  <profiles>
-    <profile>
-      <activation>
-        <property>
-          <name>!skip</name>
-        </property>
-      </activation>
-    
-      <repositories>
-        <repository>
-          <id>planit-repository.goplanit.org</id>
-          <name>PLANit Repository</name>
-          <url>http://repository.goplanit.org</url>
-        </repository>     
-      </repositories>
-    </profile>
-  </profiles>
-```
-
-
 ### Maven deploy
 
 Distribution management is setup via the parent pom such that Maven deploys this project to the PLANit online repository (also specified in the parent pom). To enable deployment ensure that you setup your credentials correctly in your settings.xml as otherwise the deployment will fail.

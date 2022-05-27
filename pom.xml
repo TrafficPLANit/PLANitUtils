@@ -85,7 +85,7 @@
 	</build>
 
 	<repositories>
-		<!-- PLANit repository -->
+		<!-- PLANit repository to obtain parentpom from-->
 		<repository>
 			<id>planit-repository.goplanit.org</id>
 			<name>PLANit Repository</name>
