@@ -43,7 +43,8 @@ public interface ConjugateVirtualNetwork {
   public abstract void reset(); 
   
   /** Access to underlying original virtual network this conjugate represents
-   * @return
+   *
+   * @return original virtual network
    */
   public abstract VirtualNetwork getOriginalVirtualNetwork();
 

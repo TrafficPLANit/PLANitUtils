@@ -51,7 +51,7 @@ public interface ConjugateVertex extends Vertex {
   
   /**
    * Collect the original edge this conjugate vertex represents in the conjugate graph
-   * @return
+   * @return original edge
    */
   public abstract Edge getOriginalEdge();
 }
