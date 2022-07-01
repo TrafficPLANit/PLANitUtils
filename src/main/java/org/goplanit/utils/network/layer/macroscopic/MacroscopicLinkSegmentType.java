@@ -7,6 +7,7 @@ import java.util.stream.Collectors;
 import org.goplanit.utils.id.ExternalIdAble;
 import org.goplanit.utils.id.ManagedId;
 import org.goplanit.utils.macroscopic.MacroscopicConstants;
+import org.goplanit.utils.misc.StringUtils;
 import org.goplanit.utils.mode.Mode;
 
 /**
@@ -38,7 +39,6 @@ public interface MacroscopicLinkSegmentType extends Cloneable, ExternalIdAble, M
   /**
    * {@inheritDoc}
    */
-  @Override
   public abstract MacroscopicLinkSegmentType clone();
 
   /**
@@ -243,5 +243,21 @@ public interface MacroscopicLinkSegmentType extends Cloneable, ExternalIdAble, M
   public default void removeModeAccess(final Set<Mode> toBeRemovedModes) {
     toBeRemovedModes.forEach( mode -> removeModeAccess(mode));
   }
-  
+
+  /**
+   * Add a new access mode to an existing access group properties on this link segment type
+   *
+   * @param accessMode to add
+   * @param accessGroupProperties to add the mode to
+   */
+  public abstract void registerModeOnAccessGroup(Mode accessMode, AccessGroupProperties accessGroupProperties);
+
+  /**
+   * Verify if name is present or not
+   *
+   * @return true when name is set, false otherwise
+   */
+  public default boolean hasName(){
+    return !StringUtils.isNullOrBlank(getName());
+  }
 }

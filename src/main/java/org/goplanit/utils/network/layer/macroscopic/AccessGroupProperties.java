@@ -112,6 +112,14 @@ public interface AccessGroupProperties extends Cloneable {
    * 
    * @param mode to add
    */
-  public abstract void addAccessMode(final Mode mode); 
+  public abstract void addAccessMode(final Mode mode);
 
+  /**
+   * Verify if group supports one or more access modes
+   *
+   * @return true when one or more modes are supported, false otherwise
+   */
+  public default boolean hasAccessModes(){
+    return !getAccessModes().isEmpty();
+  }
 }
