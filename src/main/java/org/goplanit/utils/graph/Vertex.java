@@ -85,7 +85,6 @@ public interface Vertex extends Serializable, GraphEntity {
    * Clone the vertex
    * @return the cloned vertex
    */
-  @Override
   public abstract Vertex clone();
   
   /**

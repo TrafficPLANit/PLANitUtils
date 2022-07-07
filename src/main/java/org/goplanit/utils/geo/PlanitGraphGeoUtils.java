@@ -13,7 +13,6 @@ import java.util.logging.Logger;
 import org.goplanit.utils.exceptions.PlanItException;
 import org.goplanit.utils.exceptions.PlanItRunTimeException;
 import org.goplanit.utils.graph.Edge;
-import org.goplanit.utils.graph.GraphEntities;
 import org.goplanit.utils.graph.Vertex;
 import org.goplanit.utils.graph.directed.EdgeSegment;
 import org.goplanit.utils.math.Precision;
@@ -274,23 +273,8 @@ public class PlanitGraphGeoUtils {
     }
     
     return null;
-  }  
-    
-  /**
-   * Created quadtree based on edge envelopes as spatial index. Requires PlanitJtsIntersectEdgeVisitor to filter out true spatial matches when querying.
-   * 
-   *  @param <T> type of edge
-   *  @param edgesCollection collections to add
-   *  @return created quadtree instance
-   */
-  public static <T extends Edge> Quadtree createSpatiallyIndexedPlanitEdges(Collection<? extends GraphEntities<T>> edgesCollection) {
-    Quadtree spatiallyIndexedEdges = new Quadtree();
-    for(GraphEntities<T> edges : edgesCollection) {
-      edges.forEach(edge -> spatiallyIndexedEdges.insert(edge.getGeometry().getEnvelope().getEnvelopeInternal(),edge));
-    }
-    return spatiallyIndexedEdges;
-  }   
-  
+  }
+
   /** Find the edge closest to the passed in line string using a projection from any existing coordinate on the line string to the geometry of the link.
    * 
    * @param lineString to find closest link for
@@ -386,7 +370,7 @@ public class PlanitGraphGeoUtils {
    * @return links found intersecting or within bounding box provided
    */
   public static <T extends Edge> Collection<T> findEdgesSpatially(Envelope searchBoundingBox, Quadtree spatiallyIndexedEdgeTree) {
-    PlanitJtsIntersectEdgeVisitor<T> edgevisitor = new PlanitJtsIntersectEdgeVisitor<T>(PlanitJtsUtils.create2DPolygon(searchBoundingBox), new HashSet<T>());
+    PlanitJtsIntersectEdgeVisitor<T> edgevisitor = new PlanitJtsIntersectEdgeVisitor<>(PlanitJtsUtils.create2DPolygon(searchBoundingBox), new HashSet<>());
     spatiallyIndexedEdgeTree.query(searchBoundingBox, edgevisitor);
     return edgevisitor.getResult();
   }  

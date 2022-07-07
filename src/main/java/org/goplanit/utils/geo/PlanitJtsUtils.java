@@ -9,27 +9,23 @@ import java.util.Optional;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
+import org.geotools.geometry.jts.JTS;
 import org.geotools.geometry.jts.JTSFactoryFinder;
 import org.geotools.referencing.CRS;
 import org.goplanit.utils.exceptions.PlanItException;
 import org.goplanit.utils.exceptions.PlanItRunTimeException;
 import org.goplanit.utils.misc.Pair;
 import org.locationtech.jts.algorithm.RobustDeterminant;
-import org.locationtech.jts.geom.Coordinate;
-import org.locationtech.jts.geom.Envelope;
-import org.locationtech.jts.geom.GeometryFactory;
-import org.locationtech.jts.geom.LineSegment;
-import org.locationtech.jts.geom.LineString;
-import org.locationtech.jts.geom.MultiLineString;
-import org.locationtech.jts.geom.Point;
-import org.locationtech.jts.geom.Polygon;
+import org.locationtech.jts.geom.*;
 import org.locationtech.jts.linearref.LinearLocation;
 import org.locationtech.jts.linearref.LocationIndexedLine;
 import org.locationtech.jts.operation.linemerge.LineMerger;
 import org.opengis.geometry.DirectPosition;
+import org.opengis.geometry.MismatchedDimensionException;
 import org.opengis.geometry.coordinate.PointArray;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.MathTransform;
+import org.opengis.referencing.operation.TransformException;
 
 /**
  * General geographic related utils utilising the JTS API. 
@@ -52,11 +48,10 @@ public class PlanitJtsUtils {
    * @param sourceCRS      the source
    * @param destinationCRS the destination
    * @return transformer
-   * @throws PlanItException thrown if error
    */
-  public static MathTransform findMathTransform(CoordinateReferenceSystem sourceCRS, CoordinateReferenceSystem destinationCRS) throws PlanItException {
-    PlanItException.throwIfNull(sourceCRS, "source coordinate reference system null when creating math transform");
-    PlanItException.throwIfNull(destinationCRS, "destination coordinate reference system null when creating math transform");
+  public static MathTransform findMathTransform(CoordinateReferenceSystem sourceCRS, CoordinateReferenceSystem destinationCRS){
+    PlanItRunTimeException.throwIfNull(sourceCRS, "source coordinate reference system null when creating math transform");
+    PlanItRunTimeException.throwIfNull(destinationCRS, "destination coordinate reference system null when creating math transform");
     PlanitCrsUtils.silenceHsqlLogging();
 
     try {
@@ -64,11 +59,23 @@ public class PlanitJtsUtils {
       boolean lenient = true;
       return CRS.findMathTransform(sourceCRS, destinationCRS, lenient);
     } catch (Exception e) {
-      throw new PlanItException(String.format("error during creation of transformer from CRS %s to CRS %s", sourceCRS.toString(), destinationCRS.toString()), e);
+      throw new PlanItRunTimeException(String.format("error during creation of transformer from CRS %s to CRS %s", sourceCRS.toString(), destinationCRS.toString()), e);
     }
 
   }
-  
+
+  /**
+   * Transform given geometry based on provided transformer
+   * @param geometry to transform
+   * @param transformer to apply transformation
+   * @return transformed geometry
+   * @throws MismatchedDimensionException
+   * @throws TransformException
+   */
+  public static Geometry transformGeometry(Geometry geometry, MathTransform transformer) throws MismatchedDimensionException, TransformException {
+    return JTS.transform(geometry,transformer);
+  }
+
   /**
    * create a coordinate by mapping ordinate 0 to x and ordinate 1 to y on the open gis DirecPosition
    * 

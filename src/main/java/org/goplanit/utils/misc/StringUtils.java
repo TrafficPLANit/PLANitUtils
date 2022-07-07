@@ -8,6 +8,17 @@ package org.goplanit.utils.misc;
  */
 public class StringUtils {
 
+  /**
+   * A String might have some byte order mark preceding the string (for example InputStreamReader might include this). These are not visible in the string
+   * but do change the underlying bytes compared to a string without this BOM and comparing them will fail despite looking identical.
+   * This method will remove the BOM from a copy of this string which is returned.
+   *
+   * @param value to remove BOM from
+   * @return BOM-less copy
+   */
+  public static String removeBOM(String value){
+    return value.replace("\uFeFF","");
+  }
   
   /** split string by anything but alpha numeric characters, i.e., a-zA-Z0-9
    *  
