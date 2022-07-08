@@ -365,7 +365,7 @@ public class PlanitJtsCrsUtils {
     }else if(geometry instanceof Polygon){
       return getClosestDistanceInMetersToPolygon(referencePoint, (Polygon)geometry);
     }else {
-      throw new PlanItRunTimeException("Unsupported geometry provided for fiding closest distance to point");
+      throw new PlanItRunTimeException("Unsupported geometry provided for finding closest distance to point");
     }              
   }
 
@@ -375,9 +375,8 @@ public class PlanitJtsCrsUtils {
    * @param startPosition location of the start point
    * @param endPosition   location of the end point
    * @return distance in metres between the points
-   * @throws PlanItException thrown if there is an error
    */
-  public double getDistanceInMetres(Point startPosition, Point endPosition) throws PlanItException {
+  public double getDistanceInMetres(Point startPosition, Point endPosition){
     return getDistanceInMetres(startPosition.getCoordinate(), endPosition.getCoordinate());
   }
 
@@ -431,8 +430,8 @@ public class PlanitJtsCrsUtils {
   /** create a square bounding box envelope instance based on the passed in reference point and length in meters 
    * of each of the legs, with the point residing in the middle
    * 
-   * @param centrePointX x (longitude) coord of centre
-   * @param centrePointY y (latitude) coord of centre
+   * @param centrePointX x coord of centre in crs
+   * @param centrePointY y coord of centre in crs
    * @param lengthMeters in meters
    * @return envelope with appropriate square bounding box
    */
@@ -441,27 +440,27 @@ public class PlanitJtsCrsUtils {
       /* cartesian approach (not in meters though )*/
       return new Envelope(centrePointX-lengthMeters, centrePointX+lengthMeters, centrePointY-lengthMeters, centrePointY+lengthMeters);
     }
-    
+
     geoCalculator.setStartingGeographicPoint(centrePointX, centrePointY);
-  
+
     geoCalculator.setDirection( 0, lengthMeters );
     Point2D north = geoCalculator.getDestinationGeographicPoint();
-  
+
     geoCalculator.setDirection( 90, lengthMeters );
     Point2D east = geoCalculator.getDestinationGeographicPoint();
-  
+
     geoCalculator.setDirection( 180, lengthMeters );
     Point2D south = geoCalculator.getDestinationGeographicPoint();
-  
+
     geoCalculator.setDirection( -90, lengthMeters );
-    Point2D west = geoCalculator.getDestinationGeographicPoint();   
-    
+    Point2D west = geoCalculator.getDestinationGeographicPoint();
+
     double y1 = north.getY();
     double y2 = south.getY();
     double x1 = west.getX();
     double x2 = east.getX();
-    
-    return new Envelope(x1, x2, y2, y1);    
+
+    return new Envelope(x1, x2, y2, y1);
   }
   
   /** create a square bounding box envelope instance based on an existing envelope bounding box and and buffer length in meters 

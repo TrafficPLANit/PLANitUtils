@@ -77,6 +77,24 @@ public class PlanitJtsUtils {
   }
 
   /**
+   * Transform the spanning coordinates of envelope to difference CRS
+   * @param envelope to transform
+   * @param crsTransform to apply
+   * @return transformed envelope
+   */
+  public static Envelope transformEnvelope(Envelope envelope, MathTransform crsTransform){
+    var minPoint = createPoint(new Coordinate(envelope.getMinX(),envelope.getMinY()));
+    var maxPoint = createPoint(new Coordinate(envelope.getMaxX(),envelope.getMaxY()));
+    try {
+      var transformedMinPoint = transformGeometry(minPoint,crsTransform);
+      var transformedMaxPoint = transformGeometry(maxPoint,crsTransform);
+      return new Envelope(transformedMinPoint.getCoordinate(),transformedMaxPoint.getCoordinate());
+    } catch (TransformException e) {
+      throw new PlanItRunTimeException("Unable to transform envelope", e);
+    }
+  }
+
+  /**
    * create a coordinate by mapping ordinate 0 to x and ordinate 1 to y on the open gis DirecPosition
    * 
    * @param position in opengis format
@@ -647,5 +665,5 @@ public class PlanitJtsUtils {
   }
 
 
-  
+
 }

@@ -1,5 +1,9 @@
 package org.goplanit.utils.exceptions;
 
+import org.goplanit.utils.zoning.TransferZone;
+
+import java.util.Collection;
+
 /**
  * General run time exception for PlanIt which wraps exceptions thrown during execution
  * 
@@ -90,7 +94,7 @@ public class PlanItRunTimeException extends RuntimeException {
   }  
   
   /**
-   * Throw a planitException if object is null
+   * Throw a PLANitException if object is null
    * 
    * @param object to test
    * @param message for exception
@@ -99,5 +103,18 @@ public class PlanItRunTimeException extends RuntimeException {
    */
   public static void throwIfNull(Object object, String message, Object... objectArgs) throws PlanItRunTimeException {
     throwIf(object==null, message, objectArgs);
-  }   
+  }
+
+  /**
+   * Throw a PLANitRunTimeException if collection is null or empty
+   *
+   * @param <T> concrete type of collection
+   * @param collection to test
+   * @param message for exception
+   * @param objectArgs to format exception string with
+   * @throws PlanItRunTimeException thrown when condition not met
+   */
+  public static <T> void throwIfNullOrEmpty(Collection<T> collection, String message, Object... objectArgs) throws PlanItRunTimeException{
+    throwIf(collection==null || collection.isEmpty(), message, objectArgs);
+  }
 }
