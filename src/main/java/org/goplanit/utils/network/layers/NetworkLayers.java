@@ -33,15 +33,6 @@ public interface NetworkLayers<T extends NetworkLayer> extends ManagedIdEntities
   public abstract T getByXmlId(final String xmlId);  
 
   /**
-   * When there are no layers the instance is considered empty
-   * 
-   * @return true when no layers exist yet, false otherwise
-   */
-  public default boolean isNoLayers() {
-    return !(size() > 0);
-  }
-
-  /**
    * Check if each layer itself is empty
    * 
    * @return true when all empty false otherwise
