@@ -22,7 +22,8 @@ public interface EnumOf<T extends EnumValue<V>, V> {
   public default <T> T createFromValues(Supplier<T[]> enumValuesSupplier, V value){
     T[] values = enumValuesSupplier.get();
     for(int index = 0 ; index < values.length; ++index){
-      if(((EnumValue<V>) values[index]).getValue() == value){
+      V currValue = ((EnumValue<V>) values[index]).getValue();
+      if(currValue.equals(value)){
         return values[index];
       }
     }
