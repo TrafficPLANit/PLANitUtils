@@ -3,6 +3,7 @@ package org.goplanit.utils.unit;
 import java.util.logging.Logger;
 
 import org.goplanit.utils.exceptions.PlanItException;
+import org.goplanit.utils.exceptions.PlanItRunTimeException;
 
 /** Unit class for all time related units.
  * 
@@ -107,12 +108,11 @@ public class TimeUnit extends SimpleUnit{
   /** convert hour to... 
    * @param to to unit
    * @param value to convert 
-   * @return converted value 
-   * @throws PlanItException thrown if error
+   * @return converted value
    */
-  public static double convertHourTo(UnitType to, double value) throws PlanItException {
+  public static double convertHourTo(UnitType to, double value) {
     if(to==null) {
-      throw new PlanItException(String.format("to unit null, conversion infeasible"));
+      throw new PlanItRunTimeException(String.format("to unit null, conversion infeasible"));
     }
     switch (to) {
     case HOUR:
@@ -122,7 +122,7 @@ public class TimeUnit extends SimpleUnit{
     case SECOND:
       return value * HOUR_2_SECOND;        
     default:
-      throw new PlanItException(
+      throw new PlanItRunTimeException(
           String.format("conversion illegal or not supported yet from %s --> %s",UnitType.HOUR, to));
     }  
   }      

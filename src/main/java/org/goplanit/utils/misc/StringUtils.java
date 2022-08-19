@@ -9,6 +9,18 @@ package org.goplanit.utils.misc;
 public class StringUtils {
 
   /**
+   * Create string ot use in String.format of form "0numPadding%d"
+   * @param numPadding to apply
+   * @return created String
+   */
+  private static String createPaddingFormatString(int numPadding){
+    var sb = new StringBuilder("%0");
+    sb.append(numPadding);
+    sb.append("d");
+    return sb.toString();
+  }
+
+  /**
    * A String might have some byte order mark preceding the string (for example InputStreamReader might include this). These are not visible in the string
    * but do change the underlying bytes compared to a string without this BOM and comparing them will fail despite looking identical.
    * This method will remove the BOM from a copy of this string which is returned.
@@ -55,5 +67,16 @@ public class StringUtils {
    */
   public static String removeEndingStringWhenPresent(String theString, String endString) {
     return theString.endsWith(endString) ? theString.substring(0, theString.length() - endString.length()) : theString;
-  }  
+  }
+
+  /**
+   * Value to be converted to string with given zero padding in from
+   * @param value to convert
+   * @param numPadding to apply
+   * @return created string
+   */
+  public static String zeroPaddedStringOf(int value, int numPadding){
+    String paddingFormatString = createPaddingFormatString(numPadding);
+    return String.format(paddingFormatString,value);
+  }
 }

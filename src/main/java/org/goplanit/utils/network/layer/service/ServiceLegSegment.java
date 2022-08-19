@@ -1,5 +1,6 @@
 package org.goplanit.utils.network.layer.service;
 
+import org.goplanit.utils.graph.directed.DirectedVertex;
 import org.goplanit.utils.graph.directed.EdgeSegment;
 
 /**
@@ -15,6 +16,25 @@ public interface ServiceLegSegment extends EdgeSegment {
    * 
    * @return leg instance which is the parent of this leg segment
    */
-  public abstract ServiceLeg getParentLeg();
+  @Override
+  public ServiceLeg getParent();
+
+  /**
+   * Get the segment's upstream service node
+   *
+   * @return upstream vertex
+   */
+  public default ServiceNode getUpstreamServiceNode() {
+    return isDirectionAb() ? getParent().getServiceNodeA() : getParent().getServiceNodeB();
+  }
+
+  /**
+   * Get the segment's downstream vertex
+   *
+   * @return downstream service node
+   */
+  public default ServiceNode getDownstreamServiceNode() {
+    return isDirectionAb() ? getParent().getServiceNodeB() : getParent().getServiceNodeA();
+  }
 
 }
