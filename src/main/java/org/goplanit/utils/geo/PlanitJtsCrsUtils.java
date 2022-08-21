@@ -409,9 +409,8 @@ public class PlanitJtsCrsUtils {
    * @param startPosition location of the start point
    * @param endPosition   location of the end point
    * @return distance in kilometres between the points
-   * @throws PlanItException thrown if there is an error
    */
-  public double getDistanceInKilometres(Point startPosition, Point endPosition) throws PlanItException {
+  public double getDistanceInKilometres(Point startPosition, Point endPosition) {
     return getDistanceInMetres(startPosition, endPosition) / 1000.0;
   }
 
@@ -421,9 +420,8 @@ public class PlanitJtsCrsUtils {
    * @param vertex1 vertex with location
    * @param vertex2 vertex with location
    * @return distance in kilometres between the points
-   * @throws PlanItException thrown if there is an error
    */
-  public double getDistanceInKilometres(Vertex vertex1, Vertex vertex2) throws PlanItException {
+  public double getDistanceInKilometres(Vertex vertex1, Vertex vertex2) {
     return getDistanceInKilometres(vertex1.getPosition(), vertex2.getPosition());
   }
 
