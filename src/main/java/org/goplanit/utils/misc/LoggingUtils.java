@@ -82,8 +82,19 @@ public class LoggingUtils {
    */    
   public static String serviceNetworkPrefix(long serviceNetworkId) {
     return surroundwithBrackets(String.format("services network id: %d", serviceNetworkId));
-  }    
-  
+  }
+
+  /**
+   * Create a prefix for the logger so that all logging items specific to a particular service network layer
+   * are prefixed with the exact same string, i.e.  {@code [s_layer id: <id> ]}
+   *
+   * @param serviceNetworkLayerId the id
+   * @return service network prefix
+   */
+  public static String serviceNetworkLayerPrefix(long serviceNetworkLayerId) {
+    return surroundwithBrackets(String.format("s_layer id: %d", serviceNetworkLayerId));
+  }
+
   /**
    * Create a prefix for the logger so that all logging items specific to a particular routed services
    * are prefixed with the exact same string, i.e.  {@code [routed services id: <id> ]}
@@ -93,7 +104,19 @@ public class LoggingUtils {
    */    
   public static String routedServicesPrefix(long routedServicesId) {
     return surroundwithBrackets(String.format("routed services id: %d", routedServicesId));
-  }  
+  }
+
+  /**
+   * Create a prefix for the logger so that all logging items specific to a particular routed services layer
+   * are prefixed with the exact same string, i.e.  {@code [rs_layer id: <id> ]}
+   *
+   * @param routedServiceLayerId the routed services id
+   * @return routed services prefix
+   */
+  public static String routedServiceLayerPrefix(long routedServiceLayerId) {
+    return surroundwithBrackets(String.format("rs_layer id: %d", routedServiceLayerId));
+  }
+
   
   /**
    * Create a prefix for the logger so that all logging items specific to a particular od path sets
