@@ -27,7 +27,7 @@ public abstract class ManagedIdEntitiesImpl<E extends ManagedId> extends LongMap
    * of this container
    */
   protected ManagedIdEntitiesImpl(final Function<E, Long> valueToKey, final Class<? extends ManagedId> managedIdClass) {
-    super(new TreeMap<Long, E>(), valueToKey);
+    super(new TreeMap<>(), valueToKey);
     this.managedIdClass = managedIdClass;
   }
   

@@ -2,12 +2,16 @@ package org.goplanit.utils.network.virtual;
 
 import org.goplanit.utils.id.IdGroupingToken;
 
+import java.util.logging.Logger;
+
 /**
  * Model free virtual network interface which is part of the zoning and holds all the virtual infrastructure connecting the zones to the physical road network.
  * 
  * @author markr
  */
 public interface VirtualNetwork {
+
+  public static final Logger LOGGER = Logger.getLogger(VirtualNetwork.class.getCanonicalName());
 
   /**
    * Access to connectoid segments
