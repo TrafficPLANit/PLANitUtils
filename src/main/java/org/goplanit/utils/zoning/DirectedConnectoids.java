@@ -19,6 +19,6 @@ public interface DirectedConnectoids extends Connectoids<DirectedConnectoid> {
    * {@inheritDoc}
    */
   @Override
-  public abstract DirectedConnectoids clone(); 
+  public abstract DirectedConnectoids clone();
   
 }

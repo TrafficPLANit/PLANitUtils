@@ -43,6 +43,21 @@ public class GeoContainerUtils {
   }
 
   /**
+   * Created quadtree based on edge envelopes as spatial index. Requires PlanitJtsIntersectEdgeVisitor to filter out true spatial matches when querying.
+   *
+   *  @param <T> type of edge
+   *  @param edgesCollection collections to add
+   *  @return created quadtree instance
+   */
+  public static <T extends Edge> Quadtree toGeoIndexed(Collection<? extends GraphEntities<T>> edgesCollection) {
+    Quadtree spatiallyIndexedEdges = new Quadtree();
+    for(GraphEntities<T> edges : edgesCollection) {
+      edges.forEach(edge -> spatiallyIndexedEdges.insert(edge.getGeometry().getEnvelope().getEnvelopeInternal(),edge));
+    }
+    return spatiallyIndexedEdges;
+  }
+
+  /**
    * Query a quad tree populated with zone locations and return all zones within or touching the given bounding box
    *
    * @param spatialContainer to query
@@ -65,18 +80,4 @@ public class GeoContainerUtils {
     return spatialZoneFilterVisitor.getResult();
   }
 
-  /**
-   * Created quadtree based on edge envelopes as spatial index. Requires PlanitJtsIntersectEdgeVisitor to filter out true spatial matches when querying.
-   *
-   *  @param <T> type of edge
-   *  @param edgesCollection collections to add
-   *  @return created quadtree instance
-   */
-  public static <T extends Edge> Quadtree toGeoIndexed(Collection<? extends GraphEntities<T>> edgesCollection) {
-    Quadtree spatiallyIndexedEdges = new Quadtree();
-    for(GraphEntities<T> edges : edgesCollection) {
-      edges.forEach(edge -> spatiallyIndexedEdges.insert(edge.getGeometry().getEnvelope().getEnvelopeInternal(),edge));
-    }
-    return spatiallyIndexedEdges;
-  }
 }

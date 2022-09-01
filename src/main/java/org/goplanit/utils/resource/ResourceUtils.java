@@ -24,7 +24,8 @@ public class ResourceUtils {
   /** logger to use */
   private static final Logger LOGGER = Logger.getLogger(ResourceUtils.class.getCanonicalName());
   
-  /** find the resource URL via this class' classloader
+  /** find the resource URL via this class' classloader. The resource location is expected to be a (relative) path with
+   * forward slashes
    * 
    * @param resourceLocation to find URL for
    * @return the URL of the resource

@@ -125,7 +125,7 @@ public interface Connectoid extends ExternalIdAble, ManagedId, Iterable<Zone> {
   public abstract boolean isModeAllowed(Zone accessZone, Mode mode) throws PlanItException;
   
   /** collect modes that are explicitly allowed for this zone (unmodifiable). Note that if no explicit allowed
-   * modes are present, all modes are implicitly allowed. When there exist explicitly allowed modes, any mdoes 
+   * modes are present, all modes are implicitly allowed. When there exist explicitly allowed modes, any modes
    * in the network not included in the explicitly allowed modes are regarded to not be allowed.
    * 
    * @param accessZone to check
@@ -213,7 +213,6 @@ public interface Connectoid extends ExternalIdAble, ManagedId, Iterable<Zone> {
   public default boolean hasAccessZones() {
     return getNumberOfAccessZones()>0;
   }
- 
-  
+
 
 }
