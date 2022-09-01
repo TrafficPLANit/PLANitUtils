@@ -78,6 +78,26 @@ public interface ExternalIdAble extends IdAble {
   }
 
   /**
+   * Collect external id split by default comma separator
+   *
+   * @return split external ids as array
+   */
+  public default String[] getSplitExternalId(){
+    return getSplitExternalId(CharacterUtils.COMMA);
+  }
+
+  /**
+   * Collect external id split by custom  separator
+   *
+   * @param separator to split by
+   * @return split external ids as array
+   */
+  public default String[] getSplitExternalId(char separator){
+    return getExternalId().split(String.valueOf(separator));
+  }
+
+
+  /**
    * append the external id with additional id if non-empty, separated with provided separator
    *
    * @param appendWith to append external id with

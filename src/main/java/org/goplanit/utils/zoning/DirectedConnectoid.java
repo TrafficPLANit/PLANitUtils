@@ -69,9 +69,9 @@ public interface DirectedConnectoid extends Connectoid{
    */
   public default Node getAccessNode() {
     if(isNodeAccessDownstream()) {
-      return (Node)getAccessLinkSegment().getDownstreamVertex();
+      return getAccessLinkSegment().getDownstreamVertex();
     }else {
-      return (Node)getAccessLinkSegment().getUpstreamVertex();
+      return getAccessLinkSegment().getUpstreamVertex();
     }
   }
 
