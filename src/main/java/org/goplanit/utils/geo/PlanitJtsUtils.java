@@ -65,15 +65,18 @@ public class PlanitJtsUtils {
   }
 
   /**
-   * Transform given geometry based on provided transformer
+   * Transform given geometry based on provided transformer, checkedd exceptions are converted to PLANitRunTimeException instead
+   *
    * @param geometry to transform
    * @param transformer to apply transformation
    * @return transformed geometry
-   * @throws MismatchedDimensionException
-   * @throws TransformException
    */
-  public static Geometry transformGeometry(Geometry geometry, MathTransform transformer) throws MismatchedDimensionException, TransformException {
-    return JTS.transform(geometry,transformer);
+  public static Geometry transformGeometry(Geometry geometry, MathTransform transformer){
+    try {
+      return JTS.transform(geometry, transformer);
+    }catch(Exception e){
+      throw new PlanItRunTimeException("Unable to transform geometry %s",geometry, e);
+    }
   }
 
   /**
@@ -85,13 +88,9 @@ public class PlanitJtsUtils {
   public static Envelope transformEnvelope(Envelope envelope, MathTransform crsTransform){
     var minPoint = createPoint(new Coordinate(envelope.getMinX(),envelope.getMinY()));
     var maxPoint = createPoint(new Coordinate(envelope.getMaxX(),envelope.getMaxY()));
-    try {
-      var transformedMinPoint = transformGeometry(minPoint,crsTransform);
-      var transformedMaxPoint = transformGeometry(maxPoint,crsTransform);
-      return new Envelope(transformedMinPoint.getCoordinate(),transformedMaxPoint.getCoordinate());
-    } catch (TransformException e) {
-      throw new PlanItRunTimeException("Unable to transform envelope", e);
-    }
+    var transformedMinPoint = transformGeometry(minPoint,crsTransform);
+    var transformedMaxPoint = transformGeometry(maxPoint,crsTransform);
+    return new Envelope(transformedMinPoint.getCoordinate(),transformedMaxPoint.getCoordinate());
   }
 
   /**

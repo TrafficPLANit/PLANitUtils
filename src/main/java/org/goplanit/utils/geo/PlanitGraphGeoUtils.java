@@ -84,17 +84,17 @@ public class PlanitGraphGeoUtils {
    * A cap is placed on how far an entity is allowed to be to still be regarded as closest via maxDistanceMeters.
    * 
    * @param <T> PLANit entity type
-   * @param referencePoint reference location to find distance to
+   * @param reference reference location to find distance to
    * @param planitEntity to check against using their geometries
    * @param geoUtils to compute projected distances
    * @return planitEntity closest and distance in meters, null if none matches criteria
    */  
-  protected static <T> Double findPlanitEntityDistance(Point referencePoint, T planitEntity, PlanitJtsCrsUtils geoUtils){
+  protected static <T> Double findPlanitEntityDistance(Coordinate reference, T planitEntity, PlanitJtsCrsUtils geoUtils){
     if(planitEntity instanceof Zone) {
-      Coordinate closestCoordinate = geoUtils.getClosestProjectedCoordinateOnGeometry(referencePoint,  ((Zone)planitEntity).getGeometry());
-      return geoUtils.getDistanceInMetres(referencePoint.getCoordinate(), closestCoordinate);
+      Coordinate closestCoordinate = geoUtils.getClosestProjectedCoordinateOnGeometry(reference,  ((Zone)planitEntity).getGeometry());
+      return geoUtils.getDistanceInMetres(reference, closestCoordinate);
     }else if(planitEntity instanceof Edge) {
-      return geoUtils.getClosestProjectedDistanceInMetersToLineString(referencePoint, ((Edge)planitEntity).getGeometry());
+      return geoUtils.getClosestProjectedDistanceInMetersToLineString(reference, ((Edge)planitEntity).getGeometry());
     }else {
       LOGGER.warning(String.format("Unsupported planit entity to compute closest distance to %s",planitEntity.getClass().getCanonicalName()));
     }      
@@ -106,15 +106,15 @@ public class PlanitGraphGeoUtils {
    * of the PLANit entities geometry (or its point location if no polygon/linestring is available) and the reference coordinate and it is therefore very precise. 
    * 
    * @param <T> PLANit entity type
-   * @param referencePoint reference location to find distance to
+   * @param reference reference location to find distance to
    * @param planitEntities to check against using their geometries
    * @param geoUtils to compute projected distances
    * @return planitEntity closest and distance in meters, null if none matches criteria
    */  
-  protected static <T> Map<T,Double> findPlanitEntitiesDistance(Point referencePoint, Collection<? extends T> planitEntities, PlanitJtsCrsUtils geoUtils){
+  protected static <T> Map<T,Double> findPlanitEntitiesDistance(Coordinate reference, Collection<? extends T> planitEntities, PlanitJtsCrsUtils geoUtils){
     Map<T,Double> distanceMap = new TreeMap<T,Double>();
     for(T entity : planitEntities) {
-      distanceMap.put(entity, findPlanitEntityDistance(referencePoint, entity, geoUtils));
+      distanceMap.put(entity, findPlanitEntityDistance(reference, entity, geoUtils));
     }
     return distanceMap;    
   } 
@@ -134,7 +134,7 @@ public class PlanitGraphGeoUtils {
     int numCoordinates = lineString.getCoordinates().length;
     for(int index=0; index<numCoordinates; ++index) {
       Coordinate coordinate = lineString.getCoordinateN(index);      
-      Map<T,Double> coordinateDistanceMap = findPlanitEntitiesDistance(PlanitJtsUtils.createPoint(coordinate),planitEntities, geoUtils);
+      Map<T,Double> coordinateDistanceMap = findPlanitEntitiesDistance(coordinate,planitEntities, geoUtils);
       if(distanceMap==null) {
         distanceMap = coordinateDistanceMap;
       }else {
@@ -176,16 +176,16 @@ public class PlanitGraphGeoUtils {
    * the line string and it is therefore is very precise. A cap is placed on how far an entities geometry is allowed to be away to still be regarded as closest via maxDistanceMeters.
    * 
    * @param <T> PLANit entity type
-   * @param referencePoint reference point to use
+   * @param reference reference location to use
    * @param planitEntities to check against using their geometries
    * @param maxDistanceMeters maximum allowedDistance to be eligible
    * @param geoUtils to compute projected distances
    * @return closest and its distance, null if none matches criteria
    * @throws PlanItException thrown if error
    */  
-  protected static <T> Set<? extends T> findPlanitEntitiesWithinDistance(Point referencePoint, Collection<? extends T> planitEntities, Double maxDistanceMeters, PlanitJtsCrsUtils geoUtils) throws PlanItException {
+  protected static <T> Set<? extends T> findPlanitEntitiesWithinDistance(Coordinate reference, Collection<? extends T> planitEntities, Double maxDistanceMeters, PlanitJtsCrsUtils geoUtils) throws PlanItException {
     /* collect distances */
-    Map<? extends T, Double> result = findPlanitEntitiesDistance(referencePoint, planitEntities, geoUtils);    
+    Map<? extends T, Double> result = findPlanitEntitiesDistance(reference, planitEntities, geoUtils);
     /* remove entries beyond distance */
     removePlanitEntitiesBeyondValue(result, maxDistanceMeters);
     
@@ -198,7 +198,7 @@ public class PlanitGraphGeoUtils {
    * A cap is placed on how far an entity is allowed to be to still be regarded as closest via maxDistanceMeters.
    * 
    * @param <T> PLANit entity type
-   * @param referencePoint reference location to find distance to
+   * @param reference reference location to find distance to
    * @param planitEntities to check against using their geometries
    * @param maxDistanceMeters maximum allowedDistance to be eligible
    * @param geoUtils to compute projected distances
@@ -206,9 +206,9 @@ public class PlanitGraphGeoUtils {
    * @throws PlanItException thrown if error
    */  
   protected static <T> Pair<T, Double> findPlanitEntityClosest(
-      Point referencePoint, Collection<? extends T> planitEntities, double maxDistanceMeters, PlanitJtsCrsUtils geoUtils) throws PlanItException {
+      Coordinate reference, Collection<? extends T> planitEntities, double maxDistanceMeters, PlanitJtsCrsUtils geoUtils) throws PlanItException {
     /* collect distances */
-    Map<? extends T, Double> result = findPlanitEntitiesDistance(referencePoint, planitEntities, geoUtils);
+    Map<? extends T, Double> result = findPlanitEntitiesDistance(reference, planitEntities, geoUtils);
     /* find minimum entry */
     return findMinimumValuePair(result);               
   }
@@ -343,7 +343,7 @@ public class PlanitGraphGeoUtils {
     /* collect entity distances */
     Map<Edge, Double> result = null;
     if(geometry instanceof Point) {
-      result = findPlanitEntitiesDistance((Point)geometry, edges, geoUtils);
+      result = findPlanitEntitiesDistance(((Point)geometry).getCoordinate(), edges, geoUtils);
     }else if(geometry instanceof LineString) {
       result = findPlanitEntitiesDistance((LineString)geometry, edges, geoUtils);
     }else if(geometry instanceof Polygon) {

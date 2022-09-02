@@ -2,6 +2,8 @@ package org.goplanit.utils.misc;
 
 import org.goplanit.utils.time.TimePeriod;
 
+import java.util.logging.Logger;
+
 /**
  * some utilities for consistent logging message creation in PLANit
  * 
@@ -199,6 +201,20 @@ public class LoggingUtils {
     }
     
     return sb.toString();
+  }
+
+  /**
+   * Log severe message when null
+   *
+   * @param object to check
+   * @param logger to use
+   * @param message to log
+   * @param arguments arguments of message
+   */
+  public static void LogSevereIfNull(Object object, Logger logger, String message, Object... arguments){
+    if(object==null){
+      logger.severe(String.format(message, arguments));
+    }
   }
   
 
