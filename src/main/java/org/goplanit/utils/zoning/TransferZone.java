@@ -64,7 +64,7 @@ public interface TransferZone extends Zone {
    * @return true if all are newly added, false otherwise
    */
   public default void addTransferZonePlatformNames(String[] platformNames){
-    addTransferZonePlatformNames(Arrays.asList());
+    addTransferZonePlatformNames(Arrays.asList(platformNames));
   }
 
   /** Add all platform names provided
