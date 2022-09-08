@@ -16,6 +16,6 @@ public interface ManagedGraphEntities<E extends GraphEntity> extends GraphEntiti
    * @return clone of entities
    */
   @Override  
-  public abstract ManagedGraphEntities<E> clone();  
-      
+  public abstract ManagedGraphEntities<E> clone();
+
 }

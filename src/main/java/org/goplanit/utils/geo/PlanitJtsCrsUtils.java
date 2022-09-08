@@ -25,6 +25,7 @@ import org.locationtech.jts.linearref.LinearLocation;
 import org.locationtech.jts.linearref.LocationIndexedLine;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.opengis.referencing.operation.MathTransform;
 
 /**
  * General geographic JTS utilities that rely on a known Coordinate Reference system (CRS). 
@@ -634,5 +635,5 @@ public class PlanitJtsCrsUtils {
     }
     return (distanceMeters + Precision.EPSILON_6) <= maxDistanceMeters;
   }
-  
+
 }

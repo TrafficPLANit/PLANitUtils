@@ -58,6 +58,23 @@ public class GeoContainerUtils {
   }
 
   /**
+   * Created quadtree based on edge envelopes as spatial index. Requires PlanitJtsIntersectEdgeVisitor to filter out true spatial matches when querying.
+   *
+   *  @param <T> type of edge
+   *  @param edges collections to add
+   *  @return created quadtree instance
+   */
+  public static <T extends GraphEntities<? extends Edge>> Quadtree toGeoIndexed(T edges) {
+    Quadtree spatiallyIndexedEdges = new Quadtree();
+    edges.forEach(edge -> {
+      if(edge.hasGeometry()){
+        spatiallyIndexedEdges.insert(edge.getGeometry().getEnvelope().getEnvelopeInternal(),edge);
+      }
+    });
+    return spatiallyIndexedEdges;
+  }
+
+  /**
    * Query a quad tree populated with zone locations and return all zones within or touching the given bounding box
    *
    * @param spatialContainer to query
@@ -78,6 +95,19 @@ public class GeoContainerUtils {
 
     /* return findings */
     return spatialZoneFilterVisitor.getResult();
+  }
+
+  /** Find edges spatially based on the provided bounding box and spatially indexed quadtree containing edges as values
+   *
+   * @param <T> type of edge
+   * @param searchBoundingBox to use
+   * @param spatiallyIndexedEdgeTree to consider
+   * @return links found intersecting or within bounding box provided
+   */
+  public static <T extends Edge> Collection<T> queryEdgeQuadtree(Envelope searchBoundingBox, Quadtree spatiallyIndexedEdgeTree) {
+    PlanitJtsIntersectEdgeVisitor<T> edgevisitor = new PlanitJtsIntersectEdgeVisitor<>(PlanitJtsUtils.create2DPolygon(searchBoundingBox), new HashSet<>());
+    spatiallyIndexedEdgeTree.query(searchBoundingBox, edgevisitor);
+    return edgevisitor.getResult();
   }
 
 }

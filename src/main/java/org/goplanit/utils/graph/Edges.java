@@ -1,5 +1,7 @@
 package org.goplanit.utils.graph;
 
+import org.locationtech.jts.index.quadtree.Quadtree;
+
 /**
  * Container and factory class for edges in a graph, also to be used to create and register edges of any
  * (derived) type

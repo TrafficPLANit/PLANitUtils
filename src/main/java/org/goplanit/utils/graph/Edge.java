@@ -190,6 +190,6 @@ public interface Edge extends Serializable, GraphEntity {
       return getGeometry().getEnvelopeInternal();
     }
     return null;
-  }  
-    
+  }
+
 }

@@ -127,4 +127,17 @@ public interface EdgeSegment extends Serializable, GraphEntity {
     return this==getParent().getEdgeSegmentAb() ? getParent().getEdgeSegmentBa() : getParent().getEdgeSegmentAb();  
   }
 
+
+  /**
+   * Assuming geometry is present, if not false is returned, we verify if the geometry is provided in the direction of the
+   * segment or not
+   * @return true when geometry direction coincides with segment direction, false otherwise
+   */
+  public default boolean isParentGeometryInSegmentDirection(){
+    var geometry = getParent().getGeometry();
+    if(geometry == null){
+      return false;
+    }
+    return getParent().isGeometryInAbDirection() == isDirectionAb();
+  }
 }

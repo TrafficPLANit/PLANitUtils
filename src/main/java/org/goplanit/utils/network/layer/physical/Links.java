@@ -3,7 +3,7 @@ package org.goplanit.utils.network.layer.physical;
 import org.goplanit.utils.graph.ManagedGraphEntities;
 
 /**
- *rimary managed container class for links with access to factory capable of creating new links and registering them on the container
+ *Primary managed container class for links with access to factory capable of creating new links and registering them on the container
  * directly
  * 
  * @author markr

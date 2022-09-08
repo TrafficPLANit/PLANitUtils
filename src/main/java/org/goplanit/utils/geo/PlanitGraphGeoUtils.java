@@ -361,20 +361,7 @@ public class PlanitGraphGeoUtils {
     result.remove(minResult.first());
     return Pair.of(minResult.first(), new TreeSet<Edge>(result.keySet())); 
   }   
-  
-  /** Find edges spatially based on the provided bounding box and spatially indexed quadtree containing edges as values
-   * 
-   * @param <T> type of edge
-   * @param searchBoundingBox to use
-   * @param spatiallyIndexedEdgeTree to consider
-   * @return links found intersecting or within bounding box provided
-   */
-  public static <T extends Edge> Collection<T> findEdgesSpatially(Envelope searchBoundingBox, Quadtree spatiallyIndexedEdgeTree) {
-    PlanitJtsIntersectEdgeVisitor<T> edgevisitor = new PlanitJtsIntersectEdgeVisitor<>(PlanitJtsUtils.create2DPolygon(searchBoundingBox), new HashSet<>());
-    spatiallyIndexedEdgeTree.query(searchBoundingBox, edgevisitor);
-    return edgevisitor.getResult();
-  }  
-  
+
   /** Extract the JTS line segment from the edge segment that is closest to the reference geometry in its intended direction.
    * 
    * @param <T> edge segment type

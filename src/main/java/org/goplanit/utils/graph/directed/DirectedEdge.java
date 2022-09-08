@@ -2,6 +2,7 @@ package org.goplanit.utils.graph.directed;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.function.Consumer;
 
 import org.goplanit.utils.graph.Edge;
 
@@ -123,6 +124,21 @@ public interface DirectedEdge extends Edge {
       }
     }
     return edgeSegments;
+  }
+
+  /**
+   * Apply consumer to each edge segment of directed egde when present
+   *
+   * @param edgeSegmentConsumer to apply
+   * @param <T> type of edge segment
+   */
+  default <T extends EdgeSegment> void forEachSegment(Consumer<T> edgeSegmentConsumer){
+    if(hasEdgeSegmentAb()){
+      edgeSegmentConsumer.accept( (T) getEdgeSegmentAb());
+    }
+    if(hasEdgeSegmentBa()){
+      edgeSegmentConsumer.accept( (T) getEdgeSegmentBa());
+    }
   }
 
 }
