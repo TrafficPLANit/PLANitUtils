@@ -1,9 +1,7 @@
 package org.goplanit.utils.network.layer;
 
 import org.goplanit.utils.id.IdGroupingToken;
-import org.goplanit.utils.network.layer.macroscopic.MacroscopicLinkSegment;
-import org.goplanit.utils.network.layer.macroscopic.MacroscopicLinkSegmentTypes;
-import org.goplanit.utils.network.layer.macroscopic.MacroscopicLinkSegments;
+import org.goplanit.utils.network.layer.macroscopic.*;
 import org.goplanit.utils.network.layer.physical.Link;
 import org.goplanit.utils.network.layer.physical.Links;
 import org.goplanit.utils.network.layer.physical.Node;
@@ -16,15 +14,15 @@ import org.goplanit.utils.network.virtual.ConjugateVirtualNetwork;
  *
  * @author markr
  */
-public interface MacroscopicNetworkLayer extends UntypedPhysicalLayer<Node, Link, MacroscopicLinkSegment> {
+public interface MacroscopicNetworkLayer extends UntypedPhysicalLayer<Node, MacroscopicLink, MacroscopicLinkSegment> {
   
   /**
    * Collect the links
-   * 
+   *
    * @return the links
    */
   @Override
-  public abstract Links getLinks();
+  public abstract MacroscopicLinks getLinks();
 
   /**
    * Collect the link segments

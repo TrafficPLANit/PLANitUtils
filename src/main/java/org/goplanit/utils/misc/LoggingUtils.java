@@ -1,7 +1,11 @@
 package org.goplanit.utils.misc;
 
+import org.goplanit.utils.geo.PlanitJtsCrsUtils;
 import org.goplanit.utils.time.TimePeriod;
+import org.locationtech.jts.geom.Envelope;
+import org.locationtech.jts.geom.Geometry;
 
+import java.util.function.Predicate;
 import java.util.logging.Logger;
 
 /**
@@ -216,6 +220,18 @@ public class LoggingUtils {
       logger.severe(String.format(message, arguments));
     }
   }
-  
+
+  /** log the given warning message if predicate holds
+   *
+   * @param message to log if not too close to bounding box
+   * @param testObject to test on
+   * @param predicate to use
+   */
+  public static <T> void logWarningIf(Logger logger, String message, T testObject, Predicate<T> predicate) {
+    if(predicate.test(testObject)) {
+      logger.warning(message);
+    }
+  }
+
 
 }

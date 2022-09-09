@@ -7,7 +7,7 @@ import org.goplanit.utils.graph.GraphEntityFactory;
  * @author markr
  *
  */
-public interface LinkFactory extends GraphEntityFactory<Link>{
+public interface LinkFactory<L extends Link> extends GraphEntityFactory<L>{
  
   /**
    * Create new link on links container, allow to be registered on nodes if indicated)

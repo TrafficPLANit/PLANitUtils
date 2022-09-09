@@ -11,6 +11,7 @@ import org.goplanit.utils.exceptions.PlanItException;
 import org.goplanit.utils.exceptions.PlanItRunTimeException;
 import org.goplanit.utils.graph.Vertex;
 import org.goplanit.utils.math.Precision;
+import org.goplanit.utils.network.layer.physical.LinkSegment;
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.Envelope;
 import org.locationtech.jts.geom.Geometry;
@@ -24,8 +25,10 @@ import org.locationtech.jts.geom.Polygon;
 import org.locationtech.jts.linearref.LinearLocation;
 import org.locationtech.jts.linearref.LocationIndexedLine;
 import org.opengis.geometry.DirectPosition;
+import org.opengis.geometry.coordinate.Position;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.MathTransform;
+import org.opengis.referencing.operation.TransformException;
 
 /**
  * General geographic JTS utilities that rely on a known Coordinate Reference system (CRS). 
@@ -426,7 +429,8 @@ public class PlanitJtsCrsUtils {
   }
 
   /** create a square bounding box envelope instance based on the passed in reference point and length in meters 
-   * of each of the legs, with the point residing in the middle
+   * of each of the legs, with the point residing in the middle, it is expected the locations (when no cartesian) are in lat/long regardless of the transformation
+   * of the underlying CRS
    * 
    * @param centrePointX x coord of centre in crs
    * @param centrePointY y coord of centre in crs
@@ -462,7 +466,8 @@ public class PlanitJtsCrsUtils {
   }
   
   /** create a square bounding box envelope instance based on an existing envelope bounding box and and buffer length in meters 
-   * resulting in a larger bounding box returned
+   * resulting in a larger bounding box returned, it is expected the locations (when no cartesian) are in lat/long regardless of the transformation
+   *    * of the underlying CRS
    * 
    * @param boundingBox original bounding box
    * @param lengthMeters buffer length in meters
@@ -473,7 +478,8 @@ public class PlanitJtsCrsUtils {
   }  
 
   /** create a square bounding box envelope instance based on the passed in bounding box coordinates and buffer length in meters 
-   * resulting in a larger bounding box returned
+   * resulting in a larger bounding box returned, it is expected the locations (when no cartesian) are in lat/long regardless of the transformation
+   * of the underlying CRS
    * 
    * @param minX x (longitude) coord of minimum extreme point
    * @param minY y (latitude) coord of minimum extreme point
@@ -580,7 +586,7 @@ public class PlanitJtsCrsUtils {
   }
 
   /**
-   *  Collect the azimuth heading between the two coordinates in decimal degrees between -180 and 180, from location 1 to location 2
+   *  Collect the azimuth heading between the two coordinates (lat/long) in decimal degrees between -180 and 180, from location 1 to location 2
    *  
    *@param coordinate1 first Coordinate
    *@param coordinate2 second Coordinate
@@ -590,6 +596,45 @@ public class PlanitJtsCrsUtils {
     geoCalculator.setStartingGeographicPoint(coordinate1.getX(), coordinate1.getY());
     geoCalculator.setDestinationGeographicPoint(coordinate2.getX(), coordinate2.getY());
     return geoCalculator.getAzimuth();
+  }
+
+  /**
+   *  Collect the azimuth heading between the two positions (in user CRS) in decimal degrees between -180 and 180, from location 1 to location 2
+   *
+   *@param position1 first Coordinate
+   *@param position2 second Coordinate
+   *@return azimuth in degrees
+   */
+  public Double getAzimuthInDegrees(Position position1, Position position2){
+    try {
+      geoCalculator.setStartingPosition(position1);
+      geoCalculator.setDestinationPosition(position2);
+      return geoCalculator.getAzimuth();
+    } catch (Exception e){
+      throw new PlanItRunTimeException(e);
+    }
+  }
+
+  /** extract direct position from coordinate
+   *
+   * @param coordinate to extract from
+   * @return coordinate + CRS as direct position
+   */
+  public DirectPosition toDirectPosition(Coordinate coordinate){
+    try {
+      return JTS.toDirectPosition(coordinate, getCoordinateReferenceSystem());
+    } catch (Exception e){
+      throw new PlanItRunTimeException(e);
+    }
+  }
+
+  /** extract direct position from point
+   *
+   * @param point to extract from
+   * @return coordinate + CRS as direct position
+   */
+  public DirectPosition toDirectPosition(Point point){
+    return toDirectPosition(point.getCoordinate());
   }
 
   /** Verify if the provided geometry resides left of the line defined from coordA to coordB. If the geometry is not a point, we first find the closest
@@ -602,15 +647,15 @@ public class PlanitJtsCrsUtils {
    */
   public boolean isGeometryLeftOf(Geometry geometry, Coordinate coordA, Coordinate coordB) {
     
-    Coordinate transferZoneReferenceCoordinate = null; 
+    Coordinate referenceCoordinate = null;
     if(geometry instanceof Point) {
-      transferZoneReferenceCoordinate = geometry.getCoordinate();
+      referenceCoordinate = geometry.getCoordinate();
     }else {
       /* find projected coordinate closest to coordB */
-      transferZoneReferenceCoordinate = getClosestProjectedCoordinateOnGeometry(coordB,  geometry);
+      referenceCoordinate = getClosestProjectedCoordinateOnGeometry(coordB,  geometry);
     }    
-    return PlanitJtsUtils.isCoordinateLeftOf(transferZoneReferenceCoordinate, coordA, coordB);   
-  }  
+    return PlanitJtsUtils.isCoordinateLeftOf(referenceCoordinate, coordA, coordB);
+  }
   
   /** Verify if any existing coordinate on the passed in geometry is within the maximum provided distance of the also provided bounding box
    * 

@@ -104,7 +104,7 @@ public class GeoContainerUtils {
    * @param spatiallyIndexedEdgeTree to consider
    * @return links found intersecting or within bounding box provided
    */
-  public static <T extends Edge> Collection<T> queryEdgeQuadtree(Envelope searchBoundingBox, Quadtree spatiallyIndexedEdgeTree) {
+  public static <T extends Edge> Collection<T> queryEdgeQuadtree(Quadtree spatiallyIndexedEdgeTree, Envelope searchBoundingBox) {
     PlanitJtsIntersectEdgeVisitor<T> edgevisitor = new PlanitJtsIntersectEdgeVisitor<>(PlanitJtsUtils.create2DPolygon(searchBoundingBox), new HashSet<>());
     spatiallyIndexedEdgeTree.query(searchBoundingBox, edgevisitor);
     return edgevisitor.getResult();

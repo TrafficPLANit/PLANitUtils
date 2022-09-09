@@ -64,7 +64,7 @@ public interface MapWrapper<K, V> extends Iterable<V>, Cloneable {
    * @param value to verify
    * @return true if present, false otherwise
    */
-  public abstract boolean contains(V value);
+  public abstract boolean containsValue(V value);
 
   /**
    * Collect values as unmodifiable collection
@@ -130,7 +130,7 @@ public interface MapWrapper<K, V> extends Iterable<V>, Cloneable {
    * @param consumer to apply
    */
   public default <T extends V> void forEachIn(final Collection<T> values, final Consumer<T> consumer) {
-    values.forEach( (v) -> { if(contains(v)){consumer.accept(v);};});
+    values.forEach( (v) -> { if(containsValue(v)){consumer.accept(v);};});
   }
     
 

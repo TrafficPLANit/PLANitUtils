@@ -210,8 +210,8 @@ public class MapWrapperImpl<K, V> implements MapWrapper<K, V>{
    * {@inheritDoc}
    */  
   @Override
-  public boolean contains(V value) {
-    return getMap().containsKey(getKeyByValue(value));
+  public boolean containsValue(V value) {
+    return getMap().containsValue(value);
   }
 
   /**

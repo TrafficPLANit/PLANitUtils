@@ -3,6 +3,7 @@ package org.goplanit.utils.network.layer.physical;
 import org.goplanit.utils.graph.directed.EdgeSegment;
 import org.goplanit.utils.id.IdGenerator;
 import org.goplanit.utils.id.IdGroupingToken;
+import org.goplanit.utils.network.layer.macroscopic.MacroscopicLink;
 
 /**
  * Interface for link segments (directional) part of link (non-directional).

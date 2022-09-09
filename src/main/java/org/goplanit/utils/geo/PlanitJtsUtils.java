@@ -277,9 +277,8 @@ public class PlanitJtsUtils {
    * 
    * @param positions List of GeoTools Position objects
    * @return coordinates array of JTS Coordinate objects
-   * @throws PlanItException thrown if there is an error
    */
-  public static Coordinate[] directPositionsToCoordinates(List<DirectPosition> positions) throws PlanItException {
+  public static Coordinate[] directPositionsToCoordinates(List<DirectPosition> positions) {
     Coordinate[] coordinates = new Coordinate[positions.size()];
     for (int index = 0; index < coordinates.length; ++index) {
       coordinates[index] = createCoordinate(positions.get(index));

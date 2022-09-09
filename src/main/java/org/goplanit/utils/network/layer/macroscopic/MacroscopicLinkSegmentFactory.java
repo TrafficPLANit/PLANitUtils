@@ -20,7 +20,7 @@ public interface MacroscopicLinkSegmentFactory extends GraphEntityFactory<Macros
    * @return the created segment
    * @throws PlanItException thrown if error
    */
-  public MacroscopicLinkSegment create(final Link parentLink, final boolean directionAB) throws PlanItException;
+  public MacroscopicLinkSegment create(final MacroscopicLink parentLink, final boolean directionAB) throws PlanItException;
   
   /**
    * Create macroscopic link segments in both directions and register them
@@ -29,7 +29,7 @@ public interface MacroscopicLinkSegmentFactory extends GraphEntityFactory<Macros
    * @param registerOnLink option to register the new segment on the underlying link
    * @return the created segments as a pair with direction (Ab,Ba)
    */
-  public Pair<MacroscopicLinkSegment,MacroscopicLinkSegment> registerNew(Link parentLink, boolean registerOnLink);  
+  public Pair<MacroscopicLinkSegment,MacroscopicLinkSegment> registerNew(MacroscopicLink parentLink, boolean registerOnLink);
 
   /**
    * Create a macroscopic link segment and register it
@@ -39,7 +39,7 @@ public interface MacroscopicLinkSegmentFactory extends GraphEntityFactory<Macros
    * @param registerOnLink option to register the new segment on the underlying link
    * @return the created segment
    */
-  public MacroscopicLinkSegment registerNew(Link parentLink, boolean directionAb, boolean registerOnLink);
+  public MacroscopicLinkSegment registerNew(MacroscopicLink parentLink, boolean directionAb, boolean registerOnLink);
   
   /**
    * Create a macroscopic link segment and register it
@@ -50,6 +50,6 @@ public interface MacroscopicLinkSegmentFactory extends GraphEntityFactory<Macros
    * @param registerOnLink option to register the new segment on the underlying link
    * @return the created segment
    */
-  public MacroscopicLinkSegment registerNew(Link parentLink, MacroscopicLinkSegmentType type, boolean directionAb, boolean registerOnLink);  
+  public MacroscopicLinkSegment registerNew(MacroscopicLink parentLink, MacroscopicLinkSegmentType type, boolean directionAb, boolean registerOnLink);
 
 }

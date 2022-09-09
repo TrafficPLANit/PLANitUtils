@@ -1,6 +1,5 @@
 package org.goplanit.utils.misc;
 
-import org.goplanit.utils.exceptions.PlanItException;
 import org.goplanit.utils.exceptions.PlanItRunTimeException;
 import org.goplanit.utils.wrapper.MapWrapper;
 import org.goplanit.utils.wrapper.MapWrapperImpl;
@@ -45,11 +44,15 @@ public class CustomIndexTracker {
 
     @SuppressWarnings("unchecked")
     var mapWrapper = (MapWrapper<U, V>) entitiyByIndexTracker.get(theClazz);
-    PlanItRunTimeException.throwIfNull(mapWrapper,"No source id container registered for PLANit entity of type %s, unable to register, perhaps consider registering via its superclass explicitly",
-              obj.getClass().getName());
-    PlanItRunTimeException.throwIf(mapWrapper.contains(obj), "PLANit entity of type %s already registered by its source id %s, unable to register", obj.getClass().getName(),
-              mapWrapper.getKeyByValue(obj).toString());
-    mapWrapper.register(obj);
+    if(mapWrapper == null) {
+      throw new PlanItRunTimeException("No source id container registered for PLANit entity of type %s, unable to register, perhaps consider registering via its superclass explicitly",
+          obj.getClass().getName());
+    }
+    var old = mapWrapper.register(obj);
+    if(old!=null){
+      throw new PlanItRunTimeException("PLANit entity of type %s already registered by its source id %s, unable to register", obj.getClass().getName(),
+          mapWrapper.getKeyByValue(old).toString());
+    }
   }
 
   /**

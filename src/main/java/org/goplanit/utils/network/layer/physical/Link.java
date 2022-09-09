@@ -57,23 +57,21 @@ public interface Link extends DirectedEdge {
   
   /** collect edgeSegment as something extending LinkSegment which is to be expected for any link. Convenience method
    * for readability
-   * 
-   * @param <LS> link segment type
+   *
    * @param directionAb the direction
    * @return link segment in given direction
    */
   @SuppressWarnings("unchecked")
-  public default <LS extends LinkSegment> LS getLinkSegment(boolean directionAb) {
-    return (LS) getEdgeSegment(directionAb);
+  public default LinkSegment getLinkSegment(boolean directionAb) {
+    return (LinkSegment) getEdgeSegment(directionAb);
   }   
   
   /** collect edgeSegment Ab as something extending LinkSegment which is to be expected for any link. Convenience method
    * for readability
-   * 
-   * @param <LS> link segment type
+   *
    * @return link segment in given direction
    */
-  public default <LS extends LinkSegment> LS getLinkSegmentAb() {
+  public default LinkSegment getLinkSegmentAb() {
     return getLinkSegment(true);
   }   
   
@@ -87,11 +85,10 @@ public interface Link extends DirectedEdge {
   
   /** collect edgeSegment Ba as something extending LinkSegment which is to be expected for any link. Convenience method
    * for readability
-   * 
-   * @param <LS> link segment type
+   *
    * @return link segment in given direction
    */
-  public default <LS extends LinkSegment> LS getLinkSegmentBa() {
+  public default LinkSegment getLinkSegmentBa() {
     return getLinkSegment(false);
   } 
   
@@ -111,12 +108,11 @@ public interface Link extends DirectedEdge {
   }
 
   /** collect all available link segments of this link
-   * @param <LS> type of link segment
    * @return available link segments
    */
   @SuppressWarnings("unchecked")
-  public default <LS extends LinkSegment> Collection<LS> getLinkSegments(){
-    return (Collection<LS>) getEdgeSegments();
+  public default Collection<? extends LinkSegment> getLinkSegments(){
+    return (Collection<LinkSegment>) getEdgeSegments();
   }
   
 }
