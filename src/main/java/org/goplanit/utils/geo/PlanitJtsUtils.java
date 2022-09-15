@@ -15,17 +15,16 @@ import org.geotools.referencing.CRS;
 import org.goplanit.utils.exceptions.PlanItException;
 import org.goplanit.utils.exceptions.PlanItRunTimeException;
 import org.goplanit.utils.misc.Pair;
+import org.locationtech.jts.algorithm.Angle;
 import org.locationtech.jts.algorithm.RobustDeterminant;
 import org.locationtech.jts.geom.*;
 import org.locationtech.jts.linearref.LinearLocation;
 import org.locationtech.jts.linearref.LocationIndexedLine;
 import org.locationtech.jts.operation.linemerge.LineMerger;
 import org.opengis.geometry.DirectPosition;
-import org.opengis.geometry.MismatchedDimensionException;
 import org.opengis.geometry.coordinate.PointArray;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.MathTransform;
-import org.opengis.referencing.operation.TransformException;
 
 /**
  * General geographic related utils utilising the JTS API. 
@@ -663,5 +662,13 @@ public class PlanitJtsUtils {
   }
 
 
-
+  /**
+   * Compute the minimum difference t get to one angle to another in either direction between the given two angles (0-360)
+   *
+   * @param angleDegrees1 first angle in degrees
+   * @param angleDegrees2 second angle in degrees
+   */
+  public static double minDiffAngleInDegrees(double angleDegrees1, double angleDegrees2) {
+    return Angle.toDegrees(Angle.diff(Angle.normalize(Angle.toRadians(angleDegrees1)),Angle.normalize(Angle.toRadians(angleDegrees2))));
+  }
 }

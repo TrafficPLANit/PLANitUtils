@@ -262,7 +262,7 @@ public class PlanitJtsCrsUtils {
    */  
   public Coordinate getClosestProjectedCoordinateOnGeometry(Coordinate reference, Geometry geometry){
     if(geometry instanceof Point) {
-      return ((Point)geometry).getCoordinate();
+      return geometry.getCoordinate();
     }else if(geometry instanceof LineString ) {
         return getClosestProjectedCoordinateOnLineString(reference, (LineString)geometry);
     }else if(geometry instanceof Polygon) {
@@ -542,12 +542,12 @@ public class PlanitJtsCrsUtils {
     /* obtain heading first */        
     DirectPosition newStartPosition = null;
     if(extendStart) {
-      newStartPosition = createPositionInDirection(source.p0, getAzimuthInDegrees(source.p1, source.p0),extensionInMeters);
+      newStartPosition = createPositionInDirection(source.p0, getAzimuthInDegrees(source.p1, source.p0, false),extensionInMeters);
     }
     
     DirectPosition newEndPosition = null;    
     if(extendEnd) {
-      newEndPosition = createPositionInDirection(source.p1, getAzimuthInDegrees(source.p0, source.p1),extensionInMeters);
+      newEndPosition = createPositionInDirection(source.p1, getAzimuthInDegrees(source.p0, source.p1, false),extensionInMeters);
     }    
    
     Coordinate startCoordinate = newStartPosition!=null ? PlanitJtsUtils.createCoordinate(newStartPosition) : source.p0;
@@ -586,30 +586,33 @@ public class PlanitJtsCrsUtils {
   }
 
   /**
-   *  Collect the azimuth heading between the two coordinates (lat/long) in decimal degrees between -180 and 180, from location 1 to location 2
+   *  Collect the azimuth heading between the two coordinates (lat/long) in decimal degrees
    *  
    *@param coordinate1 first Coordinate
    *@param coordinate2 second Coordinate
+   *@param zeroTo360 when true, return azimuth in zero to 360 degrees instead of 0-180,0-180 degrees
    *@return azimuth in degrees
    */
-  public double getAzimuthInDegrees(Coordinate coordinate1, Coordinate coordinate2) {
+  public double getAzimuthInDegrees(Coordinate coordinate1, Coordinate coordinate2, boolean zeroTo360) {
     geoCalculator.setStartingGeographicPoint(coordinate1.getX(), coordinate1.getY());
     geoCalculator.setDestinationGeographicPoint(coordinate2.getX(), coordinate2.getY());
     return geoCalculator.getAzimuth();
   }
 
   /**
-   *  Collect the azimuth heading between the two positions (in user CRS) in decimal degrees between -180 and 180, from location 1 to location 2
+   *  Collect the azimuth heading between the two positions (in user CRS) in decimal degrees, from location 1 to location 2
    *
    *@param position1 first Coordinate
    *@param position2 second Coordinate
+   *@param zeroTo360 when true, return azimuth in zero to 360 degrees instead of 0-180,0-180 degrees
    *@return azimuth in degrees
    */
-  public Double getAzimuthInDegrees(Position position1, Position position2){
+  public Double getAzimuthInDegrees(Position position1, Position position2, boolean zeroTo360){
     try {
       geoCalculator.setStartingPosition(position1);
       geoCalculator.setDestinationPosition(position2);
-      return geoCalculator.getAzimuth();
+      double azimuth = geoCalculator.getAzimuth();
+      return zeroTo360 && azimuth<0 ? 360 + azimuth : azimuth;
     } catch (Exception e){
       throw new PlanItRunTimeException(e);
     }
