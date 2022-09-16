@@ -1,13 +1,7 @@
 package org.goplanit.utils.geo;
 
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Map;
+import java.util.*;
 import java.util.Map.Entry;
-import java.util.Set;
-import java.util.TreeMap;
-import java.util.TreeSet;
 import java.util.logging.Logger;
 
 import org.goplanit.utils.exceptions.PlanItException;
@@ -25,7 +19,6 @@ import org.locationtech.jts.geom.LineSegment;
 import org.locationtech.jts.geom.LineString;
 import org.locationtech.jts.geom.Point;
 import org.locationtech.jts.geom.Polygon;
-import org.locationtech.jts.index.quadtree.Quadtree;
 import org.locationtech.jts.linearref.LinearLocation;
 
 /**
@@ -48,16 +41,8 @@ public class PlanitGraphGeoUtils {
    * @return minimum value pair
    */
   protected static <T>  Pair<T, Double> findMinimumValuePair(Map<? extends T, Double> valueMap) {
-    Entry<? extends T, Double> minEntry = null;
-    for( Entry<? extends T, Double> entry : valueMap.entrySet()) {
-      if(minEntry==null || (minEntry.getValue() + Precision.EPSILON_6) > entry.getValue()) {
-        minEntry = entry;
-      }
-    }
-    if(minEntry==null) {
-      return null;
-    }
-    return Pair.of(minEntry.getKey(), minEntry.getValue());
+    var minEntry = valueMap.entrySet().stream().min(Comparator.comparing(Entry::getValue)).get();
+    return Pair.of(minEntry.getKey(),minEntry.getValue());
   }  
   
   /** Remove all entities that fall outside provided maxDistance
@@ -327,19 +312,18 @@ public class PlanitGraphGeoUtils {
    */    
   public static Pair<? extends Edge,Set<? extends Edge>> findEdgesClosestToPoint(Point point, Collection<? extends Edge> edges, double bufferDistanceMeters, PlanitJtsCrsUtils geoUtils){
    return findEdgesClosestToGeometry(point, edges, bufferDistanceMeters, geoUtils); 
-  }   
-  
-  /** Find the edge closest to the passed in geometry as well as all other edges within the given margin 
-   * using a projection from any existing coordinate on the geometry to the geometry of the link. All edges that are
+  }
+
+  /** Find the edges within the given buffer distance (around shortest distance found) to the passed in geometry using a projection from any existing coordinate on the geometry to the geometry of the link. All edges that are
    * found within a small buffer distance of the closest distance are also retrieved
-   * 
+   *
    * @param geometry to find closest link for
    * @param edges to check against
    * @param bufferDistanceMeters margin used to collect all edges with distance smaller or equal to buffer (distance to closest edge + this margin)
    * @param geoUtils used to compute distances
-   * @return closest edge found and all other edges within the given margin
-   */    
-  public static Pair<? extends Edge,Set<? extends Edge>> findEdgesClosestToGeometry(Geometry geometry, Collection<? extends Edge> edges, double bufferDistanceMeters, PlanitJtsCrsUtils geoUtils){
+   * @return edges found with their distances to the geometry, can be null if none match
+   */
+  public static Map<? extends Edge, Double> findEdgesWithinClosestDistanceDeltaToGeometry(Geometry geometry, Collection<? extends Edge> edges, double bufferDistanceMeters, PlanitJtsCrsUtils geoUtils){
     /* collect entity distances */
     Map<Edge, Double> result = null;
     if(geometry instanceof Point) {
@@ -351,15 +335,33 @@ public class PlanitGraphGeoUtils {
     }else {
       throw new PlanItRunTimeException("Unsupported geometry encountered when finding edges closest to geometry");
     }
-    
+
     /* find minimum entry */
     Pair<Edge, Double> minResult = findMinimumValuePair(result);
-    /* filter entires beyond buffer distance */
+    /* filter entries beyond buffer distance */
     removePlanitEntitiesBeyondValue(result, minResult.second() + bufferDistanceMeters);
-    
+
+    return result;
+  }
+
+  /** Find the edge closest to the passed in geometry as well as all other edges within the given margin 
+   * using a projection from any existing coordinate on the geometry to the geometry of the link. All edges that are
+   * found within a small buffer distance of the closest distance are also retrieved
+   * 
+   * @param geometry to find closest link for
+   * @param edges to check against
+   * @param bufferDistanceMeters margin used to collect all edges with distance smaller or equal to buffer (distance to closest edge + this margin)
+   * @param geoUtils used to compute distances
+   * @return closest edge found and all other edges within the given margin
+   */    
+  public static Pair<? extends Edge,Set<? extends Edge>> findEdgesClosestToGeometry(Geometry geometry, Collection<? extends Edge> edges, double bufferDistanceMeters, PlanitJtsCrsUtils geoUtils){
+    var result = findEdgesWithinClosestDistanceDeltaToGeometry(geometry, edges, bufferDistanceMeters, geoUtils);
+
     /* remove minimum entry as it is returned separately */
-    result.remove(minResult.first());
-    return Pair.of(minResult.first(), new TreeSet<Edge>(result.keySet())); 
+    var minEntry = findMinimumValuePair(result);
+    result.remove(minEntry.first());
+
+    return Pair.of(minEntry.first(), new TreeSet<Edge>(result.keySet()));
   }   
 
   /** Extract the JTS line segment from the edge segment that is closest to the reference geometry in its intended direction.
