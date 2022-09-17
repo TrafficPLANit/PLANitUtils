@@ -649,7 +649,10 @@ public class PlanitJtsCrsUtils {
    * @return true when left, false otherwise
    */
   public boolean isGeometryLeftOf(Geometry geometry, Coordinate coordA, Coordinate coordB) {
-    
+    if(geometry == null) {
+      throw new PlanItRunTimeException("geometry null, unable to determine on which side of line AB (%s, %s) is resides", coordA.toString(), coordB.toString());
+    }
+
     Coordinate referenceCoordinate = null;
     if(geometry instanceof Point) {
       referenceCoordinate = geometry.getCoordinate();

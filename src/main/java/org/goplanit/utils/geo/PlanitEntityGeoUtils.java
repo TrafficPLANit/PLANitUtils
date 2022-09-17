@@ -5,6 +5,7 @@ import org.goplanit.utils.graph.Edge;
 import org.goplanit.utils.graph.Vertex;
 import org.goplanit.utils.misc.Pair;
 import org.goplanit.utils.network.layer.macroscopic.MacroscopicLinkSegment;
+import org.goplanit.utils.zoning.TransferZone;
 import org.goplanit.utils.zoning.Zone;
 import org.locationtech.jts.geom.*;
 import org.locationtech.jts.linearref.LinearLocation;
@@ -102,17 +103,35 @@ public class PlanitEntityGeoUtils {
    * @return line segment if found
    */
   public static LineSegment extractClosestLineSegmentToGeometryFromLinkSegment(Geometry referenceGeometry, MacroscopicLinkSegment linkSegment, PlanitJtsCrsUtils geoUtils) {
-
     LineString linkSegmentGeometry = linkSegment.getParent().getGeometry();
-    if(linkSegmentGeometry == null) {
-      throw new PlanItRunTimeException("Geometry not available on link segment (XMLid %s, (parent Extid %s)), unable to determine if link (segment) is closest to reference geometry, this shouldn't happen", linkSegment.getXmlId(), linkSegment.getParent().getExternalId());
-    }
-
-    LinearLocation linearLocation = geoUtils.getClosestGeometryExistingCoordinateToProjectedLinearLocationOnLineString(referenceGeometry, linkSegmentGeometry);
-    LineSegment lineSegment = linearLocation.getSegment(linkSegment.getParent().getGeometry());
+    var closestLinearLoc = extractClosestProjectedLinearLocationToGeometryFromEdge(referenceGeometry, linkSegment.getParentLink(),geoUtils);
+    LineSegment lineSegment = closestLinearLoc.getSegment(linkSegmentGeometry);
     if(linkSegment.isDirectionAb()!=linkSegment.getParent().isGeometryInAbDirection()) {
       lineSegment.reverse();
     }
     return lineSegment;
+  }
+
+  /** Find the linear location reflecting the closest projected location between the transfer zone and link geometries. For the transfer zone geometry we use existing coordinates
+   * rather than projected ones
+   *
+   * @param referenceGeometry to use
+   * @param accessEdge to use
+   * @param geoUtils to use
+   * @return closest projected linear location on link geometry
+   */
+  public static LinearLocation extractClosestProjectedLinearLocationToGeometryFromEdge(Geometry referenceGeometry, Edge accessEdge, PlanitJtsCrsUtils geoUtils) {
+
+    if(referenceGeometry == null){
+      throw new PlanItRunTimeException("Geometry not allowed to be null");
+    }
+
+    LinearLocation projectedLinearLocationOnLink = null;
+    if(referenceGeometry instanceof Point) {
+      projectedLinearLocationOnLink = geoUtils.getClosestProjectedLinearLocationOnGeometry(((Point)referenceGeometry).getCoordinate(),accessEdge.getGeometry());
+    }else{
+      projectedLinearLocationOnLink = geoUtils.getClosestGeometryExistingCoordinateToProjectedLinearLocationOnLineString(referenceGeometry,accessEdge.getGeometry());
+    }
+    return projectedLinearLocationOnLink;
   }
 }
