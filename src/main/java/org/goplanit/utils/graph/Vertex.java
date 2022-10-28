@@ -164,13 +164,23 @@ public interface Vertex extends Serializable, GraphEntity {
     setPosition((Point) JTS.transform(getPosition(),transformer));
   }
 
-  /** Verify if the vertex position is equal (in 2D) to the passed in coordinate
+  /** Verify if the vertex position is exactly equal (in 2D) to the passed in coordinate
    * 
    * @param coordinate to check against
    * @return true when equal location in 2D, false otherwise
    */
   public default boolean isPositionEqual2D(Coordinate coordinate) {
     return hasPosition() && getPosition().getCoordinate().equals2D(coordinate);
+  }
+
+  /** Verify if the vertex position is exactly equal (in 2D) to the passed in coordinate
+   *
+   * @param coordinate to check against
+   * @param epsilon allowed difference to still be regarded equal
+   * @return true when equal location in 2D, false otherwise
+   */
+  public default boolean isPositionEqual2D(Coordinate coordinate, double epsilon) {
+    return hasPosition() && getPosition().getCoordinate().equals2D(coordinate, epsilon);
   }
   
   /** Validate the vertex regarding it connections to edges etc.

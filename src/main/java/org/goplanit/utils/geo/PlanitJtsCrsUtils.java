@@ -429,7 +429,7 @@ public class PlanitJtsCrsUtils {
   }
 
   /** create a square bounding box envelope instance based on the passed in reference point and length in meters 
-   * of each of the legs, with the point residing in the middle, it is expected the locations (when no cartesian) are in lat/long regardless of the transformation
+   * of each of the legs, with the point residing in the middle, it is expected the locations (when no cartesian) are in LAT/LONG regardless of the transformation
    * of the underlying CRS
    * 
    * @param centrePointX x coord of centre in crs

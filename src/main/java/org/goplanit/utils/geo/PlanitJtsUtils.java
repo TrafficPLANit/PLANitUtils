@@ -652,7 +652,7 @@ public class PlanitJtsUtils {
    * @return index, -1 if nto found
    */
   public static int getCoordinateIndexOf(Coordinate coordinate, Coordinate[] coordinates) {
-    for(int coordinateIndex = 1; coordinateIndex < coordinates.length-1; ++coordinateIndex) {
+    for(int coordinateIndex = 0; coordinateIndex <= coordinates.length-1; ++coordinateIndex) {
       Point internalPoint = createPoint(coordinates[coordinateIndex]);
       if(internalPoint.getCoordinate().equals2D(coordinate)) {
         return coordinateIndex;

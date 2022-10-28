@@ -3,6 +3,8 @@ package org.goplanit.utils.graph;
 import java.io.Serializable;
 
 import org.geotools.geometry.jts.JTS;
+import org.goplanit.utils.exceptions.PlanItRunTimeException;
+import org.goplanit.utils.math.Precision;
 import org.locationtech.jts.geom.Envelope;
 import org.locationtech.jts.geom.LineString;
 import org.opengis.geometry.MismatchedDimensionException;
@@ -166,9 +168,20 @@ public interface Edge extends Serializable, GraphEntity {
    * @return true if in A to B direction, false otherwise
    */
   public default boolean isGeometryInAbDirection() {
-    boolean isVertexAStartPoint = getGeometry().getStartPoint().equals(getVertexA().getPosition());
-    boolean isVertexBEndPoint = getGeometry().getEndPoint().equals(getVertexB().getPosition());
-    return isVertexAStartPoint && isVertexBEndPoint;     
+    // Given difficulty of ensuring consistency in rounding between various geometries
+    // we check both, ideally we make sure we have a precision model throughout, but this is not implemented yet
+    boolean isVertexAStartPoint = getGeometry().getStartPoint().getCoordinate().equals2D(getVertexA().getPosition().getCoordinate(), Precision.EPSILON_6);
+    boolean isVertexBEndPoint = getGeometry().getEndPoint().getCoordinate().equals2D(getVertexB().getPosition().getCoordinate(), Precision.EPSILON_6);
+    if(isVertexAStartPoint && isVertexBEndPoint){
+      return true;
+    }
+    boolean isVertexAEndPoint = getGeometry().getStartPoint().getCoordinate().equals2D(getVertexB().getPosition().getCoordinate(), Precision.EPSILON_6);
+    boolean isVertexBStartPoint = getGeometry().getEndPoint().getCoordinate().equals2D(getVertexA().getPosition().getCoordinate(), Precision.EPSILON_6);
+    if(isVertexBStartPoint && isVertexAEndPoint){
+      return false;
+    }
+
+    throw new PlanItRunTimeException("Unable to identify direction as vertex locations do not match internal geometry of edge within reason it appears");
   }  
   
   /** transform the line string information of this edge using the passed in MathTransform
