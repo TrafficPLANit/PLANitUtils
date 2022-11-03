@@ -221,6 +221,20 @@ public class LoggingUtils {
     }
   }
 
+  /**
+   * Log fine message when null
+   *
+   * @param object to check
+   * @param logger to use
+   * @param message to log
+   * @param arguments arguments of message
+   */
+  public static void LogFineIfNull(Object object, Logger logger, String message, Object... arguments){
+    if(object==null){
+      logger.fine(String.format(message, arguments));
+    }
+  }
+
   /** log the given warning message if predicate holds
    *
    * @param message to log if not too close to bounding box

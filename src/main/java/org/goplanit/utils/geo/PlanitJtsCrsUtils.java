@@ -407,6 +407,30 @@ public class PlanitJtsCrsUtils {
   }
 
   /**
+   * Determine if the distance in metres between two (JTS) coordinates (assuming the positions are provided in the same crs as registered on this class instance) is within the given distance
+   *
+   * @param startCoordinate location of the start point
+   * @param endCoordinate   location of the end point
+   * @param maxDistanceMeters allowed
+   * @return true when distance in metres between the points is smaller, false otherwise
+   */
+  public boolean isDistanceWithinMetres(Coordinate startCoordinate, Coordinate endCoordinate, double maxDistanceMeters){
+    return getDistanceInMetres(startCoordinate,endCoordinate) < maxDistanceMeters;
+  }
+
+  /**
+   * Determine if the distance in metres between two (JTS) coordinates (assuming the positions are provided in the same crs as registered on this class instance) is within the given distance
+   *
+   * @param startPosition location of the start point
+   * @param endPosition   location of the end point
+   * @param maxDistanceMeters allowed
+   * @return true when distance in metres between the points is smaller, false otherwise
+   */
+  public boolean isDistanceWithinMetres(Point startPosition, Point endPosition, double maxDistanceMeters){
+    return getDistanceInMetres(startPosition,endPosition) < maxDistanceMeters;
+  }
+
+  /**
    * Compute the distance in kilometres between two positions assuming the positions are provided in the same crs as registered on this class instance
    * 
    * @param startPosition location of the start point
