@@ -1,5 +1,7 @@
 package org.goplanit.utils.misc;
 
+import java.util.Map;
+import java.util.function.Function;
 import java.util.stream.StreamSupport;
 
 
@@ -37,5 +39,23 @@ public class IterableUtils {
       ++count;
     }
     return count;
-  }  
+  }
+
+  /**
+   * Map iterable to a map with a custom key obtained from the iterable entries
+   *
+   * @param iterable to use
+   * @param getKey function to extract key from entries
+   * @param mapToFill to fill
+   * @return populated map
+   *
+   * @param <T> type of iterable
+   * @param <K> type of key
+   */
+  public static <T,K> Map<K,T> toMap(Iterable<T> iterable, Function<T,K> getKey, Map<K,T> mapToFill){
+    for(var entry : iterable){
+      mapToFill.put(getKey.apply(entry),entry);
+    }
+    return mapToFill; // for chaining
+  }
 }

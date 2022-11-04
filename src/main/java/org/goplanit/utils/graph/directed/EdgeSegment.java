@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.function.Function;
 
 import org.goplanit.utils.graph.GraphEntity;
+import org.goplanit.utils.network.layer.physical.LinkSegment;
 
 /**
  * EdgeSegment represents an edge in a particular (single) direction. Each edge
@@ -32,7 +33,28 @@ public interface EdgeSegment extends Serializable, GraphEntity {
    */
   public static Function<EdgeSegment, DirectedVertex> getVertexForEdgeSegmentLambda(boolean upstreamVertex) {
     return upstreamVertex ? getUpstreamVertex : getDownstreamVertex;
-  }   
+  }
+
+  /**
+   * Find segment in iterable of segments
+   *
+   * @param edgeSegment to find
+   * @param edgeSegments to find them in
+   * @return true when present, false otherwise
+   */
+  public static boolean hasSegment(EdgeSegment edgeSegment, Iterable<? extends EdgeSegment> edgeSegments){
+    if( edgeSegments == null){
+      return false;
+    }
+
+    for(var currSegment : edgeSegments){
+      if(currSegment.equals(edgeSegment)){
+        return true;
+      }
+    }
+
+    return false;
+  }
  
   /**
    * Get the segment's upstream vertex
@@ -139,5 +161,24 @@ public interface EdgeSegment extends Serializable, GraphEntity {
       return false;
     }
     return getParent().isGeometryInAbDirection() == isDirectionAb();
+  }
+
+  /** Verify if provided edge segment is adjacent to this edge segment taking direction into account, i.e., either an upstream
+   * segment is directly adjacent to this segment, or this segment connects to a directly adjcent downstream segment
+   *
+   * @param other edge segment to verify adjacency
+   * @param allowUTurn when true the opposite direction segment is considered adjacent, otherwise not
+   * @return true when adjacent, false otherwise
+   */
+  public default boolean isAdjacent(EdgeSegment other, boolean allowUTurn){
+    if(other == null){
+      return false;
+    }
+
+    if(other.equals(getOppositeDirectionSegment())){
+      return allowUTurn ? true : false;
+    }
+
+    return getUpstreamVertex().hasEntrySegment(other) || getDownstreamVertex().hasExitSegment(other);
   }
 }

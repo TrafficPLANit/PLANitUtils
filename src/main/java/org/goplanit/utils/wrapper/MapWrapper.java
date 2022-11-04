@@ -1,8 +1,13 @@
 package org.goplanit.utils.wrapper;
 
+import org.goplanit.utils.misc.IterableUtils;
+
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Set;
 import java.util.function.Consumer;
+import java.util.function.Function;
 import java.util.function.Predicate;
 
 /**
@@ -130,8 +135,19 @@ public interface MapWrapper<K, V> extends Iterable<V>, Cloneable {
    * @param consumer to apply
    */
   public default <T extends V> void forEachIn(final Collection<T> values, final Consumer<T> consumer) {
-    values.forEach( (v) -> { if(containsValue(v)){consumer.accept(v);};});
+    values.forEach( (v) -> { if(containsValue(v)){consumer.accept(v);}});
   }
-    
+
+  /**
+   * Convert to a map with a custom key obtained from entries
+   *
+   * @param getCustomKey function to extract key from entries
+   * @return populated map
+   *
+   * @param <K> type of key
+   */
+  public default <K> Map<K, V> toMap(Function<V,K> getCustomKey){
+    return IterableUtils.toMap(this, getCustomKey, new HashMap<>());
+  }
 
 }

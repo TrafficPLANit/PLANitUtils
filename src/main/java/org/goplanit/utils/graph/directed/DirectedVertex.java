@@ -28,7 +28,7 @@ public interface DirectedVertex extends Vertex {
   public static Function<DirectedVertex, Iterable<? extends EdgeSegment>> getEdgeSegmentsForVertexLambda(boolean entrySegments) {
     return entrySegments ? getEntryEdgeSegments : getExitEdgeSegments;
   }
-     
+
   /**
    * Returns a collection of DirectedEdge objects (unmodifiable)
    * 
@@ -72,6 +72,26 @@ public interface DirectedVertex extends Vertex {
       }
     }
     return null;
+  }
+
+  /**
+   * Find segment in entry segments
+   *
+   * @param segment to find
+   * @return true when present, false otherwise
+   */
+  public default boolean hasEntrySegment(EdgeSegment segment){
+    return EdgeSegment.hasSegment(segment,getEntryEdgeSegments());
+  }
+
+  /**
+   * Find segment in exit segments
+   *
+   * @param segment to find
+   * @return true when present, false otherwise
+   */
+  public default boolean hasExitSegment(EdgeSegment segment){
+    return EdgeSegment.hasSegment(segment,getExitEdgeSegments());
   }
   
   /**
