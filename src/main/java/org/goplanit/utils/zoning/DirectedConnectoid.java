@@ -37,9 +37,9 @@ public interface DirectedConnectoid extends Connectoid{
   /**
    * Replace the access link segment for this connectoid
    * 
-   * @param exitEdgeSegment to use
+   * @param accessEdgeSegment to use
    */
-  public abstract void replaceAccessLinkSegment(EdgeSegment exitEdgeSegment);  
+  public abstract void replaceAccessLinkSegment(LinkSegment accessEdgeSegment);
   
   /** set if the node access is downstream or not
    * 
