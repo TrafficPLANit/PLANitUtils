@@ -14,6 +14,7 @@ import org.geotools.geometry.jts.JTSFactoryFinder;
 import org.geotools.referencing.CRS;
 import org.goplanit.utils.exceptions.PlanItException;
 import org.goplanit.utils.exceptions.PlanItRunTimeException;
+import org.goplanit.utils.math.Precision;
 import org.goplanit.utils.misc.Pair;
 import org.locationtech.jts.algorithm.Angle;
 import org.locationtech.jts.algorithm.RobustDeterminant;
@@ -367,7 +368,7 @@ public class PlanitJtsUtils {
    * @return the line string created
    */
   public static LineString createCopyWithoutCoordinatesBefore(Point position, LineString geometry){
-    Optional<Integer> offset = findFirstCoordinatePosition(position.getCoordinate(), geometry);
+    Optional<Integer> offset = findFirstCoordinatePosition(position.getCoordinate(), geometry, Precision.EPSILON_0);
 
     if (!offset.isPresent()) {
       throw new PlanItRunTimeException(String.format("Point (%s) does not exist on line string (%s), unable to create copy from this location", position.toString(), geometry.toString()));
@@ -404,7 +405,7 @@ public class PlanitJtsUtils {
    * @return copy of the line string without indicated coordinates
    */
   public static LineString createCopyWithoutCoordinatesAfter(Point position, LineString geometry){
-    Optional<Integer> offset = findFirstCoordinatePosition(position.getCoordinate(), geometry);
+    Optional<Integer> offset = findFirstCoordinatePosition(position.getCoordinate(), geometry, Precision.EPSILON_0);
 
     if (!offset.isPresent()) {
       throw new PlanItRunTimeException(String.format("Point (%s) does not exist on line string %s, unable to create copy from this location", position.toString(), geometry.toString()));
@@ -468,9 +469,10 @@ public class PlanitJtsUtils {
    * @param coordinateToLocate the one to locate
    * @param offset             start searching from offset position
    * @param geometry           to locate from
+   * @param tolerance the tolerance allowed
    * @return the position if present
    */
-  public static Optional<Integer> findFirstCoordinatePosition(Coordinate coordinateToLocate, int offset, LineString geometry) {
+  public static Optional<Integer> findFirstCoordinatePosition(Coordinate coordinateToLocate, int offset, LineString geometry, double tolerance) {
     if (geometry == null || coordinateToLocate == null) {
       return Optional.empty();
     }
@@ -478,7 +480,7 @@ public class PlanitJtsUtils {
     int numCoordinates = geometry.getNumPoints();
     for (int index = offset; index < numCoordinates; ++index) {
       Coordinate coordinate = geometry.getCoordinateN(index);
-      if (coordinate.equals2D(coordinateToLocate)) {
+      if (coordinate.equals2D(coordinateToLocate, tolerance)) {
         return Optional.of(index);
       }
     }
@@ -490,10 +492,12 @@ public class PlanitJtsUtils {
    * 
    * @param coordinateToLocate the one to locate
    * @param geometry           to locate from
+   * @param tolerance the tolerance allowed
    * @return the position if present
    */
-  public static Optional<Integer> findFirstCoordinatePosition(Coordinate coordinateToLocate, LineString geometry) {
-    return findFirstCoordinatePosition(coordinateToLocate, 0, geometry);
+  public static Optional<Integer> findFirstCoordinatePosition(Coordinate coordinateToLocate, LineString geometry, double tolerance) {
+    final int offset = 0;
+    return findFirstCoordinatePosition(coordinateToLocate, offset, geometry, tolerance);
   }
 
   /**

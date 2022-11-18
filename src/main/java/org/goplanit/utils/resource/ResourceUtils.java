@@ -13,6 +13,7 @@ import java.nio.file.FileSystems;
 import java.util.Collections;
 import java.util.logging.Logger;
 
+import org.goplanit.utils.exceptions.PlanItRunTimeException;
 import org.goplanit.utils.misc.UriUtils;
 
 /** Utilities to access resources in the Java environment
@@ -39,15 +40,19 @@ public class ResourceUtils {
    * 
    * @param resourceLocation to find URI for
    * @return the URI of the resource
-   * @throws URISyntaxException thrown if error
    */
-  public static URI getResourceUri(final String resourceLocation) throws URISyntaxException{
+  public static URI getResourceUri(final String resourceLocation) {
     URL url = getResourceUrl(resourceLocation);
     if(url==null) {
       LOGGER.warning(String.format("Unable to create resource URL and therefore URI for %s",resourceLocation));
       return null;
     }
-    return url.toURI(); 
+
+    try {
+      return url.toURI();
+    }catch(Exception e){
+      throw new PlanItRunTimeException("Error while obtaining resource URI for location %s", resourceLocation, e);
+    }
   }  
   
   /** Collect the jar as a FileSystem to access its internals

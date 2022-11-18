@@ -170,7 +170,7 @@ public interface Connectoid extends ExternalIdAble, ManagedId, Iterable<Zone> {
    * @param transferZone to add allowed mode(s) to
    * @param allowedModes to add
    */  
-  public default void addAllowedModes(TransferZone transferZone, Set<Mode> allowedModes) {
+  public default void addAllowedModes(Zone transferZone, Collection<Mode> allowedModes) {
     allowedModes.forEach( mode -> addAllowedMode(transferZone, mode));
   }
 

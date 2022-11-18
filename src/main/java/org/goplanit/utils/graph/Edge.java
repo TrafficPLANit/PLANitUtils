@@ -4,9 +4,14 @@ import java.io.Serializable;
 
 import org.geotools.geometry.jts.JTS;
 import org.goplanit.utils.exceptions.PlanItRunTimeException;
+import org.goplanit.utils.geo.PlanitJtsUtils;
 import org.goplanit.utils.math.Precision;
+import org.goplanit.utils.misc.Pair;
+import org.goplanit.utils.network.layer.macroscopic.MacroscopicLink;
 import org.locationtech.jts.geom.Envelope;
+import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.LineString;
+import org.locationtech.jts.linearref.LinearLocation;
 import org.opengis.geometry.MismatchedDimensionException;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.TransformException;
@@ -192,7 +197,22 @@ public interface Edge extends Serializable, GraphEntity {
    */
   public default void transformGeometry(MathTransform transformer) throws MismatchedDimensionException, TransformException {
     setGeometry((LineString) JTS.transform(getGeometry(),transformer));
-  }    
+  }
+
+  /**
+   * Update the geometry by taking the current geometry and inject a coordinate at the projected location between existing coordinates using the passed in location.
+   * this replaces the existing geometry instance which is returned.
+   *
+   * @param projectedLinearLocation to use as reference point of new coordinate
+   * @return old geometry that is now replaced
+   */
+  public default Geometry updateGeometryInjectCoordinateAtProjectedLocation(LinearLocation projectedLinearLocation){
+    var oldGeometry = getGeometry();
+    Pair<LineString, LineString> splitLineString = PlanitJtsUtils.splitLineString(getGeometry(),projectedLinearLocation);
+    LineString linkGeometryWithExplicitProjectedCoordinate = PlanitJtsUtils.mergeLineStrings(splitLineString.first(),splitLineString.second());
+    setGeometry(linkGeometryWithExplicitProjectedCoordinate);
+    return oldGeometry;
+  }
   
   /** collect the bounding box of the geometry of this link
    * 

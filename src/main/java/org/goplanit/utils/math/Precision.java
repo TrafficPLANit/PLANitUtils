@@ -2,11 +2,14 @@ package org.goplanit.utils.math;
 
 import java.text.DecimalFormat;
 
-/** compare doubles with a certain precision
+/** Compare doubles with a certain precision
  * @author markr
  *
  */
 public class Precision {
+
+  /** no tolerance, i.e., 0.0 */
+  public static final double EPSILON_0 = 0.0;
   
   public static final double EPSILON_18 = 0.000000000000000001;
   

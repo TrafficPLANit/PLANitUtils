@@ -128,7 +128,7 @@ public class PlanitEntityGeoUtils {
 
     LinearLocation projectedLinearLocationOnLink = null;
     if(referenceGeometry instanceof Point) {
-      projectedLinearLocationOnLink = geoUtils.getClosestProjectedLinearLocationOnGeometry(((Point)referenceGeometry).getCoordinate(),accessEdge.getGeometry());
+      projectedLinearLocationOnLink = geoUtils.getClosestProjectedLinearLocationOnGeometry(referenceGeometry.getCoordinate(),accessEdge.getGeometry());
     }else{
       projectedLinearLocationOnLink = geoUtils.getClosestGeometryExistingCoordinateToProjectedLinearLocationOnLineString(referenceGeometry,accessEdge.getGeometry());
     }
