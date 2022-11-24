@@ -12,6 +12,7 @@ import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 import org.goplanit.utils.exceptions.PlanItException;
+import org.goplanit.utils.exceptions.PlanItRunTimeException;
 
 /**
  * Reflection specific utility functions
@@ -52,9 +53,8 @@ public class ReflectionUtils {
    * @param className of the class to be instantiated
    * @param constructorParameters parameters for constructor
    * @return created instance
-   * @throws PlanItException when error occurs during instantiation
    */
-  public static Object createInstance(String className, Object...constructorParameters) throws PlanItException {
+  public static Object createInstance(String className, Object...constructorParameters){
     Object createdInstance = null;
     
     /* constructor */
@@ -63,11 +63,7 @@ public class ReflectionUtils {
       try {                         
         Class<?>[] parameterTypes = ReflectionUtils.getParameterTypes(constructorParameters);
         constructor = Class.forName(className).getConstructor(parameterTypes);    
-      }catch ( 
-        IllegalArgumentException|
-        NoSuchMethodException |
-        SecurityException |
-        ClassNotFoundException e) {
+      }catch ( Exception e) {
 
         //TODO: ideally we loop over all super types and interfaces and its permutations to try
         //      and instantiate automatically via these instead to get around the limitation. No time
@@ -80,14 +76,14 @@ public class ReflectionUtils {
           
         e.printStackTrace();
         LOGGER.severe(e.getMessage());
-        throw new PlanItException("Unable to find appropriate constructor for type: "+ className, e);        
+        throw new PlanItRunTimeException("Unable to find appropriate constructor for type: "+ className, e);
       }      
         
       /* instance */
       try {
         createdInstance = constructor.newInstance(constructorParameters);
       } catch (Exception e) {
-        throw new PlanItException("Unable to create instance of type: "+ className, e);
+        throw new PlanItRunTimeException("Unable to create instance of type: "+ className, e);
       }
     } else {
       
@@ -95,7 +91,7 @@ public class ReflectionUtils {
       try {
         createdInstance = Class.forName(className).getConstructor().newInstance();
       } catch (Exception e) {
-        throw new PlanItException("Unable to create instance of type via default constructor: "+ className, e);
+        throw new PlanItRunTimeException("Unable to create instance of type via default constructor: "+ className, e);
       }
     }          
     return createdInstance;    
