@@ -162,9 +162,9 @@ public abstract class EventProducerImpl{
     if (this.listeners.containsKey(event.getType())){
       // copy containers while iterating in case removeListener() is called during this method processing
       Map<EventListenerPriority, List<EventListener>> listenersForEventType = this.listeners.get(event.getType());
-      Set<EventListenerPriority> availablePriorities = new TreeSet<EventListenerPriority>(listenersForEventType.keySet());
+      Set<EventListenerPriority> availablePriorities = new TreeSet<>(listenersForEventType.keySet());
       for(EventListenerPriority priority : availablePriorities) {
-        ArrayList<EventListener> listenersForEventAndPriority = new ArrayList<EventListener>(listenersForEventType.get(priority));
+        ArrayList<EventListener> listenersForEventAndPriority = new ArrayList<>(listenersForEventType.get(priority));
         for (EventListener listener: listenersForEventAndPriority){
           this.fireEvent(listener, event);              
         }  

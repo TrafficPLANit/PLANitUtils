@@ -7,7 +7,7 @@ import org.goplanit.utils.id.ManagedId;
 import org.goplanit.utils.mode.Mode;
 
 /**
- * An infrastructure layer represents the infrastructure suited for a number of modes. This can be in the form of a physical network or by some other (more aggregate)
+ * A network layer represents the infrastructure suited for a number of modes. This can be in the form of a physical network or by some other (more aggregate)
  * representation. The combination of infrastructure layers can be used to construct an intermodal network. Each layer supports one or more modes
  * 
  * @author markr

@@ -34,9 +34,8 @@ public interface ConnectoidEdge extends DirectedEdge{
    * @param connectoidSegment connectoid segment to be registered
    * @param directionAB direction of travel
    * @return replaced ConnectoidSegment
-   * @throws PlanItException thrown if there is an error
    */
-  public abstract ConnectoidSegment registerConnectoidSegment(ConnectoidSegment connectoidSegment, boolean directionAB) throws PlanItException;
+  public abstract ConnectoidSegment registerConnectoidSegment(ConnectoidSegment connectoidSegment, boolean directionAB);
 
   /**
    * 

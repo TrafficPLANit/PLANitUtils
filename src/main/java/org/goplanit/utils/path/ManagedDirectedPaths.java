@@ -8,18 +8,18 @@ import org.goplanit.utils.id.ManagedIdEntities;
  * @author markr
  *
  */
-public interface DirectedPaths extends ManagedIdEntities<DirectedPath>  {
+public interface ManagedDirectedPaths extends ManagedIdEntities<ManagedDirectedPath>  {
 
   /**
    * Factory to create paths on this container
    */
   @Override
-  public abstract ContainerisedDirectedPathFactory getFactory();
+  public abstract ManagedDirectedPathFactory getFactory();
 
   /**
    * {@inheritDoc}
    */
   @Override
-  public abstract DirectedPaths clone();
+  public abstract ManagedDirectedPaths clone();
 
 }

@@ -21,7 +21,7 @@ public class PathUtils {
    * @param idMapper lambda function to get the required Id value
    * @return the path as a String of comma-separated node Id or external Id values
    */
-  public static String getNodePathString(final DirectedPath path, final Function<Vertex, Object> idMapper) {
+  public static String getNodePathString(final ManagedDirectedPath path, final Function<Vertex, Object> idMapper) {
     final StringBuilder builder = new StringBuilder("[");
     for (final EdgeSegment edgeSegment : path) {
       final Vertex vertex = edgeSegment.getUpstreamVertex();
@@ -44,7 +44,7 @@ public class PathUtils {
    * @param idGetter lambda function to get the required Id value
    * @return the path as a String of comma-separated link segment Id or external Id values
    */
-  public static String getEdgeSegmentPathString(final DirectedPath path, final Function<EdgeSegment, Object> idGetter) {
+  public static String getEdgeSegmentPathString(final ManagedDirectedPath path, final Function<EdgeSegment, Object> idGetter) {
     final StringBuilder builder = new StringBuilder("[");
     for (final EdgeSegment edgeSegment : path) {
       builder.append(idGetter.apply(edgeSegment));

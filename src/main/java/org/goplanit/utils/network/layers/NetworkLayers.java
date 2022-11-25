@@ -2,6 +2,8 @@ package org.goplanit.utils.network.layers;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
 
 import org.goplanit.utils.id.ManagedIdEntities;
 import org.goplanit.utils.mode.Mode;
@@ -66,6 +68,16 @@ public interface NetworkLayers<T extends NetworkLayer> extends ManagedIdEntities
       }
     }
     return layerList;
+  }
+
+  /**
+   * Collect all distinct supported modes across all network layers in newly created collection
+   * @return supported modes
+   */
+  public default Collection<Mode> getSupportedModes(){
+    final Set<Mode> modes = new HashSet<>();
+    this.forEach( l -> modes.addAll(l.getSupportedModes()));
+    return modes;
   }
   
   /**

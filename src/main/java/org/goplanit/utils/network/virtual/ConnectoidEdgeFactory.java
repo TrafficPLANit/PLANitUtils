@@ -18,7 +18,6 @@ public interface ConnectoidEdgeFactory extends GraphEntityFactory<ConnectoidEdge
    * 
    * @param connectoid extract information from connectoid to create virtual connectoid edge(s)
    * @return newly created connectoid edges (reference nodes not yet aware of connection these have to be added afterwards)
-   * @throws PlanItException thrown if there is an error
    */
-  public Collection<ConnectoidEdge> registerNew(Connectoid connectoid) throws PlanItException;
+  public Collection<ConnectoidEdge> registerNew(Connectoid connectoid);
 }

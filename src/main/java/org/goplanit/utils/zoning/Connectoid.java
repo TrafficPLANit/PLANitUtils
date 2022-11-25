@@ -111,18 +111,16 @@ public interface Connectoid extends ExternalIdAble, ManagedId, Iterable<Zone> {
    * 
    * @param accessZone to collect length for
    * @return length in km(null if zone is not registered)
-   * @throws PlanItException thrown if error
    */
-  public abstract Optional<Double> getLengthKm(Zone accessZone) throws PlanItException;
+  public abstract Optional<Double> getLengthKm(Zone accessZone);
   
   /** Verify if a mode is allowed access to the zone via this connectoid
    * 
    * @param accessZone to verify
    * @param mode to verify if allowed
    * @return true when allowed, false otherwise
-   * @throws PlanItException thrown if provided zone is not valid
    */
-  public abstract boolean isModeAllowed(Zone accessZone, Mode mode) throws PlanItException;
+  public abstract boolean isModeAllowed(Zone accessZone, Mode mode);
   
   /** collect modes that are explicitly allowed for this zone (unmodifiable). Note that if no explicit allowed
    * modes are present, all modes are implicitly allowed. When there exist explicitly allowed modes, any modes
@@ -202,7 +200,7 @@ public interface Connectoid extends ExternalIdAble, ManagedId, Iterable<Zone> {
   public default boolean hasLength(Zone accessZone) {    
     try {
       return getLengthKm(accessZone).isEmpty();
-    } catch (PlanItException e) {
+    } catch (Exception e) {
       return false;
     }
   }

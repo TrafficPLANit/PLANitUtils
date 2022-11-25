@@ -7,10 +7,7 @@ import org.goplanit.utils.network.layer.physical.Node;
 /**
  * A directed connectoid is referring to an edge segment in a network (layer) which is directed for access
  * hence, the connectoid also being directed
- * 
- * TODO: we can potentially get rid of UndirectedConnectoid and let DirectedConnectoid extend from base since they
- * now both rely on accessNodes
- * 
+ *
  * @author markr
  *
  */

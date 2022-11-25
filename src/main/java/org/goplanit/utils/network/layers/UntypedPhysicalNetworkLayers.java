@@ -1,6 +1,11 @@
 package org.goplanit.utils.network.layers;
 
+import org.goplanit.utils.mode.Mode;
 import org.goplanit.utils.network.layer.physical.UntypedPhysicalLayer;
+
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Interface to manage physical network layers, i.e., layers that contain a topologically meaningful representation in the form of nodes and links
@@ -52,7 +57,7 @@ public interface UntypedPhysicalNetworkLayers<L extends UntypedPhysicalLayer<?,?
     }
     return sum;
   }
-  
+
   /**
    * clone container
    */

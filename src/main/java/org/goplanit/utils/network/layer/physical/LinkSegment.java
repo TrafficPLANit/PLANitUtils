@@ -3,7 +3,12 @@ package org.goplanit.utils.network.layer.physical;
 import org.goplanit.utils.graph.directed.EdgeSegment;
 import org.goplanit.utils.id.IdGenerator;
 import org.goplanit.utils.id.IdGroupingToken;
+import org.goplanit.utils.mode.Mode;
 import org.goplanit.utils.network.layer.macroscopic.MacroscopicLink;
+
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Interface for link segments (directional) part of link (non-directional).
@@ -48,6 +53,35 @@ public interface LinkSegment extends EdgeSegment {
    * Default maximum link density in pcu/km
    */
   public final double MAXIMUM_DENSITY = 180;
+
+  /**
+   * Returns whether vehicles of a specified mode are allowed through this link
+   *
+   * @param mode the specified mode
+   * @return true if vehicles of this mode can drive along this link, false otherwise
+   */
+  public abstract boolean isModeAllowed(Mode mode);
+
+  /**
+   * Returns the modes that are allowed on the link segment
+   *
+   * @return allowed modes
+   */
+  public abstract Set<Mode> getAllowedModes();
+
+  /** collect the allowed modes from the passed in modes
+   * @param modes to choose from
+   * @return allowed modes
+   */
+  public default Set<Mode> getAllowedModesFrom(Collection<Mode> modes){
+    Set<Mode> allowedModes = new HashSet<>();
+    for(Mode mode : modes) {
+      if(isModeAllowed(mode)) {
+        allowedModes.add(mode);
+      }
+    }
+    return allowedModes;
+  }
 
   /**
    * Return id of this instance. This id is expected to be generated using the

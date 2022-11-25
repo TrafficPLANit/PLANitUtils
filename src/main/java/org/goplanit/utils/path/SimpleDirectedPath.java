@@ -1,30 +1,19 @@
 package org.goplanit.utils.path;
 
-import java.util.Collection;
-
 import org.goplanit.utils.graph.directed.EdgeSegment;
 import org.goplanit.utils.id.ExternalIdAble;
 import org.goplanit.utils.id.ManagedId;
 
+import java.util.Collection;
+
 /**
- * Path interface representing a path through the network on edge segment level
+ * Simple Path interface representing a path through the network on edge segment level
  * 
  * @author markr
  *
  */
-public interface DirectedPath extends ExternalIdAble, ManagedId, Iterable<EdgeSegment> {
+public interface SimpleDirectedPath extends Iterable<EdgeSegment> {
 
-  /** class to use for id generation */
-  public static final Class<DirectedPath> PATH_ID_CLASS = DirectedPath.class;
-  
-  /**
-   * {@inheritDoc}
-   */
-  @Override
-  public default Class<DirectedPath> getIdClass() {
-    return PATH_ID_CLASS;
-  }  
-    
   /** The size of the path is given by the number of edge segments it holds
    * 
    * @return size

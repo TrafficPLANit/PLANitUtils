@@ -1,6 +1,7 @@
 package org.goplanit.utils.network.layer.macroscopic;
 
 import org.goplanit.utils.id.ManagedIdEntities;
+import org.goplanit.utils.mode.Mode;
 
 /**
  * A container interface for macroscopic link segment types
@@ -23,6 +24,26 @@ public interface MacroscopicLinkSegmentTypes extends ManagedIdEntities<Macroscop
    */
   @Override
   public abstract MacroscopicLinkSegmentTypeFactory getFactory();
+
+
+  /**
+   * Convenience method to determine the maximum speed limit across all types for a given mode
+   *
+   * @param mode to use
+   * @return found maximum applied speed limit
+   */
+  public default double findMaximumSpeedLimit(Mode mode){
+    double maxSpeedLimitKmH = Double.NEGATIVE_INFINITY;
+    for(var linkSegmentType : this) {
+      if(linkSegmentType.isModeAllowed(mode)){
+        double maxSpeedCurr = linkSegmentType.getMaximumSpeedKmH(mode);
+        if(maxSpeedCurr > maxSpeedLimitKmH ){
+          maxSpeedLimitKmH = maxSpeedCurr;
+        }
+      }
+    }
+    return maxSpeedLimitKmH;
+  }
 
   /**
    * {@inheritDoc}

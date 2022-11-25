@@ -1,23 +1,23 @@
 package org.goplanit.utils.path;
 
-import java.util.Deque;
-
 import org.goplanit.utils.graph.directed.EdgeSegment;
 import org.goplanit.utils.id.ManagedIdEntityFactory;
 
-/** Factory interface for directed paths
+import java.util.Deque;
+
+/** Factory interface for simple directed paths
  * 
  * @author markr
  *
  */
-public interface DirectedPathFactory extends ManagedIdEntityFactory<DirectedPath>{
+public interface DirectedPathFactory<T extends SimpleDirectedPath> {
 
   /**
    * Create new path
    *
    * @return the created path
    */
-  public abstract DirectedPath createNew();
+  public abstract T createNew();
   
   /**
    * Create new path 
@@ -25,5 +25,6 @@ public interface DirectedPathFactory extends ManagedIdEntityFactory<DirectedPath
    * @param edgeSegments      of the path
    * @return the created path
    */
-  public abstract DirectedPath createNew(Deque<? extends EdgeSegment> edgeSegments); 
+  public abstract T createNew(Deque<? extends EdgeSegment> edgeSegments);
+
 }
