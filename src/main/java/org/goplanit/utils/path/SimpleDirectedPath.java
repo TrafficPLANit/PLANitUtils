@@ -5,6 +5,7 @@ import org.goplanit.utils.id.ExternalIdAble;
 import org.goplanit.utils.id.ManagedId;
 
 import java.util.Collection;
+import java.util.Iterator;
 
 /**
  * Simple Path interface representing a path through the network on edge segment level
@@ -34,6 +35,13 @@ public interface SimpleDirectedPath extends Iterable<EdgeSegment> {
    * @param subPath to verify
    * @return true when it contains the subpath, false otherwise.
    */
-  public abstract boolean containsSubPath(Collection<? extends EdgeSegment> subPath); 
+  public abstract boolean containsSubPath(Collection<? extends EdgeSegment> subPath);
+
+  /** Verify if the path contains the provided subpath. It is only a subpath of the subpath is present continguously
+   *
+   * @param subPath to verify
+   * @return true when it contains the subpath, false otherwise.
+   */
+  public abstract boolean containsSubPath(Iterator<? extends EdgeSegment> subPath);
 
 }
