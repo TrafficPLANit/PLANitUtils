@@ -6,6 +6,7 @@ import org.goplanit.utils.id.ManagedId;
 
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.stream.StreamSupport;
 
 /**
  * Simple Path interface representing a path through the network on edge segment level
@@ -43,5 +44,14 @@ public interface SimpleDirectedPath extends Iterable<EdgeSegment> {
    * @return true when it contains the subpath, false otherwise.
    */
   public abstract boolean containsSubPath(Iterator<? extends EdgeSegment> subPath);
+
+  /**
+   * Compute the length in km of the path based on the sum of the edge segment's getLengthKm method
+   *
+   * @return total length of path in km
+   */
+  public default double computeLengthKm(){
+    return StreamSupport.stream(this.spliterator(),false).mapToDouble( es -> es.getLengthKm()).sum();
+  }
 
 }

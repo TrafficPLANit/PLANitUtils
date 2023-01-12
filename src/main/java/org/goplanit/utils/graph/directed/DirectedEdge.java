@@ -107,6 +107,14 @@ public interface DirectedEdge extends Edge {
   public default boolean hasEdgeSegmentAb() {
     return getEdgeSegmentAb() != null;
   }
+
+  /** Verify if any edge segment exists
+   *
+   * @return true if present, false otherwise
+   */
+  public default boolean hasEdgeSegment() {
+    return hasEdgeSegmentAb() || hasEdgeSegmentBa();
+  }
   
   /** collect all edge segments available on the edge 
    * 

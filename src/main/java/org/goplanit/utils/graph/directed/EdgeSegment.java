@@ -181,4 +181,13 @@ public interface EdgeSegment extends Serializable, GraphEntity {
 
     return getUpstreamVertex().hasEntrySegment(other) || getDownstreamVertex().hasExitSegment(other);
   }
+
+  /**
+   * Provides the length in km based on its parent's information
+   *
+   * @return length in km of the segment
+   */
+  public default double getLengthKm(){
+    return getParent().getLengthKm();
+  }
 }

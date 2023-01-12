@@ -7,8 +7,8 @@ import org.goplanit.utils.graph.directed.DirectedEdge;
 import org.goplanit.utils.network.layer.physical.Link;
 
 /**
- * Service leg interface which extends the Edge interface. A service leg comprises of one or more underlying physical links
- * and represents an uninterrupted service route between two service nodes.
+ * Service leg interface which extends the Edge interface. A service leg comprises one or more underlying physical links, e.g., an uninterrupted service route between two stops for example in a public transport context
+ * with scheduled stops at either end, namely the two service nodes.
  * 
  * @author markr
  *
@@ -103,26 +103,5 @@ public interface ServiceLeg extends DirectedEdge {
     return (Collection<LS>) getEdgeSegments();
   }
   
-  /** Collect the links that make up this leg ordered and in direction from A to B
-   * 
-   * @return parent links this leg represents
-   */
-  public abstract List<Link> getParentLinks();
-  
-  /** Collect the first parent link
-   * 
-   * @return first parent link
-   */
-  public default Link getFirstParentLink() {
-    return getParentLinks().get(0);
-  }
-  
-  /** Collect the last parent link
-   * 
-   * @return last parent link
-   */
-  public default Link getLastParentLink() {
-    return getParentLinks().get(getParentLinks().size()-1);
-  }  
-  
+
 }
