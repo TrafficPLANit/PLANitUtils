@@ -2,6 +2,7 @@ package org.goplanit.utils.network.layer.service;
 
 import org.goplanit.utils.graph.directed.EdgeSegment;
 import org.goplanit.utils.network.layer.physical.Link;
+import org.goplanit.utils.network.layer.physical.LinkSegment;
 
 import java.util.List;
 
@@ -50,7 +51,13 @@ public interface ServiceLegSegment extends EdgeSegment {
    *
    * @return parent links this leg represents
    */
-  public abstract List<Link> getPhysicalParentSegments();
+  public abstract List<LinkSegment> getPhysicalParentSegments();
+
+  /**
+   * Set the network layer links that make up this leg irrespective wether they have been set before. Use with caution
+   * @param networkLayerLinkSegments to use
+   */
+  public abstract void setPhysicalParentSegments(final List<LinkSegment> networkLayerLinkSegments);
 
   /** verify if any physical parent leg segments are registered for this service leg segment
    *
@@ -64,7 +71,7 @@ public interface ServiceLegSegment extends EdgeSegment {
    *
    * @return first parent link
    */
-  public default Link getFirstPhysicalLink() {
+  public default LinkSegment getFirstPhysicalLinkSegment() {
     return getPhysicalParentSegments().get(0);
   }
 
@@ -72,7 +79,7 @@ public interface ServiceLegSegment extends EdgeSegment {
    *
    * @return last parent link
    */
-  public default Link getLastPhysicalLink() {
+  public default LinkSegment getLastPhysicalLinkSegment() {
     return getPhysicalParentSegments().get(getPhysicalParentSegments().size()-1);
   }
 

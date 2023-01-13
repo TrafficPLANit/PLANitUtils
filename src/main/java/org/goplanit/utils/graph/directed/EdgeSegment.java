@@ -190,4 +190,13 @@ public interface EdgeSegment extends Serializable, GraphEntity {
   public default double getLengthKm(){
     return getParent().getLengthKm();
   }
+
+  /**
+   * verify if geometry is present based on parent's geometry
+   *
+   * @return true when parent has geometry, false otherwise
+   */
+  public default boolean hasGeometry(){
+    return getParent().hasGeometry();
+  }
 }

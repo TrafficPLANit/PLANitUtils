@@ -21,7 +21,7 @@ public interface SimpleDirectedPath extends Iterable<EdgeSegment> {
    * @return size
    */
   public abstract long size();
-  
+
   /**
    * verify if the size of the path is zero (empty) or not
    * 

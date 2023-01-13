@@ -2,6 +2,8 @@ package org.goplanit.utils.network.layer.service;
 
 import org.goplanit.utils.graph.GraphEntityFactory;
 import org.goplanit.utils.network.layer.physical.Link;
+import org.goplanit.utils.network.layer.physical.LinkSegment;
+import org.goplanit.utils.network.layer.physical.LinkSegments;
 
 import java.util.List;
 
@@ -38,9 +40,9 @@ public interface ServiceLegSegmentFactory extends GraphEntityFactory<ServiceLegS
    *
    * @param parentLeg of the segment
    * @param directionAb direction of the segment
-   * @param networkLayerLinks  the underlying parent links that make up this leg
+   * @param networkLayerLinkSegments  the underlying parent link segments that make up this leg
    * @param registerOnServiceNodeAndLeg flag indicating whether to register the created leg segment on node and leg
    * @return created segment
    */
-  ServiceLegSegment registerNew(ServiceLeg parentLeg, boolean directionAb, final List<Link> networkLayerLinks, boolean registerOnServiceNodeAndLeg);
+  ServiceLegSegment registerNew(ServiceLeg parentLeg, boolean directionAb, final List<LinkSegment> networkLayerLinkSegments, boolean registerOnServiceNodeAndLeg);
 }
