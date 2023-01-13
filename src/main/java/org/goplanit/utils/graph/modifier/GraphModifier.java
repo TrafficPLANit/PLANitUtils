@@ -21,6 +21,22 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 public interface GraphModifier<V extends Vertex, E extends Edge> extends GraphModifierEventProducer, TopologicalModifier{
 
   /**
+   * Remove a vertex by removing it from the graph and the edges it is connected to. Any registered events fro vertex removal
+   * will be triggered.
+   *
+   * @param vertex to remove
+   */
+  public abstract void removeVertex(V vertex);
+
+  /**
+   * Remove an edge by removing it from the graph and the vertices it is connected to. Any registered events for edge removal
+   * will be triggered.
+   *
+   * @param edge to remove
+   */
+  public abstract void removeEdge(E edge);
+
+  /**
    * remove any dangling subgraphs below a given size from the graph if they exist and subsequently reorder the internal ids if needed
    * 
    * @param belowSize         remove subgraphs below the given size

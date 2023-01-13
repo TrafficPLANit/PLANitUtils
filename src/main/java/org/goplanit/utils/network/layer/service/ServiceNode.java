@@ -83,5 +83,13 @@ public interface ServiceNode extends DirectedVertex {
    * @return networkLayerNode
    */
   public abstract Node getPhysicalParentNode();
-  
+
+  /**
+   * Verify if a physical parent node is linked to this service node
+   *
+   * @return true when present false otherwise
+   */
+  public default boolean hasPhysicalParentNode(){
+    return getPhysicalParentNode()!=null;
+  }
 }

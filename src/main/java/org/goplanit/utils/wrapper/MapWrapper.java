@@ -2,6 +2,7 @@ package org.goplanit.utils.wrapper;
 
 import org.goplanit.utils.misc.IterableUtils;
 
+import javax.accessibility.AccessibleStreamable;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
@@ -9,6 +10,8 @@ import java.util.Set;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
+import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
 
 /**
  * Wrap a map as a named class
@@ -148,6 +151,15 @@ public interface MapWrapper<K, V> extends Iterable<V>, Cloneable {
    */
   public default <K> Map<K, V> toMap(Function<V,K> getCustomKey){
     return IterableUtils.toMap(this, getCustomKey, new HashMap<>());
+  }
+
+  /**
+   * Create a stream from this iterable
+   *
+   * @return stream of all entries (values)
+   */
+  public default Stream<V> stream(){
+    return StreamSupport.stream(this.spliterator(), false);
   }
 
 }
