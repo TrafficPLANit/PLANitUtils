@@ -8,7 +8,7 @@ import org.goplanit.utils.network.layer.UntypedDirectedGraphLayer;
 import org.goplanit.utils.network.layer.modifier.UntypedDirectedGraphLayerModifier;
 
 /**
- * Network layer comprising of containers with custom entity types. Use this as a base template for implementations and derived interfaced that
+ * Network layer comprising containers with custom entity types. Use this as a base template for implementations and derived interfaced that
  * are typed. No access to containers is dictated to allow for maximum flexibility for derived interface to define suitable method names to access
  * underlying containers and/or entities. Since all entities are id managed we do require access to the id token used by this layer
  *

@@ -112,7 +112,12 @@ public interface Vertex extends Serializable, GraphEntity {
    */
   public default boolean removeEdge(final Edge edge) {
     return removeEdge(edge.getId());
-  }  
+  }
+
+  /**
+   * Remove al edges from vertex
+   */
+  public abstract void removeAllEdges();
   
   /**
    * Collect the edge(s) based on the other vertex

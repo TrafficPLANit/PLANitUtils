@@ -12,10 +12,10 @@ import org.goplanit.utils.network.layer.ServiceNetworkLayer;
 public interface ServiceNetworkLayerFactory extends ManagedIdEntityFactory<ServiceNetworkLayer> {
  
   /** Create a new service network layer  
-   * 
-   * @param parentLayer this service layer is built upon 
+   *
+   * @param parentLayer the physical network layer this service layer is built upon
    * @return created service layer
    */
-  public abstract ServiceNetworkLayer registerNew(MacroscopicNetworkLayer parentLayer);   
+  public abstract ServiceNetworkLayer registerNew(MacroscopicNetworkLayer parentLayer);
   
 }

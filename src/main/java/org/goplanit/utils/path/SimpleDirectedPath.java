@@ -54,4 +54,18 @@ public interface SimpleDirectedPath extends Iterable<EdgeSegment> {
     return StreamSupport.stream(this.spliterator(),false).mapToDouble( es -> es.getLengthKm()).sum();
   }
 
+  /**
+   * Collect first segment on path
+   *
+   * @return initial segment
+   */
+  public abstract EdgeSegment getFirstSegment();
+
+  /**
+   * Collect last segment on path
+   *
+   * @return last segment
+   */
+  public abstract EdgeSegment getLastSegment();
+
 }
