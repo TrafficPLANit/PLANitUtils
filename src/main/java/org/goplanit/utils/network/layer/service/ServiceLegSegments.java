@@ -25,5 +25,25 @@ public interface ServiceLegSegments extends ManagedGraphEntities<ServiceLegSegme
    * {@inheritDoc}
    */
   @Override
-  public abstract ServiceLegSegments clone();  
+  public abstract ServiceLegSegments clone();
+
+  /**
+   * Verify if present
+   *
+   * @param serviceLegSegmentId to verify
+   * @return true when present, false otherwise
+   */
+  public default boolean hasServiceLegSegment(long serviceLegSegmentId){
+    return containsKey(serviceLegSegmentId);
+  }
+
+  /**
+   * Verify if present
+   *
+   * @param parentLegSegment to verify
+   * @return true when present, false otherwise
+   */
+  public default boolean hasServiceLegSegment(ServiceLegSegment parentLegSegment){
+    return hasServiceLegSegment(parentLegSegment.getId());
+  }
 }

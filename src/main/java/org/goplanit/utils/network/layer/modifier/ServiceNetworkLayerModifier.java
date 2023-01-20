@@ -13,7 +13,10 @@ public interface ServiceNetworkLayerModifier<V extends ServiceNode, E extends Se
 
   /**
    * Method that will remove all entities (service nodes, legs, leg segments) that have no mapping present to the underlying physical network layer
-   * the service network is attached to
+   * the service network is attached to.
+   * <p>
+   *   Note that invoking this method will recreate all managed ids across the service network due to gaps occurring after removal of unmapped entries
+   * </p>
    *
    */
   public abstract void removeUnmappedServiceNetworkEntities();

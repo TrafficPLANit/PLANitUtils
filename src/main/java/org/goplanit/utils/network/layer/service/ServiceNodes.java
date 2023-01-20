@@ -26,4 +26,13 @@ public interface ServiceNodes extends ManagedGraphEntities<ServiceNode> {
    */
   @Override
   public abstract ServiceNodes clone();
+
+  public default boolean hasServiceNode(long serviceNodeId){
+    return containsKey(serviceNodeId);
+  }
+
+  public default boolean hasServiceNode(ServiceNode serviceNode){
+    return hasServiceNode(serviceNode.getId());
+  }
+
 }
