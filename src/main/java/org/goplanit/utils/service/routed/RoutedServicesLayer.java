@@ -3,7 +3,7 @@ package org.goplanit.utils.service.routed;
 import org.goplanit.utils.id.ExternalIdAble;
 import org.goplanit.utils.id.ManagedId;
 import org.goplanit.utils.mode.Mode;
-import org.goplanit.utils.network.layer.ServiceNetworkLayer;
+import org.goplanit.utils.network.layer.RoutedServiceLayer;
 
 import java.util.Collection;
 
@@ -46,7 +46,7 @@ public interface RoutedServicesLayer extends ManagedId, ExternalIdAble, Iterable
    * 
    * @return parent layer
    */
-  public abstract ServiceNetworkLayer getParentLayer();
+  public abstract RoutedServiceLayer getParentLayer();
 
   /**
    * The services for a given mode available on this layer. If no services are yet available an empty instance is provided

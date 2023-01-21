@@ -2,6 +2,8 @@ package org.goplanit.utils.service.routed;
 
 import org.goplanit.utils.id.ManagedIdEntities;
 
+import java.time.LocalTime;
+
 /**
  * A container class for departures registered on a schedule based routed trip
  * 
@@ -21,4 +23,18 @@ public interface RoutedTripDepartures extends ManagedIdEntities<RoutedTripDepart
    */
   @Override
   public abstract RoutedTripDepartureFactory getFactory();
+
+  /**
+   * Make all departures of the routed trip departure depart later by the given amount
+   *
+   * @param departureTimeIncrease to apply
+   */
+  public abstract void allDepartLaterBy(LocalTime departureTimeIncrease);
+
+  /**
+   * Make all departures of the routed trip departure depart later by the given amount
+   *
+   * @param departureTimeIncrease to apply
+   */
+  public abstract void allDepartEarlierBy(LocalTime departureTimeIncrease);
 }

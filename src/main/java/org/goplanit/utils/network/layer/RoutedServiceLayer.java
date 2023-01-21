@@ -14,7 +14,7 @@ import org.goplanit.utils.network.layer.service.ServiceNodes;
  *
  * @author markr
  */
-public interface ServiceNetworkLayer extends UntypedDirectedGraphLayer<ServiceNode, ServiceLeg, ServiceLegSegment> {
+public interface RoutedServiceLayer extends UntypedDirectedGraphLayer<ServiceNode, ServiceLeg, ServiceLegSegment> {
     
   /**
    * Collect the parent layer of this service layer

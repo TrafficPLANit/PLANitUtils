@@ -1,6 +1,7 @@
 package org.goplanit.utils.service.routed;
 
 import java.time.LocalTime;
+import java.util.List;
 
 import org.goplanit.utils.network.layer.service.ServiceLegSegment;
 
@@ -61,7 +62,16 @@ public interface RoutedTripSchedule extends RoutedTrip, Iterable<RelativeLegTimi
    * @return found relative leg timing if any, otherwise null
    */
   public default RelativeLegTiming getLastRelativeLegTiming(){
-    return getRelativeLegTiming(getRelativeLegTimingsSize()-1);
+    return getRelativeLegTiming(getLastRelativeLegTimingIndex());
+  }
+
+  /**
+   * Get last index that is valid, when no entries exist, -1 is returned
+   *
+   * @return last valid index, -1 if no valid entries exist
+   */
+  public default int getLastRelativeLegTimingIndex(){
+    return hasRelativeLegTimings() ? getRelativeLegTimingsSize()-1 : -1;
   }
 
   /**
@@ -82,4 +92,37 @@ public interface RoutedTripSchedule extends RoutedTrip, Iterable<RelativeLegTimi
     return getRelativeLegTimingsSize()>0;
   }
 
+  /**
+   * Verify if given index is a valid relative leg timings index
+   *
+   * @param relTimingsIndex to verify
+   * @return true when entry exists, false otherwise
+   */
+  public default boolean isValidRelativeLegTimingsIndex(int relTimingsIndex){
+    return relTimingsIndex >0 && relTimingsIndex < getRelativeLegTimingsSize();
+  }
+
+  /**
+   * Clear the instance by removing both departures and leg timings from it. Use with caution
+   */
+  public default void clear(){
+    clearDepartures();
+    clearRelativeLegTimings();
+  }
+
+  /**
+   * Remove the leg timing with the given index from the leg timings
+   *
+   * @param legTimingIndex to remove
+   */
+  public abstract void removeLegTiming(int legTimingIndex);
+
+  /**
+   * Remove the leg timings
+   *
+   * @param legTimingIndices to remove
+   */
+  public default void removeLegTimingsIn(List<Integer> legTimingIndices){
+    legTimingIndices.forEach( index -> removeLegTiming(index));
+  }
 }

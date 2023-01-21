@@ -159,6 +159,33 @@ public interface Edge extends Serializable, GraphEntity {
   public default boolean hasVertex(Vertex vertex) {
     return getVertexA().equals(vertex) || getVertexB().equals(vertex); 
   }
+
+  /**
+   * Verify if vertex A is available
+   *
+   * @return true when present, false otherwise
+   */
+  public default boolean hasVertexA(){
+    return getVertexA() != null;
+  }
+
+  /**
+   * Verify if vertex B is available
+   *
+   * @return true when present, false otherwise
+   */
+  public default boolean hasVertexB(){
+    return getVertexB() != null;
+  }
+
+  /**
+   * Verify if vertex A and B are available
+   *
+   * @return true when present, false otherwise
+   */
+  public default boolean hasVertices(){
+    return hasVertexA() && hasVertexB();
+  }
   
   /**
    * check if geometry is available

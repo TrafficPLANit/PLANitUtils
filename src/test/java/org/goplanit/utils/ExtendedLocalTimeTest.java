@@ -27,6 +27,10 @@ public class ExtendedLocalTimeTest {
     newTime = beforeMidnight.minus(afterMidnight);
     assertThat(newTime, nullValue());
 
+    newTime = beforeMidnight.plus(beforeMidnight);
+    assertThat(newTime, notNullValue());
+    assertThat(newTime, equalTo(ExtendedLocalTime.of("47:59:58")));
+
     afterMidnight = ExtendedLocalTime.of("33:33:33");
     assertThat(afterMidnight.exceedsSingleDay(), CoreMatchers.is(true));
     assertThat(afterMidnight.toString(), CoreMatchers.is("33:33:33"));
@@ -34,6 +38,15 @@ public class ExtendedLocalTimeTest {
     var afterNextMidnight = ExtendedLocalTime.of("48:00:00");
     assertThat(afterNextMidnight, nullValue());
 
+    assertThat(beforeMidnight.isBefore(afterMidnight), CoreMatchers.is(true));
+    assertThat(afterMidnight.isBefore(beforeMidnight), CoreMatchers.is(false));
+    assertThat(afterMidnight.isAfter(beforeMidnight), CoreMatchers.is(true));
+    assertThat(beforeMidnight.isAfter(afterMidnight), CoreMatchers.is(false));
+
+    assertThat(beforeMidnight.compareTo(afterMidnight), CoreMatchers.is(-1));
+    assertThat(beforeMidnight.compareTo(beforeMidnight), CoreMatchers.is(0));
+    assertThat(beforeMidnight.compareTo(ExtendedLocalTime.of("23:59:59")), CoreMatchers.is(0));
+    assertThat(beforeMidnight.equals(ExtendedLocalTime.of("23:59:59")), CoreMatchers.is(true));
 
   }
 }

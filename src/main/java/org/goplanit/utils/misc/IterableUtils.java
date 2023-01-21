@@ -5,6 +5,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
+import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
 
@@ -13,6 +14,16 @@ import java.util.stream.StreamSupport;
  * @author markr
  */
 public class IterableUtils {
+
+  /**
+   * As non-parallel stream
+   *
+   * @param iterable iterable to stream
+   * @return stream
+   */
+  public static <T> Stream<T> asStream(Iterable<T> iterable) {
+    return StreamSupport.stream(iterable.spliterator(), false);
+  }
 
   /**
    * Get iterable from iterator
@@ -99,4 +110,5 @@ public class IterableUtils {
     }
     return theList;
   }
+
 }

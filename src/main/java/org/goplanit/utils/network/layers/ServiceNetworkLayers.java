@@ -1,7 +1,6 @@
 package org.goplanit.utils.network.layers;
 
-import org.goplanit.utils.network.layer.NetworkLayer;
-import org.goplanit.utils.network.layer.ServiceNetworkLayer;
+import org.goplanit.utils.network.layer.RoutedServiceLayer;
 
 /**
  * interface to manage service network layers, i.e., layers that contain service networks on top of other network layers
@@ -9,7 +8,7 @@ import org.goplanit.utils.network.layer.ServiceNetworkLayer;
  * @author markr
  *
  */
-public interface ServiceNetworkLayers extends TopologicalLayers<ServiceNetworkLayer> {
+public interface ServiceNetworkLayers extends TopologicalLayers<RoutedServiceLayer> {
     
   /**
    * {@inheritDoc}

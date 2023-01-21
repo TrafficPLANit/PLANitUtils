@@ -32,6 +32,9 @@ public interface ServiceNodes extends ManagedGraphEntities<ServiceNode> {
   }
 
   public default boolean hasServiceNode(ServiceNode serviceNode){
+    if(serviceNode == null){
+      return false;
+    }
     return hasServiceNode(serviceNode.getId());
   }
 

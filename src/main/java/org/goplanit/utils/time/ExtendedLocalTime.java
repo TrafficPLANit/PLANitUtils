@@ -11,10 +11,10 @@ import java.util.logging.Logger;
  * Simple extension to Local Time to allow for additional time beyond midnight within a single time entity, e.g. 25:01:01 (HH:mm:ss).
  * <p>
  *   This class does not support nano seconds and only allows for time to be expanded up to hour 47, i.e., not beyond another midnight.
- *   Also we only support strings to be parsed and outputed of the form HH:mm:ss, to keep things simple
+ *   Also we only support strings to be parsed and output of the form HH:mm:ss, to keep things simple
  * </p>
  */
-public class ExtendedLocalTime {
+public class ExtendedLocalTime implements Comparable<ExtendedLocalTime>{
 
   /** Logger to use */
   private static final Logger LOGGER = Logger.getLogger(ExtendedLocalTime.class.getCanonicalName());
@@ -34,6 +34,15 @@ public class ExtendedLocalTime {
     this.beyondMidnight = beyondMidnight;
   }
 
+  /**
+   * Verify if nanos are valid, i.e., within 48h and not negative
+   *
+   * @param nanos to verify
+   * @return true when valid, false otherwise
+   */
+  public static boolean isNanosValid(long nanos){
+    return nanos <= (LocalTime.MAX.toNanoOfDay() * 2)+1 && nanos >= 0;
+  }
 
   /**
    * Create extended local time from regular local time
@@ -41,6 +50,25 @@ public class ExtendedLocalTime {
    */
   public static ExtendedLocalTime of(LocalTime localtime){
     return new ExtendedLocalTime(localtime, null);
+  }
+
+  /**
+   * Create from nanos, logs warning and returns null if not valid
+   *
+   * @param nanos to use
+   * @return created extended local time
+   */
+  public static ExtendedLocalTime of(long nanos){
+    if(!isNanosValid(nanos)){
+      LOGGER.warning("Cannot create extended local time beyond 48h or with negative value");
+      return null;
+    }
+
+    if(nanos > LocalTime.MAX.toNanoOfDay()){
+      return ofBeyondMidnight(LocalTime.ofNanoOfDay(nanos - (LocalTime.MAX.toNanoOfDay()+1)));
+    }
+
+    return of(LocalTime.ofNanoOfDay(nanos));
   }
 
   /**
@@ -117,43 +145,65 @@ public class ExtendedLocalTime {
   }
 
   /**
-   * subtract other from this and return newly created extended time reflecting the new time. Once cannot subtract to invalid time, e.g.
+   * verify if other time occurs before this time
+   *
+   * @param other to compare to
+   * @return true when before, false otherwise
+   */
+  public boolean isBefore(ExtendedLocalTime other){
+    return compareTo(other) < 0;
+  }
+
+  /**
+   * verify if other time occurs before this time
+   *
+   * @param other to compare to
+   * @return true when before, false otherwise
+   */
+  public boolean isAfter(ExtendedLocalTime other){
+    return compareTo(other) > 0;
+  }
+
+  /**
+   * subtract other from this and return newly created extended time reflecting the new time. One cannot subtract to invalid time, e.g.
    * negative time is not allowed, so this time must be larger than other
    *
    * @param other to subtract
    * @return newly created time, null if invalid
    */
   public ExtendedLocalTime minus(final ExtendedLocalTime other){
-    boolean invalid = false;
-    if(other.exceedsSingleDay()){
-      invalid = !this.exceedsSingleDay() || other.beyondMidnight.isAfter(this.beyondMidnight);
+    long totalNanos = this.toNanoOfTime() - other.toNanoOfTime();
+    if(isNanosValid(totalNanos)){
+      return of(totalNanos);
     }else{
-      invalid = other.beforeMidnight.isAfter(this.beforeMidnight);
-    }
-
-    if(invalid){
-      LOGGER.severe(String.format("Provided reference time (%s) exceeds current time (%s), unable to subtract", this, other));
+      LOGGER.severe("Subtracting two local extended times would result in negative time, not allowed");
       return null;
     }
+  }
 
-    ExtendedLocalTime createdExtendedLocaltime = null;
-    if(!other.exceedsSingleDay()){
-      if(!this.exceedsSingleDay()) {
-        // all before midnight
-        createdExtendedLocaltime = of(this.beforeMidnight.minusNanos(other.beforeMidnight.toNanoOfDay()));
-      }else if(this.beyondMidnight.isAfter(other.asLocalTimeBeforeMidnight())){
-        // remain in beyond midnight part for this
-        createdExtendedLocaltime = of(this.beyondMidnight.minusNanos(other.beforeMidnight.toNanoOfDay()));
-      }else{
-        // to be subtracted from before midnight after removal of everything beyond midnight from this
-        var toBeSubstracted = other.beforeMidnight.minusNanos(this.beyondMidnight.toNanoOfDay());
-        createdExtendedLocaltime = of(this.beforeMidnight.minusNanos(toBeSubstracted.toNanoOfDay() - 1));
-      }
+  /**
+   * add other to this and return newly created extended time reflecting the new time. One cannot add to invalid time, e.g.,
+   * negative time is not allowed, so this time must be larger than other
+   *
+   * @param other to subtract
+   * @return newly created time, null if invalid
+   */
+  public ExtendedLocalTime plus(final ExtendedLocalTime other){
+    long totalNanos = this.toNanoOfTime() + other.toNanoOfTime();
+    if(isNanosValid(totalNanos)){
+      return of(totalNanos);
     }else{
-      // both beyond midnight, so before midnight can be remove
-      createdExtendedLocaltime = of(this.beyondMidnight.minusNanos(other.beyondMidnight.toNanoOfDay()));
+      LOGGER.severe("Adding two local extended times would exceed 48 hours, not allowed");
+      return null;
     }
-    return createdExtendedLocaltime;
+  }
+
+  /** get nanos of this extended time
+   *
+   * @return nanos
+   */
+  public long toNanoOfTime(){
+    return this.beforeMidnight.toNanoOfDay() + (exceedsSingleDay() ? this.beyondMidnight.toNanoOfDay()+1 : 0);
   }
 
   /**
@@ -194,5 +244,18 @@ public class ExtendedLocalTime {
         this.beforeMidnight.equals(other.beforeMidnight) &&
             /* ... either both after midnight is also the same, or they both do not have an after midnight part */
             ( (this.exceedsSingleDay() && this.beyondMidnight.equals(other.beyondMidnight)) || !other.exceedsSingleDay());
+  }
+
+  /**
+   *  When before 0 value -1, when after value 1, otherwise 0
+   */
+  @Override
+  public int compareTo(ExtendedLocalTime o) {
+    if( this.equals(o)) {
+      return 0;
+    }
+
+    long diff = toNanoOfTime() - o.toNanoOfTime();
+    return diff<0 ? -1 : 1;
   }
 }

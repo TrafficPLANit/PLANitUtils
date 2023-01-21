@@ -1,9 +1,7 @@
 package org.goplanit.utils.service.routed;
 
-import org.goplanit.utils.id.IdGroupingToken;
 import org.goplanit.utils.id.ManagedIdEntityFactory;
-import org.goplanit.utils.id.ManagedIdEntityFactoryImpl;
-import org.goplanit.utils.network.layer.ServiceNetworkLayer;
+import org.goplanit.utils.network.layer.RoutedServiceLayer;
 
 /**
  * Factory for creating routed services layer instances (on container)
@@ -18,6 +16,6 @@ public interface RoutedServicesLayerFactory extends ManagedIdEntityFactory<Route
    * @param parentLayer the parent layer these routed services are built upon
    * @return created instance
    */
-  public abstract RoutedServicesLayer registerNew(final ServiceNetworkLayer parentLayer);
+  public abstract RoutedServicesLayer registerNew(final RoutedServiceLayer parentLayer);
 
 }

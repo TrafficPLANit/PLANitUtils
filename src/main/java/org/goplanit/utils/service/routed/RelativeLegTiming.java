@@ -37,4 +37,13 @@ public interface RelativeLegTiming extends Cloneable {
    * @return dwell time
    */
   public abstract LocalTime getDwellTime();
+
+  /**
+   * Verify if a parent leg segment is registered for this timing
+   *
+   * @return true when present, false otherwise
+   */
+  public default boolean hasParentLegSegment(){
+    return getParentLegSegment() != null;
+  }
 }

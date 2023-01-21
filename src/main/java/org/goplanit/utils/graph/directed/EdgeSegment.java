@@ -80,6 +80,15 @@ public interface EdgeSegment extends Serializable, GraphEntity {
    * @return parentEdge
    */
   public abstract DirectedEdge getParent();
+
+  /**
+   * Verify if segment has parent set
+   *
+   * @return true if present, false otherwise
+   */
+  public default boolean hasParent(){
+    return getParent() != null;
+  }
   
   /**
    * remove the parent edge from this edge segment
@@ -199,4 +208,5 @@ public interface EdgeSegment extends Serializable, GraphEntity {
   public default boolean hasGeometry(){
     return getParent().hasGeometry();
   }
+
 }

@@ -3,6 +3,8 @@ package org.goplanit.utils.service.routed;
 import org.goplanit.utils.id.*;
 import org.goplanit.utils.time.ExtendedLocalTime;
 
+import java.time.LocalTime;
+
 /**
  * A representation of a departure within a routed trip
  * 
@@ -21,8 +23,29 @@ public interface RoutedTripDeparture extends ExternalIdAble, ManagedId {
   public Class<RoutedTripDeparture> getIdClass();
 
   /**
+   * Departure time of the trip this instance is stored on
+   *
+   * @return departure time
+   */
+  public abstract ExtendedLocalTime getDepartureTime();
+
+  /**
    * {@inheritDoc}
    */
   @Override
-  public RoutedTripDeparture clone();
+  public abstract RoutedTripDeparture clone();
+
+  /**
+   * Depart later by the given amount
+   *
+   * @param departureTimeIncrease to apply
+   */
+  public abstract void departLater(LocalTime departureTimeIncrease);
+
+  /**
+   * Depart earlier by the given amount
+   *
+   * @param departureTimeDecrease to apply
+   */
+  public abstract void departEarlier(LocalTime departureTimeDecrease);
 }
