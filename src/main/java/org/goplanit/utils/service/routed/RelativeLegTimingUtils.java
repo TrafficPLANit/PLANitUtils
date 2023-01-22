@@ -77,14 +77,15 @@ public class RelativeLegTimingUtils {
    */
   public static List<Integer> findLegTimingsNotMappedToServiceNetwork(
           RoutedTripSchedule routedTripSchedule, RoutedServicesLayer routedServicesLayer) {
-    // find first valid service node from given reference point (including reference point check which is assumed valid)
+    // find first valid service node from given reference point (including reference point check which is assumed valid) or otherwise index beyond last index
     int currValidLegIndex = findNextTimingLegMappedToServiceNetwork(0, routedTripSchedule, routedServicesLayer);
-    if(!routedTripSchedule.isValidRelativeLegTimingsIndex(currValidLegIndex)){
-      return IntStream.range(0, routedTripSchedule.getLastRelativeLegTimingIndex()).boxed().collect(Collectors.toList());
+    // initialise with first invalid part
+    List<Integer> toBeRemovedLegSegments = IntStream.range(0, currValidLegIndex).boxed().collect(Collectors.toList());
+    if(toBeRemovedLegSegments.size() == routedTripSchedule.getRelativeLegTimingsSize()){
+      return toBeRemovedLegSegments; // all invalid
     }
 
     /* at least some portion remains, remove portions in between/front/back where needed */
-    List<Integer> toBeRemovedLegSegments = null;
     int nextValidLegIndex = -1;
     final int maxLegIndex = routedTripSchedule.getRelativeLegTimingsSize();
     do{
@@ -95,7 +96,7 @@ public class RelativeLegTimingUtils {
       /* update to be removed leg segments based on invalid leg timings found in between valid ones */
       if(currValidLegIndex+1 != nextValidLegIndex) {
         var toBeRemovedLegSegmentPartialList =
-                IntStream.range(currValidLegIndex + 1, Math.min(maxLegIndex,nextValidLegIndex - 1)).boxed().collect(Collectors.toList());
+                IntStream.range(currValidLegIndex + 1, Math.min(maxLegIndex,nextValidLegIndex)).boxed().collect(Collectors.toList());
         if (toBeRemovedLegSegments == null) {
           toBeRemovedLegSegments = toBeRemovedLegSegmentPartialList;
         } else {

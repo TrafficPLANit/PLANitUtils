@@ -38,7 +38,7 @@ public abstract class ManagedIdEntitiesImpl<E extends ManagedId> extends LongMap
    * @param valueToKey the mapping from key to value of the graph entity
    */
   protected ManagedIdEntitiesImpl(final Function<E, Long> valueToKey) {
-    super(new TreeMap<Long, E>(), valueToKey);
+    super(new TreeMap<>(), valueToKey);
     this.managedIdClass = null;
   }  
 

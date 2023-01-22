@@ -114,7 +114,7 @@ public class MapWrapperImpl<K, V> implements MapWrapper<K, V>{
   public MapWrapperImpl(final MapWrapperImpl<K,V> other) {
     this.valueToKey = other.valueToKey;
     
-    Map<K, V> newMap = createEmptyInstance(theMap);    
+    Map<K, V> newMap = createEmptyInstance(other.theMap);
     if(newMap != null) {
       newMap.putAll(other.getMap());
       this.theMap = newMap;
