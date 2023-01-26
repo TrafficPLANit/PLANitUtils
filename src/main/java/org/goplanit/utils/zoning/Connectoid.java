@@ -212,5 +212,16 @@ public interface Connectoid extends ExternalIdAble, ManagedId, Iterable<Zone> {
     return getNumberOfAccessZones()>0;
   }
 
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public abstract Connectoid clone();
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public abstract Connectoid deepClone();
 
 }

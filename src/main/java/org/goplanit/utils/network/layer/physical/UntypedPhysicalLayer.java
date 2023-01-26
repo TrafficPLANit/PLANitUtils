@@ -36,6 +36,18 @@ public interface UntypedPhysicalLayer<N extends Node, L extends Link, LS extends
   public abstract GraphEntities<N> getNodes();
 
   /**
+   * {@inheritDoc}
+   */
+  @Override
+  public abstract UntypedPhysicalLayer clone();
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public abstract UntypedPhysicalLayer deepClone();
+
+  /**
    * Number of nodes
    * 
    * @return number of nodes

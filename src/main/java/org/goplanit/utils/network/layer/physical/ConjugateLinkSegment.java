@@ -53,6 +53,17 @@ public interface ConjugateLinkSegment extends ConjugateEdgeSegment {
   public default Pair<? extends LinkSegment,? extends LinkSegment> getOriginalAdjcentEdgeSegments(){
     return (Pair<? extends LinkSegment, ? extends LinkSegment>) ConjugateEdgeSegment.super.getOriginalAdjcentEdgeSegments();
   }
-  
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public abstract ConjugateLinkSegment clone();
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public abstract ConjugateLinkSegment deepClone();
 
 }

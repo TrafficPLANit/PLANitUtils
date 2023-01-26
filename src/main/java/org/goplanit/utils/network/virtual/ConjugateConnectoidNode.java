@@ -21,5 +21,16 @@ public interface ConjugateConnectoidNode extends ConjugateDirectedVertex {
   public default Class<? extends ConjugateConnectoidNode> getConjugateNodeIdClass(){
     return CONJUGATE_NODE_ID_CLASS;
   }
-       
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public abstract ConjugateConnectoidNode clone();
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public abstract ConjugateConnectoidNode deepClone();
 }

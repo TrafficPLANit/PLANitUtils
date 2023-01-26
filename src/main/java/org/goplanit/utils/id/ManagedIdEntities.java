@@ -32,11 +32,18 @@ public interface ManagedIdEntities<E extends ManagedId> extends LongMapWrapper<E
   public abstract void recreateIds(boolean resetManagedIdClass);  
     
   /**
-   * Force clone implementation
+   * Shallow clone implementation
    * 
    * @return clone of entities
    */
-  public abstract ManagedIdEntities<E> clone();  
+  public abstract ManagedIdEntities<E> clone();
+
+  /**
+   * Deep clone implementation
+   *
+   * @return deep copy of entities
+   */
+  public abstract ManagedIdEntities<E> deepClone();
     
   /** Verify if present
    * 

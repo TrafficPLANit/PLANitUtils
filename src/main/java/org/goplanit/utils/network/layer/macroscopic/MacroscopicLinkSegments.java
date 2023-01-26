@@ -21,13 +21,19 @@ public interface MacroscopicLinkSegments extends ManagedGraphEntities<Macroscopi
    * {@inheritDoc}
    */
   @Override
-  public abstract MacroscopicLinkSegmentFactory getFactory();  
-  
+  public abstract MacroscopicLinkSegmentFactory getFactory();
+
   /**
    * {@inheritDoc}
    */
   @Override
-  public abstract MacroscopicLinkSegments clone();    
+  public abstract MacroscopicLinkSegments clone();
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public abstract MacroscopicLinkSegments deepClone();
   
   /** Create a raw array of all free flow travel times of the registered macroscopic link segments where the index in the array corresponds
    * to the link segment id (not id). 

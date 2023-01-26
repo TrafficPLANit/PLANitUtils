@@ -78,4 +78,16 @@ public interface RoutedServicesLayer extends ManagedId, ExternalIdAble, Iterable
    * @return routed services layer modifier
    */
   public abstract RoutedServicesLayerModifier getLayerModifier();
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public abstract RoutedServicesLayer clone();
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public abstract RoutedServicesLayer deepClone();
 }

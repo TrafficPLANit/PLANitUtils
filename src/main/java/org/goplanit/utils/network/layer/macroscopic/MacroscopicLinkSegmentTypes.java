@@ -51,4 +51,10 @@ public interface MacroscopicLinkSegmentTypes extends ManagedIdEntities<Macroscop
   @Override
   public abstract MacroscopicLinkSegmentTypes clone();
 
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public abstract MacroscopicLinkSegmentTypes deepClone();
+
 }

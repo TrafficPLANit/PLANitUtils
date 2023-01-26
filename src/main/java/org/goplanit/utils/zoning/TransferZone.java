@@ -122,13 +122,18 @@ public interface TransferZone extends Zone {
    * remove this transfer zone from all groups it is registered on (and also update the group references
    */
   public abstract void removeFromAllTransferZoneGroups();
-  
-  
+
   /**
    * {@inheritDoc}
    */
   @Override
   public abstract TransferZone clone();
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public abstract TransferZone deepClone();
   
   /**
    * {@inheritDoc}

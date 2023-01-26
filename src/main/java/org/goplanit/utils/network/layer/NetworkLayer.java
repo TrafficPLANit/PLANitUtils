@@ -22,9 +22,21 @@ public interface NetworkLayer extends ExternalIdAble, ManagedId {
    * {@inheritDoc}
    */
   @Override
-  default Class<NetworkLayer> getIdClass() {
+  public default Class<NetworkLayer> getIdClass() {
     return NETWORK_LAYER_ID_CLASS;
   }
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public abstract NetworkLayer clone();
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public abstract NetworkLayer deepClone();
   
   /**
    * create a string that can be used to prefix log statements for this layer to - in a unified way - identify this statement came from a particular layer

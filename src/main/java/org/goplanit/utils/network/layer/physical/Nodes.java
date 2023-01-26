@@ -20,10 +20,16 @@ public interface Nodes extends ManagedGraphEntities<Node> {
    */
   @Override
   public abstract NodeFactory getFactory();
-  
+
   /**
    * {@inheritDoc}
    */
   @Override
   public abstract Nodes clone();
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public abstract Nodes deepClone();
 }

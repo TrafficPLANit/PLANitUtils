@@ -21,4 +21,16 @@ public interface Connectoids<T extends Connectoid> extends ManagedIdEntities<T>,
    * @return newly created map of each access zone's its connectoids
    */
   public abstract Map<Zone, Set<T>> createIndexByAccessZone();
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public abstract Connectoids clone();
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public abstract Connectoids deepClone();
 }

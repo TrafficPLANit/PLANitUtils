@@ -50,4 +50,14 @@ public interface TimePeriod extends ExternalIdAble{
     return getDurationSeconds()/3600.0;
   }
 
+  /**
+   * {@inheritDoc}
+   */
+  public abstract TimePeriod clone();
+
+  /**
+   * {@inheritDoc}
+   */
+  public abstract TimePeriod deepClone();
+
 }

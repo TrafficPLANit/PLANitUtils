@@ -29,4 +29,16 @@ public interface RoutedTrips<T extends RoutedTrip> extends ManagedIdEntities<T>,
     return serviceNodes;
   }
 
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public abstract RoutedTrips clone();
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public abstract RoutedTrips deepClone();
+
 }

@@ -97,5 +97,16 @@ public interface MacroscopicLink extends Link {
 
     return segment;
   }
-  
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public abstract MacroscopicLink clone();
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public abstract MacroscopicLink deepClone();
 }

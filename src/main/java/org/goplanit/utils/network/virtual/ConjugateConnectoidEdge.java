@@ -4,6 +4,7 @@ import java.util.Collection;
 
 import org.goplanit.utils.graph.directed.ConjugateDirectedEdge;
 import org.goplanit.utils.graph.directed.EdgeSegment;
+import org.goplanit.utils.network.layers.UntypedPhysicalNetworkLayers;
 
 /**
  * the connecting component between centroid and a first physical node in the network.
@@ -13,6 +14,18 @@ import org.goplanit.utils.graph.directed.EdgeSegment;
  *
  */
 public interface ConjugateConnectoidEdge extends ConjugateDirectedEdge {
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public abstract ConjugateConnectoidEdge clone();
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public abstract ConjugateConnectoidEdge deepClone();
  
   /** additional id class for generating conjugate connectoid edge ids */
   public static Class<ConjugateConnectoidEdge> CONJUGATE_CONNECTOID_EDGE_ID_CLASS = ConjugateConnectoidEdge.class;

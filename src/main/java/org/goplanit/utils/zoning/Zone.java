@@ -82,12 +82,18 @@ public interface Zone extends ExternalIdAble, ManagedId {
    * @return name of the zone
    */
   public abstract String getName();
-  
+
   /**
    * {@inheritDoc}
    */
   @Override
   public abstract Zone clone();
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public abstract Zone deepClone();
   
   /**
    * {@inheritDoc}

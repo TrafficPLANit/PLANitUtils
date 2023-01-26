@@ -107,11 +107,16 @@ public interface EdgeSegment extends Serializable, GraphEntity {
   public abstract boolean validate(); 
 
   /**
-   * Clone the edge segment
-   * 
-   * @return copy of this instance
+   * {@inheritDoc}
    */
+  @Override
   public abstract EdgeSegment clone();
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public abstract EdgeSegment deepClone();
 
   /**
    * Set the parent edge

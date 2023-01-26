@@ -23,6 +23,18 @@ public interface ServiceLegSegment extends EdgeSegment {
   public ServiceLeg getParent();
 
   /**
+   * {@inheritDoc}
+   */
+  @Override
+  public abstract ServiceLegSegment clone();
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public abstract ServiceLegSegment deepClone();
+
+  /**
    * Get the segment's upstream service node
    *
    * @return upstream vertex

@@ -31,4 +31,16 @@ public interface RoutedTrip extends ExternalIdAble, ManagedId {
    */
   public abstract Set<ServiceNode> getUsedServiceNodes();
 
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public abstract RoutedTrip clone();
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public abstract RoutedTrip deepClone();
+
 }

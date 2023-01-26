@@ -3,6 +3,7 @@ package org.goplanit.utils.graph;
 import org.goplanit.utils.graph.directed.DirectedEdge;
 import org.goplanit.utils.graph.directed.DirectedVertex;
 import org.goplanit.utils.graph.directed.EdgeSegment;
+import org.goplanit.utils.id.IdAble;
 
 /**
  * Interface for a directed graph
@@ -36,6 +37,17 @@ public interface UntypedDirectedGraph<V extends DirectedVertex, E extends Direct
       isValid = isValid && edgeSegment.validate();
     }
     return isValid;
-  }  
+  }
 
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public abstract UntypedDirectedGraph<V, E, ES> clone();
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public abstract UntypedDirectedGraph<V, E, ES> deepClone();
 }

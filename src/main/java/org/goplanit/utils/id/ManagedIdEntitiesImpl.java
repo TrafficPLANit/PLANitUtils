@@ -46,10 +46,16 @@ public abstract class ManagedIdEntitiesImpl<E extends ManagedId> extends LongMap
    * copy constructor
    * 
    * @param other to copy
+   * @param deepCopy when true, create a deep copy, shallow copy otherwise
    */
-  protected ManagedIdEntitiesImpl(ManagedIdEntitiesImpl<E> other) {
+  protected ManagedIdEntitiesImpl(ManagedIdEntitiesImpl<E> other, boolean deepCopy) {
     super(other);
     this.managedIdClass = other.managedIdClass;
+
+    if(deepCopy){
+      clear();
+      other.forEach(v -> this.register((E) v.deepClone()));
+    }
   }
 
   /**
@@ -107,5 +113,11 @@ public abstract class ManagedIdEntitiesImpl<E extends ManagedId> extends LongMap
    */
   @Override
   public abstract ManagedIdEntitiesImpl<E> clone();
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public abstract ManagedIdEntitiesImpl<E> deepClone();
   
 }

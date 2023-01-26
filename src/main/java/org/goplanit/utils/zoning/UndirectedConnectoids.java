@@ -19,5 +19,11 @@ public interface UndirectedConnectoids extends Connectoids<UndirectedConnectoid>
    * {@inheritDoc}
    */
   @Override
-  public abstract UndirectedConnectoids clone(); 
+  public abstract UndirectedConnectoids clone();
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public abstract UndirectedConnectoids deepClone();
 }

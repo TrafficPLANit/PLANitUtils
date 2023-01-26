@@ -34,6 +34,14 @@ public interface IdAble extends Comparable<IdAble>, Cloneable {
   public abstract IdAble clone();
 
   /**
+   * An id entity should always support a deep copy, i.e., all "owned" members will be deep copied when a clone
+   * of this instance is created via this call. To be used with caution if not called by managed id container related code
+   *
+   * @return deep copy of entity
+   */
+  public abstract IdAble deepClone();
+
+  /**
    * equals based on id
    * 
    * @param o object to compare id to

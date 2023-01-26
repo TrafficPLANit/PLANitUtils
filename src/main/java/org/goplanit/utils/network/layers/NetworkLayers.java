@@ -79,11 +79,17 @@ public interface NetworkLayers<T extends NetworkLayer> extends ManagedIdEntities
     this.forEach( l -> modes.addAll(l.getSupportedModes()));
     return modes;
   }
-  
+
   /**
-   * clone container
+   * {@inheritDoc}
    */
   @Override
   public abstract NetworkLayers<T> clone();
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public abstract NetworkLayers<T> deepClone();
 
 }

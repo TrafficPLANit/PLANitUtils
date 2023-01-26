@@ -16,10 +16,15 @@ public interface ServiceNetworkLayers extends TopologicalLayers<RoutedServiceLay
   @Override
   public abstract ServiceNetworkLayerFactory getFactory();
 
-
   /**
-   * clone container
+   * {@inheritDoc}
    */
   @Override
-  public abstract ServiceNetworkLayers clone(); 
+  public abstract ServiceNetworkLayers clone();
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public abstract ServiceNetworkLayers deepClone();
 }

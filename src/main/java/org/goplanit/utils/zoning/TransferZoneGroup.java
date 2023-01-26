@@ -58,13 +58,19 @@ public interface TransferZoneGroup extends ExternalIdAble, ManagedId, Iterable<T
    * 
    * @return registered transfer zones
    */
-  public abstract Collection<TransferZone> getTransferZones();  
-  
+  public abstract Collection<TransferZone> getTransferZones();
+
   /**
    * {@inheritDoc}
    */
   @Override
   public abstract TransferZoneGroup clone();
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public abstract TransferZoneGroup deepClone();
   
   /** Collect first transfer zone that would be returned by the iterator
    * @return transfer zone

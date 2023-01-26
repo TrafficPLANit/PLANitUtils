@@ -1,6 +1,7 @@
 package org.goplanit.utils.network.layer.service;
 
 import org.goplanit.utils.graph.ManagedGraphEntities;
+import org.goplanit.utils.network.layer.physical.UntypedPhysicalLayer;
 
 /** Container around service legs with factory access 
  * 
@@ -19,12 +20,18 @@ public interface ServiceLegs extends ManagedGraphEntities<ServiceLeg> {
    */
   @Override
   public abstract ServiceLegFactory getFactory();
-  
+
   /**
    * {@inheritDoc}
    */
   @Override
-  public abstract ServiceLegs clone();   
+  public abstract ServiceLegs clone();
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public abstract ServiceLegs deepClone();
 
   /**
    * verify if service leg is present

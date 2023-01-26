@@ -5,6 +5,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.util.Map;
 
 /**
  * Some utility methods to use serialization to allow for deep copy cloning without knowing anything about the objects type
@@ -46,12 +47,24 @@ public class CloneUtils {
    * @return cloned version
    */
   @SuppressWarnings("unchecked")
-  public static <T> T clone(T object) {
+  public static <T> T deepClone(T object) {
       try {
           return (T)deSerialize(serialize(object));
       } catch (Exception e) {
           throw new RuntimeException(e);
       }
   }
-  
+
+  /** clone object values (not keys) in source map by using the serialise/deserialise methods in this class. This is a costly operation
+   *
+   * @param <K> key type
+   * @param <V> object value type
+   * @param sourceMap to clone
+   * @param destinationMap to populate
+   * @return destination map
+   */
+  public static <K,V> Map<K,V> deepCloneFromTo(Map<K,V> sourceMap, Map<K,V> destinationMap ) {
+    sourceMap.entrySet().forEach(entry -> destinationMap.put(entry.getKey(), CloneUtils.deepClone(entry.getValue())));
+    return destinationMap;
+  }
 }

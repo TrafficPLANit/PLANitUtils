@@ -93,4 +93,15 @@ public interface RoutedTripFrequency extends RoutedTrip, Iterable<ServiceLegSegm
     return getLegSegment(getNumberOfLegSegments() - 1);
   }
 
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public abstract RoutedTripFrequency clone();
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public abstract RoutedTripFrequency deepClone();
 }

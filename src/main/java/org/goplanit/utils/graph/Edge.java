@@ -126,11 +126,18 @@ public interface Edge extends Serializable, GraphEntity {
   public abstract boolean replace(final Vertex vertextoReplace, final Vertex vertexToReplaceWith);
   
   /**
-   * Clone the edge as is, all shared members are shallow copied, fully owned members are deep copied
+   * Shallow copy
    * 
    * @return copy of this edge
    */
   public abstract Edge clone();
+
+  /**
+   * Deep copy, non-owned members are reference copied
+   *
+   * @return copy of this edge
+   */
+  public abstract Edge deepClone();
   
   /** validate the contents of this edge 
    * @return true when valid, false otherwise

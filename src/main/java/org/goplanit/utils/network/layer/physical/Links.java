@@ -29,6 +29,12 @@ public interface Links<L extends Link> extends ManagedGraphEntities<L> {
   public abstract Links clone();
 
   /**
+   * {@inheritDoc}
+   */
+  @Override
+  public abstract Links deepClone();
+
+  /**
    * verify if link is present
    * 
    * @param id to check

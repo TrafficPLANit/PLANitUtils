@@ -14,7 +14,19 @@ import org.goplanit.utils.network.virtual.ConjugateVirtualNetwork;
  * @author markr
  */
 public interface MacroscopicNetworkLayer extends UntypedPhysicalLayer<Node, MacroscopicLink, MacroscopicLinkSegment> {
-  
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public abstract MacroscopicNetworkLayer clone();
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public abstract MacroscopicNetworkLayer deepClone();
+
   /**
    * Collect the links
    *

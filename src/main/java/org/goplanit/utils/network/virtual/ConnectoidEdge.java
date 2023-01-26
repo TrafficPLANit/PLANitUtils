@@ -23,7 +23,19 @@ public interface ConnectoidEdge extends DirectedEdge{
    */
   public default Class<ConnectoidEdge> getConnectoidEdgeIdClass(){
     return CONNECTOID_EDGE_ID_CLASS;
-  }    
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public abstract ConnectoidEdge clone();
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public abstract ConnectoidEdge deepClone();
 
   /**
    * Register connectoidSegment.

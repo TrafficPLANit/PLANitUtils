@@ -114,5 +114,16 @@ public interface MacroscopicLinkSegment extends LinkSegment, PcuCapacitated {
   public default double getCapacityOrDefaultPcuHLane() {
     return getLinkSegmentType().getExplicitCapacityPerLaneOrDefault();
   }
-  
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public abstract MacroscopicLinkSegment clone();
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public abstract MacroscopicLinkSegment deepClone();
 }

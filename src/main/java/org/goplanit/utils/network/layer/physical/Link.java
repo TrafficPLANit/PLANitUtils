@@ -114,5 +114,17 @@ public interface Link extends DirectedEdge {
   public default Collection<? extends LinkSegment> getLinkSegments(){
     return (Collection<LinkSegment>) getEdgeSegments();
   }
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public abstract Link clone();
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public abstract Link deepClone();
   
 }

@@ -88,11 +88,18 @@ public interface AccessGroupProperties extends Cloneable {
   public abstract Set<Mode> getAccessModes();
   
   /**
-   * Clone this instance
+   * Shallow clone this instance
    * 
-   * @return copy of this instance
+   * @return shallow copy of this instance
    */
   public abstract AccessGroupProperties clone();
+
+  /**
+   * Deep clone this instance
+   *
+   * @return deep copy of this instance
+   */
+  public abstract AccessGroupProperties deepClone();
 
   /** Remove access mode 
    * 

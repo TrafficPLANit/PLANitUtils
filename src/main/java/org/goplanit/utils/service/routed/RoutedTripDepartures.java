@@ -22,6 +22,12 @@ public interface RoutedTripDepartures extends ManagedIdEntities<RoutedTripDepart
    * {@inheritDoc}
    */
   @Override
+  public abstract RoutedTripDepartures deepClone();
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
   public abstract RoutedTripDepartureFactory getFactory();
 
   /**

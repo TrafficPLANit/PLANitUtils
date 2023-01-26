@@ -69,6 +69,18 @@ public interface UntypedGraph<V extends Vertex, E extends Edge> extends ManagedI
     for(Vertex vertex : getVertices()) {
       vertex.transformPosition(transformer);
     }
-  } 
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public abstract UntypedGraph<V, E> clone();
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public abstract UntypedGraph<V, E> deepClone();
   
 }

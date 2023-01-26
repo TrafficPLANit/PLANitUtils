@@ -11,8 +11,14 @@ import org.goplanit.utils.network.layer.TopologicalLayer;
 public interface TopologicalLayers<T extends TopologicalLayer> extends NetworkLayers<T> {
 
   /**
-   * clone container
+   * {@inheritDoc}
    */
   @Override
   public abstract TopologicalLayers<T> clone();
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public abstract TopologicalLayers<T> deepClone();
 }

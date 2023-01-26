@@ -8,7 +8,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.logging.Logger;
 
 /**
- * Simple extension to Local Time to allow for additional time beyond midnight within a single time entity, e.g. 25:01:01 (HH:mm:ss).
+ * Simple immutable extension to Local Time to allow for additional time beyond midnight within a single time entity, e.g. 25:01:01 (HH:mm:ss).
  * <p>
  *   This class does not support nano seconds and only allows for time to be expanded up to hour 47, i.e., not beyond another midnight.
  *   Also we only support strings to be parsed and output of the form HH:mm:ss, to keep things simple

@@ -9,11 +9,14 @@ package org.goplanit.utils.service.routed;
 public interface RoutedServiceTripInfo extends Cloneable {
 
   /**
-   * Be able to clone a RoutedServicetripInfo instance
-   * 
-   * @return shallow copy
+   * {@inheritDoc}
    */
   public abstract RoutedServiceTripInfo clone();
+
+  /**
+   * {@inheritDoc}
+   */
+  public abstract RoutedServiceTripInfo deepClone();
 
   /**
    * Trips for a service can be frequency or schedule based, or have both. Via this method we collect only the frequency based trips

@@ -9,7 +9,7 @@ import java.util.logging.Logger;
  * 
  * @author markr
  */
-public interface VirtualNetwork {
+public interface VirtualNetwork extends Cloneable{
 
   public static final Logger LOGGER = Logger.getLogger(VirtualNetwork.class.getCanonicalName());
 
@@ -48,5 +48,15 @@ public interface VirtualNetwork {
    * @return conjugate version of this virtual network's edges/edgesgments
    */
   public abstract ConjugateVirtualNetwork createConjugate(IdGroupingToken idToken);
+
+  /**
+   * Perform shallow clone
+   */
+  public abstract VirtualNetwork clone();
+
+  /**
+   * Perform deep clone
+   */
+  public abstract VirtualNetwork deepClone();
 
 }

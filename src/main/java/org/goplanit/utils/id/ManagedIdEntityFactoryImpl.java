@@ -51,10 +51,23 @@ public abstract class ManagedIdEntityFactoryImpl<E extends ManagedId> implements
    * {@inheritDoc}
    */
   @Override
-  public E createUniqueCopyOf(ManagedId entityToCopy) {
+  public E createUniqueShallowCopyOf(ManagedId entityToCopy) {
     /* shallow copy as is */
     @SuppressWarnings("unchecked")
     E copy = (E) entityToCopy.clone();
+    /* recreate id and register */
+    copy.recreateManagedIds(getIdGroupingToken());
+    return copy;
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public E createUniqueDeepCopyOf(ManagedId entityToCopy) {
+    /* deep copy as is */
+    @SuppressWarnings("unchecked")
+    E copy = (E) entityToCopy.deepClone();
     /* recreate id and register */
     copy.recreateManagedIds(getIdGroupingToken());
     return copy;

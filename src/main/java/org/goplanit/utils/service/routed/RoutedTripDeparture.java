@@ -36,6 +36,12 @@ public interface RoutedTripDeparture extends ExternalIdAble, ManagedId {
   public abstract RoutedTripDeparture clone();
 
   /**
+   * {@inheritDoc}
+   */
+  @Override
+  public abstract RoutedTripDeparture deepClone();
+
+  /**
    * Depart later by the given amount
    *
    * @param departureTimeIncrease to apply

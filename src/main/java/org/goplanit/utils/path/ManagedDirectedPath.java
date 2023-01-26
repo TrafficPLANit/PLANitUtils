@@ -23,6 +23,18 @@ public interface ManagedDirectedPath extends ExternalIdAble, ManagedId, SimpleDi
   @Override
   public default Class<ManagedDirectedPath> getIdClass() {
     return PATH_ID_CLASS;
-  }  
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public abstract ManagedDirectedPath clone();
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public abstract ManagedDirectedPath deepClone();
 
 }

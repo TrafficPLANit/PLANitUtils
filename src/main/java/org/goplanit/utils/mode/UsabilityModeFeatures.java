@@ -19,6 +19,18 @@ public interface UsabilityModeFeatures {
    * collect how this mode is used via this type, e.g. public, private, etc.
    * @return use of this type
    */
-  UseOfModeType getUseOfType();
+  public abstract UseOfModeType getUseOfType();
+
+  /**
+   * Shallow copy
+   * @return shallow copy of instance
+   */
+  public abstract UsabilityModeFeatures clone();
+
+  /**
+   * deep copy
+   * @return shallow copy of instance
+   */
+  public abstract UsabilityModeFeatures deepClone();
 
 }

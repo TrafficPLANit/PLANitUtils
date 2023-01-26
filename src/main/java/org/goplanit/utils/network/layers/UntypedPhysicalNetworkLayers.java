@@ -59,9 +59,15 @@ public interface UntypedPhysicalNetworkLayers<L extends UntypedPhysicalLayer<?,?
   }
 
   /**
-   * clone container
+   * {@inheritDoc}
    */
   @Override
-  public abstract UntypedPhysicalNetworkLayers<L> clone();  
+  public abstract UntypedPhysicalNetworkLayers<L> clone();
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public abstract UntypedPhysicalNetworkLayers<L> deepClone();
 
 }

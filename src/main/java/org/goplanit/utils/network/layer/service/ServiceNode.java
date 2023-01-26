@@ -16,6 +16,18 @@ import org.goplanit.utils.network.layer.physical.Node;
  *
  */
 public interface ServiceNode extends DirectedVertex {
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public abstract ServiceNode clone();
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public abstract ServiceNode deepClone();
      
   /**
    * Identical to {@link #getEdges()}

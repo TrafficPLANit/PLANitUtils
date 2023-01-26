@@ -56,6 +56,18 @@ public interface ConjugateDirectedEdge extends DirectedEdge {
    */  
   @Override
   public abstract ConjugateEdgeSegment getEdgeSegmentBa();
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public abstract ConjugateDirectedEdge clone();
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public abstract ConjugateDirectedEdge deepClone();
   
  
   /**

@@ -20,12 +20,18 @@ public interface ServiceNodes extends ManagedGraphEntities<ServiceNode> {
    */
   @Override
   public abstract ServiceNodeFactory getFactory();
-  
+
   /**
    * {@inheritDoc}
    */
   @Override
   public abstract ServiceNodes clone();
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public abstract ServiceNodes deepClone();
 
   public default boolean hasServiceNode(long serviceNodeId){
     return containsKey(serviceNodeId);

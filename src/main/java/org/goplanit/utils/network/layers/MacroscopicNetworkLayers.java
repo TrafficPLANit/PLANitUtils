@@ -1,6 +1,7 @@
 package org.goplanit.utils.network.layers;
 
 import org.goplanit.utils.network.layer.MacroscopicNetworkLayer;
+import org.goplanit.utils.network.layer.UntypedDirectedGraphLayer;
 
 /**
  * interface to manage macroscopic physical network layers, i.e., layers that contain a topologically meaningful representation in the form of nodes and links
@@ -14,11 +15,17 @@ public interface MacroscopicNetworkLayers extends UntypedPhysicalNetworkLayers<M
    * {@inheritDoc}
    */
   @Override
-  public abstract MacroscopicNetworkLayerFactory getFactory();   
-  
+  public abstract MacroscopicNetworkLayerFactory getFactory();
+
   /**
-   * clone container
+   * {@inheritDoc}
    */
   @Override
-  public abstract MacroscopicNetworkLayers clone(); 
+  public abstract MacroscopicNetworkLayers clone();
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public abstract MacroscopicNetworkLayers deepClone();
 }

@@ -28,4 +28,10 @@ public interface ConjugateLinks extends ManagedGraphEntities<ConjugateLink> {
   @Override
   public abstract ConjugateLinks clone();
 
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public abstract ConjugateLinks deepClone();
+
 }

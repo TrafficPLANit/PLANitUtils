@@ -10,10 +10,16 @@ import org.goplanit.utils.network.layer.UntypedDirectedGraphLayer;
  *
  */
 public interface UntypedDirectedGraphLayers<L extends UntypedDirectedGraphLayer<?,?,?>> extends TopologicalLayers<L> {
-  
+
   /**
-   * clone container
+   * {@inheritDoc}
    */
   @Override
   public abstract UntypedDirectedGraphLayers<L> clone();
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public abstract UntypedDirectedGraphLayers<L> deepClone();
 }

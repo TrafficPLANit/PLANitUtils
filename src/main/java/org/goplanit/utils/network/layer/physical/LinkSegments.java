@@ -21,10 +21,16 @@ public interface LinkSegments extends GraphEntities<LinkSegment>, ManagedIdEntit
    */
   @Override
   public abstract LinkSegmentFactory getFactory();
-  
+
   /**
    * {@inheritDoc}
    */
   @Override
-  public abstract LinkSegments clone();  
+  public abstract LinkSegments clone();
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public abstract LinkSegments deepClone();
 }

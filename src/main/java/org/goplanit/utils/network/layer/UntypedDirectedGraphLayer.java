@@ -15,7 +15,19 @@ import org.goplanit.utils.network.layer.modifier.UntypedDirectedGraphLayerModifi
  * @author markr
  */
 public interface UntypedDirectedGraphLayer<V extends DirectedVertex, E extends DirectedEdge, S extends EdgeSegment> extends TopologicalLayer {
-  
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public abstract UntypedDirectedGraphLayer clone();
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public abstract UntypedDirectedGraphLayer deepClone();
+
   /**
    * Collect the id grouping token used for all entities registered on the layer, i.e., this layer's specific identifier for generating ids unique and contiguous within this
    * layer 

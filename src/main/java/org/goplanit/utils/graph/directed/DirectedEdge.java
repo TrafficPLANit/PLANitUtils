@@ -80,7 +80,19 @@ public interface DirectedEdge extends Edge {
    * @param edgeSegmentToReplace the one to replace
    * @param edgeSegmentToReplaceWith the one to replace it with
    */
-  public abstract void replace(EdgeSegment edgeSegmentToReplace, EdgeSegment edgeSegmentToReplaceWith);  
+  public abstract void replace(EdgeSegment edgeSegmentToReplace, EdgeSegment edgeSegmentToReplaceWith);
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public abstract DirectedEdge clone();
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public abstract DirectedEdge deepClone();
   
   /**
    * Edge segment in the direction indicated

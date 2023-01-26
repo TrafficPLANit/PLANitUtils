@@ -22,4 +22,10 @@ public interface ConnectoidSegments extends GraphEntities<ConnectoidSegment>{
    */
   @Override
   public abstract ConnectoidSegments clone();
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public abstract ConnectoidSegments deepClone();
 }

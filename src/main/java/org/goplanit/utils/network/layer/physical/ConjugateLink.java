@@ -3,6 +3,7 @@ package org.goplanit.utils.network.layer.physical;
 import java.util.Collection;
 
 import org.goplanit.utils.graph.directed.ConjugateDirectedEdge;
+import org.goplanit.utils.network.layer.macroscopic.MacroscopicLinkSegment;
 
 /**
  * Conjugate link representing two adjacent directed edges in original network and connecting two conjugated nodes 
@@ -59,4 +60,16 @@ public interface ConjugateLink extends ConjugateDirectedEdge {
   public default <LS extends ConjugateLinkSegment> Collection<LS> getConjugateLinkSegments(){
     return (Collection<LS>) getEdgeSegments();
   }
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public abstract ConjugateLink clone();
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public abstract ConjugateLink deepClone();
 }

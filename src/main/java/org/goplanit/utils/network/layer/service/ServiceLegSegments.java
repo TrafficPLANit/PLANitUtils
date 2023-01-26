@@ -20,12 +20,18 @@ public interface ServiceLegSegments extends ManagedGraphEntities<ServiceLegSegme
    */
   @Override
   public abstract ServiceLegSegmentFactory getFactory();
-  
+
   /**
    * {@inheritDoc}
    */
   @Override
   public abstract ServiceLegSegments clone();
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public abstract ServiceLegSegments deepClone();
 
   /**
    * Verify if present

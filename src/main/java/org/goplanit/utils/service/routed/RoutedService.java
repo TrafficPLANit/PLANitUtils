@@ -31,6 +31,12 @@ public interface RoutedService extends ManagedId, ExternalIdAble {
   public abstract RoutedService clone();
 
   /**
+   * {@inheritDoc}
+   */
+  @Override
+  public abstract RoutedService deepClone();
+
+  /**
    * Name of the service, can be a number. Shortest visual (user) identifier for the service
    * 
    * @return name

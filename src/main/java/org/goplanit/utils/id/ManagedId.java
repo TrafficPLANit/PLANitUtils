@@ -34,6 +34,5 @@ public interface ManagedId extends IdAble {
   public default void resetChildManagedIdEntities() {
     // by default do nothing, yet if the entity contains ManagedIdEntities derived classes, it should reset those by overriding this method
   }
- 
 
 }

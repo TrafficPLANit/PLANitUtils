@@ -107,7 +107,7 @@ public class MapWrapperImpl<K, V> implements MapWrapper<K, V>{
     populateWith.forEach( value -> register(value));
   }   
     
-  /** Copy constructor 
+  /** Copy constructor which creates a new underlying map and copies entries over (shallow)
    * 
    * @param other to copy
    */

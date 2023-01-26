@@ -20,5 +20,11 @@ public interface ConnectoidEdges extends GraphEntities<ConnectoidEdge>{
    * {@inheritDoc}
    */
   @Override
-  public abstract ConnectoidEdges clone(); 
+  public abstract ConnectoidEdges clone();
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public abstract ConnectoidEdges deepClone();
 }

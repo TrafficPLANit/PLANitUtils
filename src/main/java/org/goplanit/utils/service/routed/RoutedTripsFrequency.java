@@ -18,6 +18,12 @@ public interface RoutedTripsFrequency extends RoutedTrips<RoutedTripFrequency> {
    * {@inheritDoc}
    */
   @Override
+  public abstract RoutedTripsFrequency deepClone();
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
   public abstract RoutedTripFrequencyFactory getFactory();
 
 }

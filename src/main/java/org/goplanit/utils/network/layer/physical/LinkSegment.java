@@ -138,6 +138,18 @@ public interface LinkSegment extends EdgeSegment {
    */
   @Override  
   public abstract Node getDownstreamVertex();
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public abstract LinkSegment clone();
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public abstract LinkSegment deepClone();
   
   /**
    * Return the parent link of this link segment

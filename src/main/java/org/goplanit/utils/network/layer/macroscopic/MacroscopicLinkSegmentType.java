@@ -42,6 +42,12 @@ public interface MacroscopicLinkSegmentType extends Cloneable, ExternalIdAble, M
   public abstract MacroscopicLinkSegmentType clone();
 
   /**
+   * {@inheritDoc}
+   */
+  @Override
+  public abstract MacroscopicLinkSegmentType deepClone();
+
+  /**
    * Return the name of this macroscopic link segment type
    * 
    * @return the name

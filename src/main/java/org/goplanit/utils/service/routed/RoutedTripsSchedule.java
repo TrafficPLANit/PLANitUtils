@@ -18,6 +18,12 @@ public interface RoutedTripsSchedule extends RoutedTrips<RoutedTripSchedule> {
    * {@inheritDoc}
    */
   @Override
+  public abstract RoutedTripsSchedule deepClone();
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
   public abstract RoutedTripScheduleFactory getFactory();
 
 }

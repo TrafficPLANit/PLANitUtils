@@ -1,6 +1,7 @@
 package org.goplanit.utils.zoning;
 
 import org.goplanit.utils.graph.directed.DirectedVertex;
+import org.goplanit.utils.network.virtual.ConnectoidSegment;
 
 /**
  * A centroid is a special type of vertex representing the location of departure/arrival of traffic
@@ -40,5 +41,17 @@ public interface Centroid extends DirectedVertex {
   public default boolean hasName() {
     return getName()!= null && !getName().isBlank();
   }
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public abstract Centroid clone();
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public abstract Centroid deepClone();
 
 }

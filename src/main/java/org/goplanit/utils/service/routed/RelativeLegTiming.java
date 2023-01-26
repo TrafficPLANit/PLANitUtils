@@ -1,6 +1,7 @@
 package org.goplanit.utils.service.routed;
 
 import org.goplanit.utils.network.layer.service.ServiceLegSegment;
+import org.goplanit.utils.zoning.Zone;
 
 import java.time.LocalTime;
 
@@ -11,11 +12,6 @@ import java.time.LocalTime;
  *
  */
 public interface RelativeLegTiming extends Cloneable {
-
-  /**
-   * Clone this class
-   */
-  public abstract RelativeLegTiming clone();
 
   /**
    * Collect parent leg segment

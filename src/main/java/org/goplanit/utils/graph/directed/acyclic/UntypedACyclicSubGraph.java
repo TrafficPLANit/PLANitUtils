@@ -84,4 +84,10 @@ public interface UntypedACyclicSubGraph<V extends DirectedVertex, E extends Edge
   @Override
   public abstract UntypedACyclicSubGraph<V, E> clone();
 
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public abstract UntypedACyclicSubGraph<V, E> deepClone();
+
 }

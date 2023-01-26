@@ -20,10 +20,16 @@ public interface ConjugateLinkSegments extends ManagedGraphEntities<ConjugateLin
    */
   @Override
   public abstract ConjugateLinkSegmentFactory getFactory();
-  
+
   /**
    * {@inheritDoc}
    */
   @Override
-  public abstract ConjugateLinkSegments clone();  
+  public abstract ConjugateLinkSegments clone();
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public abstract ConjugateLinkSegments deepClone();
 }

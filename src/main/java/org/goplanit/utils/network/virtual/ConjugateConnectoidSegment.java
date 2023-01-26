@@ -14,6 +14,18 @@ import org.goplanit.utils.pcu.PcuCapacitated;
 public interface ConjugateConnectoidSegment extends ConjugateEdgeSegment, PcuCapacitated {
 
   /**
+   * {@inheritDoc}
+   */
+  @Override
+  public abstract ConjugateConnectoidSegment clone();
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public abstract ConjugateConnectoidSegment deepClone();
+
+  /**
    * Connectoid segments are not capacity restricted by default, but can be used in conjunction with a capacitated network.
    * Therefore, they by default return {@code Double.MAX_VALUE} as their capacity. We have no limitation on capacity to ensure that
    * demand does not get "trapped" in zones, but can at least be loaded onto connectoid segments so it is present in the network during loading 

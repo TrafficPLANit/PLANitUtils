@@ -102,6 +102,18 @@ public interface ServiceLeg extends DirectedEdge {
   public default <LS extends ServiceLegSegment> Collection<LS> getLegSegments(){
     return (Collection<LS>) getEdgeSegments();
   }
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public abstract ServiceLeg clone();
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public abstract ServiceLeg deepClone();
   
 
 }

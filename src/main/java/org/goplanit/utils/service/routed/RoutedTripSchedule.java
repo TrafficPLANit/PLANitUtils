@@ -3,6 +3,7 @@ package org.goplanit.utils.service.routed;
 import java.time.LocalTime;
 import java.util.List;
 
+import org.goplanit.utils.exceptions.PlanItRunTimeException;
 import org.goplanit.utils.network.layer.service.ServiceLegSegment;
 
 /**
@@ -118,11 +119,34 @@ public interface RoutedTripSchedule extends RoutedTrip, Iterable<RelativeLegTimi
   public abstract void removeLegTiming(int legTimingIndex);
 
   /**
-   * Remove the leg timings
+   * Remove the leg timings in ascending order. Note that after removal indices might have shifted due to removal
+   * of entries
    *
-   * @param legTimingIndices to remove
+   * @param legTimingIndices to remove, should be in ascending order
    */
   public default void removeLegTimingsIn(List<Integer> legTimingIndices){
-    legTimingIndices.forEach( index -> removeLegTiming(index));
+    var iter = legTimingIndices.iterator();
+    int indexOffset = 0;
+    int prevIndex = -1;
+    while(iter.hasNext()){
+      int indexToRemove = iter.next() - indexOffset;
+      if(indexToRemove <= prevIndex){
+        throw new PlanItRunTimeException("leg timing indices cannot contain duplicates and should be provided in ascending order");
+      }
+      removeLegTiming(indexToRemove);
+      ++indexOffset; // each removed entry shifts remaining indices one to the left, account for that
+    }
   }
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public abstract RoutedTripSchedule clone();
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public abstract RoutedTripSchedule deepClone();
 }

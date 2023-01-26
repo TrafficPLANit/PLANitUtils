@@ -23,5 +23,17 @@ public interface OdZone extends Zone {
    */
   public default Class<OdZone> getOdZoneIdClass() {
     return OD_ZONE_ID_CLASS;
-  }  
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public abstract OdZone clone();
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public abstract OdZone deepClone();
 }

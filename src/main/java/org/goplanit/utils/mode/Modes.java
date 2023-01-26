@@ -33,10 +33,16 @@ public interface Modes extends ManagedIdEntities<Mode> {
   public Mode getByXmlId(String xmlId);
 
   /**
-   * clone modes container
+   * {@inheritDoc
    */
   @Override
   public abstract Modes clone();
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public abstract Modes deepClone();
 
   /**
    * Collect the mode factory to use for creating instances

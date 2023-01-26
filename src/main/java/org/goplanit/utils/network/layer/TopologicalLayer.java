@@ -16,6 +16,18 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 public interface TopologicalLayer extends NetworkLayer {
 
   /**
+   * {@inheritDoc}
+   */
+  @Override
+  public abstract TopologicalLayer clone();
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public abstract TopologicalLayer deepClone();
+
+  /**
    * transform all underlying geometries in the layer from the given crs to the new crs
    * 
    * @param fromCoordinateReferenceSystem presumed current crs

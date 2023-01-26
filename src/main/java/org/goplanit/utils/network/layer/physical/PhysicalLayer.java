@@ -9,4 +9,15 @@ import org.goplanit.utils.network.layer.physical.PhysicalLayer;
  */
 public interface PhysicalLayer extends UntypedPhysicalLayer<Node, Link, LinkSegment> {
 
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public abstract PhysicalLayer clone();
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public abstract PhysicalLayer deepClone();
 }

@@ -21,6 +21,12 @@ public interface OdZones extends Zones<OdZone>{
    */
   @Override
   public abstract OdZones clone();
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public abstract OdZones deepClone();
   
   /** Loop over all origin destination combinations possible given the registered zones and apply the 
    * provided consumer

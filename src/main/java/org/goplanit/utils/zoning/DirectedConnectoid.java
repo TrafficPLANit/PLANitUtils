@@ -23,7 +23,19 @@ public interface DirectedConnectoid extends Connectoid{
    * 
    * @return directed connectoid id
    */
-  public abstract long getDirectedConnectoidId();  
+  public abstract long getDirectedConnectoidId();
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public abstract DirectedConnectoid clone();
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public abstract DirectedConnectoid deepClone();
 
   /** The edge segment that provides access
    * 

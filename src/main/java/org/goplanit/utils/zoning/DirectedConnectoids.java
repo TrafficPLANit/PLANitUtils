@@ -34,6 +34,12 @@ public interface DirectedConnectoids extends Connectoids<DirectedConnectoid> {
   public abstract DirectedConnectoids clone();
 
   /**
+   * {@inheritDoc}
+   */
+  @Override
+  public abstract DirectedConnectoids deepClone();
+
+  /**
    * For a given physical network layers container that has a relatino with these directed connectoids, index all connectoids by their access node location to the physical network on the layers they
    * connect to. Do this by location rather than node, so it can be used when modifying the network and updating the node the connectoids attach to for example
    *

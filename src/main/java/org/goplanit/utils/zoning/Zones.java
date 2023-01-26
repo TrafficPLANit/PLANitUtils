@@ -28,5 +28,17 @@ public interface Zones<Z extends Zone> extends ManagedIdEntities<Z> {
     return findFirst(zone -> zone.getXmlId().equals(xmlId));
   }
 
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public abstract Zones clone();
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public abstract Zones deepClone();
+
 
 }

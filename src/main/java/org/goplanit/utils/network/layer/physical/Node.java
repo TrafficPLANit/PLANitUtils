@@ -60,6 +60,18 @@ public interface Node extends DirectedVertex {
    * @param name of the node
    */
   public abstract void setName(String name);
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public abstract Node clone();
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public abstract Node deepClone();
   
   /**
    * It is expected that nodes are used in conjunction with links. If so, this method will cast the edges of the node to a links collection
