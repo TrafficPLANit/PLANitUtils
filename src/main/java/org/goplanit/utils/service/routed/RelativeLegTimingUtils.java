@@ -77,26 +77,27 @@ public class RelativeLegTimingUtils {
    */
   public static List<Integer> findLegTimingsNotMappedToServiceNetwork(
           RoutedTripSchedule routedTripSchedule, RoutedServicesLayer routedServicesLayer) {
+
     // find first valid service node from given reference point (including reference point check which is assumed valid) or otherwise index beyond last index
-    int currValidLegIndex = findNextTimingLegMappedToServiceNetwork(0, routedTripSchedule, routedServicesLayer);
+    int currFoundValidLegIndex = findNextTimingLegMappedToServiceNetwork(0, routedTripSchedule, routedServicesLayer);
     // initialise with first invalid part
-    List<Integer> toBeRemovedLegSegments = IntStream.range(0, currValidLegIndex).boxed().collect(Collectors.toList());
+    List<Integer> toBeRemovedLegSegments = IntStream.range(0, currFoundValidLegIndex).boxed().collect(Collectors.toList());
     if(toBeRemovedLegSegments.size() == routedTripSchedule.getRelativeLegTimingsSize()){
       return toBeRemovedLegSegments; // all invalid
     }
 
     /* at least some portion remains, remove portions in between/front/back where needed */
-    int nextValidLegIndex = -1;
+    int nextFoundValidLegIndex = -1;
     final int maxLegIndex = routedTripSchedule.getRelativeLegTimingsSize();
-    do{
+    while(routedTripSchedule.isValidRelativeLegTimingsIndex(currFoundValidLegIndex+1)){
 
       // find last consecutive valid service node from given reference point (excluding reference point check which is assumed valid)
-      nextValidLegIndex = findNextTimingLegMappedToServiceNetwork(currValidLegIndex+1, routedTripSchedule, routedServicesLayer);
+      nextFoundValidLegIndex = findNextTimingLegMappedToServiceNetwork(currFoundValidLegIndex+1, routedTripSchedule, routedServicesLayer);
 
       /* update to be removed leg segments based on invalid leg timings found in between valid ones */
-      if(currValidLegIndex+1 != nextValidLegIndex) {
+      if(currFoundValidLegIndex+1 != nextFoundValidLegIndex) {
         var toBeRemovedLegSegmentPartialList =
-                IntStream.range(currValidLegIndex + 1, Math.min(maxLegIndex,nextValidLegIndex)).boxed().collect(Collectors.toList());
+                IntStream.range(currFoundValidLegIndex + 1, Math.min(maxLegIndex,nextFoundValidLegIndex)).boxed().collect(Collectors.toList());
         if (toBeRemovedLegSegments == null) {
           toBeRemovedLegSegments = toBeRemovedLegSegmentPartialList;
         } else {
@@ -104,8 +105,8 @@ public class RelativeLegTimingUtils {
         }
       }
 
-      currValidLegIndex = nextValidLegIndex;
-    }while(routedTripSchedule.isValidRelativeLegTimingsIndex(nextValidLegIndex));
+      currFoundValidLegIndex = nextFoundValidLegIndex;
+    }
 
     return toBeRemovedLegSegments;
   }

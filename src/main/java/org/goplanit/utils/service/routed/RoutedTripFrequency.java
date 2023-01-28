@@ -94,6 +94,16 @@ public interface RoutedTripFrequency extends RoutedTrip, Iterable<ServiceLegSegm
   }
 
   /**
+   * Remove leg segment at given index from the instance
+   */
+  void removeLegSegment(int index);
+
+  /**
+   * Remove all service leg segments from the instance
+   */
+  public abstract void removeAllLegSegments();
+
+  /**
    * {@inheritDoc}
    */
   @Override
@@ -104,4 +114,13 @@ public interface RoutedTripFrequency extends RoutedTrip, Iterable<ServiceLegSegm
    */
   @Override
   public abstract RoutedTripFrequency deepClone();
+
+  /**
+   * Clear the instance by setting frequency to 0 and removing all service leg segments
+   */
+  public default void clear(){
+    setFrequencyPerHour(0);
+    removeAllLegSegments();
+  }
+
 }

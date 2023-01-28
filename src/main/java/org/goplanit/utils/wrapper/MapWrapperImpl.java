@@ -203,7 +203,7 @@ public class MapWrapperImpl<K, V> implements MapWrapper<K, V>{
    */
   @Override
   public MapWrapperImpl<K,V> clone(){
-    return new MapWrapperImpl<K,V>(this);
+    return new MapWrapperImpl<>(this);
   }
 
   /**

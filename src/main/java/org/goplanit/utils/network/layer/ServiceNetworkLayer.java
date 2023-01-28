@@ -14,19 +14,19 @@ import org.goplanit.utils.network.layer.service.ServiceNodes;
  *
  * @author markr
  */
-public interface RoutedServiceLayer extends UntypedDirectedGraphLayer<ServiceNode, ServiceLeg, ServiceLegSegment> {
+public interface ServiceNetworkLayer extends UntypedDirectedGraphLayer<ServiceNode, ServiceLeg, ServiceLegSegment> {
 
   /**
    * {@inheritDoc}
    */
   @Override
-  public abstract RoutedServiceLayer clone();
+  public abstract ServiceNetworkLayer clone();
 
   /**
    * {@inheritDoc}
    */
   @Override
-  public abstract RoutedServiceLayer deepClone();
+  public abstract ServiceNetworkLayer deepClone();
 
   /**
    * Collect the parent layer of this service layer
