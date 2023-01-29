@@ -130,8 +130,9 @@ public interface RoutedTripSchedule extends RoutedTrip, Iterable<RelativeLegTimi
     int prevIndex = -1;
     while(iter.hasNext()){
       int indexToRemove = iter.next() - indexOffset;
-      if(indexToRemove <= prevIndex){
-        throw new PlanItRunTimeException("leg timing indices cannot contain duplicates and should be provided in ascending order");
+      if(indexToRemove <= prevIndex  || indexToRemove < 0){
+        throw new PlanItRunTimeException(
+                String.format("leg timing indices cannot contain duplicates and should be provided in valid ascending order (curr %d, prev %d"), indexToRemove, prevIndex);
       }
       removeLegTiming(indexToRemove);
       ++indexOffset; // each removed entry shifts remaining indices one to the left, account for that

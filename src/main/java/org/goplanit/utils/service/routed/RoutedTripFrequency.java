@@ -1,6 +1,9 @@
 package org.goplanit.utils.service.routed;
 
+import org.goplanit.utils.exceptions.PlanItRunTimeException;
 import org.goplanit.utils.network.layer.service.ServiceLegSegment;
+
+import java.util.List;
 
 /**
  * Interface for frequency based trips of a RoutedService. The route is defined based on legs on the parent ServiceNetwork the RoutedService - and therefore the trip - resides on.
@@ -121,6 +124,36 @@ public interface RoutedTripFrequency extends RoutedTrip, Iterable<ServiceLegSegm
   public default void clear(){
     setFrequencyPerHour(0);
     removeAllLegSegments();
+  }
+
+  /**
+   * Remove the segments in ascending order by their index.
+   * Note that after removal indices might have shifted due to removal
+   * of entries
+   *
+   * @param segmentIndicesToRemove to remove, should be in ascending order
+   */
+  public default void removeLegSegmentsIn(List<Integer> segmentIndicesToRemove){
+    var iter = segmentIndicesToRemove.iterator();
+    int indexOffset = 0;
+    int prevIndex = -1;
+    while(iter.hasNext()){
+      int indexToRemove = iter.next() - indexOffset;
+      if(indexToRemove <= prevIndex){
+        throw new PlanItRunTimeException("trip frequency service leg segment's to remove cannot contain duplicates and should be provided in ascending order");
+      }
+      removeLegSegment(indexToRemove);
+      ++indexOffset; // each removed entry shifts remaining indices one to the left, account for that
+    }
+  }
+
+  /**
+   * Provide the last valid leg segment index
+   *
+   * @return last index, e.g., size - 1
+   */
+  public default int getLastSegmentIndex(){
+    return getNumberOfLegSegments()-1;
   }
 
 }

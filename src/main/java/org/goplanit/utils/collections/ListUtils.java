@@ -28,7 +28,7 @@ public class ListUtils {
    * @param <T> type
    * @teturn last entry, null if empty or null
    */
-  public static <T> T getLast(List<T> list){
+  public static <T> T getLastValue(List<T> list){
     if(list == null || list.isEmpty()){
       return null;
     }
