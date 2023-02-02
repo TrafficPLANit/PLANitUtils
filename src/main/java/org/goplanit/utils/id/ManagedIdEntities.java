@@ -24,12 +24,12 @@ public interface ManagedIdEntities<E extends ManagedId> extends LongMapWrapper<E
   public abstract Class<? extends ManagedId> getManagedIdClass();  
       
   /**
-   * Recreate the ids for all registered entities with or without resetting 
+   * Recreate the ids for all registered entities with or without resetting, this includes child managed ids, i.e., nested magedidentities containers if so indicated
    * 
-   * @param resetManagedIdClass when true we reset the managedId's counter to zero (via its id class) before recreating the ids, otherwise we simply recreate the managed id by 
-   * starting with the next available id without resetting
+   * @param resetManagedIdClass when true we reset the managedId's counter to zero (via its id class) before recreating the ids, otherwise we simply recreate the managed id by
+   *                            starting with the next available id without resetting
    */
-  public abstract void recreateIds(boolean resetManagedIdClass);  
+  public abstract void recreateIds(boolean resetManagedIdClass);
     
   /**
    * Shallow clone implementation

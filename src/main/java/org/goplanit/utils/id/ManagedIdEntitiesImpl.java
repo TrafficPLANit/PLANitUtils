@@ -88,7 +88,9 @@ public abstract class ManagedIdEntitiesImpl<E extends ManagedId> extends LongMap
     
     if (!isEmpty()) {
       /* remove gaps by simply resetting and recreating all entity ids */            
-      forEach(entity -> entity.recreateManagedIds(getFactory().getIdGroupingToken()));
+      for(var entity : this){
+        entity.recreateManagedIds(getFactory().getIdGroupingToken());
+      }
       updateIdMapping();
     }
   }

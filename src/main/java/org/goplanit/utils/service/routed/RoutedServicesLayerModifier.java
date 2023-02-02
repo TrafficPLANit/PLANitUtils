@@ -31,4 +31,19 @@ public interface RoutedServicesLayerModifier {
    * Method can be used in conjunctions with the removal of parts of the routed services and the result is required to have unique contiguous ids
    */
   public abstract void recreateManagedEntitiesIds();
+
+  /**
+   * Recreate the ids of the routed services layer routedModeServices across all modes
+   */
+  public abstract void recreateRoutedServicesIds();
+
+  /**
+   * Recreate the ids of the routed services layer's routed trip departure ids across all scheduled trips across all modes
+   */
+  void recreateRoutedTripScheduleDepartureIds();
+
+  /**
+   * Recreate the ids of the routed services layer's routed trips (scheduled and frequency based) across all modes
+   */
+  void recreateRoutedTripsIds();
 }

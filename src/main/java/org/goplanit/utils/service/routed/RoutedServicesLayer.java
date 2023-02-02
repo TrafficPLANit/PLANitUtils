@@ -49,7 +49,15 @@ public interface RoutedServicesLayer extends ManagedId, ExternalIdAble, Iterable
   public abstract ServiceNetworkLayer getParentLayer();
 
   /**
-   * The services for a given mode available on this layer. If no services are yet available an empty instance is provided
+   * Verify if there exist no registered services for a given mode at all  at present
+   *
+   * @return true when no single routed service by mode exists, false otherwise
+   */
+  public boolean isServicesByModeEmpty(Mode mode);
+
+  /**
+   * The services for a given mode available on this layer. If no services are yet available an empty instance is provided.
+   * It is expected that each routed service across all modes on the layer has a unique internal id, so internal ids do not restart at zero per mode
    * 
    * @param mode to obtain services for
    * @return services by mode, empty instance if none have been registered yet
