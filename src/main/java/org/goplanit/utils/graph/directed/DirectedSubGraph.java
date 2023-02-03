@@ -67,6 +67,12 @@ public interface DirectedSubGraph <V extends DirectedVertex, E extends EdgeSegme
    * {@inheritDoc}
    */
   @Override
-  public abstract DirectedSubGraph<V,E> clone();  
+  public abstract DirectedSubGraph<V,E> shallowClone();
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public abstract DirectedSubGraph<V,E> deepClone();
   
 }

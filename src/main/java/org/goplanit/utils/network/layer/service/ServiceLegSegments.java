@@ -25,7 +25,7 @@ public interface ServiceLegSegments extends ManagedGraphEntities<ServiceLegSegme
    * {@inheritDoc}
    */
   @Override
-  public abstract ServiceLegSegments clone();
+  public abstract ServiceLegSegments shallowClone();
 
   /**
    * {@inheritDoc}

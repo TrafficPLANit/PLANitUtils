@@ -11,12 +11,12 @@ import org.goplanit.utils.id.ManagedIdEntities;
 public interface ManagedGraphEntities<E extends GraphEntity> extends GraphEntities<E>, ManagedIdEntities<E>{
       
   /**
-   * Force clone implementation
+   * shallow clone implementation
    * 
    * @return clone of entities
    */
   @Override  
-  public abstract ManagedGraphEntities<E> clone();
+  public abstract ManagedGraphEntities<E> shallowClone();
 
   /**
    * Force clone implementation

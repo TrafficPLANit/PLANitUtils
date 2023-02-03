@@ -107,7 +107,7 @@ public interface ServiceLeg extends DirectedEdge {
    * {@inheritDoc}
    */
   @Override
-  public abstract ServiceLeg clone();
+  public abstract ServiceLeg shallowClone();
 
   /**
    * {@inheritDoc}

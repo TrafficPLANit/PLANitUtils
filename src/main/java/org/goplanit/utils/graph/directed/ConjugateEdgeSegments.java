@@ -37,8 +37,14 @@ public interface ConjugateEdgeSegments extends GraphEntities<ConjugateEdgeSegmen
   }    
   
   /**
-   * clone conjugate edge segments
+   * shallow clone conjugate edge segments
    */
   @Override
-  public abstract ConjugateEdgeSegments clone();   
+  public abstract ConjugateEdgeSegments shallowClone();
+
+  /**
+   * Deep clone conjugate edge segments
+   */
+  @Override
+  public abstract ConjugateEdgeSegments deepClone();
 }

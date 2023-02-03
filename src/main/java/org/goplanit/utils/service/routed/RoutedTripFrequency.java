@@ -110,7 +110,7 @@ public interface RoutedTripFrequency extends RoutedTrip, Iterable<ServiceLegSegm
    * {@inheritDoc}
    */
   @Override
-  public abstract RoutedTripFrequency clone();
+  public abstract RoutedTripFrequency shallowClone();
 
   /**
    * {@inheritDoc}

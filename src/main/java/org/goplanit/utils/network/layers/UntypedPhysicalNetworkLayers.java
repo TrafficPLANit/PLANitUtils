@@ -62,7 +62,7 @@ public interface UntypedPhysicalNetworkLayers<L extends UntypedPhysicalLayer<?,?
    * {@inheritDoc}
    */
   @Override
-  public abstract UntypedPhysicalNetworkLayers<L> clone();
+  public abstract UntypedPhysicalNetworkLayers<L> shallowClone();
 
   /**
    * {@inheritDoc}

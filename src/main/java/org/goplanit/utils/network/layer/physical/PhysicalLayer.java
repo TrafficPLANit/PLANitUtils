@@ -13,7 +13,7 @@ public interface PhysicalLayer extends UntypedPhysicalLayer<Node, Link, LinkSegm
    * {@inheritDoc}
    */
   @Override
-  public abstract PhysicalLayer clone();
+  public abstract PhysicalLayer shallowClone();
 
   /**
    * {@inheritDoc}

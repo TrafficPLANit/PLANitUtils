@@ -69,7 +69,7 @@ public abstract class OdPrimitiveMatrix<T extends Number> extends OdMatrixImpl<T
    * {@inheritDoc}
    */
   @Override
-  public abstract OdPrimitiveMatrix<T> clone();
+  public abstract OdPrimitiveMatrix<T> shallowClone();
 
   /**
    * {@inheritDoc}
@@ -77,7 +77,7 @@ public abstract class OdPrimitiveMatrix<T extends Number> extends OdMatrixImpl<T
   @Override
   public OdPrimitiveMatrix<T> deepClone(){
     /* for a primitive matrix the deep clone is the same as a shallow copy since contents are immutable */
-    return clone();
+    return shallowClone();
   }
 
   /**

@@ -27,7 +27,7 @@ public interface MacroscopicLinkSegments extends ManagedGraphEntities<Macroscopi
    * {@inheritDoc}
    */
   @Override
-  public abstract MacroscopicLinkSegments clone();
+  public abstract MacroscopicLinkSegments shallowClone();
 
   /**
    * {@inheritDoc}

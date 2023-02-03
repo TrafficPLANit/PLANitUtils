@@ -28,7 +28,7 @@ public interface ConnectoidSegment extends EdgeSegment, PcuCapacitated {
    * {@inheritDoc}
    */
   @Override
-  public abstract ConnectoidSegment clone();
+  public abstract ConnectoidSegment shallowClone();
 
   /**
    * {@inheritDoc}

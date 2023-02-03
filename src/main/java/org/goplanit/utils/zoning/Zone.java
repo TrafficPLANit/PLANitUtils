@@ -87,7 +87,7 @@ public interface Zone extends ExternalIdAble, ManagedId {
    * {@inheritDoc}
    */
   @Override
-  public abstract Zone clone();
+  public abstract Zone shallowClone();
 
   /**
    * {@inheritDoc}

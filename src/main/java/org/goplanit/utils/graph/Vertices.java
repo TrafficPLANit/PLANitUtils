@@ -16,9 +16,14 @@ public interface Vertices extends GraphEntities<Vertex> {
   public abstract VertexFactory getFactory();  
   
   /**
-   * clone vertices
+   * shallow clone vertices
    */
   @Override
-  public abstract Vertices clone();  
-  
+  public abstract Vertices shallowClone();
+
+  /**
+   * deep clone vertices
+   */
+  @Override
+  public abstract Vertices deepClone();
 }

@@ -202,7 +202,7 @@ public class MapWrapperImpl<K, V> implements MapWrapper<K, V>{
    * {@inheritDoc}
    */
   @Override
-  public MapWrapperImpl<K,V> clone(){
+  public MapWrapperImpl<K,V> shallowClone(){
     return new MapWrapperImpl<>(this);
   }
 

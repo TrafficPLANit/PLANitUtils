@@ -19,7 +19,7 @@ public interface ConjugateMacroscopicNetworkLayer extends UntypedDirectedGraphLa
    * {@inheritDoc}
    */
   @Override
-  public abstract ConjugateMacroscopicNetworkLayer clone();
+  public abstract ConjugateMacroscopicNetworkLayer shallowClone();
 
   /**
    * {@inheritDoc}

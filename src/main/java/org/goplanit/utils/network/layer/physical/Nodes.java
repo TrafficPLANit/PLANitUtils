@@ -25,7 +25,7 @@ public interface Nodes extends ManagedGraphEntities<Node> {
    * {@inheritDoc}
    */
   @Override
-  public abstract Nodes clone();
+  public abstract Nodes shallowClone();
 
   /**
    * {@inheritDoc}

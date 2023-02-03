@@ -84,7 +84,7 @@ public interface NetworkLayers<T extends NetworkLayer> extends ManagedIdEntities
    * {@inheritDoc}
    */
   @Override
-  public abstract NetworkLayers<T> clone();
+  public abstract NetworkLayers<T> shallowClone();
 
   /**
    * {@inheritDoc}

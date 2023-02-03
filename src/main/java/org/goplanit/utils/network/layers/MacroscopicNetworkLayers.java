@@ -21,7 +21,7 @@ public interface MacroscopicNetworkLayers extends UntypedPhysicalNetworkLayers<M
    * {@inheritDoc}
    */
   @Override
-  public abstract MacroscopicNetworkLayers clone();
+  public abstract MacroscopicNetworkLayers shallowClone();
 
   /**
    * {@inheritDoc}

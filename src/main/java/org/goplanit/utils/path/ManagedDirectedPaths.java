@@ -20,6 +20,11 @@ public interface ManagedDirectedPaths extends ManagedIdEntities<ManagedDirectedP
    * {@inheritDoc}
    */
   @Override
-  public abstract ManagedDirectedPaths clone();
+  public abstract ManagedDirectedPaths shallowClone();
 
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public abstract ManagedDirectedPaths deepClone();
 }

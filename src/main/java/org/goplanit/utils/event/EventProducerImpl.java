@@ -51,9 +51,9 @@ public abstract class EventProducerImpl{
   protected final synchronized void addListener(final EventListener listener, EventListenerPriority priority, final EventType... eventTypes){
     for(int index=0;index<eventTypes.length;++index) {
       EventType type = eventTypes[index];
-      listeners.putIfAbsent(type, new TreeMap<EventListenerPriority, List<EventListener>>());
+      listeners.putIfAbsent(type, new TreeMap<>());
       Map<EventListenerPriority, List<EventListener>> listenersByEventType = listeners.get(type);
-      listenersByEventType.putIfAbsent(priority, new ArrayList<EventListener>());
+      listenersByEventType.putIfAbsent(priority, new ArrayList<>());
       listenersByEventType.get(priority).add(listener);
     }
   }  
@@ -176,7 +176,7 @@ public abstract class EventProducerImpl{
    * Constructs a new EventProducer and checks for duplicate values in event types.
    */
   protected EventProducerImpl(){
-    this.listeners = new HashMap<EventType, Map<EventListenerPriority,List<EventListener>>>();
+    this.listeners = new HashMap<>();
   }
 
   /**
@@ -184,7 +184,7 @@ public abstract class EventProducerImpl{
    */
   public synchronized void removeAllListeners(){
     this.listeners = null;
-    this.listeners = new HashMap<EventType, Map<EventListenerPriority,List<EventListener>>>();
+    this.listeners = new HashMap<>();
   }
 
   /**

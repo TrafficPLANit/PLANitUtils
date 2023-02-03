@@ -18,7 +18,7 @@ public interface RoutedServicesLayers extends ManagedIdEntities<RoutedServicesLa
    * {@inheritDoc}
    */
   @Override
-  public abstract RoutedServicesLayers clone();
+  public abstract RoutedServicesLayers shallowClone();
 
   /**
    * {@inheritDoc}

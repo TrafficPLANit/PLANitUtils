@@ -21,7 +21,7 @@ public interface ServiceNode extends DirectedVertex {
    * {@inheritDoc}
    */
   @Override
-  public abstract ServiceNode clone();
+  public abstract ServiceNode shallowClone();
 
   /**
    * {@inheritDoc}

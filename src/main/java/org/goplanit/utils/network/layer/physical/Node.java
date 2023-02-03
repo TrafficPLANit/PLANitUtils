@@ -65,7 +65,7 @@ public interface Node extends DirectedVertex {
    * {@inheritDoc}
    */
   @Override
-  public abstract Node clone();
+  public abstract Node shallowClone();
 
   /**
    * {@inheritDoc}

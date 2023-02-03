@@ -57,5 +57,5 @@ public abstract class LongMapWrapperImpl<V> extends MapWrapperImpl<Long, V> impl
    * {@inheritDoc}
    */
   @Override
-  public abstract LongMapWrapperImpl<V> clone();  
+  public abstract LongMapWrapperImpl<V> shallowClone();
 }

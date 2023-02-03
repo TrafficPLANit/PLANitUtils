@@ -14,7 +14,7 @@ public interface TopologicalLayers<T extends TopologicalLayer> extends NetworkLa
    * {@inheritDoc}
    */
   @Override
-  public abstract TopologicalLayers<T> clone();
+  public abstract TopologicalLayers<T> shallowClone();
 
   /**
    * {@inheritDoc}

@@ -26,7 +26,7 @@ public interface Connectoids<T extends Connectoid> extends ManagedIdEntities<T>,
    * {@inheritDoc}
    */
   @Override
-  public abstract Connectoids clone();
+  public abstract Connectoids shallowClone();
 
   /**
    * {@inheritDoc}

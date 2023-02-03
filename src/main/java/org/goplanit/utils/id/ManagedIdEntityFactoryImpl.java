@@ -1,5 +1,6 @@
 package org.goplanit.utils.id;
 
+import org.goplanit.utils.exceptions.PlanItRunTimeException;
 import org.goplanit.utils.id.IdGroupingToken;
 
 /**
@@ -53,8 +54,7 @@ public abstract class ManagedIdEntityFactoryImpl<E extends ManagedId> implements
   @Override
   public E createUniqueShallowCopyOf(ManagedId entityToCopy) {
     /* shallow copy as is */
-    @SuppressWarnings("unchecked")
-    E copy = (E) entityToCopy.clone();
+    E copy = (E) entityToCopy.shallowClone();
     /* recreate id and register */
     copy.recreateManagedIds(getIdGroupingToken());
     return copy;

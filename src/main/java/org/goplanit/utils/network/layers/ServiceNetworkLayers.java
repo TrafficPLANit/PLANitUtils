@@ -20,7 +20,7 @@ public interface ServiceNetworkLayers extends TopologicalLayers<ServiceNetworkLa
    * {@inheritDoc}
    */
   @Override
-  public abstract ServiceNetworkLayers clone();
+  public abstract ServiceNetworkLayers shallowClone();
 
   /**
    * {@inheritDoc}

@@ -89,6 +89,11 @@ public abstract class IdAbleImpl implements IdAble {
    * {@inheritDoc}
    */
   @Override
-  public abstract IdAble clone();
+  public abstract IdAble shallowClone();
 
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public abstract IdAble deepClone();
 }

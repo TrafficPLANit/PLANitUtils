@@ -29,7 +29,7 @@ public interface ConnectoidEdge extends DirectedEdge{
    * {@inheritDoc}
    */
   @Override
-  public abstract ConnectoidEdge clone();
+  public abstract ConnectoidEdge shallowClone();
 
   /**
    * {@inheritDoc}

@@ -25,7 +25,7 @@ public interface UsabilityModeFeatures {
    * Shallow copy
    * @return shallow copy of instance
    */
-  public abstract UsabilityModeFeatures clone();
+  public abstract UsabilityModeFeatures shallowClone();
 
   /**
    * deep copy

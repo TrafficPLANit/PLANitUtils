@@ -25,11 +25,18 @@ public interface ConjugateVertex extends Vertex {
   public abstract Collection<? extends ConjugateEdge> getEdges();  
     
   /**
-   * Clone the vertex
+   * Shallow Clone the conjugate vertex
    * @return the cloned vertex
    */
   @Override
-  public abstract ConjugateVertex clone();
+  public abstract ConjugateVertex shallowClone();
+
+  /**
+   * Deep Clone the conjugate vertex
+   * @return the cloned vertex
+   */
+  @Override
+  public abstract ConjugateVertex deepClone();
   
   /**
    * All vertices use the CONJUGATE_VERTEX_ID_CLASS to generate the unique internal ids

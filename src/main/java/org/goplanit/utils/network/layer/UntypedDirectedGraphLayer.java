@@ -20,7 +20,7 @@ public interface UntypedDirectedGraphLayer<V extends DirectedVertex, E extends D
    * {@inheritDoc}
    */
   @Override
-  public abstract UntypedDirectedGraphLayer clone();
+  public abstract UntypedDirectedGraphLayer shallowClone();
 
   /**
    * {@inheritDoc}

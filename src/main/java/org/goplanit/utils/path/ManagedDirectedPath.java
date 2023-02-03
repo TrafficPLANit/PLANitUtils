@@ -29,7 +29,7 @@ public interface ManagedDirectedPath extends ExternalIdAble, ManagedId, SimpleDi
    * {@inheritDoc}
    */
   @Override
-  public abstract ManagedDirectedPath clone();
+  public abstract ManagedDirectedPath shallowClone();
 
   /**
    * {@inheritDoc}

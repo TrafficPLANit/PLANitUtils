@@ -68,7 +68,7 @@ public class RemoveSubGraphListenerImpl extends IdAbleImpl implements RemoveSubG
    * {@inheritDoc}
    */  
   @Override
-  public RemoveSubGraphListenerImpl clone() {
+  public RemoveSubGraphListenerImpl shallowClone() {
     return new RemoveSubGraphListenerImpl(this);
   }
 
@@ -77,6 +77,6 @@ public class RemoveSubGraphListenerImpl extends IdAbleImpl implements RemoveSubG
    */
   @Override
   public RemoveSubGraphListenerImpl deepClone() {
-    return clone(); // same as regular clone
+    return shallowClone(); // same as regular clone
   }
 }

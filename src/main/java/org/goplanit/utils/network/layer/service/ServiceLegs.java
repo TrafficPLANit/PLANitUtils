@@ -25,7 +25,7 @@ public interface ServiceLegs extends ManagedGraphEntities<ServiceLeg> {
    * {@inheritDoc}
    */
   @Override
-  public abstract ServiceLegs clone();
+  public abstract ServiceLegs shallowClone();
 
   /**
    * {@inheritDoc}

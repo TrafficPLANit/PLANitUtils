@@ -29,7 +29,7 @@ public interface OdZone extends Zone {
    * {@inheritDoc}
    */
   @Override
-  public abstract OdZone clone();
+  public abstract OdZone shallowClone();
 
   /**
    * {@inheritDoc}

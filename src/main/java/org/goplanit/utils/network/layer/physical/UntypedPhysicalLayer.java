@@ -39,7 +39,7 @@ public interface UntypedPhysicalLayer<N extends Node, L extends Link, LS extends
    * {@inheritDoc}
    */
   @Override
-  public abstract UntypedPhysicalLayer clone();
+  public abstract UntypedPhysicalLayer shallowClone();
 
   /**
    * {@inheritDoc}

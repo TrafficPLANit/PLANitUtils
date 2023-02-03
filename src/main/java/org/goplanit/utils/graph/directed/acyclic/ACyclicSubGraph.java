@@ -20,6 +20,11 @@ public interface ACyclicSubGraph extends UntypedACyclicSubGraph<DirectedVertex, 
    * {@inheritDoc}
    */
   @Override
-  public abstract ACyclicSubGraph clone();
+  public abstract ACyclicSubGraph shallowClone();
 
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public abstract ACyclicSubGraph deepClone();
 }

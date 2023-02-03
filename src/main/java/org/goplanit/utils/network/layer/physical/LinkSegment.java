@@ -142,8 +142,7 @@ public interface LinkSegment extends EdgeSegment {
   /**
    * {@inheritDoc}
    */
-  @Override
-  public abstract LinkSegment clone();
+  public abstract LinkSegment shallowClone();
 
   /**
    * {@inheritDoc}

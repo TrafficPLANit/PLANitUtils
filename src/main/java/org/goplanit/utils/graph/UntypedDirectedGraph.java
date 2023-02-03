@@ -43,7 +43,7 @@ public interface UntypedDirectedGraph<V extends DirectedVertex, E extends Direct
    * {@inheritDoc}
    */
   @Override
-  public abstract UntypedDirectedGraph<V, E, ES> clone();
+  public abstract UntypedDirectedGraph<V, E, ES> shallowClone();
 
   /**
    * {@inheritDoc}

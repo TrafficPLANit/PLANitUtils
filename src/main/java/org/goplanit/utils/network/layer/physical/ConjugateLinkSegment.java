@@ -58,7 +58,7 @@ public interface ConjugateLinkSegment extends ConjugateEdgeSegment {
    * {@inheritDoc}
    */
   @Override
-  public abstract ConjugateLinkSegment clone();
+  public abstract ConjugateLinkSegment shallowClone();
 
   /**
    * {@inheritDoc}

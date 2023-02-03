@@ -10,7 +10,7 @@ import org.goplanit.utils.mode.Mode;
  * @author markr
  *
  */
-public interface AccessGroupProperties extends Cloneable {
+public interface AccessGroupProperties {
   
   /**
    * Epsilon margin when comparing speeds (km/h)
@@ -92,7 +92,7 @@ public interface AccessGroupProperties extends Cloneable {
    * 
    * @return shallow copy of this instance
    */
-  public abstract AccessGroupProperties clone();
+  public abstract AccessGroupProperties shallowClone();
 
   /**
    * Deep clone this instance

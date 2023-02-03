@@ -83,8 +83,7 @@ public abstract class EventImpl extends IdAbleImpl implements Event{
    * While events are id able, they cannot be cloned. and null is always returned
    * upon calling this method
    */
-  @Override
-  public EventImpl clone() {
+  public EventImpl shallowClone() {
     LOGGER.warning("IGNORED, Events are not cloneable");
     return null;
   }
@@ -95,8 +94,7 @@ public abstract class EventImpl extends IdAbleImpl implements Event{
    */
   @Override
   public EventImpl deepClone() {
-    LOGGER.warning("IGNORED, Events are not cloneable");
-    return null;
+    return shallowClone();
   }
 
   /** 

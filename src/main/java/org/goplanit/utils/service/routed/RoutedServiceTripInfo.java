@@ -6,12 +6,12 @@ package org.goplanit.utils.service.routed;
  * @author markr
  *
  */
-public interface RoutedServiceTripInfo extends Cloneable {
+public interface RoutedServiceTripInfo {
 
   /**
    * {@inheritDoc}
    */
-  public abstract RoutedServiceTripInfo clone();
+  public abstract RoutedServiceTripInfo shallowClone();
 
   /**
    * {@inheritDoc}

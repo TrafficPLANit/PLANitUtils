@@ -114,7 +114,7 @@ public abstract class ManagedIdEntitiesImpl<E extends ManagedId> extends LongMap
    * {@inheritDoc}
    */
   @Override
-  public abstract ManagedIdEntitiesImpl<E> clone();
+  public abstract ManagedIdEntitiesImpl<E> shallowClone();
 
   /**
    * {@inheritDoc}

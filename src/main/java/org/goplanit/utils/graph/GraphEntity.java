@@ -17,7 +17,7 @@ public interface GraphEntity extends ExternalIdAble, ManagedId {
    * {@inheritDoc}
    */
   @Override
-  public abstract GraphEntity clone();
+  public abstract GraphEntity shallowClone();
 
   /**
    * {@inheritDoc}

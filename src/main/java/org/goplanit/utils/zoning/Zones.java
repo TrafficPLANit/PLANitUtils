@@ -11,7 +11,7 @@ import org.goplanit.utils.id.ManagedIdEntities;
  */
 public interface Zones<Z extends Zone> extends ManagedIdEntities<Z> {
      
-  /** Each zone has exactly one centroid, so this is functionally equivalent to calling {@link size()}
+  /** Each zone has exactly one centroid, so this is functionally equivalent to calling size()
    * 
    * @return number of centroids
    */
@@ -32,7 +32,7 @@ public interface Zones<Z extends Zone> extends ManagedIdEntities<Z> {
    * {@inheritDoc}
    */
   @Override
-  public abstract Zones clone();
+  public abstract Zones shallowClone();
 
   /**
    * {@inheritDoc}

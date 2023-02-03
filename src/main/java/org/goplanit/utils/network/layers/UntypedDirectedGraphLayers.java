@@ -15,7 +15,7 @@ public interface UntypedDirectedGraphLayers<L extends UntypedDirectedGraphLayer<
    * {@inheritDoc}
    */
   @Override
-  public abstract UntypedDirectedGraphLayers<L> clone();
+  public abstract UntypedDirectedGraphLayers<L> shallowClone();
 
   /**
    * {@inheritDoc}

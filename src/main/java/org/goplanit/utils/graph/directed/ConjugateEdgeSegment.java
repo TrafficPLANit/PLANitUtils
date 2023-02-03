@@ -40,7 +40,13 @@ public interface ConjugateEdgeSegment extends EdgeSegment{
    * {@inheritDoc}
    */
   @Override 
-  public abstract ConjugateEdgeSegment clone();
+  public abstract ConjugateEdgeSegment shallowClone();
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public abstract ConjugateEdgeSegment deepClone();
   
   /**
    * All edges use the CONJUGATE_EDGE_SEGMENT_ID_CLASS to generate the unique internal ids

@@ -12,6 +12,11 @@ public interface ConjugateDirectedSubGraph extends DirectedSubGraph<ConjugateDir
    * {@inheritDoc}
    */
   @Override
-  public abstract ConjugateDirectedSubGraph clone();  
-  
+  public abstract ConjugateDirectedSubGraph shallowClone();
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public abstract ConjugateDirectedSubGraph deepClone();
 }

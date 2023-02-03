@@ -4,6 +4,7 @@ import org.goplanit.utils.id.ExternalIdAble;
 import org.goplanit.utils.id.ManagedId;
 import org.goplanit.utils.mode.Mode;
 import org.goplanit.utils.network.layer.ServiceNetworkLayer;
+import org.goplanit.utils.service.routed.modifier.RoutedServicesLayerModifier;
 
 import java.util.Collection;
 
@@ -91,7 +92,7 @@ public interface RoutedServicesLayer extends ManagedId, ExternalIdAble, Iterable
    * {@inheritDoc}
    */
   @Override
-  public abstract RoutedServicesLayer clone();
+  public abstract RoutedServicesLayer shallowClone();
 
   /**
    * {@inheritDoc}

@@ -12,7 +12,7 @@ public interface RoutedTripsFrequency extends RoutedTrips<RoutedTripFrequency> {
    * {@inheritDoc}
    */
   @Override
-  public abstract RoutedTripsFrequency clone();
+  public abstract RoutedTripsFrequency shallowClone();
 
   /**
    * {@inheritDoc}

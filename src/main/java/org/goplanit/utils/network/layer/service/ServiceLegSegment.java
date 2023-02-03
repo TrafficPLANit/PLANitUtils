@@ -26,7 +26,7 @@ public interface ServiceLegSegment extends EdgeSegment {
    * {@inheritDoc}
    */
   @Override
-  public abstract ServiceLegSegment clone();
+  public abstract ServiceLegSegment shallowClone();
 
   /**
    * {@inheritDoc}

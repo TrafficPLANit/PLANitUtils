@@ -23,7 +23,7 @@ public interface RoutedModeServices extends ManagedIdEntities<RoutedService> {
    * {@inheritDoc}
    */
   @Override
-  public abstract RoutedModeServices clone();
+  public abstract RoutedModeServices shallowClone();
 
   /**
    * {@inheritDoc}

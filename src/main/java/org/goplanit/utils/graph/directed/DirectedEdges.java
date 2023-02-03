@@ -35,7 +35,7 @@ public interface DirectedEdges extends GraphEntities<DirectedEdge> {
    * @return clone of entities
    */
   @Override
-  public abstract DirectedEdges clone();
+  public abstract DirectedEdges shallowClone();
 
   /**
    * Deep clone implementation

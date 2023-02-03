@@ -21,7 +21,7 @@ import java.util.stream.StreamSupport;
  * @param <K> key type
  * @param <V> value type
  */
-public interface MapWrapper<K, V> extends Iterable<V>, Cloneable {
+public interface MapWrapper<K, V> extends Iterable<V> {
   
   /**
    * Register on the internal container
@@ -102,7 +102,7 @@ public interface MapWrapper<K, V> extends Iterable<V>, Cloneable {
    * 
    * @return copy
    */
-  public abstract MapWrapper<K, V> clone();
+  public abstract MapWrapper<K, V> shallowClone();
   
   /** collect the key used for the given value
    * 

@@ -33,7 +33,7 @@ public interface RoutedTrips<T extends RoutedTrip> extends ManagedIdEntities<T>,
    * {@inheritDoc}
    */
   @Override
-  public abstract RoutedTrips clone();
+  public abstract RoutedTrips shallowClone();
 
   /**
    * {@inheritDoc}

@@ -130,7 +130,7 @@ public interface Edge extends Serializable, GraphEntity {
    * 
    * @return copy of this edge
    */
-  public abstract Edge clone();
+  public abstract Edge shallowClone();
 
   /**
    * Deep copy, non-owned members are reference copied

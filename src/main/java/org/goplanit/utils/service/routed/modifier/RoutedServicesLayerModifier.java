@@ -1,11 +1,12 @@
-package org.goplanit.utils.service.routed;
+package org.goplanit.utils.service.routed.modifier;
 
 import org.goplanit.utils.network.layer.modifier.ServiceNetworkLayerModifier;
+import org.goplanit.utils.zoning.modifier.event.ZoningModifierEventProducer;
 
 /**
  * Modification utilities for a routed services layer that require complex changes to the underlying containers
  */
-public interface RoutedServicesLayerModifier {
+public interface RoutedServicesLayerModifier extends RoutedServicesModifierEventProducer {
 
   /**
    * Method that will truncate all routed entities to available service network entities in its parent in case the parent service network has been altered for some reason,

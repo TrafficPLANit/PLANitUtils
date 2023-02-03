@@ -19,7 +19,7 @@ public interface ConjugateConnectoidEdge extends ConjugateDirectedEdge {
    * {@inheritDoc}
    */
   @Override
-  public abstract ConjugateConnectoidEdge clone();
+  public abstract ConjugateConnectoidEdge shallowClone();
 
   /**
    * {@inheritDoc}

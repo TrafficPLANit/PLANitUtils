@@ -102,7 +102,7 @@ public interface MacroscopicLink extends Link {
    * {@inheritDoc}
    */
   @Override
-  public abstract MacroscopicLink clone();
+  public abstract MacroscopicLink shallowClone();
 
   /**
    * {@inheritDoc}

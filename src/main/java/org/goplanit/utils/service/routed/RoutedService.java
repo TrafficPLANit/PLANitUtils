@@ -28,7 +28,7 @@ public interface RoutedService extends ManagedId, ExternalIdAble {
    * {@inheritDoc}
    */
   @Override
-  public abstract RoutedService clone();
+  public abstract RoutedService shallowClone();
 
   /**
    * {@inheritDoc}

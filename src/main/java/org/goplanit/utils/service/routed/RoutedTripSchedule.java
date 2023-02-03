@@ -143,7 +143,7 @@ public interface RoutedTripSchedule extends RoutedTrip, Iterable<RelativeLegTimi
    * {@inheritDoc}
    */
   @Override
-  public abstract RoutedTripSchedule clone();
+  public abstract RoutedTripSchedule shallowClone();
 
   /**
    * {@inheritDoc}

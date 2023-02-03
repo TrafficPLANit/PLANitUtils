@@ -20,6 +20,11 @@ public interface ConjugateACyclicSubGraph extends UntypedACyclicSubGraph<Conjuga
    * {@inheritDoc}
    */
   @Override
-  public abstract ConjugateACyclicSubGraph clone();
+  public abstract ConjugateACyclicSubGraph shallowClone();
 
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public abstract ConjugateACyclicSubGraph deepClone();
 }

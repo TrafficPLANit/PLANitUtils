@@ -21,7 +21,7 @@ public interface TransferZoneGroups extends ManagedIdEntities<TransferZoneGroup>
    * {@inheritDoc}
    */
   @Override
-  public abstract TransferZoneGroups clone();
+  public abstract TransferZoneGroups shallowClone();
 
   /**
    * {@inheritDoc}

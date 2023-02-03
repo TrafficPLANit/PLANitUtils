@@ -28,11 +28,20 @@ public interface ConjugateEdge extends Edge {
   public abstract ConjugateVertex getVertexB();
  
   /**
-   * Clone the edge as is, all shared members are shallow copied, fully owned members are deep copied
+   * Clone the conjugate edge as is, all shared members are shallow copied, fully owned members are deep copied
    * 
-   * @return copy of this edge
+   * @return copy of this conjugate edge
    */
-  public abstract ConjugateEdge clone();   
+  @Override
+  public abstract ConjugateEdge shallowClone();
+
+  /**
+   * deep Clone the conjugate edge
+   *
+   * @return copy of this conjugate edge
+   */
+  @Override
+  public abstract ConjugateEdge deepClone();
      
   /**
    * Edges in original graph representing this conjugate

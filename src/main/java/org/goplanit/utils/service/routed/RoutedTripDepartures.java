@@ -16,7 +16,7 @@ public interface RoutedTripDepartures extends ManagedIdEntities<RoutedTripDepart
    * {@inheritDoc}
    */
   @Override
-  public abstract RoutedTripDepartures clone();
+  public abstract RoutedTripDepartures shallowClone();
 
   /**
    * {@inheritDoc}

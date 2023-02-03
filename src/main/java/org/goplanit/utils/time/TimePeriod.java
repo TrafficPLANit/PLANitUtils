@@ -53,7 +53,7 @@ public interface TimePeriod extends ExternalIdAble{
   /**
    * {@inheritDoc}
    */
-  public abstract TimePeriod clone();
+  public abstract TimePeriod shallowClone();
 
   /**
    * {@inheritDoc}

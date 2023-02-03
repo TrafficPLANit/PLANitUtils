@@ -26,7 +26,7 @@ public interface ConjugateNode extends ConjugateDirectedVertex {
    * {@inheritDoc}
    */
   @Override
-  public abstract ConjugateNode clone();
+  public abstract ConjugateNode shallowClone();
 
   /**
    * {@inheritDoc}

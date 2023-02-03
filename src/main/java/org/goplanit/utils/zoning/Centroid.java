@@ -46,7 +46,7 @@ public interface Centroid extends DirectedVertex {
    * {@inheritDoc}
    */
   @Override
-  public abstract Centroid clone();
+  public abstract Centroid shallowClone();
 
   /**
    * {@inheritDoc}

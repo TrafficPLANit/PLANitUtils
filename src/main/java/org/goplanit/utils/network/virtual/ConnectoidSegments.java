@@ -21,7 +21,7 @@ public interface ConnectoidSegments extends GraphEntities<ConnectoidSegment>{
    * {@inheritDoc}
    */
   @Override
-  public abstract ConnectoidSegments clone();
+  public abstract ConnectoidSegments shallowClone();
 
   /**
    * {@inheritDoc}

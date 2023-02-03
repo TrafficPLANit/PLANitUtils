@@ -86,7 +86,7 @@ public interface DirectedEdge extends Edge {
    * {@inheritDoc}
    */
   @Override
-  public abstract DirectedEdge clone();
+  public abstract DirectedEdge shallowClone();
 
   /**
    * {@inheritDoc}

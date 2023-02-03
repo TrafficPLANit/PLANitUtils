@@ -71,7 +71,7 @@ public class ExternalIdAbleImpl extends IdAbleImpl implements ExternalIdAble {
    * {@inheritDoc}
    */  
   @Override
-  public ExternalIdAbleImpl clone() {
+  public ExternalIdAbleImpl shallowClone() {
     return new ExternalIdAbleImpl(this);
   }
 
@@ -80,7 +80,7 @@ public class ExternalIdAbleImpl extends IdAbleImpl implements ExternalIdAble {
    */
   @Override
   public ExternalIdAbleImpl deepClone(){
-    return clone() /* no different with regular clone */;
+    return shallowClone() /* no different with regular clone */;
   }
 
 

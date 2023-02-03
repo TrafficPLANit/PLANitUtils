@@ -17,7 +17,7 @@ public interface ConjugateConnectoidSegment extends ConjugateEdgeSegment, PcuCap
    * {@inheritDoc}
    */
   @Override
-  public abstract ConjugateConnectoidSegment clone();
+  public abstract ConjugateConnectoidSegment shallowClone();
 
   /**
    * {@inheritDoc}

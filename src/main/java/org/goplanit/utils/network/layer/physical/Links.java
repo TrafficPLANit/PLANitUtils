@@ -26,7 +26,7 @@ public interface Links<L extends Link> extends ManagedGraphEntities<L> {
    * {@inheritDoc}
    */
   @Override
-  public abstract Links clone();
+  public abstract Links shallowClone();
 
   /**
    * {@inheritDoc}

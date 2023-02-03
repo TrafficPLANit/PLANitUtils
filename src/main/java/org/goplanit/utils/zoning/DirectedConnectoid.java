@@ -29,7 +29,7 @@ public interface DirectedConnectoid extends Connectoid{
    * {@inheritDoc}
    */
   @Override
-  public abstract DirectedConnectoid clone();
+  public abstract DirectedConnectoid shallowClone();
 
   /**
    * {@inheritDoc}

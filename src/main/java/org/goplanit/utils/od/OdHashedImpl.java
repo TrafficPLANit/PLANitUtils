@@ -80,7 +80,7 @@ public abstract class OdHashedImpl<T> extends OdDataImpl<T> implements OdHashed<
    * {@inheritDoc}
    */
   @Override
-  public abstract OdHashedImpl<T> clone();
+  public abstract OdHashedImpl<T> shallowClone();
 
   /**
    * {@inheritDoc}

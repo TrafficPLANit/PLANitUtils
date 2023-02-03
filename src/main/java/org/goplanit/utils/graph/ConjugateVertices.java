@@ -16,9 +16,14 @@ public interface ConjugateVertices extends GraphEntities<ConjugateVertex> {
   public abstract ConjugateVertexFactory getFactory();  
   
   /**
-   * clone conjugate vertices
+   * shallow clone conjugate vertices
    */
   @Override
-  public abstract ConjugateVertices clone();  
-  
+  public abstract ConjugateVertices shallowClone();
+
+  /**
+   * deep clone conjugate vertices
+   */
+  @Override
+  public abstract ConjugateVertices deepClone();
 }

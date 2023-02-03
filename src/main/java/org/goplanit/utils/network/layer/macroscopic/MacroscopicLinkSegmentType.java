@@ -16,7 +16,7 @@ import org.goplanit.utils.mode.Mode;
  * @author markr
  *
  */
-public interface MacroscopicLinkSegmentType extends Cloneable, ExternalIdAble, ManagedId {
+public interface MacroscopicLinkSegmentType extends ExternalIdAble, ManagedId {
   
   /** id class for generating ids */
   public static final Class<MacroscopicLinkSegmentType> MACROSCOPIC_LINK_SEGMENT_TYPE_ID_CLASS = MacroscopicLinkSegmentType.class;   
@@ -39,7 +39,8 @@ public interface MacroscopicLinkSegmentType extends Cloneable, ExternalIdAble, M
   /**
    * {@inheritDoc}
    */
-  public abstract MacroscopicLinkSegmentType clone();
+  @Override
+  public abstract MacroscopicLinkSegmentType shallowClone();
 
   /**
    * {@inheritDoc}

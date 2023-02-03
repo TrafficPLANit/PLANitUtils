@@ -64,7 +64,7 @@ public interface TransferZoneGroup extends ExternalIdAble, ManagedId, Iterable<T
    * {@inheritDoc}
    */
   @Override
-  public abstract TransferZoneGroup clone();
+  public abstract TransferZoneGroup shallowClone();
 
   /**
    * {@inheritDoc}

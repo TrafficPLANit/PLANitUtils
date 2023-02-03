@@ -8,7 +8,7 @@ import org.goplanit.utils.wrapper.LongMapWrapper;
  *
  * @param <E> type of managed id entity
  */
-public interface ManagedIdEntities<E extends ManagedId> extends LongMapWrapper<E>, Cloneable {
+public interface ManagedIdEntities<E extends ManagedId> extends LongMapWrapper<E> {
 
   /** Factory to create instance of managed id entity (for this container class)
    * 
@@ -36,7 +36,7 @@ public interface ManagedIdEntities<E extends ManagedId> extends LongMapWrapper<E
    * 
    * @return clone of entities
    */
-  public abstract ManagedIdEntities<E> clone();
+  public abstract ManagedIdEntities<E> shallowClone();
 
   /**
    * Deep clone implementation

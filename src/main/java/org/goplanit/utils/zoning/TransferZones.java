@@ -18,7 +18,7 @@ public interface TransferZones extends Zones<TransferZone>{
    * {@inheritDoc}
    */
   @Override
-  public abstract TransferZones clone();
+  public abstract TransferZones shallowClone();
 
   /**
    * {@inheritDoc}

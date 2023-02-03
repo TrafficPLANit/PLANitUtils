@@ -23,12 +23,12 @@ public interface GraphEntities<E extends GraphEntity> extends LongMapWrapper<E>,
   public abstract GraphEntityFactory<E> getFactory();
       
   /**
-   * Force clone implementation
+   * shallow clone implementation
    * 
    * @return clone of entities
    */
   @Override  
-  public abstract GraphEntities<E> clone();
+  public abstract GraphEntities<E> shallowClone();
 
   /**
    * Deep clone implementation

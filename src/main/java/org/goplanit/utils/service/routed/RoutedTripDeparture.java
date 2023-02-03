@@ -33,7 +33,7 @@ public interface RoutedTripDeparture extends ExternalIdAble, ManagedId {
    * {@inheritDoc}
    */
   @Override
-  public abstract RoutedTripDeparture clone();
+  public abstract RoutedTripDeparture shallowClone();
 
   /**
    * {@inheritDoc}

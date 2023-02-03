@@ -110,7 +110,7 @@ public interface EdgeSegment extends Serializable, GraphEntity {
    * {@inheritDoc}
    */
   @Override
-  public abstract EdgeSegment clone();
+  public abstract EdgeSegment shallowClone();
 
   /**
    * {@inheritDoc}

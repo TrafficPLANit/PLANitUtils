@@ -216,7 +216,7 @@ public interface Connectoid extends ExternalIdAble, ManagedId, Iterable<Zone> {
    * {@inheritDoc}
    */
   @Override
-  public abstract Connectoid clone();
+  public abstract Connectoid shallowClone();
 
   /**
    * {@inheritDoc}

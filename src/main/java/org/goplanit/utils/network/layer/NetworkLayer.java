@@ -30,7 +30,7 @@ public interface NetworkLayer extends ExternalIdAble, ManagedId {
    * {@inheritDoc}
    */
   @Override
-  public abstract NetworkLayer clone();
+  public abstract NetworkLayer shallowClone();
 
   /**
    * {@inheritDoc}

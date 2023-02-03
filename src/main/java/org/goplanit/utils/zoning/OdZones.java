@@ -20,7 +20,7 @@ public interface OdZones extends Zones<OdZone>{
    * {@inheritDoc}
    */
   @Override
-  public abstract OdZones clone();
+  public abstract OdZones shallowClone();
 
   /**
    * {@inheritDoc}

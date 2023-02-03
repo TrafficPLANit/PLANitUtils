@@ -19,9 +19,15 @@ public interface Edges extends GraphEntities<Edge>{
   public abstract EdgeFactory getFactory();
   
   /**
-   * clone edges
+   * shallow clone edges
    */
   @Override
-  public abstract Edges clone();
+  public abstract Edges shallowClone();
+
+  /**
+   * deep clone edges
+   */
+  @Override
+  public abstract Edges deepClone();
 
 }

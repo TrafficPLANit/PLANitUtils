@@ -82,10 +82,18 @@ public interface Vertex extends Serializable, GraphEntity {
   public abstract Collection<? extends Edge> getEdges();  
     
   /**
-   * Clone the vertex
-   * @return the cloned vertex
+   * Shallow clone
+   * @return the cloned entity
    */
-  public abstract Vertex clone();
+  @Override
+  public abstract Vertex shallowClone();
+
+  /**
+   * Deep clone
+   * @return the cloned entity
+   */
+  @Override
+  public abstract Vertex deepClone();
   
   /**
    * All vertices use the VERTEX_ID_CLASS to generate the unique internal ids

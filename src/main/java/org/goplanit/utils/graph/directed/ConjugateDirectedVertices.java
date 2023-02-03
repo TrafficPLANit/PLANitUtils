@@ -30,9 +30,14 @@ public interface ConjugateDirectedVertices extends GraphEntities<ConjugateDirect
   }  
   
   /**
-   * clone vertices
+   * shallow clone vertices
    */
   @Override
-  public abstract ConjugateDirectedVertices clone();  
-  
+  public abstract ConjugateDirectedVertices shallowClone();
+
+  /**
+   * deep clone vertices
+   */
+  @Override
+  public abstract ConjugateDirectedVertices deepClone();
 }

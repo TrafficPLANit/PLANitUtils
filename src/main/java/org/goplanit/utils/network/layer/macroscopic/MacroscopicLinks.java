@@ -28,7 +28,7 @@ public interface MacroscopicLinks extends ManagedGraphEntities<MacroscopicLink> 
    * {@inheritDoc}
    */
   @Override
-  public abstract MacroscopicLinks clone();
+  public abstract MacroscopicLinks shallowClone();
 
   /**
    * {@inheritDoc}

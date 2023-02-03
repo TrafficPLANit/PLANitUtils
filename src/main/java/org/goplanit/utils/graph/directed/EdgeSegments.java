@@ -41,5 +41,11 @@ public interface EdgeSegments extends GraphEntities<EdgeSegment> {
    * clone edge segments
    */
   @Override
-  public abstract EdgeSegments clone();   
+  public abstract EdgeSegments shallowClone();
+
+  /**
+   * clone edge segments
+   */
+  @Override
+  public abstract EdgeSegments deepClone();
 }

@@ -75,7 +75,7 @@ public interface UntypedGraph<V extends Vertex, E extends Edge> extends ManagedI
    * {@inheritDoc}
    */
   @Override
-  public abstract UntypedGraph<V, E> clone();
+  public abstract UntypedGraph<V, E> shallowClone();
 
   /**
    * {@inheritDoc}

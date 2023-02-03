@@ -17,9 +17,15 @@ public interface ConjugateEdges extends GraphEntities<ConjugateEdge>{
   public abstract ConjugateEdgeFactory getFactory();
   
   /**
-   * clone edges
+   * shallow clone edges
    */
   @Override
-  public abstract ConjugateEdges clone();
+  public abstract ConjugateEdges shallowClone();
+
+  /**
+   * deep clone conjugate edges
+   */
+  @Override
+  public abstract ConjugateEdges deepClone();
 
 }

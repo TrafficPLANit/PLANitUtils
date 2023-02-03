@@ -30,7 +30,7 @@ public interface UndirectedConnectoid extends Connectoid{
    * {@inheritDoc}
    */
   @Override
-  public abstract UndirectedConnectoid clone();
+  public abstract UndirectedConnectoid shallowClone();
 
   /**
    * {@inheritDoc}

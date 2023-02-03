@@ -12,7 +12,7 @@ public interface RoutedTripsSchedule extends RoutedTrips<RoutedTripSchedule> {
    * {@inheritDoc}
    */
   @Override
-  public abstract RoutedTripsSchedule clone();
+  public abstract RoutedTripsSchedule shallowClone();
 
   /**
    * {@inheritDoc}

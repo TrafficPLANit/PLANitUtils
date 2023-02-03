@@ -119,7 +119,7 @@ public interface MacroscopicLinkSegment extends LinkSegment, PcuCapacitated {
    * {@inheritDoc}
    */
   @Override
-  public abstract MacroscopicLinkSegment clone();
+  public abstract MacroscopicLinkSegment shallowClone();
 
   /**
    * {@inheritDoc}

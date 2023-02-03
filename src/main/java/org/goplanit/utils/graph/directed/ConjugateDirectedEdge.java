@@ -61,7 +61,7 @@ public interface ConjugateDirectedEdge extends DirectedEdge {
    * {@inheritDoc}
    */
   @Override
-  public abstract ConjugateDirectedEdge clone();
+  public abstract ConjugateDirectedEdge shallowClone();
 
   /**
    * {@inheritDoc}

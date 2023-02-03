@@ -36,7 +36,7 @@ public interface Modes extends ManagedIdEntities<Mode> {
    * {@inheritDoc
    */
   @Override
-  public abstract Modes clone();
+  public abstract Modes shallowClone();
 
   /**
    * {@inheritDoc}

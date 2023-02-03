@@ -118,8 +118,7 @@ public interface Link extends DirectedEdge {
   /**
    * {@inheritDoc}
    */
-  @Override
-  public abstract Link clone();
+  public abstract Link shallowClone();
 
   /**
    * {@inheritDoc}

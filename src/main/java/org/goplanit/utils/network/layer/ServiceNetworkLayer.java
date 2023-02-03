@@ -20,7 +20,7 @@ public interface ServiceNetworkLayer extends UntypedDirectedGraphLayer<ServiceNo
    * {@inheritDoc}
    */
   @Override
-  public abstract ServiceNetworkLayer clone();
+  public abstract ServiceNetworkLayer shallowClone();
 
   /**
    * {@inheritDoc}
