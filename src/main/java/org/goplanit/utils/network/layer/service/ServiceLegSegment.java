@@ -63,13 +63,13 @@ public interface ServiceLegSegment extends EdgeSegment {
    *
    * @return parent links this leg represents
    */
-  public abstract List<LinkSegment> getPhysicalParentSegments();
+  public abstract List<? extends LinkSegment> getPhysicalParentSegments();
 
   /**
    * Set the network layer links that make up this leg irrespective wether they have been set before. Use with caution
    * @param networkLayerLinkSegments to use
    */
-  public abstract void setPhysicalParentSegments(final List<LinkSegment> networkLayerLinkSegments);
+  public abstract void setPhysicalParentSegments(final List<? extends LinkSegment> networkLayerLinkSegments);
 
   /** verify if any physical parent leg segments are registered for this service leg segment
    *
