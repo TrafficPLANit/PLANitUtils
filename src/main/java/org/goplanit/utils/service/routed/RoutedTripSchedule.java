@@ -23,6 +23,15 @@ public interface RoutedTripSchedule extends RoutedTrip, Iterable<RelativeLegTimi
   public abstract RoutedTripDepartures getDepartures();
 
   /**
+   * Verify if any departures are present on the schedule
+   *
+   * @return true when present, false otherwise
+   */
+  public default boolean hasDepartures(){
+    return !getDepartures().isEmpty();
+  }
+
+  /**
    * Clear all leg timings from the trip
    */
   public abstract void clearRelativeLegTimings();
@@ -150,4 +159,5 @@ public interface RoutedTripSchedule extends RoutedTrip, Iterable<RelativeLegTimi
    */
   @Override
   public abstract RoutedTripSchedule deepClone();
+
 }

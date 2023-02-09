@@ -2,6 +2,7 @@ package org.goplanit.utils.service.routed;
 
 import org.goplanit.utils.id.ExternalIdAble;
 import org.goplanit.utils.id.ManagedId;
+import org.goplanit.utils.misc.StringUtils;
 import org.goplanit.utils.mode.Mode;
 
 /**
@@ -44,6 +45,14 @@ public interface RoutedService extends ManagedId, ExternalIdAble {
   public abstract String getName();
 
   /**
+   * Verify if routed service has a name
+   * @return true when present and non-empty, false otherwise
+   */
+  public default boolean hasName(){
+    return StringUtils.isNullOrBlank(getName());
+  }
+
+  /**
    * Name of the service, can be a number. Shortest visual (user) identifier for the service
    * 
    * @param name to use
@@ -59,6 +68,14 @@ public interface RoutedService extends ManagedId, ExternalIdAble {
   public abstract String getNameDescription();
 
   /**
+   * Verify if routed service has a name description
+   * @return true when present and non-empty, false otherwise
+   */
+  public default boolean hasNameDescription(){
+    return StringUtils.isNullOrBlank(getNameDescription());
+  }
+
+  /**
    * Description of the name of the service, usually a short elaboration in addition to the name (number), for example for a bus the name could be 370 and the nameDescription
    * "Balmain to Coogee"
    * 
@@ -72,6 +89,14 @@ public interface RoutedService extends ManagedId, ExternalIdAble {
    * @return serviceDescription
    */
   public abstract String getServiceDescription();
+
+  /**
+   * Verify if routed service has a name description
+   * @return true when present and non-empty, false otherwise
+   */
+  public default boolean hasServiceDescription(){
+    return StringUtils.isNullOrBlank(getServiceDescription());
+  }
 
   /**
    * Description of the service, longer (if at all) and contextual not meant for end user in reality

@@ -2,7 +2,7 @@ package org.goplanit.utils.unit;
 
 import java.util.logging.Logger;
 
-import org.goplanit.utils.exceptions.PlanItException;
+import org.goplanit.utils.exceptions.PlanItRunTimeException;
 import org.goplanit.utils.exceptions.PlanItRunTimeException;
 
 /** Unit class for all time related units.
@@ -63,11 +63,10 @@ public class TimeUnit extends SimpleUnit{
    * @param to to unit
    * @param value to convert 
    * @return converted value 
-   * @throws PlanItException thrown if error
    */
-  public static double convertSecondTo(UnitType to, double value) throws PlanItException {
+  public static double convertSecondTo(UnitType to, double value){
     if(to==null) {
-      throw new PlanItException(String.format("to unit null, conversion infeasible"));
+      throw new PlanItRunTimeException(String.format("to unit null, conversion infeasible"));
     }
     switch (to) {    
     case HOUR:
@@ -77,7 +76,7 @@ public class TimeUnit extends SimpleUnit{
     case SECOND:
       return value;
     default:
-      throw new PlanItException(
+      throw new PlanItRunTimeException(
           String.format("conversion illegal or not supported yet from %s --> %s",UnitType.SECOND, to));
     }   
   }  
@@ -86,11 +85,10 @@ public class TimeUnit extends SimpleUnit{
    * @param to to unit
    * @param value to convert 
    * @return converted value 
-   * @throws PlanItException thrown if error
    */
-  public static double convertMinuteTo(UnitType to, double value) throws PlanItException {
+  public static double convertMinuteTo(UnitType to, double value) {
     if(to==null) {
-      throw new PlanItException(String.format("to unit null, conversion infeasible"));
+      throw new PlanItRunTimeException(String.format("to unit null, conversion infeasible"));
     }
     switch (to) {
     case MINUTE:
@@ -100,11 +98,11 @@ public class TimeUnit extends SimpleUnit{
     case SECOND:
       return value * MINUTE_2_SECOND;        
     default:
-      throw new PlanItException(
+      throw new PlanItRunTimeException(
           String.format("conversion illegal or not supported yet from %s --> %s",UnitType.MINUTE, to));
     }   
   }
-  
+
   /** convert hour to... 
    * @param to to unit
    * @param value to convert 
@@ -131,7 +129,7 @@ public class TimeUnit extends SimpleUnit{
    * {@inheritDoc}
    */
   @Override
-  public double convertTo(Unit to, double value) throws PlanItException {
+  public double convertTo(Unit to, double value){
     TimeUnit toUnit = (TimeUnit)to;
     switch(unitType) {
       case MINUTE:
@@ -141,7 +139,7 @@ public class TimeUnit extends SimpleUnit{
       case HOUR:
         return convertHourTo(toUnit.unitType, value);
     default:
-      throw new PlanItException("Unsupported time unit encountered on from Unit");
+      throw new PlanItRunTimeException("Unsupported time unit encountered on from Unit");
     }    
   }  
 
