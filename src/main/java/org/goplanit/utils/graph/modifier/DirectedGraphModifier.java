@@ -20,4 +20,5 @@ public interface DirectedGraphModifier extends GraphModifier<DirectedVertex, Dir
    * @param edgeSegment to remove
    */
   public abstract void removeEdgeSegment(EdgeSegment edgeSegment);
+
 }

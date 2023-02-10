@@ -1,5 +1,7 @@
 package org.goplanit.utils.wrapper;
 
+import java.util.function.Predicate;
+
 /** Version of MApWrapper when we use Long as key
  * 
  * @author markr
@@ -14,8 +16,8 @@ public interface LongMapWrapper<V> extends MapWrapper<Long,V> {
    * @param key to remove
    * @return removed entry if any
    */
-  public abstract V remove(final long key); 
-  
+  public abstract V remove(final long key);
+
   /**
    * Collect entry from container using primitive
    * 

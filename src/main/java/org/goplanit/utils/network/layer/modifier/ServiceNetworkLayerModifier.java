@@ -17,8 +17,10 @@ public interface ServiceNetworkLayerModifier<V extends ServiceNode, E extends Se
    * <p>
    *   Note that invoking this method will recreate all managed ids across the service network due to gaps occurring after removal of unmapped entries
    * </p>
-   *
+   * <p>
+   *   Should fire #RecreatedGraphEntitiesManagedIdsEvent after it has been executed
+   * </p>
    */
-  public abstract void removeUnmappedServiceNetworkEntities();
+    public abstract void removeUnmappedServiceNetworkEntities();
 
 }

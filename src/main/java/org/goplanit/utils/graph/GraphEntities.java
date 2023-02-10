@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.function.Consumer;
 
+import org.goplanit.utils.id.ExternalIdAble;
 import org.goplanit.utils.id.IdAble;
 import org.goplanit.utils.id.ManagedIdEntities;
 import org.goplanit.utils.wrapper.LongMapWrapper;
@@ -74,5 +75,5 @@ public interface GraphEntities<E extends GraphEntity> extends LongMapWrapper<E>,
   public default <T extends IdAble> void forEachMatchingIdIn(final Iterable<T> values, final Consumer<T> consumer) {
     values.forEach( (v) -> { if(containsKey(v.getId())){consumer.accept(v);};});
   }
-  
+
 }

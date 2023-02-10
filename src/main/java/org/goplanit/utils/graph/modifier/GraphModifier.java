@@ -91,6 +91,10 @@ public interface GraphModifier<V extends Vertex, E extends Edge> extends GraphMo
    * The reasoning is that if we would recreate ids of the container while the container does not contain all = let's say - vertices, their managedId is no longer guaranteed to be unique which can lead to issues
    * <p> 
    * Method can be used in conjunctions with the removal of parts of the graph and the result is required to have unique contiguous ids
+   * <p>
+   *   Should fire #RecreatedGraphEntitiesManagedIdsEvent after it has been executed
+   * </p>
+   *
    */
   public abstract void recreateManagedEntitiesIds();
   

@@ -11,7 +11,14 @@ import org.goplanit.utils.event.EventProducer;
 public interface RoutedServicesModifierEventProducer extends EventProducer {
 
   /**
-   * Register listeners for events fired by a zoning modifier
+   * Register listeners for events fired by a routed services modifier
+   *
+   *  @param listener to register
+   */
+  public abstract void addListener(final RoutedServicesModifierListener listener);
+
+  /**
+   * Register listeners for events fired by a routed services modifier
    *
    *  @param listener to register
    *  @param eventType to register listener for

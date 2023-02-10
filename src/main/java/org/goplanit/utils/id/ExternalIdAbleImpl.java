@@ -1,5 +1,7 @@
 package org.goplanit.utils.id;
 
+import java.util.function.Consumer;
+
 /**
  * Implementation of ExternalIdable interface including hash and equals based on id
  * 
@@ -13,7 +15,7 @@ public class ExternalIdAbleImpl extends IdAbleImpl implements ExternalIdAble {
   
   /** external id */
   private String externalId;
-  
+
   /** Constructor 
    * 
    * @param id to use
@@ -82,6 +84,5 @@ public class ExternalIdAbleImpl extends IdAbleImpl implements ExternalIdAble {
   public ExternalIdAbleImpl deepClone(){
     return shallowClone() /* no different with regular clone */;
   }
-
 
 }

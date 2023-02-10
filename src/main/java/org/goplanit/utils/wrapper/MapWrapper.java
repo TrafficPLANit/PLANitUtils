@@ -38,6 +38,13 @@ public interface MapWrapper<K, V> extends Iterable<V> {
    * @return removed entry if any
    */
   public abstract V remove(V value);
+
+  /**
+   * Remove all values that satisfy the given condition
+   *
+   * @param condition to remove
+   */
+  public abstract void removeIf(Predicate<V> condition);
   
   /**
    * Clear all entries from map

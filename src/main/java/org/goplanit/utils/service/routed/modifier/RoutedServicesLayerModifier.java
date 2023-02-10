@@ -1,12 +1,31 @@
 package org.goplanit.utils.service.routed.modifier;
 
+import org.goplanit.utils.event.EventListener;
+import org.goplanit.utils.mode.Mode;
 import org.goplanit.utils.network.layer.modifier.ServiceNetworkLayerModifier;
 import org.goplanit.utils.zoning.modifier.event.ZoningModifierEventProducer;
+
+import java.util.List;
 
 /**
  * Modification utilities for a routed services layer that require complex changes to the underlying containers
  */
 public interface RoutedServicesLayerModifier extends RoutedServicesModifierEventProducer {
+
+  /**
+   * Remove all RoutedServicesByMode instances from the layer in case they no longer have any services  associated with them
+   *
+   * @param recreateManagedEntitiesIds when true recreate all managed ids on the layer (if needed), otherwise do not
+   */
+  public abstract void removeEmptyRoutedServicesByMode(boolean recreateManagedEntitiesIds);
+
+  /**
+   * Remove all routed services from the layer in case they no longer have any trips associated with them for the given modes
+   *
+   * @param recreateManagedEntitiesIds when true recreate all managed ids on the layer, otherwise do not
+   * @param modes to do this for
+   */
+  public abstract void removeRoutedServicesWithoutTrips(boolean recreateManagedEntitiesIds, Mode... modes);
 
   /**
    * Method that will truncate all routed entities to available service network entities in its parent in case the parent service network has been altered for some reason,

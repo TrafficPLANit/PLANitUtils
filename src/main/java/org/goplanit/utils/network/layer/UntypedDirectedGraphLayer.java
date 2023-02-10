@@ -1,11 +1,15 @@
 package org.goplanit.utils.network.layer;
 
+import org.goplanit.utils.graph.GraphEntity;
 import org.goplanit.utils.graph.directed.DirectedEdge;
 import org.goplanit.utils.graph.directed.DirectedVertex;
 import org.goplanit.utils.graph.directed.EdgeSegment;
 import org.goplanit.utils.id.IdGroupingToken;
+import org.goplanit.utils.id.ManagedId;
 import org.goplanit.utils.network.layer.UntypedDirectedGraphLayer;
 import org.goplanit.utils.network.layer.modifier.UntypedDirectedGraphLayerModifier;
+
+import java.util.function.Consumer;
 
 /**
  * Network layer comprising containers with custom entity types. Use this as a base template for implementations and derived interfaced that
@@ -40,6 +44,6 @@ public interface UntypedDirectedGraphLayer<V extends DirectedVertex, E extends D
    * {@inheritDoc}
    */
   @Override
-  public abstract UntypedDirectedGraphLayerModifier<V,E,S> getLayerModifier();  
-      
+  public abstract UntypedDirectedGraphLayerModifier<V,E,S> getLayerModifier();
+
 }

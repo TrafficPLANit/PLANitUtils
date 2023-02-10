@@ -143,7 +143,15 @@ public class MapWrapperImpl<K, V> implements MapWrapper<K, V>{
   @Override
   public V remove(final V value) {
     return theMap.remove(getKeyByValue(value));
-  }  
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public void removeIf(Predicate<V> condition) {
+    theMap.values().removeIf(condition);
+  }
 
   /**
    * {@inheritDoc}

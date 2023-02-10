@@ -1,11 +1,11 @@
 package org.goplanit.utils.network.layer.physical;
 
 import org.goplanit.utils.graph.GraphEntities;
-import org.goplanit.utils.mode.Mode;
+import org.goplanit.utils.graph.GraphEntity;
+import org.goplanit.utils.id.ExternalIdAble;
 import org.goplanit.utils.network.layer.UntypedDirectedGraphLayer;
-import org.goplanit.utils.network.layer.physical.UntypedPhysicalLayer;
 
-import java.util.Collection;
+import java.util.function.Consumer;
 
 /**
  * Physical topological Network consisting of nodes, links and link segments 

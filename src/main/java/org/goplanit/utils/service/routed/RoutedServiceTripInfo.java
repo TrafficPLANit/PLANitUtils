@@ -47,7 +47,7 @@ public interface RoutedServiceTripInfo {
    * @return True when present, false otherwise
    */
   public default boolean hasScheduleBasedTrips() {
-    return getFrequencyBasedTrips() != null && !getFrequencyBasedTrips().isEmpty();
+    return getScheduleBasedTrips() != null && !getScheduleBasedTrips().isEmpty();
   }
 
   /**
@@ -55,4 +55,12 @@ public interface RoutedServiceTripInfo {
    */
   public abstract void reset();
 
+  /**
+   * Verify if any trips exist as either scheduled or frequency based
+   *
+   * @return true when present, false otherwise
+   */
+  public default boolean hasAnyTrips(){
+    return hasScheduleBasedTrips() || hasFrequencyBasedTrips();
+  }
 }
