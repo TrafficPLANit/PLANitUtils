@@ -98,7 +98,8 @@ public interface UntypedDirectedGraphLayerModifier<V extends DirectedVertex, E e
   /**
    * Recreate all managed id entities on the layer
    * <p>
-   *   Should fire #RecreatedGraphEntitiesManagedIdsEvent after it has been executed
+   *   Should fire #RecreatedGraphEntitiesManagedIdsEvent and #RecreatedDirectedGraphEntitiesManagedIdsEvent after each
+   *   relevant managedIds container (nodes, links) and (link segments) that has updated
    * </p>
    */
   public abstract void recreateManagedIdEntities();

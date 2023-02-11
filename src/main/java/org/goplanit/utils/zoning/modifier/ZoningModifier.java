@@ -17,6 +17,9 @@ public interface ZoningModifier extends ZoningModifierEventProducer{
   
   /**
    * recreate all internal ids fo all zones both od and transfer zones
+   * <p>
+   *   fires #ModifiedZoneIdsEvent after completion
+   * </p>
    */  
   public abstract void recreateZoneIds();
   
@@ -36,5 +39,11 @@ public interface ZoningModifier extends ZoningModifierEventProducer{
    */  
   public abstract void removeDanglingTransferZoneGroups();
 
-
+  /**
+   * Recreate all managed id entities owned by this zoning
+   * <p>
+   *   fires #RecreatedZoningManagedIdsEvent after each managedIds container that is has updated
+   * </p>
+   */
+  void recreateManagedIdEntities();
 }
