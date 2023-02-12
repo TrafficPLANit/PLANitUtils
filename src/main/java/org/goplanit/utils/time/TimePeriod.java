@@ -1,7 +1,9 @@
 package org.goplanit.utils.time;
 
 import org.goplanit.utils.id.ExternalIdAble;
+import org.goplanit.utils.id.ManagedId;
 import org.goplanit.utils.misc.StringUtils;
+import org.goplanit.utils.service.routed.RoutedTrip;
 
 /**
  * Represents a time period within the day. Used to determine the duration and start time of trips for example.
@@ -10,8 +12,18 @@ import org.goplanit.utils.misc.StringUtils;
  * @author markr
  *
  */
-public interface TimePeriod extends ExternalIdAble{
-  
+public interface TimePeriod extends ExternalIdAble, ManagedId {
+
+  /** id class for generating ids */
+  public static final Class<TimePeriod> TIMEPERIOD_ID_CLASS = TimePeriod.class;
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public default Class<? extends TimePeriod> getIdClass() {
+    return TIMEPERIOD_ID_CLASS;
+  }
 
   /**
    * Return the start time
@@ -53,11 +65,13 @@ public interface TimePeriod extends ExternalIdAble{
   /**
    * {@inheritDoc}
    */
+  @Override
   public abstract TimePeriod shallowClone();
 
   /**
    * {@inheritDoc}
    */
+  @Override
   public abstract TimePeriod deepClone();
 
 }
