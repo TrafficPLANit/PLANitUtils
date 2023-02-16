@@ -85,6 +85,21 @@ public interface RoutedTripSchedule extends RoutedTrip, Iterable<RelativeLegTimi
   }
 
   /**
+   * Get default
+   *
+   * @return default dwell time
+   */
+  public abstract LocalTime getDefaultDwellTime();
+
+  /**
+   * Update the default dwell time to the most commonly found dwell time across all rell timings and
+   * update the relative lge timings acccordingly
+   *
+   * @return updated default dwell time
+   */
+  public abstract LocalTime updateDefaultDwellTimeToMostCommon();
+
+  /**
    * Collect the first relative leg timing available, i.e., having the lowest index
    *
    * @return found relative leg timing if any, otherwise null

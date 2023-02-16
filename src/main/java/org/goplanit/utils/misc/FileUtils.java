@@ -48,8 +48,8 @@ public class FileUtils {
    * @throws PlanItException thrown if error
    */
   public static File[] getFilesWithExtensionFromDir(final String pathToDir, final String fileExtension) throws PlanItException {
-    PlanItException.throwIfNull(pathToDir,String.format("Path directory is null when collecting files"));
-    PlanItException.throwIfNull(fileExtension,String.format("File extension to use is null when collecting files from directory"));
+    PlanItException.throwIf(StringUtils.isNullOrBlank(pathToDir),String.format("Path directory is null or blank when collecting files"));
+    PlanItException.throwIf(StringUtils.isNullOrBlank(fileExtension),String.format("File extension to use is null or blank when collecting files from directory"));
     
     /* the dir */
     File directoryPath = new File(pathToDir);    

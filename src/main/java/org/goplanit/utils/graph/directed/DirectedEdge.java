@@ -161,4 +161,17 @@ public interface DirectedEdge extends Edge {
     }
   }
 
+  /**
+   * Remove given edge segment from edge. If the edge segment is not a child nothing is removed
+   *
+   * @param edgeSegment to remove
+   * @return removed edge segment, null if none is removed
+   */
+  public default EdgeSegment removeEdgeSegment(EdgeSegment edgeSegment){
+    if(!edgeSegment.getParent().equals(this)){
+      return null;
+    }
+
+    return edgeSegment.isDirectionAb() ? removeEdgeSegmentAb() : removeEdgeSegmentBa();
+  }
 }

@@ -55,7 +55,18 @@ public class LoggingUtils {
    */    
   public static String networkPrefix(long networkId) {
     return surroundwithBrackets(String.format("network id: %d", networkId));
-  }   
+  }
+
+  /**
+   * Create a prefix for the logger so that all logging items specific to a particular network layer
+   * are prefixed with the exact same string, i.e.  {@code [n-layer id: <id> ]}
+   *
+   * @param layerId the network layerid
+   * @return network layer prefix
+   */
+  public static String networkLayerPrefix(long layerId) {
+    return surroundwithBrackets(String.format("n-layer id: %d", layerId));
+  }
   
   /**
    * Create a prefix for the logger so that all logging items specific to a particular zoning
@@ -247,5 +258,4 @@ public class LoggingUtils {
     }
   }
 
-
-}
+  }
