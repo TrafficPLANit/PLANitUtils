@@ -13,6 +13,7 @@ import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 
 import org.goplanit.utils.exceptions.PlanItException;
+import org.goplanit.utils.exceptions.PlanItRunTimeException;
 import org.goplanit.utils.misc.Pair;
 
 /**
@@ -36,16 +37,15 @@ public class PlanitXmlWriterUtils {
    * create an xml stream writer for the given path
    * @param xmlFilePath to create the writer for
    * @return created xml stream writer and writer instances
-   * @throws PlanItException thrown if error
    */
-  public static Pair<XMLStreamWriter, Writer> createXMLWriter(Path xmlFilePath) throws PlanItException {
+  public static Pair<XMLStreamWriter, Writer> createXMLWriter(Path xmlFilePath) {
     Path absoluteXmlPath = xmlFilePath.toAbsolutePath();
         
     /* create dir if not present */
     File directory = absoluteXmlPath.getParent().toFile();
     if(!directory.exists()) {      
       if(!directory.mkdirs()) {
-        throw new PlanItException(String.format("Unable to create Xml writer output directory %s",directory.toString()));
+        throw new PlanItRunTimeException(String.format("Unable to create Xml writer output directory %s",directory.toString()));
       }      
     }
     
@@ -62,7 +62,7 @@ public class PlanitXmlWriterUtils {
       } catch (Exception ex) {
       }       
       LOGGER.severe(e.getMessage());
-      throw new PlanItException("Could not instantiate XML writer",e);
+      throw new PlanItRunTimeException("Could not instantiate XML writer",e);
     }finally {     
     }  
   }
