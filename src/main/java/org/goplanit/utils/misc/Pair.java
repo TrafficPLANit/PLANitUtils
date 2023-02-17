@@ -161,6 +161,21 @@ public class Pair<A, B> {
   public <T> void both(Consumer<T> pairEntryConsumer) {
     pairEntryConsumer.accept( (T) first);
     pairEntryConsumer.accept( (T) second);
-  }  
-   
+  }
+
+  /**
+   * Check if first is non null
+   * @return true when the case, false otherwise
+   */
+  public boolean firstNotNull() {
+    return first() != null;
+  }
+
+  /**
+   * Check if second is non null
+   * @return true when the case, false otherwise
+   */
+  public boolean secondNotNull() {
+    return second() != null;
+  }
 }

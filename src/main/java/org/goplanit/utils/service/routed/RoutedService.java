@@ -49,7 +49,7 @@ public interface RoutedService extends ManagedId, ExternalIdAble {
    * @return true when present and non-empty, false otherwise
    */
   public default boolean hasName(){
-    return StringUtils.isNullOrBlank(getName());
+    return !StringUtils.isNullOrBlank(getName());
   }
 
   /**
@@ -72,7 +72,7 @@ public interface RoutedService extends ManagedId, ExternalIdAble {
    * @return true when present and non-empty, false otherwise
    */
   public default boolean hasNameDescription(){
-    return StringUtils.isNullOrBlank(getNameDescription());
+    return !StringUtils.isNullOrBlank(getNameDescription());
   }
 
   /**
