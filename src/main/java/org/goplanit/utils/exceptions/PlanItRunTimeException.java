@@ -117,4 +117,12 @@ public class PlanItRunTimeException extends RuntimeException {
   public static <T> void throwIfNullOrEmpty(Collection<T> collection, String message, Object... objectArgs) throws PlanItRunTimeException{
     throwIf(collection==null || collection.isEmpty(), message, objectArgs);
   }
+
+  /**
+   * throw a new PLANit run time exception with a message
+   * @param message to include
+   */
+  public static void throwNew(String message) {
+    throw new PlanItRunTimeException(message);
+  }
 }

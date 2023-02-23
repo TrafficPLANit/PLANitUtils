@@ -42,4 +42,7 @@ public interface RelativeLegTiming extends Cloneable {
   public default boolean hasParentLegSegment(){
     return getParentLegSegment() != null;
   }
+
+  @Override
+  public boolean equals(Object other);
 }

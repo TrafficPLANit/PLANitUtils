@@ -1,6 +1,12 @@
 package org.goplanit.utils.id;
 
+import org.goplanit.utils.service.routed.RoutedTripSchedule;
 import org.goplanit.utils.wrapper.LongMapWrapper;
+
+import java.util.List;
+import java.util.Map;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 /** Container class for any managed id derived entities and a factory to create them
  * 
@@ -72,6 +78,17 @@ public interface ManagedIdEntities<E extends ManagedId> extends LongMapWrapper<E
     }
     clear();
     IdGenerator.reset(getFactory().getIdGroupingToken(), getManagedIdClass());     
+  }
+
+  /**
+   * Convenience method to perform group by based on uncerlying streaming mechanisms
+   *
+   * @param classifier for group by
+   * @return map with key containing the classifier and value being a list of matched entities in the container
+   * @param <K> classifier to apply
+   */
+  public default <K> Map<K, List<E>> groupBy(Function<? super E, ? extends K> classifier){
+    return this.stream().collect(Collectors.groupingBy(classifier));
   }
   
 }

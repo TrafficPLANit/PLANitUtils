@@ -4,6 +4,7 @@ import org.goplanit.utils.misc.StringUtils;
 
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Logger;
 
@@ -257,5 +258,13 @@ public class ExtendedLocalTime implements Comparable<ExtendedLocalTime>{
 
     long diff = toNanoOfTime() - o.toNanoOfTime();
     return diff<0 ? -1 : 1;
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public int hashCode() {
+    return Objects.hash(this.beforeMidnight, this.beyondMidnight);
   }
 }

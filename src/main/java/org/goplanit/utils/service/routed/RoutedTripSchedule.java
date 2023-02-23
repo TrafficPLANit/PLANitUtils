@@ -1,9 +1,13 @@
 package org.goplanit.utils.service.routed;
 
 import java.time.LocalTime;
+import java.util.Collection;
 import java.util.List;
+import java.util.stream.Stream;
 
 import org.goplanit.utils.exceptions.PlanItRunTimeException;
+import org.goplanit.utils.misc.IterableUtils;
+import org.goplanit.utils.network.layer.physical.LinkSegment;
 import org.goplanit.utils.network.layer.service.ServiceLegSegment;
 
 /**
@@ -82,6 +86,14 @@ public interface RoutedTripSchedule extends RoutedTrip, Iterable<RelativeLegTimi
    */
   public default int getLastRelativeLegTimingIndex(){
     return hasRelativeLegTimings() ? getRelativeLegTimingsSize()-1 : -1;
+  }
+
+  /**
+   * Collect the relative leg timings as stream rather than iterable
+   * @return stream of relative leg timings
+   */
+  public default Stream<RelativeLegTiming> getRelativeLegTimingsAsStream() {
+    return IterableUtils.asStream(this);
   }
 
   /**
