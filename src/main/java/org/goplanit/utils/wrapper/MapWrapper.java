@@ -40,6 +40,15 @@ public interface MapWrapper<K, V> extends Iterable<V> {
   public abstract V remove(V value);
 
   /**
+   * Remove all entries in provided collection.
+   *
+   * @param toBeRemoved
+   */
+  public default void removeAll(Collection<V> toBeRemoved){
+    toBeRemoved.forEach(e -> remove(e));
+  }
+
+  /**
    * Remove all values that satisfy the given condition
    *
    * @param condition to remove
@@ -91,7 +100,7 @@ public interface MapWrapper<K, V> extends Iterable<V> {
   /**
    * Create a copy of the map's distinct values as a set 
    * 
-   * @return copt of values as set
+   * @return copy of values as set
    */
   public abstract Set<V> valuesAsNewSet();
   

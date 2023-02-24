@@ -3,8 +3,10 @@ package org.goplanit.utils.id;
 import org.goplanit.utils.service.routed.RoutedTripSchedule;
 import org.goplanit.utils.wrapper.LongMapWrapper;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -90,5 +92,5 @@ public interface ManagedIdEntities<E extends ManagedId> extends LongMapWrapper<E
   public default <K> Map<K, List<E>> groupBy(Function<? super E, ? extends K> classifier){
     return this.stream().collect(Collectors.groupingBy(classifier));
   }
-  
+
 }

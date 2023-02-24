@@ -43,6 +43,15 @@ public interface RoutedServicesLayerModifier extends RoutedServicesModifierEvent
   public abstract void truncateToServiceNetwork();
 
   /**
+   * Consolidate all PLANit RoutedTrips with identical relative timing schedules (but different departure times) into a single
+   *  PLANit Routed trip. Redundant trips are removed. Not that Ids are no updated when these entries are removed from their respective containers. This is left
+   *  to the user to do manually afterwards if desired.
+   *
+   * @param mode to do this for
+   */
+  public abstract void consolidateIdenticallyScheduledTrips(Mode mode);
+
+  /**
    * This method will recreate all ids of the routed services' components, but only when the containers used for them are the primary ManagedIdEntities containers, i.e., when the routed services layer
    * is responsible of uniquely tracking all entities by their managed id. If not, it will not recreate the ids.
    * <p>
@@ -60,10 +69,11 @@ public interface RoutedServicesLayerModifier extends RoutedServicesModifierEvent
   /**
    * Recreate the ids of the routed services layer's routed trip departure ids across all scheduled trips across all modes
    */
-  void recreateRoutedTripScheduleDepartureIds();
+  public abstract void recreateRoutedTripScheduleDepartureIds();
 
   /**
    * Recreate the ids of the routed services layer's routed trips (scheduled and frequency based) across all modes
    */
-  void recreateRoutedTripsIds();
+  public abstract void recreateRoutedTripsIds();
+
 }
