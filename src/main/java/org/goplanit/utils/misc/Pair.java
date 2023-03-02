@@ -4,7 +4,7 @@ import java.util.Objects;
 import java.util.function.Consumer;
 
 /**
- * Custom pair class similar to C++. By default we compare based on the first
+ * Custom pair class similar to C++.
  * value
  * 
  * @author markr
@@ -46,7 +46,7 @@ public class Pair<A, B> {
    * @return new pair
    */
   public static <A,B> Pair<A, B> of(A valueA, B valueB) {
-    return new Pair<A,B>(valueA, valueB);
+    return new Pair<>(valueA, valueB);
   }  
   
 
@@ -60,7 +60,7 @@ public class Pair<A, B> {
   }
 
   /**
-   * Compare to another pair
+   * Check equality to another pair
    * 
    * @see java.lang.Object#equals(java.lang.Object)
    * @param other pair being compared to

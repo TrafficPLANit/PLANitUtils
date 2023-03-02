@@ -146,6 +146,17 @@ public class ExtendedLocalTime implements Comparable<ExtendedLocalTime>{
   }
 
   /**
+   * Extract the component after midnight as a new LocalTime instance
+   * @return created local time based on time after midnight, null if time does not exceed single day
+   */
+  public LocalTime asLocalTimeAfterMidnight() {
+    if(!exceedsSingleDay()){
+      return null;
+    }
+    return LocalTime.from(this.beyondMidnight);
+  }
+
+  /**
    * verify if other time occurs before this time
    *
    * @param other to compare to
@@ -267,4 +278,5 @@ public class ExtendedLocalTime implements Comparable<ExtendedLocalTime>{
   public int hashCode() {
     return Objects.hash(this.beforeMidnight, this.beyondMidnight);
   }
+
 }

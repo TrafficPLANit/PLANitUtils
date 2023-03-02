@@ -20,10 +20,10 @@ public interface RoutedTrips<T extends RoutedTrip> extends ManagedIdEntities<T>,
   public abstract RoutedTripFactory<T> getFactory();
 
   /**
-   * Get all used service nodes along all registered trips
+   * Get all used service nodes along all registered trips as a newly created set
    * @return used service nodes
    */
-  public default Set<ServiceNode> getUsedServiceNodes(){
+  public default Set<ServiceNode> determineUsedServiceNodes(){
     Set<ServiceNode> serviceNodes = new HashSet<>();
     forEach(t -> serviceNodes.addAll(t.getUsedServiceNodes()));
     return serviceNodes;
