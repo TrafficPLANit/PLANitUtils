@@ -1,9 +1,7 @@
 package org.goplanit.utils.wrapper;
 
 import org.goplanit.utils.misc.IterableUtils;
-import org.goplanit.utils.service.routed.RoutedTripDeparture;
 
-import javax.accessibility.AccessibleStreamable;
 import java.util.*;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -108,7 +106,7 @@ public interface MapWrapper<K, V> extends Iterable<V> {
    * @param valuePredicate that checks a property of the value and the first which matches is returned
    * @return the retrieved entry, or null if no traveler type was found
    */
-  public abstract V findFirst(Predicate<V> valuePredicate);
+  public abstract V firstMatch(Predicate<V> valuePredicate);
 
   /**
    * Each map wrapper should be cloneable where the contents are references of the original where possible

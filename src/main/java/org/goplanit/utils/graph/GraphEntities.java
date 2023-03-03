@@ -4,9 +4,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.function.Consumer;
 
-import org.goplanit.utils.id.ExternalIdAble;
 import org.goplanit.utils.id.IdAble;
-import org.goplanit.utils.id.ManagedIdEntities;
 import org.goplanit.utils.wrapper.LongMapWrapper;
 
 /** Container class for any graph entities and a factory to create them
@@ -48,7 +46,7 @@ public interface GraphEntities<E extends GraphEntity> extends LongMapWrapper<E>,
    * @return the specified entity instance
    */
   public default E getByXmlId(String xmlId) {
-    return findFirst(entity -> xmlId.equals(entity.getXmlId()));
+    return firstMatch(entity -> xmlId.equals(entity.getXmlId()));
   }  
   
   /** Collect all entities based on a matching external id. Entities are not indexed by external id so this is

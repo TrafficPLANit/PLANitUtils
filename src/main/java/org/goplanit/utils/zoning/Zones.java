@@ -25,7 +25,7 @@ public interface Zones<Z extends Zone> extends ManagedIdEntities<Z> {
    * @return zone found, null if not present
    */
   public default Z getByXmlId(String xmlId) {
-    return findFirst(zone -> zone.getXmlId().equals(xmlId));
+    return firstMatch(zone -> zone.getXmlId().equals(xmlId));
   }
 
   /**

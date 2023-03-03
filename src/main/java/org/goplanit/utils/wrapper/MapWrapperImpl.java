@@ -197,7 +197,7 @@ public class MapWrapperImpl<K, V> implements MapWrapper<K, V>{
    * {@inheritDoc}
    */
   @Override
-  public V findFirst(Predicate<V> valuePredicate) {
+  public V firstMatch(Predicate<V> valuePredicate) {
     for (V value: this) {
       if (valuePredicate.test(value)) {
         return value;
