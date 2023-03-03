@@ -7,6 +7,7 @@ import org.goplanit.utils.network.layer.ServiceNetworkLayer;
 import org.goplanit.utils.service.routed.modifier.RoutedServicesLayerModifier;
 
 import java.util.Collection;
+import java.util.stream.Collectors;
 
 /**
  * Interface to reflect a routed services layer which in turn is to be managed by a container class that implements the RoutedServicesLayers interface. A RoutedServiceLayer
@@ -57,7 +58,7 @@ public interface RoutedServicesLayer extends ManagedId, ExternalIdAble, Iterable
   public boolean isServicesByModeEmpty(Mode mode);
 
   /**
-   * The services for a given mode available on this layer. If no services are yet available an empty instance is provided.
+   * The services for a given mode available on this layer. If no services are yet available an empty instance is created and registered.
    * It is expected that each routed service across all modes on the layer has a unique internal id, so internal ids do not restart at zero per mode
    * 
    * @param mode to obtain services for
@@ -73,11 +74,20 @@ public interface RoutedServicesLayer extends ManagedId, ExternalIdAble, Iterable
     forEach(routedModeServices -> routedModeServices.reset());
   }
 
-  /** Collect the supported modes that potentially have services registered
+  /** Collect the supported modes that potentially have services registered based on the parent layer
    * @return supported modes
    */
   public default Collection<Mode> getSupportedModes(){
     return getParentLayer().getSupportedModes();
+  }
+
+  /** Collect the modes for which a RoutedModeService entry is available, i.e., for which we expect services to exist rather than potentially support.
+   * this method does not look at the parent layer supported modes, but only at the modes for which a routed services container exists.
+   *
+   * @return available modes
+   */
+  public default Collection<Mode> getSupportedModesWithServices(){
+    return getParentLayer().getSupportedModes().stream().filter( m -> !this.isServicesByModeEmpty(m)).collect(Collectors.toList());
   }
 
   /**

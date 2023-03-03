@@ -3,6 +3,7 @@ package org.goplanit.utils.service.routed;
 import org.goplanit.utils.id.ManagedIdEntities;
 
 import java.time.LocalTime;
+import java.util.stream.Stream;
 
 /**
  * A container class for departures registered on a schedule based routed trip
@@ -43,4 +44,14 @@ public interface RoutedTripDepartures extends ManagedIdEntities<RoutedTripDepart
    * @param departureTimeIncrease to apply
    */
   public abstract void allDepartEarlierBy(LocalTime departureTimeIncrease);
+
+  /** stream over departures but by ascending departure time rather than the underlying ids, which might not be in
+   * the temporal departure time order
+   *
+   * @return departure time stream in acending departure time order
+   */
+  public default Stream<RoutedTripDeparture> streamAscDepartureTime(){
+    return streamSorted(RoutedTripDeparture::getDepartureTime);
+  }
+
 }

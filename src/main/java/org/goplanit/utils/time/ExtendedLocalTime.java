@@ -184,7 +184,7 @@ public class ExtendedLocalTime implements Comparable<ExtendedLocalTime>{
    * @return newly created time, null if invalid
    */
   public ExtendedLocalTime minus(final ExtendedLocalTime other){
-    long totalNanos = this.toNanoOfTime() - other.toNanoOfTime();
+    long totalNanos = this.toNanoOfExtendedDay() - other.toNanoOfExtendedDay();
     if(isNanosValid(totalNanos)){
       return of(totalNanos);
     }else{
@@ -201,7 +201,7 @@ public class ExtendedLocalTime implements Comparable<ExtendedLocalTime>{
    * @return newly created time, null if invalid
    */
   public ExtendedLocalTime plus(final ExtendedLocalTime other){
-    long totalNanos = this.toNanoOfTime() + other.toNanoOfTime();
+    long totalNanos = this.toNanoOfExtendedDay() + other.toNanoOfExtendedDay();
     if(isNanosValid(totalNanos)){
       return of(totalNanos);
     }else{
@@ -214,7 +214,7 @@ public class ExtendedLocalTime implements Comparable<ExtendedLocalTime>{
    *
    * @return nanos
    */
-  public long toNanoOfTime(){
+  public long toNanoOfExtendedDay(){
     return this.beforeMidnight.toNanoOfDay() + (exceedsSingleDay() ? this.beyondMidnight.toNanoOfDay()+1 : 0);
   }
 
@@ -267,7 +267,7 @@ public class ExtendedLocalTime implements Comparable<ExtendedLocalTime>{
       return 0;
     }
 
-    long diff = toNanoOfTime() - o.toNanoOfTime();
+    long diff = toNanoOfExtendedDay() - o.toNanoOfExtendedDay();
     return diff<0 ? -1 : 1;
   }
 

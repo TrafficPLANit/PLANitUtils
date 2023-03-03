@@ -1,12 +1,10 @@
 package org.goplanit.utils.wrapper;
 
 import org.goplanit.utils.misc.IterableUtils;
+import org.goplanit.utils.service.routed.RoutedTripDeparture;
 
 import javax.accessibility.AccessibleStreamable;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
@@ -176,6 +174,15 @@ public interface MapWrapper<K, V> extends Iterable<V> {
    */
   public default Stream<V> stream(){
     return StreamSupport.stream(this.spliterator(), false);
+  }
+
+  /**
+   * stream in a sorted manner to allow for a specific ordering other than the underlying key used
+   *
+   * @return stream of all entries (values) ordered by given comparing function
+   */
+  public default <M extends Comparable> Stream<V> streamSorted(Function<V,M> comparingFunction){
+    return stream().sorted(Comparator.comparing(comparingFunction));
   }
 
 }
