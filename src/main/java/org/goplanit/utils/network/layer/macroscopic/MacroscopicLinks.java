@@ -1,8 +1,12 @@
 package org.goplanit.utils.network.layer.macroscopic;
 
+import org.goplanit.utils.graph.ConjugateEdge;
+import org.goplanit.utils.graph.ConjugateEdges;
 import org.goplanit.utils.graph.ManagedGraphEntities;
 import org.goplanit.utils.network.layer.physical.Link;
 import org.goplanit.utils.network.layer.physical.LinkFactory;
+
+import java.util.function.BiConsumer;
 
 /**
  *Primary managed container class for macroscopic links with access to factory capable of creating new links and registering them on the container
@@ -35,6 +39,12 @@ public interface MacroscopicLinks extends ManagedGraphEntities<MacroscopicLink> 
    */
   @Override
   public abstract MacroscopicLinks deepClone();
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public abstract MacroscopicLinks deepCloneWithMapping(BiConsumer<MacroscopicLink, MacroscopicLink> mapper);
 
   /**
    * verify if link is present

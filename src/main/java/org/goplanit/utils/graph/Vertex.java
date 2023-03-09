@@ -1,6 +1,7 @@
 package org.goplanit.utils.graph;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
@@ -65,6 +66,15 @@ public interface Vertex extends Serializable, GraphEntity {
    * @return true when added, false when already present (and not added)
    */
   public abstract boolean addEdge(Edge edge);
+
+  /**
+   * Add multiple edges at the same time
+   *
+   * @param toBeAdded
+   */
+  public default void addEdges(Collection<? extends Edge> toBeAdded){
+    toBeAdded.forEach( edge -> addEdge(edge));
+  }
   
   /**
    * Remove edge
@@ -210,5 +220,6 @@ public interface Vertex extends Serializable, GraphEntity {
       }
     }
     return true;
-  }  
+  }
+
 }

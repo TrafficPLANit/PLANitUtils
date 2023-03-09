@@ -1,5 +1,7 @@
 package org.goplanit.utils.id;
 
+import org.goplanit.utils.network.layer.macroscopic.MacroscopicLinkSegmentType;
+import org.goplanit.utils.network.layer.macroscopic.MacroscopicLinkSegmentTypes;
 import org.goplanit.utils.service.routed.RoutedTripSchedule;
 import org.goplanit.utils.wrapper.LongMapWrapper;
 
@@ -7,6 +9,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.BiConsumer;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -52,6 +55,13 @@ public interface ManagedIdEntities<E extends ManagedId> extends LongMapWrapper<E
    * @return deep copy of entities
    */
   public abstract ManagedIdEntities<E> deepClone();
+
+  /**
+   * Deep clone implementation where the mapping for its internal copies is captured by the provided mapper
+   *
+   * @param mapper to apply to each mapping between original and copy
+   */
+  public abstract ManagedIdEntities<E> deepCloneWithMapping(BiConsumer<E, E> mapper);
     
   /** Verify if present
    * 

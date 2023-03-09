@@ -1,5 +1,7 @@
 package org.goplanit.utils.zoning;
 
+import java.util.function.BiConsumer;
+
 /**
  * Container class for TransferZone instances
  * 
@@ -25,4 +27,10 @@ public interface TransferZones extends Zones<TransferZone>{
    */
   @Override
   public abstract TransferZones deepClone();
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public abstract TransferZones deepCloneWithMapping(BiConsumer<TransferZone, TransferZone> mapper);
 }

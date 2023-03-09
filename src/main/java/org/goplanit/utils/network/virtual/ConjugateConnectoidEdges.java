@@ -1,6 +1,10 @@
 package org.goplanit.utils.network.virtual;
 
 import org.goplanit.utils.graph.GraphEntities;
+import org.goplanit.utils.network.layer.service.ServiceNode;
+import org.goplanit.utils.network.layer.service.ServiceNodes;
+
+import java.util.function.BiConsumer;
 
 /**
  * Container to register and manager conjugate connectoid edges.
@@ -27,4 +31,10 @@ public interface ConjugateConnectoidEdges extends GraphEntities<ConjugateConnect
    */
   @Override
   public abstract ConjugateConnectoidEdges deepClone();
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public abstract ConjugateConnectoidEdges deepCloneWithMapping(BiConsumer<ConjugateConnectoidEdge, ConjugateConnectoidEdge> mapper);
 }

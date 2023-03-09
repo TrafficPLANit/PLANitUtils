@@ -1,6 +1,10 @@
 package org.goplanit.utils.graph;
 
 import org.goplanit.utils.id.ManagedIdEntities;
+import org.goplanit.utils.network.virtual.ConnectoidSegment;
+import org.goplanit.utils.network.virtual.ConnectoidSegments;
+
+import java.util.function.BiConsumer;
 
 /** Container class for any graph entities and a factory to create them
  * 
@@ -25,5 +29,13 @@ public interface ManagedGraphEntities<E extends GraphEntity> extends GraphEntiti
    */
   @Override
   public abstract ManagedGraphEntities<E> deepClone();
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public abstract ManagedGraphEntities<E> deepCloneWithMapping(BiConsumer<E, E> mapper);
+
+
 
 }

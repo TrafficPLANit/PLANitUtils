@@ -2,6 +2,8 @@ package org.goplanit.utils.network.virtual;
 
 import org.goplanit.utils.graph.GraphEntities;
 
+import java.util.function.BiConsumer;
+
 /**
  * Container to register and manage conjugate connectoid segments that define the points of access for
  * zones regarding conjugate infrastructure network (layer)
@@ -28,4 +30,10 @@ public interface ConjugateConnectoidSegments extends GraphEntities<ConjugateConn
    */
   @Override
   public abstract ConjugateConnectoidSegments deepClone();
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public abstract ConjugateConnectoidSegments deepCloneWithMapping(BiConsumer<ConjugateConnectoidSegment, ConjugateConnectoidSegment> mapper);
 }

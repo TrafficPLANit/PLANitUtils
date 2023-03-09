@@ -2,6 +2,8 @@ package org.goplanit.utils.network.layer.service;
 
 import org.goplanit.utils.graph.ManagedGraphEntities;
 
+import java.util.function.BiConsumer;
+
 /**
  * Container for service leg segments
  * 
@@ -32,6 +34,12 @@ public interface ServiceLegSegments extends ManagedGraphEntities<ServiceLegSegme
    */
   @Override
   public abstract ServiceLegSegments deepClone();
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public abstract ServiceLegSegments deepCloneWithMapping(BiConsumer<ServiceLegSegment, ServiceLegSegment> mapper);
 
   /**
    * Verify if present

@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.BiConsumer;
 import java.util.function.Function;
 import java.util.logging.Logger;
 
@@ -38,6 +39,12 @@ public interface DirectedConnectoids extends Connectoids<DirectedConnectoid> {
    */
   @Override
   public abstract DirectedConnectoids deepClone();
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public abstract DirectedConnectoids deepCloneWithMapping(BiConsumer<DirectedConnectoid, DirectedConnectoid> mapper);
 
   /**
    * For a given physical network layers container that has a relation with these directed connectoids, index all connectoids by a custom key on the layers they

@@ -2,6 +2,8 @@ package org.goplanit.utils.network.virtual;
 
 import org.goplanit.utils.graph.ManagedGraphEntities;
 
+import java.util.function.BiConsumer;
+
 /**
  * Container class for conjugate connectoid nodes container and access to factory to create and register them on this instance
  * 
@@ -32,4 +34,10 @@ public interface ConjugateConnectoidNodes extends ManagedGraphEntities<Conjugate
    */
   @Override
   public abstract ConjugateConnectoidNodes deepClone();
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public abstract ConjugateConnectoidNodes deepCloneWithMapping(BiConsumer<ConjugateConnectoidNode, ConjugateConnectoidNode> mapper);
 }

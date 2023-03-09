@@ -7,6 +7,8 @@ import org.opengis.geometry.MismatchedDimensionException;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.TransformException;
 
+import java.util.function.BiConsumer;
+
 /**
  * 
  * A graph interface consisting of vertices and edges without specifying a concrete container type
@@ -82,5 +84,5 @@ public interface UntypedGraph<V extends Vertex, E extends Edge> extends ManagedI
    */
   @Override
   public abstract UntypedGraph<V, E> deepClone();
-  
+
 }

@@ -1,5 +1,7 @@
 package org.goplanit.utils.graph;
 
+import java.util.function.BiConsumer;
+
 /**
  * Container class for conjugate vertices and creating instances within this container via factory.
  * 
@@ -26,4 +28,10 @@ public interface ConjugateVertices extends GraphEntities<ConjugateVertex> {
    */
   @Override
   public abstract ConjugateVertices deepClone();
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public abstract ConjugateVertices deepCloneWithMapping(BiConsumer<ConjugateVertex, ConjugateVertex> mapper);
 }

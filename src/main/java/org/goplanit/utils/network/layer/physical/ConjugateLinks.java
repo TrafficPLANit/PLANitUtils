@@ -1,6 +1,10 @@
 package org.goplanit.utils.network.layer.physical;
 
 import org.goplanit.utils.graph.ManagedGraphEntities;
+import org.goplanit.utils.network.layer.macroscopic.MacroscopicLinkSegment;
+import org.goplanit.utils.network.layer.macroscopic.MacroscopicLinkSegments;
+
+import java.util.function.BiConsumer;
 
 /**
  * Primary managed container class for conjugate links with access to factory capable of creating new conjugate links and registering them on the container
@@ -33,5 +37,11 @@ public interface ConjugateLinks extends ManagedGraphEntities<ConjugateLink> {
    */
   @Override
   public abstract ConjugateLinks deepClone();
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public abstract ConjugateLinks deepCloneWithMapping(BiConsumer<ConjugateLink, ConjugateLink> mapper);
 
 }

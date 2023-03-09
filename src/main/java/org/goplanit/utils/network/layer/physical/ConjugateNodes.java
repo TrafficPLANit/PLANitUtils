@@ -2,6 +2,8 @@ package org.goplanit.utils.network.layer.physical;
 
 import org.goplanit.utils.graph.ManagedGraphEntities;
 
+import java.util.function.BiConsumer;
+
 /**
  * Container class for primary managed nodes container and access to factory to create and register them on this instance
  * 
@@ -32,4 +34,10 @@ public interface ConjugateNodes extends ManagedGraphEntities<ConjugateNode> {
    */
   @Override
   public abstract ConjugateNodes deepClone();
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public abstract ConjugateNodes deepCloneWithMapping(BiConsumer<ConjugateNode, ConjugateNode> mapper);
 }

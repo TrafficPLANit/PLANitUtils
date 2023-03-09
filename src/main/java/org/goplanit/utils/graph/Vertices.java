@@ -1,5 +1,7 @@
 package org.goplanit.utils.graph;
 
+import java.util.function.BiConsumer;
+
 /**
  * Container class for vertices and creating instances within this container via factory.
  * 
@@ -26,4 +28,10 @@ public interface Vertices extends GraphEntities<Vertex> {
    */
   @Override
   public abstract Vertices deepClone();
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public abstract Vertices deepCloneWithMapping(BiConsumer<Vertex, Vertex> mapper);
 }

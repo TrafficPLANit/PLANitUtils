@@ -5,6 +5,7 @@ import java.util.Collection;
 import org.goplanit.utils.id.ExternalIdAble;
 import org.goplanit.utils.id.ManagedId;
 import org.goplanit.utils.mode.Mode;
+import org.goplanit.utils.mode.PredefinedModeType;
 
 /**
  * A network layer represents the infrastructure suited for a number of modes. This can be in the form of a physical network or by some other (more aggregate)
@@ -70,6 +71,13 @@ public interface NetworkLayer extends ExternalIdAble, ManagedId {
    * @return the supported modes for at least some part of the available infrastructure
    */
   public abstract Collection<Mode> getSupportedModes();
+
+  /**
+   * Verify if a predefined mode is supported based on its type
+   * @param predefinedModeType to verify
+   * @return true, when supported, false otherwise
+   */
+  public abstract boolean supportsPredefinedMode(PredefinedModeType predefinedModeType);
 
   /**
    * check if the layer is empty of any infrastructure

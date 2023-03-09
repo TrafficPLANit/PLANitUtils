@@ -2,9 +2,11 @@ package org.goplanit.utils.id;
 
 import java.util.Map;
 import java.util.TreeMap;
+import java.util.function.BiConsumer;
 import java.util.function.Function;
 
 import org.goplanit.utils.id.IdGenerator;
+import org.goplanit.utils.time.TimePeriod;
 import org.goplanit.utils.wrapper.LongMapWrapperImpl;
 
 /**
@@ -47,14 +49,21 @@ public abstract class ManagedIdEntitiesImpl<E extends ManagedId> extends LongMap
    * 
    * @param other to copy
    * @param deepCopy when true, create a deep copy, shallow copy otherwise
+   * @param mapper to apply in case of deep copy to each original to copy combination (when provided, may be null)
    */
-  protected ManagedIdEntitiesImpl(ManagedIdEntitiesImpl<E> other, boolean deepCopy) {
+  protected ManagedIdEntitiesImpl(ManagedIdEntitiesImpl<E> other, boolean deepCopy, BiConsumer<E, E> mapper) {
     super(other);
     this.managedIdClass = other.managedIdClass;
 
+    // super already did a shallow copy, so only needed in case of deep copy
     if(deepCopy){
       clear();
-      other.forEach(v -> this.register((E) v.deepClone()));
+      other.forEach(v ->
+      {
+        var copy = (E) v.deepClone();
+        this.register(copy);
+        if(mapper!= null) mapper.accept(v, copy);
+      });
     }
   }
 

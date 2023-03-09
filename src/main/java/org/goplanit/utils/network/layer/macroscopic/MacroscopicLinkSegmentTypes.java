@@ -3,6 +3,8 @@ package org.goplanit.utils.network.layer.macroscopic;
 import org.goplanit.utils.id.ManagedIdEntities;
 import org.goplanit.utils.mode.Mode;
 
+import java.util.function.BiConsumer;
+
 /**
  * A container interface for macroscopic link segment types
  * 
@@ -56,5 +58,11 @@ public interface MacroscopicLinkSegmentTypes extends ManagedIdEntities<Macroscop
    */
   @Override
   public abstract MacroscopicLinkSegmentTypes deepClone();
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public abstract MacroscopicLinkSegmentTypes deepCloneWithMapping(BiConsumer<MacroscopicLinkSegmentType, MacroscopicLinkSegmentType> mapper);
 
 }

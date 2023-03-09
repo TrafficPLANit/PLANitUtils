@@ -2,9 +2,12 @@ package org.goplanit.utils.graph;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Map;
+import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
 import org.goplanit.utils.id.IdAble;
+import org.goplanit.utils.misc.Pair;
 import org.goplanit.utils.wrapper.LongMapWrapper;
 
 /** Container class for any graph entities and a factory to create them
@@ -35,6 +38,14 @@ public interface GraphEntities<E extends GraphEntity> extends LongMapWrapper<E>,
    * @return deep copy of entities
    */
   public abstract GraphEntities<E> deepClone();
+
+  /**
+   * Deep clone implementation with mapping retained between original and copies created
+   *
+   * @param graphEntityMapper that is applied to each deep copy entity mapping pair of origin and copy
+   * @return pair with deep copy of entities and mapping from original entities to deep copies of these entities
+   */
+  public abstract GraphEntities<E> deepCloneWithMapping(BiConsumer<E,E> graphEntityMapper);
       
   /**
    * Return an entity by its XML id

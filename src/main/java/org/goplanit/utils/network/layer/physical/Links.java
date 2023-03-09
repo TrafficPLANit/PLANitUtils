@@ -2,6 +2,8 @@ package org.goplanit.utils.network.layer.physical;
 
 import org.goplanit.utils.graph.ManagedGraphEntities;
 
+import java.util.function.BiConsumer;
+
 /**
  *Primary managed container class for links with access to factory capable of creating new links and registering them on the container
  * directly
@@ -33,6 +35,12 @@ public interface Links<L extends Link> extends ManagedGraphEntities<L> {
    */
   @Override
   public abstract Links deepClone();
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public abstract Links deepCloneWithMapping(BiConsumer<L, L> mapper);
 
   /**
    * verify if link is present

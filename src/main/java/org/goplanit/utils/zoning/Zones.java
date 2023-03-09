@@ -2,6 +2,8 @@ package org.goplanit.utils.zoning;
 
 import org.goplanit.utils.id.ManagedIdEntities;
 
+import java.util.function.BiConsumer;
+
 /**
  * Interface to manage zones
  * 
@@ -40,5 +42,10 @@ public interface Zones<Z extends Zone> extends ManagedIdEntities<Z> {
   @Override
   public abstract Zones deepClone();
 
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public abstract Zones deepCloneWithMapping(BiConsumer<Z, Z> mapper);
 
 }
