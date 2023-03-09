@@ -130,5 +130,11 @@ public abstract class ManagedIdEntitiesImpl<E extends ManagedId> extends LongMap
    */
   @Override
   public abstract ManagedIdEntitiesImpl<E> deepClone();
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public abstract ManagedIdEntitiesImpl<E> deepCloneWithMapping(BiConsumer<E,E> mapper);
   
 }

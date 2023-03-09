@@ -34,7 +34,7 @@ public interface NetworkLayer extends ExternalIdAble, ManagedId {
   public abstract NetworkLayer shallowClone();
 
   /**
-   * {@inheritDoc}
+   * A network layer deep clone is expected to update interdependencies between "owned" deep cloned entities where possible
    */
   @Override
   public abstract NetworkLayer deepClone();
