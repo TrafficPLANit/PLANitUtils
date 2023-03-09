@@ -1,5 +1,9 @@
 package org.goplanit.utils.misc;
 
+import org.apache.commons.lang3.CharSet;
+
+import java.nio.charset.Charset;
+
 /**
  * Some simple string utilities
  * 
@@ -78,5 +82,42 @@ public class StringUtils {
   public static String zeroPaddedStringOf(int value, int numPadding){
     String paddingFormatString = createPaddingFormatString(numPadding);
     return String.format(paddingFormatString,value);
+  }
+
+  /** print bytes of the String
+   *
+   * @param str to print bytes for
+   * @param encoding to apply
+   * @return String with printed bytes
+   */
+  public static String printBytes(String str, final Charset encoding) {
+    byte[] bytes = str.getBytes(encoding);
+    String output = str + "= byte[";
+    for (int i = 0; i < bytes.length; i++) {
+      output += Byte.toString(bytes[i]);
+      if (i < bytes.length - 1) {
+        output += ", ";
+      }
+    }
+    output += "]";
+    return output;
+  }
+
+  /** print chars of the String
+   *
+   * @param str to print chars for
+   * @return String with printed bytes
+   */
+  public static String printChars(String str) {
+    char[] chars = str.toCharArray();
+    String output = str + "= char[";
+    for (int i = 0; i < chars.length; i++) {
+      output += String.valueOf(chars[i]);
+      if (i < chars.length - 1) {
+        output += ", ";
+      }
+    }
+    output += "]";
+    return output;
   }
 }

@@ -10,7 +10,7 @@ import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
 /**
- * Wrap a map as a named class
+ * Wrap a map as a named class for a non-null key
  * 
  * @author markr
  *
@@ -20,7 +20,7 @@ import java.util.stream.StreamSupport;
 public interface MapWrapper<K, V> extends Iterable<V> {
   
   /**
-   * Register on the internal container
+   * Register on the internal container (no null keys allowed which will trigger a warning and the value not to be registered)
    * 
    * @param value to register
    * @return old value if any

@@ -1,5 +1,7 @@
 package org.goplanit.utils.wrapper;
 
+import org.goplanit.utils.exceptions.PlanItRunTimeException;
+
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
@@ -134,6 +136,11 @@ public class MapWrapperImpl<K, V> implements MapWrapper<K, V>{
    */
   @Override
   public V register(final V value) {
+    var key = getKeyByValue(value);
+    if(key == null){
+      LOGGER.warning(String.format("Not allowed to register null key on %s for entity %s, ignored", MapWrapperImpl.class, value.toString()));
+      return null;
+    }
     return theMap.put(getKeyByValue(value),value);
   }
   
