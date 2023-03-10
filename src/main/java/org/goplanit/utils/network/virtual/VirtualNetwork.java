@@ -29,6 +29,13 @@ public interface VirtualNetwork {
   public abstract ConnectoidEdges getConnectoidEdges();
 
   /**
+   * Access each centroid's vertex
+   *
+   * @return connectoidEdges
+   */
+  public abstract CentroidVertices getCentroidVertices();
+
+  /**
    * free up memory by clearing contents for garbage collection
    */
   public abstract void clear();
@@ -65,7 +72,11 @@ public interface VirtualNetwork {
    *
    * @param connectoidEdgeMapper to use for tracking mapping between original and copied entity (may be null)
    * @param connectoidSegmentMapper to use for tracking mapping between original and copied entity (may be null)
+   * @param centroidVertexMapper to use for tracking mapping between original and copied entity (may be null)
    */
-  public VirtualNetwork deepCloneWithMapping(GraphEntityDeepCopyMapper<ConnectoidEdge> connectoidEdgeMapper, GraphEntityDeepCopyMapper<ConnectoidSegment> connectoidSegmentMapper);
+  public VirtualNetwork deepCloneWithMapping(
+      GraphEntityDeepCopyMapper<ConnectoidEdge> connectoidEdgeMapper,
+      GraphEntityDeepCopyMapper<ConnectoidSegment> connectoidSegmentMapper,
+      GraphEntityDeepCopyMapper<CentroidVertex> centroidVertexMapper);
 
 }

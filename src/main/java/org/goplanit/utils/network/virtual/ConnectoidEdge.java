@@ -60,11 +60,11 @@ public interface ConnectoidEdge extends DirectedEdge{
   /** Collect the centroid vertex attached to the connectoid, which should always exist and only be a single one
    * @return centroid found, null if not found
    */
-  public default Centroid getCentroidVertex() {
-    if(getVertexA() instanceof Centroid) {
-      return (Centroid) getVertexA();
-    }else if (getVertexB() instanceof Centroid) {
-      return (Centroid) getVertexB();
+  public default CentroidVertex getCentroidVertex() {
+    if(getVertexA() instanceof CentroidVertex) {
+      return (CentroidVertex) getVertexA();
+    }else if (getVertexB() instanceof CentroidVertex) {
+      return (CentroidVertex) getVertexB();
     }else {
       return null;
     }

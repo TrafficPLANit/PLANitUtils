@@ -14,14 +14,22 @@ public class DirectedEdgeUtils {
    */
   public static <E extends DirectedEdge, ES extends EdgeSegment> void updateDirectedEdgeEdgeSegments(
       Iterable<E> edges, Function<ES, ES> edgeSegmentToEdgeSegmentMapping, boolean removeMissingMappings) {
+
+    final boolean forceUpdateWhenReplacing = true;
     for(var directedEdge :  edges){
-      var newAbSegment = edgeSegmentToEdgeSegmentMapping.apply((ES) directedEdge.getEdgeSegmentAb());
-      if(newAbSegment != null || removeMissingMappings){
-        directedEdge.registerEdgeSegment(newAbSegment, true);
+
+      if(directedEdge.getEdgeSegmentAb() != null) {
+        var newAbSegment = edgeSegmentToEdgeSegmentMapping.apply((ES) directedEdge.getEdgeSegmentAb());
+        if (newAbSegment != null || removeMissingMappings) {
+          directedEdge.registerEdgeSegment(newAbSegment, true, forceUpdateWhenReplacing);
+        }
       }
-      var newBaSegment = edgeSegmentToEdgeSegmentMapping.apply((ES) directedEdge.getEdgeSegmentBa());
-      if(newBaSegment != null || removeMissingMappings){
-        directedEdge.registerEdgeSegment(newBaSegment, false);
+
+      if(directedEdge.getEdgeSegmentBa() != null) {
+        var newBaSegment = edgeSegmentToEdgeSegmentMapping.apply((ES) directedEdge.getEdgeSegmentBa());
+        if (newBaSegment != null || removeMissingMappings) {
+          directedEdge.registerEdgeSegment(newBaSegment, false, forceUpdateWhenReplacing);
+        }
       }
     }
   }

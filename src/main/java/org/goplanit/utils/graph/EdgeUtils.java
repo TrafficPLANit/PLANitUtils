@@ -2,6 +2,9 @@ package org.goplanit.utils.graph;
 
 import java.util.function.Function;
 
+/**
+ * Utilities for edges that do not belong within the Edge class itself
+ */
 public class EdgeUtils {
 
   /** Collect shared vertex between two edges if any exists

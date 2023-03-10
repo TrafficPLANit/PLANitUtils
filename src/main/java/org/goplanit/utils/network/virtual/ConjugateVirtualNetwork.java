@@ -49,9 +49,9 @@ public interface ConjugateVirtualNetwork {
   public abstract VirtualNetwork getOriginalVirtualNetwork();
 
   /** Extract mapping from original network centroid's to conjugate (dummy) node
-   * @return mapping from centroid to its conjugate dummy noderepresenting the non-existing entry into the movement from centroid to any connected edge
+   * @return mapping from centroid vertex to its conjugate dummy node representing the non-existing entry into the movement from centroid to any connected edge
    */
-  public abstract Map<Centroid, ConjugateConnectoidNode> createCentroidToConjugateNodeMapping();
+  public abstract Map<CentroidVertex, ConjugateConnectoidNode> createCentroidToConjugateNodeMapping();
 
 
 }

@@ -1,7 +1,9 @@
 package org.goplanit.utils.misc;
 
 import java.util.HashMap;
+import java.util.Map;
 import java.util.function.BiConsumer;
+import java.util.stream.Stream;
 
 /**
  * A bi-consumer that tracks the mapping of an original and deep copy that was created
@@ -33,5 +35,13 @@ public class DeepCopyMapper<T> implements BiConsumer<T, T> {
    */
   public T getMapping(T original){
     return original2DeepCopyMapping.get(original);
+  }
+
+  /** stream of all mappings found
+   *
+   * @return stream of mapped entries
+   **/
+  public Stream<Map.Entry<T,T>> stream(){
+    return original2DeepCopyMapping.entrySet().stream();
   }
 }

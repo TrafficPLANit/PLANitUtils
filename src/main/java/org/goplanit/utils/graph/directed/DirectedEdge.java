@@ -39,7 +39,23 @@ public interface DirectedEdge extends Edge {
    * @param directionAB direction of travel
    * @return replaced egeSegment (if any)
    */
-  public abstract EdgeSegment registerEdgeSegment(final EdgeSegment edgeSegment, final boolean directionAB);
+  public default EdgeSegment registerEdgeSegment(final EdgeSegment edgeSegment, final boolean directionAB){
+    return registerEdgeSegment(edgeSegment, directionAB, false);
+  }
+
+  /**
+   * Register EdgeSegment.
+   *
+   * If there already exists an edgeSegment for that direction it is replaced and returned. If the edge segment
+   * has no parent edge, this edge is set. If there is a discrepancy between the edge segment's parent edge and this edge
+   * a warning is issued and the edge segment is not registered
+   *
+   * @param edgeSegment the edgeSegment to be registered
+   * @param directionAB direction of travel
+   * @param force when true the provided edge segment is always set (even if null or inconsistent, without warning)
+   * @return replaced egeSegment (if any)
+   */
+  public abstract EdgeSegment registerEdgeSegment(final EdgeSegment edgeSegment, final boolean directionAB, final boolean force);
   
   /**
    * Remove edge segments from this edge. Be careful doing this as it because it might affect the contiguous ids if the edge segment is garbage collected

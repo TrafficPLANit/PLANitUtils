@@ -1,6 +1,7 @@
 package org.goplanit.utils.graph;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.function.Function;
 
 /**
@@ -15,19 +16,19 @@ public class VertexUtils {
    */
   public static <V extends Vertex, E extends Edge> void updateVertexEdges(Iterable<V> vertices, Function<E,E> edgeToEdgeMapping, boolean removeMissingMappings) {
     for(var vertex : vertices){
-      var edgeIter = vertex.getEdges().iterator();
       var toBeAdded = new ArrayList<E>(vertex.getEdges().size());
-      while (edgeIter.hasNext()) {
-        var currEdge = edgeIter.next();
+      var toBeRemoved = new ArrayList<E>(vertex.getEdges().size());
+      for(var currEdge : vertex.getEdges()){
         var newEdge = edgeToEdgeMapping.apply((E) currEdge);
         if (newEdge != null) {
           toBeAdded.add(newEdge);
         }
-        if (removeMissingMappings && newEdge == null) {
-          edgeIter.remove();
+        if (removeMissingMappings || newEdge != null) {
+          toBeRemoved.add((E) currEdge);
         }
       }
       vertex.addEdges(toBeAdded);
+      vertex.removeEdges(toBeRemoved);
     }
   }
 }

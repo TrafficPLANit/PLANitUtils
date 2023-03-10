@@ -133,6 +133,15 @@ public interface Vertex extends Serializable, GraphEntity {
   }
 
   /**
+   * Remove provided edges
+   *
+   * @param toBeRemoved to remove
+   */
+  public default void removeEdges(Collection<? extends Edge> toBeRemoved){
+    toBeRemoved.forEach(e -> removeEdge(e));
+  }
+
+  /**
    * Remove al edges from vertex
    */
   public abstract void removeAllEdges();
