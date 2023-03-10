@@ -5,6 +5,7 @@ import org.goplanit.utils.network.layer.service.ServiceLegSegment;
 
 import java.util.List;
 import java.util.Map;
+import java.util.function.BiConsumer;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -15,18 +16,6 @@ import java.util.stream.Collectors;
  *
  */
 public interface RoutedTripsSchedule extends RoutedTrips<RoutedTripSchedule> {
-
-  /**
-   * {@inheritDoc}
-   */
-  @Override
-  public abstract RoutedTripsSchedule shallowClone();
-
-  /**
-   * {@inheritDoc}
-   */
-  @Override
-  public abstract RoutedTripsSchedule deepClone();
 
   /**
    * {@inheritDoc}
@@ -60,5 +49,23 @@ public interface RoutedTripsSchedule extends RoutedTrips<RoutedTripSchedule> {
   public default Map<List<RelativeLegTiming>, List<RoutedTripSchedule>> groupByRelativeLegTimings(){
     return groupBy(rts -> rts.getRelativeLegTimingsAsStream().collect(Collectors.toList()));
   }
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public abstract RoutedTripsSchedule shallowClone();
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public abstract RoutedTripsSchedule deepClone();
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public abstract RoutedTripsSchedule deepCloneWithMapping(BiConsumer<RoutedTripSchedule, RoutedTripSchedule> mapper);
 
 }

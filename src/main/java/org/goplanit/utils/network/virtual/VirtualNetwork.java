@@ -1,5 +1,6 @@
 package org.goplanit.utils.network.virtual;
 
+import org.goplanit.utils.graph.GraphEntityDeepCopyMapper;
 import org.goplanit.utils.id.IdGroupingToken;
 
 import java.util.logging.Logger;
@@ -58,5 +59,13 @@ public interface VirtualNetwork {
    * Perform deep clone
    */
   public abstract VirtualNetwork deepClone();
+
+  /**
+   * Perform a deep clone where mappings between original and copy are captured in the two provided mappers
+   *
+   * @param connectoidEdgeMapper to use for tracking mapping between original and copied entity (may be null)
+   * @param connectoidSegmentMapper to use for tracking mapping between original and copied entity (may be null)
+   */
+  public VirtualNetwork deepCloneWithMapping(GraphEntityDeepCopyMapper<ConnectoidEdge> connectoidEdgeMapper, GraphEntityDeepCopyMapper<ConnectoidSegment> connectoidSegmentMapper);
 
 }

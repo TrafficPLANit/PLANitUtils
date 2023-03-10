@@ -5,6 +5,7 @@ import org.goplanit.utils.network.layer.service.ServiceNode;
 
 import java.util.HashSet;
 import java.util.Set;
+import java.util.function.BiConsumer;
 
 /**
  * Base class for routed trips container for some derived type of RoutedTrip (either schedule or frequency based for example).
@@ -40,5 +41,11 @@ public interface RoutedTrips<T extends RoutedTrip> extends ManagedIdEntities<T>,
    */
   @Override
   public abstract RoutedTrips deepClone();
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public abstract RoutedTrips deepCloneWithMapping(BiConsumer<T, T> mapper);
 
 }

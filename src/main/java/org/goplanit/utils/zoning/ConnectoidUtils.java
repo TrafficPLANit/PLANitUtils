@@ -1,5 +1,7 @@
 package org.goplanit.utils.zoning;
 
+import org.goplanit.utils.graph.directed.DirectedEdge;
+import org.goplanit.utils.graph.directed.EdgeSegment;
 import org.goplanit.utils.network.layer.MacroscopicNetworkLayer;
 import org.goplanit.utils.network.layer.NetworkLayer;
 import org.goplanit.utils.network.layer.macroscopic.MacroscopicLink;
@@ -11,6 +13,7 @@ import org.goplanit.utils.network.layers.NetworkLayers;
 import org.locationtech.jts.geom.Point;
 
 import java.util.*;
+import java.util.function.Function;
 import java.util.logging.Logger;
 
 /**
@@ -73,5 +76,29 @@ public class ConnectoidUtils {
       }
     }
     return connectoidEligibleAccessNodesLocations;
+  }
+
+  /**
+   * Update the parent edge of all edge segments based on the mapping provided (if any)
+   * @param zoneToZoneMapping to use should contain original edge as currently used on vertex and then the value is the new edge to replace it
+   * @param removeMissingMappings when true if there is no mapping, the parent edge is nullified, otherwise it is left in-tact
+   */
+  public static <C extends Connectoid, Z extends Zone> void updateAccessZoneMapping(Iterable<C> connectoids, Function<Z, Z> zoneToZoneMapping, boolean removeMissingMappings) {
+    for(var connectoid :  connectoids){
+      if(!connectoid.hasAccessZones()){
+        continue;
+      }
+
+      Collection<Zone> accessZonesToAdd = new ArrayList<>(connectoid.getNumberOfAccessZones());
+      for(var accessZoneIter = connectoid.getAccessZones().iterator();accessZoneIter.hasNext();) {
+        var currAccessZone = accessZoneIter.next();
+        var newAccessZone = zoneToZoneMapping.apply((Z) currAccessZone);
+        if (newAccessZone != null || removeMissingMappings) {
+          accessZoneIter.remove();
+          if (newAccessZone != null) accessZonesToAdd.add(newAccessZone);
+        }
+      }
+      connectoid.addAllAccessZones(accessZonesToAdd);
+    }
   }
 }

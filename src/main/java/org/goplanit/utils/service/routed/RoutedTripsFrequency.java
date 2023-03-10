@@ -1,5 +1,7 @@
 package org.goplanit.utils.service.routed;
 
+import java.util.function.BiConsumer;
+
 /**
  * Interface for wrapper container class around RoutedTrip instances that define a frequency based schedule.
  * 
@@ -7,6 +9,12 @@ package org.goplanit.utils.service.routed;
  *
  */
 public interface RoutedTripsFrequency extends RoutedTrips<RoutedTripFrequency> {
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public abstract RoutedTripFrequencyFactory getFactory();
 
   /**
    * {@inheritDoc}
@@ -24,6 +32,6 @@ public interface RoutedTripsFrequency extends RoutedTrips<RoutedTripFrequency> {
    * {@inheritDoc}
    */
   @Override
-  public abstract RoutedTripFrequencyFactory getFactory();
+  public abstract RoutedTripsFrequency deepCloneWithMapping(BiConsumer<RoutedTripFrequency, RoutedTripFrequency> mapper);
 
 }

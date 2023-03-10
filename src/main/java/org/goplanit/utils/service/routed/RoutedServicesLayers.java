@@ -5,6 +5,7 @@ import org.goplanit.utils.mode.Mode;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.function.BiConsumer;
 
 /**
  * Interface for wrapper container class around RoutedServiceLayer instances. This container is used to categorise the entires in RoutedServices by their parent network layers.
@@ -25,6 +26,12 @@ public interface RoutedServicesLayers extends ManagedIdEntities<RoutedServicesLa
    */
   @Override
   public abstract RoutedServicesLayers deepClone();
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public abstract RoutedServicesLayers deepCloneWithMapping(BiConsumer<RoutedServicesLayer, RoutedServicesLayer> mapper);
 
   /**
    * {@inheritDoc}

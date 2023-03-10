@@ -87,6 +87,15 @@ public interface Connectoid extends ExternalIdAble, ManagedId, Iterable<Zone> {
    * @return overwritten zone if any
    */
   public abstract Zone addAccessZone(Zone zone);
+
+  /**
+   * Add all provided access zones
+   *
+   * @param accessZonesToAdd to add
+   */
+  public default void addAllAccessZones(Collection<Zone> accessZonesToAdd){
+    accessZonesToAdd.forEach( z -> addAccessZone(z));
+  }
   
   /** Check if zone is registered as access zone
    * 
@@ -105,7 +114,7 @@ public interface Connectoid extends ExternalIdAble, ManagedId, Iterable<Zone> {
    * 
    * @return number of accessible zones
    */
-  public abstract long getNumberOfAccessZones();
+  public abstract int getNumberOfAccessZones();
   
   /** length can be used to virtually assign a length to the connectoid/zone combination
    * 

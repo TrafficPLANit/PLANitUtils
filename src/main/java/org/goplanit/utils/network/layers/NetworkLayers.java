@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.function.BiConsumer;
 
 import org.goplanit.utils.id.ManagedIdEntities;
 import org.goplanit.utils.mode.Mode;
@@ -91,5 +92,11 @@ public interface NetworkLayers<T extends NetworkLayer> extends ManagedIdEntities
    */
   @Override
   public abstract NetworkLayers<T> deepClone();
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public abstract NetworkLayers<T> deepCloneWithMapping(BiConsumer<T,T> mapper);
 
 }
