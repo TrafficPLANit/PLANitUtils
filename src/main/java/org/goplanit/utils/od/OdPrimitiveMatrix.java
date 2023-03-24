@@ -34,8 +34,9 @@ public abstract class OdPrimitiveMatrix<T extends Number> extends OdMatrixImpl<T
 
   /**
    * Copy Constructor
-   * 
+   *
    * @param other to copy
+   * @param contentFactory to use
    */
   public OdPrimitiveMatrix(OdPrimitiveMatrix<T> other, Array2D.Factory<T> contentFactory) {
     super(other);

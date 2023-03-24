@@ -70,7 +70,7 @@ public interface Vertex extends Serializable, GraphEntity {
   /**
    * Add multiple edges at the same time
    *
-   * @param toBeAdded
+   * @param toBeAdded the to be added edges
    */
   public default void addEdges(Collection<? extends Edge> toBeAdded){
     toBeAdded.forEach( edge -> addEdge(edge));

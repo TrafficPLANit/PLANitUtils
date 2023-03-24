@@ -53,6 +53,7 @@ public interface RoutedServicesLayer extends ManagedId, ExternalIdAble, Iterable
   /**
    * Verify if there exist no registered services for a given mode at all  at present
    *
+   * @param mode to check
    * @return true when no single routed service by mode exists, false otherwise
    */
   public boolean isServicesByModeEmpty(Mode mode);

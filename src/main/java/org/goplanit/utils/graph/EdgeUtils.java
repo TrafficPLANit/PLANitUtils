@@ -27,6 +27,10 @@ public class EdgeUtils {
 
   /**
    * Update the vertices of all edges based on the mapping provided. If no mapping exists, the edge will be assigned a null reference, unless indicated otherwise
+   *
+   * @param <E> type of edge
+   * @param <V> type of vertex
+   * @param edges to update vertices for
    * @param vertexToVertexMapping to use should contain original vertex as currently used on edge and then the value is the new vertex to replace it
    * @param replaceMissingMappings when true missing mappings results in a null assignment, otherwise they are left in-tact
    */

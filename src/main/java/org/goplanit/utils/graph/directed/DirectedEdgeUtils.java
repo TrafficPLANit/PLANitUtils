@@ -9,6 +9,10 @@ public class DirectedEdgeUtils {
 
   /**
    * Update the edge segments of all directed edge based on the mapping provided (if any)
+   *
+   * @param <E> type of edge
+   * @param <ES> type of edge segment
+   * @param edges edges to update
    * @param edgeSegmentToEdgeSegmentMapping to use should contain original edgeSegment and then the value is the new edgeSegment to replace it
    * @param removeMissingMappings when true if there is no mapping, the edgeSegment on the directed edge is nullified, otherwise it is left in-tact
    */

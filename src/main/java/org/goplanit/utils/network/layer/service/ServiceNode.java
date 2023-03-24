@@ -99,7 +99,7 @@ public interface ServiceNode extends DirectedVertex {
   /**
    * Update the underlying network node,  use with caution because it modifies the network!
    *
-   * @return networkLayerNode
+   * @param physicalParentNode to set
    */
   public abstract void setPhysicalParentNode(Node physicalParentNode);
 

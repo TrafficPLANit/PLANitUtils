@@ -50,7 +50,10 @@ public interface DirectedConnectoids extends Connectoids<DirectedConnectoid> {
    * For a given physical network layers container that has a relation with these directed connectoids, index all connectoids by a custom key on the layers they
    * connect to.
    *
+   * @param <L> type of the layer
+   * @param <K> type of comparable
    * @param networkLayers to index for
+   * @param mapToKey the mapping to key from connectoid
    * @return directed connectoids indexed by access node location per layer
    */
   public default <L extends UntypedPhysicalLayer<?,?,?>, K extends Comparable> Map<L, Map<K, List<DirectedConnectoid>>> groupByPhysicalLayerAndCustomKey(

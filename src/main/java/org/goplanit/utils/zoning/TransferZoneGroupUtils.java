@@ -13,6 +13,10 @@ public class TransferZoneGroupUtils {
 
   /**
    * Update the transfer zones of all transfer zone groups based on the mapping provided (if any)
+   *
+   * @param <G> type of transfer zone group
+   * @param <Z> type of transfer zone
+   * @param transferZoneGroups to apply to
    * @param zoneToZoneMapping to use should contain original transfer zone and then the value is the new transfer zone to replace it
    * @param removeMissingMappings when true if there is no mapping, the transferZone is removed from the group, otherwise it is left in-tact
    */

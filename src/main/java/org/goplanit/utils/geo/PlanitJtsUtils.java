@@ -671,6 +671,7 @@ public class PlanitJtsUtils {
    *
    * @param angleDegrees1 first angle in degrees
    * @param angleDegrees2 second angle in degrees
+   * @return the found angle
    */
   public static double minDiffAngleInDegrees(double angleDegrees1, double angleDegrees2) {
     return Angle.toDegrees(Angle.diff(Angle.normalize(Angle.toRadians(angleDegrees1)),Angle.normalize(Angle.toRadians(angleDegrees2))));

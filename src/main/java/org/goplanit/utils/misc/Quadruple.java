@@ -56,7 +56,7 @@ public class Quadruple<A, B, C, D> {
    * @param <A> type of valueA
    * @param <B> type of valueB
    * @param <C> type of valueC
-   * @param <C> type of valueC
+   * @param <D> type of valueD
    * 
    * @param valueA first
    * @param valueB second

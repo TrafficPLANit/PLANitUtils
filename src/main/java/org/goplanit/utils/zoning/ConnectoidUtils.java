@@ -80,6 +80,10 @@ public class ConnectoidUtils {
 
   /**
    * Update the parent edge of all edge segments based on the mapping provided (if any)
+   *
+   * @param <C> type od connectoid
+   * @param <Z> type of zone
+   * @param connectoids to update
    * @param zoneToZoneMapping to use should contain original edge as currently used on vertex and then the value is the new edge to replace it
    * @param removeMissingMappings when true if there is no mapping, the parent edge is nullified, otherwise it is left in-tact
    */

@@ -60,6 +60,7 @@ public interface UntypedDirectedGraphLayerModifier<V extends DirectedVertex, E e
    *
    * Underlying link segments (if any) are also updated accordingly in the same manner.
    *
+   * @param <K> type of key
    * @param linksToBreak links that will be broken if they contain theNode as an internal geo location
    * @param nodeToBreakAt      the node to break at
    * @param crs of the network layer

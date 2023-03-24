@@ -31,6 +31,7 @@ public class DeepCopyMapper<T> implements BiConsumer<T, T> {
   /**
    * Collect mapping for the given original
    *
+   * @param original to get mapping for
    * @return the mapping
    */
   public T getMapping(T original){

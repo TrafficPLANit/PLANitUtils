@@ -34,6 +34,8 @@ public interface DirectedConnectoidFactory extends ManagedIdEntityFactory<Direct
    *
    * @param accessLinkSegment to use
    * @param parentZone to use
+   * @param syncXmlIdToId flag indicating if we should sync the XML ids to internal ids
+   * @param allowedModes to apply
    * @return created directed connectoid
    */
   public default DirectedConnectoid registerNew(LinkSegment accessLinkSegment, Zone parentZone, boolean syncXmlIdToId, Collection<Mode> allowedModes){

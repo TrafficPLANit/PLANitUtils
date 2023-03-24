@@ -47,6 +47,8 @@ public class ExtendedLocalTime implements Comparable<ExtendedLocalTime>{
 
   /**
    * Create extended local time from regular local time
+   *
+   * @param localtime to use as base for new extende local time
    * @return created extended local time
    */
   public static ExtendedLocalTime of(LocalTime localtime){
@@ -74,6 +76,8 @@ public class ExtendedLocalTime implements Comparable<ExtendedLocalTime>{
 
   /**
    * Create extended local time from regular local time that is assumed to be beyond midnight
+   *
+   * @param localtime to use as base for new extende local time
    * @return created extended local time
    */
   public static ExtendedLocalTime ofBeyondMidnight(LocalTime localtime){
@@ -129,7 +133,7 @@ public class ExtendedLocalTime implements Comparable<ExtendedLocalTime>{
   }
 
   /**
-   * Check if extended time exceeds midnight, i.e. 47>h>23
+   * Check if extended time exceeds midnight, i.e. hour is smaller than 47 and greater than 23
    *
    * @return true when extended beyond midnight, false otherwise
    */

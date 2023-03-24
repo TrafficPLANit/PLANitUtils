@@ -60,6 +60,7 @@ public interface ManagedIdEntities<E extends ManagedId> extends LongMapWrapper<E
    * Deep clone implementation where the mapping for its internal copies is captured by the provided mapper
    *
    * @param mapper to apply to each mapping between original and copy
+   * @return copy
    */
   public abstract ManagedIdEntities<E> deepCloneWithMapping(BiConsumer<E, E> mapper);
     

@@ -59,6 +59,7 @@ public class PlanitEntityGeoUtils {
    * of the planit entities geometry (or its point location if no polygon/linestring is available) and the reference node and it is therefore very precise.
    * A cap is placed on how far a zone is allowed to be to still be regarded as closest via maxDistanceMeters.
    *
+   * @param <T> type of the PLANit entity
    * @param coord reference location
    * @param planitEntities to check against using their geometries
    * @param maxDistanceMeters maximum allowedDistance to be eligible

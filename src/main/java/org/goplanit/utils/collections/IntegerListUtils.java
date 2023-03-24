@@ -14,6 +14,7 @@ public class IntegerListUtils {
    * so for 0,2,4,6,7,8,9,10,12 with offset 5, we find ,8,9,10. In case offset is 0, we only get 0 back
    *
    * @param offsetIndex (inclusive)
+   * @param intList to extract longest sublist from
    * @return sublist, empty if out of range
    */
   public static List<Integer> getLongestConsecutiveSubList(int offsetIndex, List<Integer> intList){

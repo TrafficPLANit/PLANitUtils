@@ -38,7 +38,7 @@ public interface MapWrapper<K, V> extends Iterable<V> {
   /**
    * Remove all entries in provided collection.
    *
-   * @param toBeRemoved
+   * @param toBeRemoved the to be removed entries
    */
   public default void removeAll(Collection<V> toBeRemoved){
     toBeRemoved.forEach(e -> remove(e));
@@ -177,6 +177,8 @@ public interface MapWrapper<K, V> extends Iterable<V> {
   /**
    * stream in a sorted manner to allow for a specific ordering other than the underlying key used
    *
+   * @param <M> type of comparable
+   * @param comparingFunction to apply to sorted stream
    * @return stream of all entries (values) ordered by given comparing function
    */
   public default <M extends Comparable> Stream<V> streamSorted(Function<V,M> comparingFunction){

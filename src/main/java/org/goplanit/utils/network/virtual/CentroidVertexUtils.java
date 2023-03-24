@@ -13,6 +13,10 @@ public class CentroidVertexUtils {
 
   /**
    * Update the parent edge of all edge segments based on the mapping provided (if any)
+   *
+   * @param <V> type of centroid vertex
+   * @param <C> type of centroid
+   * @param centroidVertices the centroid vertices to use
    * @param centroidToCentroidMapping to use should contain original centroid as used on current centroid vertex and then the value to replace it
    * @param removeMissingMappings when true if there is no mapping, the parent centroid is nullified, otherwise it is left in-tact
    */

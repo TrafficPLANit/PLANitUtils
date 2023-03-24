@@ -98,6 +98,8 @@ public interface RoutedTripFrequency extends RoutedTrip, Iterable<ServiceLegSegm
 
   /**
    * Remove leg segment at given index from the instance
+   *
+   * @param index to remove
    */
   void removeLegSegment(int index);
 

@@ -18,6 +18,7 @@ public class IterableUtils {
   /**
    * As non-parallel stream
    *
+   * @param <T> type of the iterable
    * @param iterable iterable to stream
    * @return stream
    */
@@ -28,9 +29,9 @@ public class IterableUtils {
   /**
    * Get iterable from iterator
    *
+   * @param <T> type of iterator values
    * @param iterator to convert to iterable
    * @return iterable
-   * @param <T> type of iterator values
    */
   public static <T> Iterable<T> toIterable(Iterator<T> iterator) {
     return () -> iterator;

@@ -248,6 +248,8 @@ public class LoggingUtils {
 
   /** log the given warning message if predicate holds
    *
+   * @param <T> type of test object to aply predicate to
+   * @param logger the logger to use
    * @param message to log if not too close to bounding box
    * @param testObject to test on
    * @param predicate to use

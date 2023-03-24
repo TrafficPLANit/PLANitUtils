@@ -12,7 +12,7 @@ public class ListUtils {
    *
    * @param list to use
    * @param <T> type
-   * @teturn first entry, null if empty or null
+   * @return first entry, null if empty or null
    */
   public static <T> T getFirst(List<T> list){
     if(list == null || list.isEmpty()){
@@ -26,7 +26,7 @@ public class ListUtils {
    *
    * @param list to use
    * @param <T> type
-   * @teturn last entry, null if empty or null
+   * @return last entry, null if empty or null
    */
   public static <T> T getLastValue(List<T> list){
     if(list == null || list.isEmpty()){

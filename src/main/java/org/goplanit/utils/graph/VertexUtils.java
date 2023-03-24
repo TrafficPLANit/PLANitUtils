@@ -11,6 +11,10 @@ public class VertexUtils {
 
   /**
    * Update the edges of all vertices based on the mapping provided (if any)
+   *
+   * @param <V> type of vertex
+   * @param <E> type of edge
+   * @param vertices the vertices to update
    * @param edgeToEdgeMapping to use should contain original edge as currently used on vertex and then the value is the new edge to replace it
    * @param removeMissingMappings when true if there is no mapping, the edge is removed as adjacent to the vertex, otherwise they are left in-tact
    */

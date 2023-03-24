@@ -16,6 +16,8 @@ public interface EnumOf<T extends EnumValue<V>, V> {
   /**
    * Create an enum instance from a list of options based on its internal value
    *
+   * @param <T> type of the supplier
+   * @param enumValuesSupplier the supplier to use
    * @param value internal value to extract enum for
    * @return the corresponding enum found, null when not present
    */

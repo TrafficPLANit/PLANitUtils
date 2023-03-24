@@ -35,7 +35,7 @@ public interface Modes extends ManagedIdEntities<Mode> {
   public Mode getByXmlId(String xmlId);
 
   /**
-   * {@inheritDoc
+   * {@inheritDoc}
    */
   @Override
   public abstract Modes shallowClone();

@@ -29,6 +29,7 @@ public interface CentroidVertexFactory extends GraphEntityFactory<CentroidVertex
   /**
    * Create and register new entity
    *
+   * @param parent to register on centroid
    * @return new centroid vertex created
    */
   public abstract CentroidVertex registerNew(Centroid parent);
