@@ -109,6 +109,16 @@ public interface NetworkLayer extends ExternalIdAble, ManagedId {
   public default boolean supports(Mode mode) {
     return getSupportedModes().contains(mode);
   }
+
+  /**
+   * Determine if mode is supported by this layer
+   *
+   * @param modeType to verify
+   * @return true when supporting, false otherwise
+   */
+  public default boolean supports(PredefinedModeType modeType) {
+    return getSupportedModes().stream().anyMatch( m -> m.isPredefinedModeType() && m.getPredefinedModeType().equals(modeType));
+  }
   
   /**
    * Determine if layer contains any supported modes

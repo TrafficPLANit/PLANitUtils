@@ -9,6 +9,7 @@ import org.goplanit.utils.id.ManagedId;
 import org.goplanit.utils.macroscopic.MacroscopicConstants;
 import org.goplanit.utils.misc.StringUtils;
 import org.goplanit.utils.mode.Mode;
+import org.goplanit.utils.mode.PredefinedModeType;
 
 /**
  * The macroscopic link segment type characteristics are contained in this class
@@ -157,8 +158,17 @@ public interface MacroscopicLinkSegmentType extends ExternalIdAble, ManagedId {
    * @param mode to verify
    * @return available modes
    */
-  public abstract boolean isModeAllowed(final Mode mode);   
-  
+  public abstract boolean isModeAllowed(final Mode mode);
+
+  /**
+   * Verify if predefined mode type is available on type. Note that for custom modes all custom modes are type with CUSTOM
+   * so a match based on mode type has little meaning in this context
+   *
+   * @param modeType to verify
+   * @return available modes
+   */
+  public abstract boolean isModeTypeAllowed(final PredefinedModeType modeType);
+
   /**
    * return the available modes present in one of the access groups that have been registered
    * 

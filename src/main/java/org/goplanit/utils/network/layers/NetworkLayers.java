@@ -8,6 +8,7 @@ import java.util.function.BiConsumer;
 
 import org.goplanit.utils.id.ManagedIdEntities;
 import org.goplanit.utils.mode.Mode;
+import org.goplanit.utils.mode.PredefinedModeType;
 import org.goplanit.utils.network.layer.NetworkLayer;
 
 /**
@@ -99,4 +100,13 @@ public interface NetworkLayers<T extends NetworkLayer> extends ManagedIdEntities
   @Override
   public abstract NetworkLayers<T> deepCloneWithMapping(BiConsumer<T,T> mapper);
 
+  /**
+   * Find layer that supports the given predefined mode type (not custom mode type)
+   *
+   * @param predefinedModeType to check for
+   * @return found layers
+   */
+  public default T get(PredefinedModeType predefinedModeType){
+    return this.firstMatch( l -> l.supports(predefinedModeType));
+  }
 }

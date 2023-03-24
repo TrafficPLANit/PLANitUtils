@@ -94,7 +94,6 @@
 						</goals>
 						<configuration>
 							<!--  place generated javadocs in /docs directory of root-->
-							<outputDirectory>${basedir}</outputDirectory>
 							<destDir>docs</destDir>
 							<includeDependencySources>false</includeDependencySources>
 						</configuration>
