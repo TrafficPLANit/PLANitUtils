@@ -1,7 +1,5 @@
 package org.goplanit.utils.exceptions;
 
-import org.goplanit.utils.zoning.TransferZone;
-
 import java.util.Collection;
 
 /**
