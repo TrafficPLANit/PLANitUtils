@@ -4,6 +4,8 @@ import org.goplanit.utils.exceptions.PlanItRunTimeException;
 import org.goplanit.utils.network.layer.service.ServiceLegSegment;
 
 import java.util.List;
+import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
 
 /**
  * Interface for frequency based trips of a RoutedService. The route is defined based on legs on the parent ServiceNetwork the RoutedService - and therefore the trip - resides on.
@@ -158,4 +160,11 @@ public interface RoutedTripFrequency extends RoutedTrip, Iterable<ServiceLegSegm
     return getNumberOfLegSegments()-1;
   }
 
+  /** convert this iterable into a stream and provide its leg segments this way
+   *
+   * @return service leg segments as stream
+   */
+  public default Stream<ServiceLegSegment> getLegSegmentsAsStream(){
+    return StreamSupport.stream(spliterator(), false);
+  }
 }

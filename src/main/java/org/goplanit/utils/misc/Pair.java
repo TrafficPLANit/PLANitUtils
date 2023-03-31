@@ -178,4 +178,12 @@ public class Pair<A, B> {
   public boolean secondNotNull() {
     return second() != null;
   }
+
+  /**
+   * Check if entries are not equal
+   * @return true when first does not equal second, false otherwise
+   */
+  public boolean different(){
+    return !first().equals(second());
+  }
 }

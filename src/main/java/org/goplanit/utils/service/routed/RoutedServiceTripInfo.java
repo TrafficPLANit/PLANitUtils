@@ -1,5 +1,9 @@
 package org.goplanit.utils.service.routed;
 
+import org.goplanit.utils.network.layer.service.ServiceLegSegment;
+
+import java.util.stream.Stream;
+
 /**
  * Interface to reflect one or more similar routed service trips by providing information on their route legs and schedule/frequencies.
  * 
@@ -62,5 +66,16 @@ public interface RoutedServiceTripInfo {
    */
   public default boolean hasAnyTrips(){
     return hasScheduleBasedTrips() || hasFrequencyBasedTrips();
+  }
+
+  /**
+   * Provide a stream of all service leg segments touched by this routed service
+   *
+   * @return service leg segments touched by this routed service
+   */
+  public default Stream<ServiceLegSegment> getLegSegmentsStream(){
+    var scheduleStream = getScheduleBasedTrips().stream().flatMap(ts -> ts.getRelativeLegTimingsAsStream()).map(rlt -> rlt.getParentLegSegment());
+    var freqStream = getFrequencyBasedTrips().stream().flatMap(ft -> ft.getLegSegmentsAsStream());
+    return Stream.concat(scheduleStream,freqStream);
   }
 }

@@ -323,9 +323,9 @@ public class PlanitGraphGeoUtils {
    * @param geoUtils used to compute distances
    * @return edges found with their distances to the geometry, can be null if none match
    */
-  public static Map<? extends Edge, Double> findEdgesWithinClosestDistanceDeltaToGeometry(Geometry geometry, Collection<? extends Edge> edges, double bufferDistanceMeters, PlanitJtsCrsUtils geoUtils){
+  public static <T extends Edge> Map<T, Double> findEdgesWithinClosestDistanceDeltaToGeometry(Geometry geometry, Collection<T> edges, double bufferDistanceMeters, PlanitJtsCrsUtils geoUtils){
     /* collect entity distances */
-    Map<Edge, Double> result = null;
+    Map<T, Double> result = null;
     if(geometry instanceof Point) {
       result = findPlanitEntitiesDistance(((Point)geometry).getCoordinate(), edges, geoUtils);
     }else if(geometry instanceof LineString) {
