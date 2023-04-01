@@ -1,4 +1,4 @@
-package org.goplanit.utils.collections;
+package org.goplanit.utils.containers;
 
 import java.util.List;
 import java.util.stream.Collectors;
