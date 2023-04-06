@@ -63,13 +63,14 @@ public interface LinkSegment extends EdgeSegment {
   public abstract boolean isModeAllowed(Mode mode);
 
   /**
-   * Returns the modes that are allowed on the link segment
+   * Returns the modes that are allowed on the link segment (unmodifiable)
    *
    * @return allowed modes
    */
   public abstract Set<Mode> getAllowedModes();
 
-  /** collect the allowed modes from the passed in modes
+  /** collect the allowed modes from the passed in modes as newly created set
+   *
    * @param modes to choose from
    * @return allowed modes
    */

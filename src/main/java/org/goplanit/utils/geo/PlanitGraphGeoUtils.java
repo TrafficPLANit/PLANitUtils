@@ -317,6 +317,7 @@ public class PlanitGraphGeoUtils {
   /** Find the edges within the given buffer distance (around shortest distance found) to the passed in geometry using a projection from any existing coordinate on the geometry to the geometry of the link. All edges that are
    * found within a small buffer distance of the closest distance are also retrieved
    *
+   * @param <T> type of edge
    * @param geometry to find closest link for
    * @param edges to check against
    * @param bufferDistanceMeters margin used to collect all edges with distance smaller or equal to buffer (distance to closest edge + this margin)

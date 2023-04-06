@@ -1,7 +1,6 @@
 package org.goplanit.utils.containers;
 
 import org.goplanit.utils.misc.Pair;
-import org.goplanit.utils.mode.Mode;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,7 +17,7 @@ public class ListUtils {
    * @param <T> type
    * @return first entry, null if empty or null
    */
-  public static <T> T getFirst(List<T> list){
+  public static <T> T getFirstValue(List<T> list){
     if(list == null || list.isEmpty()){
       return null;
     }
@@ -49,7 +48,7 @@ public class ListUtils {
   public static <T> List<Pair<T,T>> getPairPermutations(List<T> list, boolean keepSelfPermutation){
     List<Pair<T,T>> permutations = new ArrayList<>();
     if(list.size()==1){
-      permutations.add(Pair.of(getFirst(list), getFirst(list)));
+      permutations.add(Pair.of(getFirstValue(list), getFirstValue(list)));
     }else {
       for (var val1 : list) {
         for (var val2 : list) {

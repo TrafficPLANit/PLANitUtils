@@ -94,21 +94,20 @@ public interface ServiceNode extends DirectedVertex {
    * 
    * @return networkLayerNode
    */
-  public abstract Node getPhysicalParentNode();
-
-  /**
-   * Update the underlying network node,  use with caution because it modifies the network!
-   *
-   * @param physicalParentNode to set
-   */
-  public abstract void setPhysicalParentNode(Node physicalParentNode);
+  public abstract Collection<Node> getPhysicalParentNodes();
 
   /**
    * Verify if a physical parent node is linked to this service node
    *
    * @return true when present false otherwise
    */
-  public default boolean hasPhysicalParentNode(){
-    return getPhysicalParentNode()!=null;
-  }
+  public abstract boolean hasPhysicalParentNodes();
+
+  /**
+   * Verify if provided node is registered as a physical parent node of this service node
+   *
+   * @param physicalParentNode to verify
+   * @return true when registered, false otherwise
+   */
+  public abstract boolean isMappedToPhysicalParentNode(Node physicalParentNode);
 }

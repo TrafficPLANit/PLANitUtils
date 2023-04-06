@@ -1,10 +1,13 @@
 package org.goplanit.utils.misc;
 
+import org.goplanit.utils.network.layer.service.ServiceLegSegment;
+
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
+import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
 
@@ -59,5 +62,16 @@ public class IteratorUtils {
       theList.add(iterator.next());
     }
     return theList;
+  }
+
+  /**
+   * Iterator as stream
+   *
+   * @param iterator to get stream for
+   * @return stream
+   * @param <T> type of entries
+   */
+  public static <T> Stream<T> asStream(Iterator<T> iterator) {
+    return IterableUtils.asStream(toIterable(iterator));
   }
 }
