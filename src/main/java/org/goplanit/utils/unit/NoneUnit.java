@@ -1,6 +1,7 @@
 package org.goplanit.utils.unit;
 
 import org.goplanit.utils.exceptions.PlanItException;
+import org.goplanit.utils.exceptions.PlanItRunTimeException;
 
 /** Simple unit that comprises a single unit
  * 
@@ -28,12 +29,12 @@ public class NoneUnit extends SimpleUnit {
    * {@inheritDoc}
    */  
   @Override
-  public double convertTo(Unit to, double value) throws PlanItException {
+  public double convertTo(Unit to, double value){
     if(!to.isCombinedUnit() && ((NoneUnit)to).unitType.equals(UnitType.NONE)) {
       return value;
     }else {
-      throw new PlanItException(
-          String.format("conversion illegal or not supported yet from %s --> %s",UnitType.NONE, to));
+      throw new PlanItRunTimeException(
+          String.format("Conversion illegal or not supported yet from %s --> %s",UnitType.NONE, to));
     }
   }
   

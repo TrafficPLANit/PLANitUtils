@@ -40,7 +40,7 @@ public class GroupUnit implements Unit {
    * @param denominatorUnits to use
    */
   protected GroupUnit(GroupUnit other, SimpleUnit... denominatorUnits) {
-    this.numeratorUnits = new ArrayList<SimpleUnit>(other.numeratorUnits);
+    this.numeratorUnits = new ArrayList<>(other.numeratorUnits);
     if(denominatorUnits!=null) {
       this.denominatorsUnits = List.of(denominatorUnits);
     }else {
@@ -85,7 +85,7 @@ public class GroupUnit implements Unit {
    * {@inheritDoc}
    */
   @Override
-  public double convertTo(Unit to, double value) throws PlanItException {
+  public double convertTo(Unit to, double value){
     GroupUnit toUnit = (GroupUnit)to;
     
     double numeratorMultiplier = 1;

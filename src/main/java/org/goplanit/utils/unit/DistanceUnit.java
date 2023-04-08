@@ -3,6 +3,7 @@ package org.goplanit.utils.unit;
 import java.util.logging.Logger;
 
 import org.goplanit.utils.exceptions.PlanItException;
+import org.goplanit.utils.exceptions.PlanItRunTimeException;
 
 /** Unit class for all distance related units
  * 
@@ -41,12 +42,11 @@ public class DistanceUnit extends SimpleUnit{
   /** convert meter to... 
    * @param to to unit
    * @param value to convert 
-   * @return converted value 
-   * @throws PlanItException thrown if error
+   * @return converted value
    */
-  public static double convertMeterTo(UnitType to, double value) throws PlanItException {
+  public static double convertMeterTo(UnitType to, double value) {
     if(to==null) {
-      throw new PlanItException(String.format("to unit null, conversion infeasible"));
+      throw new PlanItRunTimeException("To unit null, conversion infeasible");
     }
     switch (to) {
     case METER:
@@ -54,8 +54,7 @@ public class DistanceUnit extends SimpleUnit{
     case KM:
       return value * METER_2_KM;       
     default:
-      throw new PlanItException(
-          String.format("conversion illegal or not supported yet from %s --> %s",UnitType.METER, to));
+      throw new PlanItRunTimeException("Conversion illegal or not supported yet from %s --> %s",UnitType.METER, to);
     }  
   }
 
@@ -65,16 +64,15 @@ public class DistanceUnit extends SimpleUnit{
    * @return converted value 
    * @throws PlanItException thrown if error
    */  
-  public static double convertKmTo(UnitType to, double value) throws PlanItException {
+  public static double convertKmTo(UnitType to, double value){
     if(to==null) {
-      throw new PlanItException(String.format("to unit null, conversion infeasible"));
+      throw new PlanItRunTimeException("to unit null, conversion infeasible");
     }
     switch (to) {
     case METER:
       return value * KM_2_METER;       
     default:
-      throw new PlanItException(
-          String.format("conversion illegal or not supported yet from %s --> %s",UnitType.KM, to));
+      throw new PlanItRunTimeException("Conversion illegal or not supported yet from %s --> %s",UnitType.KM, to);
     }  
   }   
  
@@ -82,7 +80,7 @@ public class DistanceUnit extends SimpleUnit{
    * {@inheritDoc}
    */
   @Override
-  public double convertTo(Unit to, double value) throws PlanItException {
+  public double convertTo(Unit to, double value){
     DistanceUnit toUnit = (DistanceUnit)to;
     switch(unitType) {
       case METER:
@@ -90,7 +88,7 @@ public class DistanceUnit extends SimpleUnit{
       case KM:
         return convertKmTo(toUnit.unitType, value);        
     default:
-      throw new PlanItException("Unsupported distance unit encountered on from Unit");
+      throw new PlanItRunTimeException("Unsupported distance unit encountered on from Unit");
     }    
   }  
 

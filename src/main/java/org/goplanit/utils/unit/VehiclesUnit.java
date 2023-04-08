@@ -1,8 +1,8 @@
 package org.goplanit.utils.unit;
 
-import java.util.logging.Logger;
+import org.goplanit.utils.exceptions.PlanItRunTimeException;
 
-import org.goplanit.utils.exceptions.PlanItException;
+import java.util.logging.Logger;
 
 /** Unit class for all vehicles related units. Since pcu to vehicle (and vice versa) is not a fixed conversion it is possible
  * to set the conversion factor on this units class.
@@ -43,11 +43,10 @@ public class VehiclesUnit extends SimpleUnit{
    * @param unitType to use
    * @param value to convert
    * @return converted value
-   * @throws PlanItException thrown if error
    */
-  public static double convertPcuTo(final UnitType unitType, final double value) throws PlanItException {
+  public static double convertPcuTo(final UnitType unitType, final double value){
     if(!unitType.equals(UnitType.VEH)){
-      throw new PlanItException("conversion illegal or not supported yet from %s --> %s",UnitType.PCU.name, unitType.name);
+      throw new PlanItRunTimeException("Conversion illegal or not supported yet from %s --> %s",UnitType.PCU.name, unitType.name);
     }
     return value * PCU_2_VEHICLE_FACTOR;
   }
@@ -56,11 +55,10 @@ public class VehiclesUnit extends SimpleUnit{
    * @param unitType to use
    * @param value to convert
    * @return converted value
-   * @throws PlanItException thrown if error
-   */  
-  public static double convertVehiclesTo(final UnitType unitType, final double value) throws PlanItException {
+   */
+  public static double convertVehiclesTo(final UnitType unitType, final double value){
     if(!unitType.equals(UnitType.PCU)){
-      throw new PlanItException("conversion illegal or not supported yet from %s --> %s",UnitType.VEH.name, unitType.name);
+      throw new PlanItRunTimeException("Conversion illegal or not supported yet from %s --> %s",UnitType.VEH.name, unitType.name);
     }    
     return value/PCU_2_VEHICLE_FACTOR;
   }
@@ -69,7 +67,7 @@ public class VehiclesUnit extends SimpleUnit{
    * {@inheritDoc}
    */
   @Override
-  public double convertTo(final Unit to, final double value) throws PlanItException {
+  public double convertTo(final Unit to, final double value){
     VehiclesUnit toUnit = (VehiclesUnit)to;
     switch(unitType) {
       case VEH:
@@ -77,7 +75,7 @@ public class VehiclesUnit extends SimpleUnit{
       case PCU:
         return convertPcuTo(toUnit.unitType, value);        
     default:
-      throw new PlanItException("Unsupported vehicles unit encountered on from Unit");
+      throw new PlanItRunTimeException("Unsupported vehicles unit encountered on from Unit");
     }    
   }  
   
