@@ -107,6 +107,7 @@ public interface ManagedIdEntities<E extends ManagedId> extends LongMapWrapper<E
    * @param sortFunction to apply
    * @return sorted stream
    * @param <T> the type to sort on which must be comparable
+   * @param <F> the return type of the stream entries
    */
   public default <T extends Comparable, F extends E> Stream<F> streamSortedBy(Function<? super E, T> sortFunction){
     return this.stream().sorted(Comparator.comparing(e -> sortFunction.apply((F) e)));

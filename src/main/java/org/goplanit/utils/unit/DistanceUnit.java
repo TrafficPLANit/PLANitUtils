@@ -62,8 +62,7 @@ public class DistanceUnit extends SimpleUnit{
    * @param to to unit
    * @param value to convert 
    * @return converted value 
-   * @throws PlanItException thrown if error
-   */  
+   */
   public static double convertKmTo(UnitType to, double value){
     if(to==null) {
       throw new PlanItRunTimeException("to unit null, conversion infeasible");
