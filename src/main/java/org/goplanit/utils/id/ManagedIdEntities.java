@@ -5,13 +5,11 @@ import org.goplanit.utils.network.layer.macroscopic.MacroscopicLinkSegmentTypes;
 import org.goplanit.utils.service.routed.RoutedTripSchedule;
 import org.goplanit.utils.wrapper.LongMapWrapper;
 
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /** Container class for any managed id derived entities and a factory to create them
  * 
@@ -104,4 +102,13 @@ public interface ManagedIdEntities<E extends ManagedId> extends LongMapWrapper<E
     return this.stream().collect(Collectors.groupingBy(classifier));
   }
 
+  /** Stream the container sorted by the given sort function
+   *
+   * @param sortFunction to apply
+   * @return sorted stream
+   * @param <T> the type to sort on which must be comparable
+   */
+  public default <T extends Comparable, F extends E> Stream<F> streamSortedBy(Function<? super E, T> sortFunction){
+    return this.stream().sorted(Comparator.comparing(e -> sortFunction.apply((F) e)));
+  }
 }

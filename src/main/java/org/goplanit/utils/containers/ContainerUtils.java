@@ -2,10 +2,7 @@ package org.goplanit.utils.containers;
 
 import org.goplanit.utils.mode.Mode;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.function.Function;
 
 /**
@@ -49,5 +46,16 @@ public class ContainerUtils {
    */
   public static <T> Set<T> wrapInUnmodifiableSetUnlessNull(Set<T> set) {
     return wrapInUnmodifiableCollectionUnlessNull(set, Collections::unmodifiableSet);
+  }
+
+  /**
+   * Wrap in an unmodifiable version unless it is null, then return null
+   *
+   * @param sortedSet to wrap
+   * @return wrapped set, or null
+   * @param <T> type of entries
+   */
+  public static <T> SortedSet<T> wrapInUnmodifiableSortedSetUnlessNull(SortedSet<T> sortedSet) {
+    return wrapInUnmodifiableCollectionUnlessNull(sortedSet, Collections::unmodifiableSortedSet);
   }
 }

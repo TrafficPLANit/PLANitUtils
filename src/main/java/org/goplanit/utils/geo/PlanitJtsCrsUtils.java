@@ -560,9 +560,8 @@ public class PlanitJtsCrsUtils {
    * @param extendStart when true extend from start coordinate onwards
    * @param extendEnd when true extend further from end coordinate onwards
    * @return extended line segment based on the passed in parameters
-   * @throws PlanItException thrown if error
    */
-  public LineSegment createExtendedLineSegment(final LineSegment source, double extensionInMeters, boolean extendStart, boolean extendEnd) throws PlanItException {
+  public LineSegment createExtendedLineSegment(final LineSegment source, double extensionInMeters, boolean extendStart, boolean extendEnd){
     /* obtain heading first */        
     DirectPosition newStartPosition = null;
     if(extendStart) {
@@ -587,16 +586,15 @@ public class PlanitJtsCrsUtils {
    * @param azimuthInDegrees heading
    * @param distanceInMeters distance
    * @return new position in desired location
-   * @throws PlanItException thrown if error
    */
-  private DirectPosition createPositionInDirection(Coordinate start, double azimuthInDegrees, double distanceInMeters) throws PlanItException {    
+  private DirectPosition createPositionInDirection(Coordinate start, double azimuthInDegrees, double distanceInMeters){
     try {
       geoCalculator.setStartingGeographicPoint(start.x, start.y);
       geoCalculator.setDirection(azimuthInDegrees, distanceInMeters);    
       return geoCalculator.getDestinationPosition();
     }catch (Exception e) {
       LOGGER.severe(e.getMessage());
-      throw new PlanItException("Unable to create a position in the desired direction", e);
+      throw new PlanItRunTimeException("Unable to create a position in the desired direction", e);
     }
   }
 
