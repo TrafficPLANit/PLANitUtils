@@ -84,4 +84,13 @@ public interface VirtualNetwork {
       GraphEntityDeepCopyMapper<ConnectoidSegment> connectoidSegmentMapper,
       GraphEntityDeepCopyMapper<CentroidVertex> centroidVertexMapper);
 
+  /**
+   * Verify if entire network is empty
+   *
+   * @return true if network is empty, false otherwise
+   */
+  public default boolean isEmpty(){
+    return getCentroidVertices().isEmpty() && getConnectoidEdges().isEmpty() && getConnectoidSegments().isEmpty();
+  }
+
 }

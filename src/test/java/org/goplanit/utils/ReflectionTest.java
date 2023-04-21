@@ -14,7 +14,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  *
  */
 public class ReflectionTest {
-    
+
   /**
    * Test some of the stackwalker utils
    */
