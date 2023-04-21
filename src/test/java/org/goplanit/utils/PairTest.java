@@ -2,40 +2,34 @@ package org.goplanit.utils;
 
 import org.goplanit.utils.misc.ComparablePair;
 import org.goplanit.utils.misc.Pair;
-import org.goplanit.utils.time.ExtendedLocalTime;
-import org.hamcrest.CoreMatchers;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import java.time.LocalTime;
-import java.time.format.DateTimeFormatter;
-
-import static org.hamcrest.CoreMatchers.*;
-import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class PairTest {
 
   @Test
   public void pairTest(){
 
-    assertThat(Pair.of(1,2).equals(Pair.of(1,3)), CoreMatchers.is(false));
-    assertThat(Pair.of(1,2).equals(Pair.of(1,2)), CoreMatchers.is(true));
+    assertFalse(Pair.of(1,2).equals(Pair.of(1,3)));
+    assertTrue(Pair.of(1,2).equals(Pair.of(1,2)));
   }
 
   @Test
   public void ComparablePairTest(){
 
-    assertThat(ComparablePair.of(1,2).compareTo(ComparablePair.of(1,3)), CoreMatchers.is(-1));
-    assertThat(ComparablePair.of(1,2).compareTo(ComparablePair.of(1,2)), CoreMatchers.is(0));
-    assertThat(ComparablePair.of(1,2).compareTo(ComparablePair.of(1,1)), CoreMatchers.is(1));
+    assertEquals(ComparablePair.of(1,2).compareTo(ComparablePair.of(1,3)), -1);
+    assertEquals(ComparablePair.of(1,2).compareTo(ComparablePair.of(1,2)), 0);
+    assertEquals(ComparablePair.of(1,2).compareTo(ComparablePair.of(1,1)), 1);
 
-    assertThat(ComparablePair.of(1,2).compareTo(ComparablePair.of(null,1)), CoreMatchers.is(1));
-    assertThat(ComparablePair.of(1,2).compareTo(ComparablePair.of(1,null)), CoreMatchers.is(1));
+    assertEquals(ComparablePair.of(1,2).compareTo(ComparablePair.of(null,1)), 1);
+    assertEquals(ComparablePair.of(1,2).compareTo(ComparablePair.of(1,null)), 1);
 
-    assertThat(ComparablePair.of(null,2).compareTo(ComparablePair.of(1,2)), CoreMatchers.is(-1));
-    assertThat(ComparablePair.of(1,null).compareTo(ComparablePair.of(1,2)), CoreMatchers.is(-1));
+    assertEquals(ComparablePair.of(null,2).compareTo(ComparablePair.of(1,2)), -1);
+    assertEquals(ComparablePair.of(1,null).compareTo(ComparablePair.of(1,2)), -1);
 
-    assertThat(ComparablePair.of(1,null).compareTo(ComparablePair.of(1,null)), CoreMatchers.is(0));
-    assertThat(ComparablePair.of(null,null).compareTo(ComparablePair.of(null,null)), CoreMatchers.is(0));
+    assertEquals(ComparablePair.of(1,null).compareTo(ComparablePair.of(1,null)), 0);
+    assertEquals(ComparablePair.of(null,null).compareTo(ComparablePair.of(null,null)), 0);
 
   }
 }
