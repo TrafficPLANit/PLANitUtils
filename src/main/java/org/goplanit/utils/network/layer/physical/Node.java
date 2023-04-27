@@ -72,7 +72,7 @@ public interface Node extends DirectedVertex {
    */
   @Override
   public abstract Node deepClone();
-  
+
   /**
    * It is expected that nodes are used in conjunction with links. If so, this method will cast the edges of the node to a links collection
    * for readability when collecting a node's edges
@@ -143,6 +143,14 @@ public interface Node extends DirectedVertex {
   @SuppressWarnings("unchecked")
   public default <LS extends EdgeSegment> LS getFirstExitLinkSegment(){
     return (LS) getExitLinkSegments().iterator().next();
-  }  
-  
+  }
+
+  /**
+   * Check if node has links
+   *
+   * @return true when links are present, false otherwise
+   */
+  public default boolean hasLinks(){
+    return !getLinks().isEmpty();
+  }
 }

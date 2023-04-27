@@ -114,4 +114,12 @@ public interface ExternalIdAble extends IdAble {
     setExternalId(String.join(separator.toString(), getExternalId(), appendWith));
   }
 
+  /**
+   * Returns string representation contain the three ids, id, XMLid and external id
+   * @return string representation
+   */
+  public default String getIdsAsString(){
+    return String.format("id: %d, xmlId: %s, extId: %s", getId(), getXmlId(), getExternalId());
+  }
+
 }
