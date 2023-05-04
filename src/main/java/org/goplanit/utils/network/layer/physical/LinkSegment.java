@@ -141,6 +141,36 @@ public interface LinkSegment extends EdgeSegment {
   public abstract Node getDownstreamVertex();
 
   /**
+   * Verify if downstream node matches given node
+   *
+   * @param node to check
+   * @return true if equal, false otherwise
+   */
+  public default boolean isDownstreamNode(Node node){
+    return getDownstreamNode().equals(node);
+  }
+
+  /**
+   * Verify if node matches any extreme node of link segment
+   *
+   * @param node to check
+   * @return true if present, false otherwise
+   */
+  public default boolean hasNode(Node node){
+    return isDownstreamNode(node) || isUpstreamNode(node);
+  }
+
+  /**
+   * Verify if upstream node matches given node
+   *
+   * @param node to check
+   * @return true if equal, false otherwise
+   */
+  public default boolean isUpstreamNode(Node node){
+    return getUpstreamNode().equals(node);
+  }
+
+  /**
    * {@inheritDoc}
    */
   public abstract LinkSegment shallowClone();
