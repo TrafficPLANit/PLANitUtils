@@ -26,6 +26,7 @@ public enum PredefinedModeType {
   TRAIN("train"), 
   TRAM("tram"),
   LIGHTRAIL("light_rail"),
+  FERRY("ferry"),
   GOODS_VEHICLE("goods"),            /* non-articulated goods vehicle, up to 3.5 tonnes */
   HEAVY_GOODS_VEHICLE("hgv"),        /* non-articulated goods vehicle, over to 3.5 tonnes */
   LARGE_HEAVY_GOODS_VEHICLE("lhgv"); /* articulated large truck */  
