@@ -186,4 +186,12 @@ public class Pair<A, B> {
   public boolean different(){
     return !first().equals(second());
   }
+
+  /**
+   * check both entries are null
+   * @return true when both null, false otherwise
+   */
+  public boolean bothNull() {
+    return first()==null && second() == null;
+  }
 }
