@@ -1,5 +1,7 @@
 package org.goplanit.utils.misc;
 
+import org.opengis.feature.simple.SimpleFeatureType;
+
 import java.util.Objects;
 import java.util.function.Consumer;
 
@@ -47,8 +49,18 @@ public class Pair<A, B> {
    */
   public static <A,B> Pair<A, B> of(A valueA, B valueB) {
     return new Pair<>(valueA, valueB);
-  }  
-  
+  }
+
+  /**
+   * Create empty pair of nulls
+   * @return null pair
+   * @param <A> typeA
+   * @param <B> typeB
+   */
+  public static <A,B> Pair<A,B> empty() {
+    return Pair.of(null, null);
+  }
+
 
   /**
    * @see java.lang.Object#hashCode()
