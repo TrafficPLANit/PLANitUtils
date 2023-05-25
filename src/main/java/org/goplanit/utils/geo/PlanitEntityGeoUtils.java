@@ -5,6 +5,7 @@ import org.goplanit.utils.graph.Edge;
 import org.goplanit.utils.graph.Vertex;
 import org.goplanit.utils.misc.Pair;
 import org.goplanit.utils.network.layer.macroscopic.MacroscopicLinkSegment;
+import org.goplanit.utils.network.layer.physical.LinkSegment;
 import org.goplanit.utils.zoning.TransferZone;
 import org.goplanit.utils.zoning.Zone;
 import org.locationtech.jts.geom.*;
@@ -52,6 +53,18 @@ public class PlanitEntityGeoUtils {
       LOGGER.warning(String.format("Edge has no geographic information to determine closeness to reference location %s",coord));
     }
     return Double.POSITIVE_INFINITY;
+  }
+
+  /** identical to {@link #findPlanitEntityClosest(Coordinate, Collection, double, PlanitJtsCrsUtils)} but without a distance criteria
+   *
+   * @param <T> type of the PLANit entity
+   * @param coord reference location
+   * @param planitEntities to check against using their geometries
+   * @param geoUtils to compute projected distances
+   * @return planitEntity closest and distance in meters
+   */
+  public static <T> Pair<T, Double> findPlanitEntityClosest(Coordinate coord, Collection<? extends T> planitEntities, PlanitJtsCrsUtils geoUtils)  {
+    return findPlanitEntityClosest(coord, planitEntities, Double.POSITIVE_INFINITY, geoUtils);
   }
 
   /** find the closest distance to the coordinate for some PLANit entity with a supported geometry from the provided collection.
@@ -103,7 +116,7 @@ public class PlanitEntityGeoUtils {
    * @param geoUtils for distance calculations
    * @return line segment if found
    */
-  public static LineSegment extractClosestLineSegmentToGeometryFromLinkSegment(Geometry referenceGeometry, MacroscopicLinkSegment linkSegment, PlanitJtsCrsUtils geoUtils) {
+  public static LineSegment extractClosestLineSegmentToGeometryFromLinkSegment(Geometry referenceGeometry, LinkSegment linkSegment, PlanitJtsCrsUtils geoUtils) {
     LineString linkSegmentGeometry = linkSegment.getParent().getGeometry();
     var closestLinearLoc = extractClosestProjectedLinearLocationToGeometryFromEdge(referenceGeometry, linkSegment.getParentLink(),geoUtils);
     LineSegment lineSegment = closestLinearLoc.getSegment(linkSegmentGeometry);

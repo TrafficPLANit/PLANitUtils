@@ -78,7 +78,10 @@ public enum PredefinedModeType {
       return HEAVY_GOODS_VEHICLE;
     }else if(LARGE_HEAVY_GOODS_VEHICLE.value().equals(predefinedModeTypeValue)) {
       return LARGE_HEAVY_GOODS_VEHICLE;
-    }else {
+    }else if(FERRY.value().equals(predefinedModeTypeValue)) {
+      return FERRY;
+    }
+    else {
       return CUSTOM;
     }
   }
