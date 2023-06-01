@@ -10,6 +10,7 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.file.FileSystem;
 import java.nio.file.FileSystems;
+import java.nio.file.Path;
 import java.util.Collections;
 import java.util.logging.Logger;
 
@@ -26,14 +27,25 @@ public class ResourceUtils {
   private static final Logger LOGGER = Logger.getLogger(ResourceUtils.class.getCanonicalName());
   
   /** find the resource URL via this class' classloader. The resource location is expected to be a (relative) path with
-   * forward slashes
+   * forward slashes. If the provided path contains backward slashes, these will be replaced to avoid issues
    * 
    * @param resourceLocation to find URL for
    * @return the URL of the resource
    */
   public static URL getResourceUrl(final String resourceLocation) {
+    var resourceLocationResourceCompatible = resourceLocation.replace('\\','/');
     /* collect the resource assuming it is available in the context where the utils are made available */
-    return ResourceUtils.class.getClassLoader().getResource(resourceLocation);
+    return ResourceUtils.class.getClassLoader().getResource(resourceLocationResourceCompatible);
+  }
+
+  /** find the resource URL via this class' classloader. The resource location is expected to be a (relative) path with
+   * forward slashes. If the provided path contains backward slashes, these will be replaced to avoid issues
+   *
+   * @param resourceLocation to find URL for
+   * @return the URL of the resource
+   */
+  public static URL getResourceUrl(final Path resourceLocation) {
+    return getResourceUrl(resourceLocation.toString());
   }
   
   /** find the resource URI via this class' class loader

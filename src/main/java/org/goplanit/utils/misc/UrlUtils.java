@@ -1,5 +1,7 @@
 package org.goplanit.utils.misc;
 
+import org.goplanit.utils.resource.ResourceUtils;
+
 import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URI;
@@ -80,29 +82,48 @@ public class UrlUtils {
    * @param path to convert
    * @return URL representation
    */
-  public static URL createFromPath(String path) {
-    try {
-      return Paths.get(path).toUri().toURL();
-    }catch(Exception e) {
-      LOGGER.severe(String.format("Unable to create URL from path string %s", path));
-    }
-    return null;
+  public static URL createFromLocalPath(String path) {
+    return createFromLocalPath(Paths.get(path));
   }
   
-  /** Construct a URL based no a given path
+  /** Construct a URL based on a given (local) path
    * 
    * @param path to convert
    * @return URL representation
    */
-  public static URL createFromPath(Path path) {
+  public static URL createFromLocalPath(Path path) {
     try {
       return path.toUri().toURL();
     } catch (MalformedURLException e) {
       LOGGER.severe(String.format("Unable to create URL from Path %s", path));
     }
     return null;
-  }  
-  
+  }
+
+  /** Construct a URL based on a given (local) path
+   *
+   * @param path to convert
+   * @return URL representation
+   */
+  public static URL createFromLocalPathOrResource(String path) {
+    /* attempt to create as if it is a local file */
+    var asLocalFile = UrlUtils.createFromLocalPath(path);
+    if(asLocalFile!= null && UrlUtils.isLocalFile(asLocalFile)){
+      return asLocalFile;
+    }
+    /* if not, it might be a resource, so then we try that instead */
+    return ResourceUtils.getResourceUrl(path);
+  }
+
+  /** Construct a URL based on a given (local) path
+   *
+   * @param path to convert
+   * @return URL representation
+   */
+  public static URL createFromLocalPathOrResource(Path path) {
+    return createFromLocalPathOrResource(path.toString());
+  }
+
   /** Append the given relative path to the URL. Implementation based on answer by Martin Senne via
    * https://stackoverflow.com/questions/7498030/append-relative-url-to-java-net-url
    * 
