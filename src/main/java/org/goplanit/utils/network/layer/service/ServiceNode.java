@@ -90,9 +90,9 @@ public interface ServiceNode extends DirectedVertex {
   }  
   
   /**
-   * Provide access to the underlying network node
+   * Provide access to the underlying network node(s)
    * 
-   * @return networkLayerNode
+   * @return networkLayerNode(s)
    */
   public abstract Collection<Node> getPhysicalParentNodes();
 
