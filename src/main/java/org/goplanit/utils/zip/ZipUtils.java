@@ -87,19 +87,7 @@ public class ZipUtils {
     positionZipEntryInputStream(zis,zipEntryFileName);
     return zis;
   }
-  
-  /** see {@link #createZipEntryInputStream(URL, String, boolean)} only we do not log any info
-   * 
-   * @param zipFileLocation of the zip file
-   * @param zipEntryFileName of the file within the zip
-   * @return input stream created, if file not found by iterating over entries null is returned
-   * @throws URISyntaxException thrown if error
-   * @throws IOException  thrown if input stream cannot be closed when necessary
-   */
-  public static PlanitZipInputStream createZipEntryInputStream(URL zipFileLocation, String zipEntryFileName) throws URISyntaxException, IOException {
-    return createZipEntryInputStream(zipFileLocation, zipEntryFileName, false);
-  }
-  
+
   /** Collect the input stream for a given zip file entry. The returned wrapper stream is positioned at the beginning of the internal file 
    * 
    * @param zipFile to use
