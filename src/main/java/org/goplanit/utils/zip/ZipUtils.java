@@ -9,6 +9,7 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.Enumeration;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipException;
 import java.util.zip.ZipFile;
@@ -58,10 +59,36 @@ public class ZipUtils {
   public static ZipFile createZipFile(URL zipUrl) throws ZipException, IOException {
     return new ZipFile(FileUtils.create(zipUrl));
   }
-  
-  /** Collect the input stream for a given zip file entry. The returned wrapper stream should be positioned at the beginning of the internal file 
+
+  /** Collect the input stream for a given zip file entry. The returned wrapper stream should be positioned at the beginning of the internal file
    * Note that invoked needs to close the input stream when done! This approach uses a ZipInputStream rather than a ZipFile for performance reasons
    * as it appears to be around 5 times faster for a regular sized zip file
+   *
+   * @param zipFileLocation of the zip file
+   * @param zipEntryFileName of the file within the zip
+   * @param logInfo when true log extensive information on entries in zip file, file size and whether the file exists for debugging purposes
+   * @return input stream created, if file not found by iterating over entries null is returned
+   * @throws URISyntaxException thrown if error
+   * @throws IOException  thrown if input stream cannot be closed when necessary
+   */
+  public static PlanitZipInputStream createZipEntryInputStream(URL zipFileLocation, String zipEntryFileName, boolean logInfo) throws URISyntaxException, IOException {
+    var file = UrlUtils.asLocalPath(zipFileLocation).toAbsolutePath().toFile();
+    if(logInfo) LOGGER.info(String.format("[LOG INFO] Zip File exists: %s",file.exists()));
+
+    if(file.exists() && logInfo){
+      LOGGER.info(String.format("[LOG INFO] Zip File size: %s",file.length()));
+      var zip = new ZipFile(file);
+      var content = zip.stream().map(ZipEntry::getName).collect(Collectors.joining(","));
+      LOGGER.info(String.format("[LOG INFO] Zip file contents %s ",content));
+      zip.close();
+    }
+
+    PlanitZipInputStream zis = createZipInputStream(zipFileLocation);
+    positionZipEntryInputStream(zis,zipEntryFileName);
+    return zis;
+  }
+  
+  /** see {@link #createZipEntryInputStream(URL, String, boolean)} only we do not log any info
    * 
    * @param zipFileLocation of the zip file
    * @param zipEntryFileName of the file within the zip
@@ -70,9 +97,7 @@ public class ZipUtils {
    * @throws IOException  thrown if input stream cannot be closed when necessary
    */
   public static PlanitZipInputStream createZipEntryInputStream(URL zipFileLocation, String zipEntryFileName) throws URISyntaxException, IOException {
-    PlanitZipInputStream zis = createZipInputStream(zipFileLocation);
-    positionZipEntryInputStream(zis,zipEntryFileName);
-    return zis;
+    return createZipEntryInputStream(zipFileLocation, zipEntryFileName, false);
   }
   
   /** Collect the input stream for a given zip file entry. The returned wrapper stream is positioned at the beginning of the internal file 
