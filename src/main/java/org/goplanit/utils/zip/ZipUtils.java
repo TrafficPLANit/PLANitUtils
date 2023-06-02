@@ -119,13 +119,10 @@ public class ZipUtils {
    */
   public static boolean positionZipEntryInputStream(ZipInputStream zipInputStream, String zipEntryFileName) {
     boolean success = false;
-    LOGGER.info(String.format("TEST finding entry in zip! %s", zipEntryFileName));
     try {
       for (ZipEntry entry; (entry = zipInputStream.getNextEntry()) != null;) {
-        LOGGER.info(String.format("TEST Moving to next entry! %s",entry.getName()));
         if (entry.getName().equals(zipEntryFileName)) {
             success = true;
-            LOGGER.info(String.format("TEST FOUND IT",entry.getName()));
             break;
         }
       }
