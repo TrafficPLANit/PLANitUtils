@@ -3,6 +3,7 @@ package org.goplanit.utils.network.layer.service;
 import org.goplanit.utils.graph.directed.EdgeSegment;
 import org.goplanit.utils.network.layer.physical.Link;
 import org.goplanit.utils.network.layer.physical.LinkSegment;
+import org.locationtech.jts.geom.LineString;
 
 import java.util.List;
 
@@ -21,6 +22,16 @@ public interface ServiceLegSegment extends EdgeSegment {
    */
   @Override
   public ServiceLeg getParent();
+
+  /**
+   * Collect the geometry of this service leg segment. Because
+   * service leg segments comprise one or more physical link segments, they may have unique geometry comapred
+   * to their opposite direction counterpart. Therefore, they are expected to be able to provide their own
+   * unique access to their geometry rather than rely on their parent
+   *
+   * @return lineString
+   */
+  public abstract LineString getGeometry();
 
   /**
    * {@inheritDoc}

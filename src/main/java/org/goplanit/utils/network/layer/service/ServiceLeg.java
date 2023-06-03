@@ -1,7 +1,10 @@
 package org.goplanit.utils.network.layer.service;
 
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.List;
+import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 import org.goplanit.utils.graph.directed.DirectedEdge;
 import org.goplanit.utils.network.layer.physical.Link;
@@ -13,7 +16,16 @@ import org.goplanit.utils.network.layer.physical.Link;
  * @author markr
  *
  */
-public interface ServiceLeg extends DirectedEdge {  
+public interface ServiceLeg extends DirectedEdge {
+
+  /**
+   * Types of lengths that can be queries for a service leg based on available underlying physical links
+   */
+  public enum LengthType {
+    MAX,
+    MIN,
+    AVERAGE
+  }
     
   /** collect vertex A as something extending service node which is to be expected for any service leg. Convenience method
    * for readability
@@ -102,6 +114,15 @@ public interface ServiceLeg extends DirectedEdge {
   public default <LS extends ServiceLegSegment> Collection<LS> getLegSegments(){
     return (Collection<LS>) getEdgeSegments();
   }
+  
+  /**
+   * determine length based on desired length type (in case both service leg segments are mapped to the leg and
+   * have different lengths due to different underlying physical link segments)
+   *
+   * @param lengthType to apply
+   * @return found length, if no underlying service leg segments are present, length is set to infinite
+   */
+  public abstract double getLengthKm(LengthType lengthType);
 
   /**
    * {@inheritDoc}
