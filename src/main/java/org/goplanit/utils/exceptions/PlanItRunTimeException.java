@@ -123,4 +123,13 @@ public class PlanItRunTimeException extends RuntimeException {
   public static void throwNew(String message) {
     throw new PlanItRunTimeException(message);
   }
+
+  /**
+   * throw a new PLANit run time exception with a message
+   * @param message to include
+   * @param objectArgs to format exception string with
+   */
+  public static void throwNew(String message, Object... objectArgs) {
+    throw new PlanItRunTimeException(message, objectArgs);
+  }
 }
