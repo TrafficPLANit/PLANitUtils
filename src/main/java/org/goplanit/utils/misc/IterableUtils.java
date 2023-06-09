@@ -1,5 +1,7 @@
 package org.goplanit.utils.misc;
 
+import org.goplanit.utils.network.virtual.ConnectoidEdges;
+
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -112,4 +114,20 @@ public class IterableUtils {
     return theList;
   }
 
+  /**
+   * Check if iterable is null or empty
+   *
+   * @param iterable to check
+   * @return true when null or empty, false otherwise
+   */
+  public static boolean nullOrEmpty(Iterable<?> iterable) {
+    if(iterable == null){
+      return true;
+    }
+    var iter = iterable.iterator();
+    if(iter == null){
+      return true;
+    }
+    return iter.hasNext();
+  }
 }

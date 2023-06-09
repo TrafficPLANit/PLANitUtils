@@ -2,6 +2,8 @@ package org.goplanit.utils.network.virtual;
 
 import org.goplanit.utils.graph.GraphEntityDeepCopyMapper;
 import org.goplanit.utils.id.IdGroupingToken;
+import org.goplanit.utils.misc.CollectionUtils;
+import org.goplanit.utils.misc.IterableUtils;
 
 import java.util.logging.Logger;
 
@@ -93,4 +95,21 @@ public interface VirtualNetwork {
     return getCentroidVertices().isEmpty() && getConnectoidEdges().isEmpty() && getConnectoidSegments().isEmpty();
   }
 
+  /**
+   * Verify if entire connectoid edges are empty
+   *
+   * @return true if empty, false otherwise
+   */
+  public default boolean hasConnectoidEdges(){
+    return !IterableUtils.nullOrEmpty(getConnectoidEdges());
+  }
+
+  /**
+   * Verify if entire connectoid segments are empty
+   *
+   * @return true if empty, false otherwise
+   */
+  public default boolean hasConnectoidSegments(){
+    return !IterableUtils.nullOrEmpty(getConnectoidSegments());
+  }
 }
