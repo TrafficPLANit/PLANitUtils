@@ -111,4 +111,11 @@ public class CustomIndexTracker {
   public <V, K> V get(Class<V> clazz, K key) {
     return ((MapWrapper<K, V>) entitiyByIndexTracker.get(clazz)).get(key);
   }
+
+  /** reset all tracked content
+   *
+   */
+  public void reset(){
+    entitiyByIndexTracker.clear();
+  }
 }
