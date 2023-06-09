@@ -47,6 +47,31 @@ public interface Edge extends Serializable, GraphEntity {
    * @param lineString to set
    */
   public abstract void setGeometry(LineString lineString);
+
+  /**
+   * Utilising the A and B vertex construct a direct line between the two points as the geometry
+   *
+   * @param overwrite  when true, overwrite existing geometry, otherwise ignore
+   * @return true when successful, false otherwise
+   */
+  public default boolean populateBasicGeometry(boolean overwrite){
+    if(hasGeometry() && !overwrite){
+      return false;
+    }
+
+    if(getVertexA()==null || getVertexB() == null){
+      return false;
+    }
+
+    var posA = getVertexA().getPosition();
+    var posB = getVertexB().getPosition();
+    if(posA == null || posB == null){
+      return false;
+    }
+
+    setGeometry(PlanitJtsUtils.createLineString(posA.getCoordinate(),posB.getCoordinate()));
+    return true;
+  }
    
   /**
    * Remove vertex from edge 
