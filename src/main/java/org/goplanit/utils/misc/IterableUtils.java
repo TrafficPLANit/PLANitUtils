@@ -128,6 +128,6 @@ public class IterableUtils {
     if(iter == null){
       return true;
     }
-    return iter.hasNext();
+    return !iter.hasNext();
   }
 }
