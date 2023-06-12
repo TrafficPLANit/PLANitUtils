@@ -162,7 +162,7 @@ public class PlanitJtsUtils {
    * @return the LineString created from the String
    */
   public static LineString createLineString(String value, char ts, char cs){
-    List<Double> coordinateDoubleList = new ArrayList<Double>();
+    List<Double> coordinateDoubleList = new ArrayList<>();
     String[] tupleString = value.split("[" + ts + "]");
     for (int index = 0; index < tupleString.length; ++index) {
       String xyCoordinateString = tupleString[index];
@@ -222,6 +222,16 @@ public class PlanitJtsUtils {
       csvStringBuilder.append(ts);
     }
     return csvStringBuilder.toString();
+  }
+
+  /**
+   * Create a multi line string from the passed in line strings
+   *
+   * @param lineStrings source
+   * @return created multi line string
+   */
+  public static MultiLineString createMultiLineString(LineString... lineStrings){
+    return jtsGeometryFactory.createMultiLineString(lineStrings);
   }
 
   /**

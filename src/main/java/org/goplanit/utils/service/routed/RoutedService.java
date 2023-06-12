@@ -1,9 +1,17 @@
 package org.goplanit.utils.service.routed;
 
+import org.goplanit.utils.geo.PlanitJtsUtils;
 import org.goplanit.utils.id.ExternalIdAble;
 import org.goplanit.utils.id.ManagedId;
 import org.goplanit.utils.misc.StringUtils;
 import org.goplanit.utils.mode.Mode;
+import org.locationtech.jts.geom.LineString;
+import org.locationtech.jts.geom.MultiLineString;
+
+import java.util.SortedSet;
+import java.util.TreeSet;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * Interface to reflect a routed service. A routed service reflects a route on a service network comprising of one or more legs. A leg comprises one or more physical links on an
@@ -119,4 +127,25 @@ public interface RoutedService extends ManagedId, ExternalIdAble {
    */
   public abstract Mode getMode();
 
+  /**
+   * Construct combined geometry across all serviced trips
+   *
+   * @param includeScheduledTrips when true consider scheduled trips, false do not
+   * @param includeFrequencyBasedTrips when true consider frequency based trips, false do not
+   * @return combined geometry of all service leg segments used by the service
+   */
+  public default MultiLineString extractGeometry(boolean includeScheduledTrips, boolean includeFrequencyBasedTrips){
+    var scheduleTrips = getTripInfo().getScheduleBasedTrips();
+
+    var scheduledLegSegmentStream = scheduleTrips.stream().flatMap( srt -> srt.getRelativeLegTimingsAsStream()).map(
+        rlt -> rlt.getParentLegSegment());
+    var frequencyTripLegSegmentStream = getTripInfo().getFrequencyBasedTrips().stream().flatMap(frt -> frt.getLegSegmentsAsStream());
+
+    /* all unique leg segments */
+    var allLegSegmentStream = Stream.concat(includeScheduledTrips ? scheduledLegSegmentStream : Stream.empty(),
+        includeFrequencyBasedTrips ?frequencyTripLegSegmentStream : Stream.empty()).distinct();
+
+    var legSegmentsAsLineStrings = allLegSegmentStream.map( ls -> ls.getGeometry()).collect(Collectors.toCollection(TreeSet::new));
+    return PlanitJtsUtils.createMultiLineString(legSegmentsAsLineStrings.toArray(new LineString[legSegmentsAsLineStrings.size()]));
+  }
 }

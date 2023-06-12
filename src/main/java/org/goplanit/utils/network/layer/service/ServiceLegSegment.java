@@ -25,9 +25,10 @@ public interface ServiceLegSegment extends EdgeSegment {
 
   /**
    * Collect the geometry of this service leg segment. Because
-   * service leg segments comprise one or more physical link segments, they may have unique geometry comapred
+   * service leg segments comprise one or more physical link segments, they may have unique geometry compared
    * to their opposite direction counterpart. Therefore, they are expected to be able to provide their own
-   * unique access to their geometry rather than rely on their parent
+   * unique access to their geometry rather than rely on their parent, also this may be generated on the fly rather than stored
+   * on the instance
    *
    * @return lineString
    */

@@ -9,6 +9,7 @@ import java.util.function.Consumer;
 import java.util.logging.Logger;
 
 import org.goplanit.utils.exceptions.PlanItException;
+import org.goplanit.utils.exceptions.PlanItRunTimeException;
 import org.xml.sax.InputSource;
 
 /**
@@ -47,15 +48,14 @@ public class FileUtils {
    * @param pathToDir path to dir
    * @param fileExtension the file extension, e.g. ".xml"
    * @return the list of files that match this extension in the dir
-   * @throws PlanItException thrown if error
    */
-  public static File[] getFilesWithExtensionFromDir(final String pathToDir, final String fileExtension) throws PlanItException {
-    PlanItException.throwIf(StringUtils.isNullOrBlank(pathToDir),String.format("Path directory is null or blank when collecting files"));
-    PlanItException.throwIf(StringUtils.isNullOrBlank(fileExtension),String.format("File extension to use is null or blank when collecting files from directory"));
+  public static File[] getFilesWithExtensionFromDir(final String pathToDir, final String fileExtension){
+    PlanItRunTimeException.throwIf(StringUtils.isNullOrBlank(pathToDir),String.format("Path directory is null or blank when collecting files"));
+    PlanItRunTimeException.throwIf(StringUtils.isNullOrBlank(fileExtension),String.format("File extension to use is null or blank when collecting files from directory"));
     
     /* the dir */
-    File directoryPath = new File(pathToDir);    
-    PlanItException.throwIf(!directoryPath.isDirectory(),String.format("%s is not a valid directory",directoryPath ));    
+    File directoryPath = new File(pathToDir);
+    PlanItRunTimeException.throwIf(!directoryPath.isDirectory(),String.format("%s is not a valid directory",directoryPath ));
     
     /* the filter */
     FilenameFilter fileExtensionFilter = new FilenameFilter(){
