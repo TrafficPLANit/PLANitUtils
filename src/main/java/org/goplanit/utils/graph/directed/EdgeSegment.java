@@ -163,18 +163,19 @@ public interface EdgeSegment extends Serializable, GraphEntity {
     return this==getParent().getEdgeSegmentAb() ? getParent().getEdgeSegmentBa() : getParent().getEdgeSegmentAb();  
   }
 
-
   /**
    * Assuming geometry is present, if not false is returned, we verify if the geometry is provided in the direction of the
    * segment or not
+   *
+   * @param allowSingleVertexWithoutGeometry when true, we assume that geometry of edge is ok to be not matching vertex on one end
    * @return true when geometry direction coincides with segment direction, false otherwise
    */
-  public default boolean isParentGeometryInSegmentDirection(){
+  public default boolean isParentGeometryInSegmentDirection(boolean allowSingleVertexWithoutGeometry ){
     var geometry = getParent().getGeometry();
     if(geometry == null){
       return false;
     }
-    return getParent().isGeometryInAbDirection() == isDirectionAb();
+    return getParent().isGeometryInAbDirection(allowSingleVertexWithoutGeometry) == isDirectionAb();
   }
 
   /** Verify if provided edge segment is adjacent to this edge segment taking direction into account, i.e., either an upstream

@@ -228,25 +228,54 @@ public interface Edge extends Serializable, GraphEntity {
     return getGeometry()!=null;
   }
   
-  /** verify if the geometry is in the A to B direction of the link 
+  /** verify if the geometry is in the A to B direction of the link, both vertices must have geometry present.
    * @return true if in A to B direction, false otherwise
    */
   public default boolean isGeometryInAbDirection() {
+    return isGeometryInAbDirection(false);
+  }
+
+  /** verify if the geometry is in the A to B direction of the edge. When one of the vertices has no geometry, we may or may not allow for
+   * this. If this is the case, we enforce that at least one end of the geometry is matched to the other vertex's geometry to
+   * infer direction.
+   *
+   * @param allowSingleVertexWithoutGeometry when true, we assume that geometry of edge is ok to be not matching vertex on one end
+   * @return true if in A to B direction, false otherwise
+   */
+  public default boolean isGeometryInAbDirection(boolean allowSingleVertexWithoutGeometry) {
+
+    var vertexAHasGeometry = getVertexA().hasPosition();
+    var vertexBHasGeometry = getVertexB().hasPosition();
+    if(!vertexAHasGeometry && !vertexBHasGeometry){
+      throw new PlanItRunTimeException("Unable to identify direction as both vertices of edge %s have no geometry", this.getIdsAsString());
+    }else if(!allowSingleVertexWithoutGeometry && !(vertexAHasGeometry && vertexBHasGeometry)){
+      throw new PlanItRunTimeException("One of the vertices has no geometry for edge %s, this is not allowed", this.getIdsAsString());
+    }
+
     // Given difficulty of ensuring consistency in rounding between various geometries
     // we check both, ideally we make sure we have a precision model throughout, but this is not implemented yet
-    boolean isVertexAStartPoint = getGeometry().getStartPoint().getCoordinate().equals2D(getVertexA().getPosition().getCoordinate(), Precision.EPSILON_6);
-    boolean isVertexBEndPoint = getGeometry().getEndPoint().getCoordinate().equals2D(getVertexB().getPosition().getCoordinate(), Precision.EPSILON_6);
+    boolean isVertexAStartPoint = vertexAHasGeometry ?
+        getGeometry().getStartPoint().getCoordinate().equals2D(getVertexA().getPosition().getCoordinate(), Precision.EPSILON_6) : false;
+    boolean isVertexBEndPoint = vertexBHasGeometry ?
+        getGeometry().getEndPoint().getCoordinate().equals2D(getVertexB().getPosition().getCoordinate(), Precision.EPSILON_6) : false;
     if(isVertexAStartPoint && isVertexBEndPoint){
       return true;
+    }else if(isVertexAStartPoint && !vertexBHasGeometry){
+      return true;
+    }else if(isVertexBEndPoint && !vertexAHasGeometry){
+      return true;
     }
-    boolean isVertexAEndPoint = getGeometry().getStartPoint().getCoordinate().equals2D(getVertexB().getPosition().getCoordinate(), Precision.EPSILON_6);
-    boolean isVertexBStartPoint = getGeometry().getEndPoint().getCoordinate().equals2D(getVertexA().getPosition().getCoordinate(), Precision.EPSILON_6);
+
+    boolean isVertexAEndPoint = vertexBHasGeometry ?
+        getGeometry().getStartPoint().getCoordinate().equals2D(getVertexB().getPosition().getCoordinate(), Precision.EPSILON_6) : false;
+    boolean isVertexBStartPoint = vertexAHasGeometry?
+        getGeometry().getEndPoint().getCoordinate().equals2D(getVertexA().getPosition().getCoordinate(), Precision.EPSILON_6) : false;
     if(isVertexBStartPoint && isVertexAEndPoint){
       return false;
     }
 
     throw new PlanItRunTimeException("Unable to identify direction as vertex locations do not match internal geometry of edge within reason it appears");
-  }  
+  }
   
   /** transform the line string information of this edge using the passed in MathTransform
    * 
