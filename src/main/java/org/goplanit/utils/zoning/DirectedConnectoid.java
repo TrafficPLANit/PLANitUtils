@@ -5,8 +5,9 @@ import org.goplanit.utils.network.layer.physical.LinkSegment;
 import org.goplanit.utils.network.layer.physical.Node;
 
 /**
- * A directed connectoid is referring to an edge segment in a network (layer) which is directed for access
- * hence, the connectoid also being directed
+ * A directed connectoid is referring to an access edge segment in a network (layer) which is directed for access
+ * hence, the connectoid also being directed. It is used in situations where not all segments connected to the access node may
+ * be available to access the connectoid
  *
  * @author markr
  *
