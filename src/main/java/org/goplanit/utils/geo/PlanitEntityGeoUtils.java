@@ -55,16 +55,18 @@ public class PlanitEntityGeoUtils {
     return Double.POSITIVE_INFINITY;
   }
 
-  /** identical to {@link #findPlanitEntityClosest(Coordinate, Collection, double, PlanitJtsCrsUtils)} but without a distance criteria
+  /** identical to {@link #findPlanitEntityClosest(Coordinate, Collection, double, boolean, PlanitJtsCrsUtils)} but without a distance criteria
    *
    * @param <T> type of the PLANit entity
    * @param coord reference location
    * @param planitEntities to check against using their geometries
+   * @param suppressLogging when true suppress logging, false otherwise
    * @param geoUtils to compute projected distances
    * @return planitEntity closest and distance in meters
    */
-  public static <T> Pair<T, Double> findPlanitEntityClosest(Coordinate coord, Collection<? extends T> planitEntities, PlanitJtsCrsUtils geoUtils)  {
-    return findPlanitEntityClosest(coord, planitEntities, Double.POSITIVE_INFINITY, geoUtils);
+  public static <T> Pair<T, Double> findPlanitEntityClosest(
+      Coordinate coord, Collection<? extends T> planitEntities, boolean suppressLogging, PlanitJtsCrsUtils geoUtils)  {
+    return findPlanitEntityClosest(coord, planitEntities, Double.POSITIVE_INFINITY, suppressLogging, geoUtils);
   }
 
   /** find the closest distance to the coordinate for some PLANit entity with a supported geometry from the provided collection.
@@ -76,10 +78,12 @@ public class PlanitEntityGeoUtils {
    * @param coord reference location
    * @param planitEntities to check against using their geometries
    * @param maxDistanceMeters maximum allowedDistance to be eligible
+   * @param suppressLogging when true suppress logging, false otherwise
    * @param geoUtils to compute projected distances
    * @return planitEntity closest and distance in meters, null if none matches criteria
    */
-  public static <T> Pair<T, Double> findPlanitEntityClosest(Coordinate coord, Collection<? extends T> planitEntities, double maxDistanceMeters, PlanitJtsCrsUtils geoUtils)  {
+  public static <T> Pair<T, Double> findPlanitEntityClosest(
+      Coordinate coord, Collection<? extends T> planitEntities, double maxDistanceMeters, boolean suppressLogging, PlanitJtsCrsUtils geoUtils)  {
     double minDistanceMeters = Double.POSITIVE_INFINITY;
     double distanceMeters = minDistanceMeters;
     T closestEntity = null;
@@ -92,7 +96,7 @@ public class PlanitEntityGeoUtils {
       }else if(entity instanceof Vertex) {
         distanceMeters = geoUtils.getDistanceInMetres(coord, ((Vertex) entity).getPosition().getCoordinate());
       }else {
-        LOGGER.warning(String.format("unsupported PLANit entity to compute closest distance to %s",entity.getClass().getCanonicalName()));
+        if(!suppressLogging) LOGGER.warning(String.format("Unsupported PLANit entity to compute closest distance to %s",entity.getClass().getCanonicalName()));
       }
 
       if(distanceMeters < minDistanceMeters) {
