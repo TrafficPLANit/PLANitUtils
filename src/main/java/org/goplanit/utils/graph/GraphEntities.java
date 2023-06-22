@@ -69,8 +69,9 @@ public interface GraphEntities<E extends GraphEntity> extends LongMapWrapper<E>,
   public default Collection<E> getByExternalId(String externalId) {
     ArrayList<E> matches = new ArrayList<E>(1);  
     for(E entity : this) {
-      if(entity.getExternalId().equals(externalId)) {
-        matches.add(entity);      }
+      if(entity.hasExternalId() && entity.getExternalId().equals(externalId)) {
+        matches.add(entity);
+      }
     }
     return matches;
   }    
