@@ -139,9 +139,24 @@ public class PlanitJtsCrsUtils {
    * @return closest existing coordinate on line string to find coordinate on
    */
   public <T extends LineString> Coordinate getClosestExistingLineStringCoordinateToGeometry(Geometry referenceGeometry, T lineString){
+    return getClosestExistingLineStringCoordinateToGeometry(referenceGeometry, lineString, 0, lineString.getNumPoints()-1);
+  }
+
+  /** Find the coordinate on the line string with the closest distance to the reference referenceGeometry. Note that this is likely NOT
+   * the closest point to the geometry as this likely lies on the line connecting the two closest points.
+   *
+   * @param <T> type of line string
+   * @param referenceGeometry to use
+   * @param lineString to verify closest coordinate
+   * @param startIndex start index offset to use (inclusive)
+   * @param endIndex end index, i.e., last index to consider (inclusive)
+   * @return closest existing coordinate on line string to find coordinate on
+   */
+  public <T extends LineString> Coordinate getClosestExistingLineStringCoordinateToGeometry(
+      Geometry referenceGeometry, T lineString, int startIndex, int endIndex){
     double minDistanceMetersToCoordinate = Double.POSITIVE_INFINITY;
     Coordinate closestCoordinate = null;
-    for(int index = 0; index < lineString.getNumPoints() ; ++index) {
+    for(int index = startIndex; index <= endIndex ; ++index) {
       Coordinate coordinate = lineString.getCoordinateN(index);
       Coordinate closestProjectedReferenceCoordinate = getClosestProjectedCoordinateOnGeometry(coordinate, referenceGeometry);
       double distanceMeters = getDistanceInMetres(closestProjectedReferenceCoordinate, coordinate);
@@ -151,8 +166,8 @@ public class PlanitJtsCrsUtils {
       }
     }
     return closestCoordinate;
-  }  
-  
+  }
+
   /** find the coordinate on the polygon with the closest distance to the reference geometry. Note that this is likely NOT
    * the closest point to the geometry as this likely lies on the line connecting the two closest points.
    * 
