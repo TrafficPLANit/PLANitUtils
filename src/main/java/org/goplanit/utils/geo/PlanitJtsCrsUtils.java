@@ -406,6 +406,12 @@ public class PlanitJtsCrsUtils {
    * @return distance in metres between the points
    */
   public double getDistanceInMetres(Coordinate startCoordinate, Coordinate endCoordinate){
+    if(startCoordinate == null){
+      throw new PlanItRunTimeException("Start coordinate is null when computing distance in meters between two Positions in JtsUtils");
+    }
+    if(endCoordinate == null){
+      throw new PlanItRunTimeException("End coordinate is null when computing distance in meters between two Positions in JtsUtils");
+    }
     try {
       if (crs.equals(CARTESIANCRS)) {
         // cartesian in meters
