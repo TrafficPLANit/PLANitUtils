@@ -3,7 +3,9 @@ package org.goplanit.utils.path;
 import org.goplanit.utils.graph.directed.EdgeSegment;
 import org.goplanit.utils.id.ExternalIdAble;
 import org.goplanit.utils.id.ManagedId;
+import org.goplanit.utils.misc.IterableUtils;
 
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.stream.StreamSupport;
@@ -38,7 +40,7 @@ public interface SimpleDirectedPath extends Iterable<EdgeSegment> {
    */
   public abstract boolean containsSubPath(Collection<? extends EdgeSegment> subPath);
 
-  /** Verify if the path contains the provided subpath. It is only a subpath of the subpath is present continguously
+  /** Verify if the path contains the provided subpath. It is only a subpath of the subpath is present contiguously
    *
    * @param subPath to verify
    * @return true when it contains the subpath, false otherwise.
@@ -67,5 +69,11 @@ public interface SimpleDirectedPath extends Iterable<EdgeSegment> {
    * @return last segment
    */
   public abstract EdgeSegment getLastSegment();
+
+  /** hash code for simple directed path
+   *
+   * @return hash code of path
+   */
+  public abstract int hashCode();
 
 }
