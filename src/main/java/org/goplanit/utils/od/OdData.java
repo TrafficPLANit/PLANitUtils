@@ -10,7 +10,7 @@ import org.goplanit.utils.zoning.Zone;
  *
  * @param <T> the type of data to be stored for each origin-destination cell
  */
-public interface OdData<T> extends IdAble, Iterable<T>, Cloneable {
+public interface OdData<T> extends IdAble, Iterable<T> {
 
   /**
    * Returns the value for a specified origin and destination
@@ -53,4 +53,10 @@ public interface OdData<T> extends IdAble, Iterable<T>, Cloneable {
    */
   public OdDataIterator<T> iterator();
 
+  /**
+   * Shallow copy
+   * @return shallow copy
+   */
+  public OdData<T> shallowClone();
+  
 }

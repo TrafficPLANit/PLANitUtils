@@ -11,19 +11,17 @@ import org.goplanit.utils.network.layer.physical.Node;
 public interface ServiceNodeFactory extends GraphEntityFactory<ServiceNode> {
  
   /** Create a new service node 
-   * 
-   * @param parentNetworkNode this service node references on a physical layer 
+   *
    * @return created service node
    */
-  public abstract ServiceNode createNew(Node parentNetworkNode);   
+  public abstract ServiceNode createNew();
   
  
   /** Create a new service node 
-   * 
-   * @param parentNetworkNode this service node references on a physical layer 
+   *
    * @return created service node
    */
-  public abstract ServiceNode registerNew(Node parentNetworkNode);   
+  public abstract ServiceNode registerNew();
 
 
   

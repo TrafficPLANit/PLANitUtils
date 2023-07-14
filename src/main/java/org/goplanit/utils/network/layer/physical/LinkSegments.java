@@ -3,6 +3,8 @@ package org.goplanit.utils.network.layer.physical;
 import org.goplanit.utils.graph.GraphEntities;
 import org.goplanit.utils.id.ManagedIdEntities;
 
+import java.util.function.BiConsumer;
+
 /**
  * Primary managed container for linkSegments explicitly and create them on the container via
  * its dedicated factory class
@@ -21,10 +23,22 @@ public interface LinkSegments extends GraphEntities<LinkSegment>, ManagedIdEntit
    */
   @Override
   public abstract LinkSegmentFactory getFactory();
-  
+
   /**
    * {@inheritDoc}
    */
   @Override
-  public abstract LinkSegments clone();  
+  public abstract LinkSegments shallowClone();
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public abstract LinkSegments deepClone();
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public abstract LinkSegments deepCloneWithMapping(BiConsumer<LinkSegment, LinkSegment> mapper);
 }

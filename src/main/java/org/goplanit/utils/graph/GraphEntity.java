@@ -1,5 +1,6 @@
 package org.goplanit.utils.graph;
 
+import org.goplanit.utils.graph.directed.EdgeSegment;
 import org.goplanit.utils.id.ExternalIdAble;
 import org.goplanit.utils.id.ManagedId;
 
@@ -11,6 +12,16 @@ import org.goplanit.utils.id.ManagedId;
  *
  */
 public interface GraphEntity extends ExternalIdAble, ManagedId {
-    
- 
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public abstract GraphEntity shallowClone();
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public abstract GraphEntity deepClone();
 }

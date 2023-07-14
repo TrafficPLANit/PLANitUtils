@@ -1,5 +1,7 @@
 package org.goplanit.utils.wrapper;
 
+import org.goplanit.utils.exceptions.PlanItRunTimeException;
+
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
@@ -107,14 +109,14 @@ public class MapWrapperImpl<K, V> implements MapWrapper<K, V>{
     populateWith.forEach( value -> register(value));
   }   
     
-  /** Copy constructor 
+  /** Copy constructor which creates a new underlying map and copies entries over (shallow)
    * 
    * @param other to copy
    */
   public MapWrapperImpl(final MapWrapperImpl<K,V> other) {
     this.valueToKey = other.valueToKey;
     
-    Map<K, V> newMap = createEmptyInstance(theMap);    
+    Map<K, V> newMap = createEmptyInstance(other.theMap);
     if(newMap != null) {
       newMap.putAll(other.getMap());
       this.theMap = newMap;
@@ -134,6 +136,11 @@ public class MapWrapperImpl<K, V> implements MapWrapper<K, V>{
    */
   @Override
   public V register(final V value) {
+    var key = getKeyByValue(value);
+    if(key == null){
+      LOGGER.warning(String.format("Not allowed to register null key on %s for entity %s, ignored", MapWrapperImpl.class, value.toString()));
+      return null;
+    }
     return theMap.put(getKeyByValue(value),value);
   }
   
@@ -143,7 +150,15 @@ public class MapWrapperImpl<K, V> implements MapWrapper<K, V>{
   @Override
   public V remove(final V value) {
     return theMap.remove(getKeyByValue(value));
-  }  
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public void removeIf(Predicate<V> condition) {
+    theMap.values().removeIf(condition);
+  }
 
   /**
    * {@inheritDoc}
@@ -189,7 +204,7 @@ public class MapWrapperImpl<K, V> implements MapWrapper<K, V>{
    * {@inheritDoc}
    */
   @Override
-  public V findFirst(Predicate<V> valuePredicate) {
+  public V firstMatch(Predicate<V> valuePredicate) {
     for (V value: this) {
       if (valuePredicate.test(value)) {
         return value;
@@ -202,16 +217,16 @@ public class MapWrapperImpl<K, V> implements MapWrapper<K, V>{
    * {@inheritDoc}
    */
   @Override
-  public MapWrapperImpl<K,V> clone(){
-    return new MapWrapperImpl<K,V>(this);
+  public MapWrapperImpl<K,V> shallowClone(){
+    return new MapWrapperImpl<>(this);
   }
 
   /**
    * {@inheritDoc}
    */  
   @Override
-  public boolean contains(V value) {
-    return getMap().containsKey(getKeyByValue(value));
+  public boolean containsValue(V value) {
+    return getMap().containsValue(value);
   }
 
   /**

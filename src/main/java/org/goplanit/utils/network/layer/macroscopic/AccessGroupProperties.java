@@ -5,12 +5,12 @@ import java.util.Set;
 import org.goplanit.utils.mode.Mode;
 
 /**
- * Contains the properties of a mode specific to a link segment type
+ * Contains the properties of a mode group specific to a link segment type
  * 
  * @author markr
  *
  */
-public interface AccessGroupProperties extends Cloneable {
+public interface AccessGroupProperties {
   
   /**
    * Epsilon margin when comparing speeds (km/h)
@@ -88,11 +88,18 @@ public interface AccessGroupProperties extends Cloneable {
   public abstract Set<Mode> getAccessModes();
   
   /**
-   * Clone this instance
+   * Shallow clone this instance
    * 
-   * @return copy of this instance
+   * @return shallow copy of this instance
    */
-  public abstract AccessGroupProperties clone();
+  public abstract AccessGroupProperties shallowClone();
+
+  /**
+   * Deep clone this instance
+   *
+   * @return deep copy of this instance
+   */
+  public abstract AccessGroupProperties deepClone();
 
   /** Remove access mode 
    * 
@@ -112,6 +119,14 @@ public interface AccessGroupProperties extends Cloneable {
    * 
    * @param mode to add
    */
-  public abstract void addAccessMode(final Mode mode); 
+  public abstract void addAccessMode(final Mode mode);
 
+  /**
+   * Verify if group supports one or more access modes
+   *
+   * @return true when one or more modes are supported, false otherwise
+   */
+  public default boolean hasAccessModes(){
+    return !getAccessModes().isEmpty();
+  }
 }

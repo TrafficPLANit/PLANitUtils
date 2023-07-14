@@ -100,7 +100,7 @@ public final class IdGenerator {
    * @return idGroupingToken that has been created
    */
   public static IdGroupingToken createIdGroupingToken(String groupDescription) {
-    return new IdGroupingToken(groupDescription);
+    return IdGroupingToken.create(groupDescription);
   }
   
   /** Factory method to create a new id grouping token based on the class instance simple name and the instance id

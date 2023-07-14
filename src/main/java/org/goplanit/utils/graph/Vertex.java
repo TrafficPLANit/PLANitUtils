@@ -1,6 +1,7 @@
 package org.goplanit.utils.graph;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
@@ -65,6 +66,15 @@ public interface Vertex extends Serializable, GraphEntity {
    * @return true when added, false when already present (and not added)
    */
   public abstract boolean addEdge(Edge edge);
+
+  /**
+   * Add multiple edges at the same time
+   *
+   * @param toBeAdded the to be added edges
+   */
+  public default void addEdges(Collection<? extends Edge> toBeAdded){
+    toBeAdded.forEach( edge -> addEdge(edge));
+  }
   
   /**
    * Remove edge
@@ -79,20 +89,27 @@ public interface Vertex extends Serializable, GraphEntity {
    * 
    * @return Set of Edge objects
    */
-  public abstract Collection<Edge> getEdges();  
+  public abstract Collection<? extends Edge> getEdges();  
     
   /**
-   * Clone the vertex
-   * @return the cloned vertex
+   * Shallow clone
+   * @return the cloned entity
    */
   @Override
-  public abstract Vertex clone();
+  public abstract Vertex shallowClone();
+
+  /**
+   * Deep clone
+   * @return the cloned entity
+   */
+  @Override
+  public abstract Vertex deepClone();
   
   /**
    * All vertices use the VERTEX_ID_CLASS to generate the unique internal ids
    */
   @Override
-  public default Class<Vertex> getIdClass() {
+  public default Class<? extends Vertex> getIdClass() {
     return VERTEX_ID_CLASS;
   }  
   
@@ -113,7 +130,21 @@ public interface Vertex extends Serializable, GraphEntity {
    */
   public default boolean removeEdge(final Edge edge) {
     return removeEdge(edge.getId());
-  }  
+  }
+
+  /**
+   * Remove provided edges
+   *
+   * @param toBeRemoved to remove
+   */
+  public default void removeEdges(Collection<? extends Edge> toBeRemoved){
+    toBeRemoved.forEach(e -> removeEdge(e));
+  }
+
+  /**
+   * Remove al edges from vertex
+   */
+  public abstract void removeAllEdges();
   
   /**
    * Collect the edge(s) based on the other vertex
@@ -121,7 +152,7 @@ public interface Vertex extends Serializable, GraphEntity {
    * @param otherVertex that defines the edge(s)
    * @return edges for which this holds, if none hold an empty set is returned
    */
-  public default Set<Edge> getEdges(Vertex otherVertex) {
+  public default Set<? extends Edge> getEdges(Vertex otherVertex) {
     Set<Edge> edges = new HashSet<Edge>();
     for (Edge edge : getEdges()) {
       if (edge.getVertexA().getId() == this.getId() && edge.getVertexB().getId() == otherVertex.getId()) {
@@ -165,13 +196,23 @@ public interface Vertex extends Serializable, GraphEntity {
     setPosition((Point) JTS.transform(getPosition(),transformer));
   }
 
-  /** Verify if the vertex position is equal (in 2D) to the passed in coordinate
+  /** Verify if the vertex position is exactly equal (in 2D) to the passed in coordinate
    * 
    * @param coordinate to check against
    * @return true when equal location in 2D, false otherwise
    */
   public default boolean isPositionEqual2D(Coordinate coordinate) {
     return hasPosition() && getPosition().getCoordinate().equals2D(coordinate);
+  }
+
+  /** Verify if the vertex position is exactly equal (in 2D) to the passed in coordinate
+   *
+   * @param coordinate to check against
+   * @param epsilon allowed difference to still be regarded equal
+   * @return true when equal location in 2D, false otherwise
+   */
+  public default boolean isPositionEqual2D(Coordinate coordinate, double epsilon) {
+    return hasPosition() && getPosition().getCoordinate().equals2D(coordinate, epsilon);
   }
   
   /** Validate the vertex regarding it connections to edges etc.
@@ -188,5 +229,6 @@ public interface Vertex extends Serializable, GraphEntity {
       }
     }
     return true;
-  }  
+  }
+
 }

@@ -27,16 +27,16 @@ public interface PhysicalModeFeatures {
   /** collect the vehicular type of this mode
    * @return vehicular type
    */
-  VehicularModeType getVehicularType();
+  public abstract VehicularModeType getVehicularType();
 
   /** collect the motorisation type of this mode
    * @return motorisation type
    */
-  MotorisationModeType getMotorisationType();
+  public abstract MotorisationModeType getMotorisationType();
 
   /** collect the track type of this mode
    * @return track type
    */
-  TrackModeType getTrackType();
+  public abstract TrackModeType getTrackType();
 
 }

@@ -13,6 +13,7 @@ import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 
 import org.goplanit.utils.exceptions.PlanItException;
+import org.goplanit.utils.exceptions.PlanItRunTimeException;
 import org.goplanit.utils.misc.Pair;
 
 /**
@@ -31,21 +32,20 @@ public class PlanitXmlWriterUtils {
   
   /** xml versin 1.0 string */
   public static final String XML_V1= "1.0";
-
+  
   /**
    * create an xml stream writer for the given path
    * @param xmlFilePath to create the writer for
    * @return created xml stream writer and writer instances
-   * @throws PlanItException thrown if error
    */
-  public static Pair<XMLStreamWriter, Writer> createXMLWriter(Path xmlFilePath) throws PlanItException {
+  public static Pair<XMLStreamWriter, Writer> createXMLWriter(Path xmlFilePath) {
     Path absoluteXmlPath = xmlFilePath.toAbsolutePath();
         
     /* create dir if not present */
     File directory = absoluteXmlPath.getParent().toFile();
     if(!directory.exists()) {      
       if(!directory.mkdirs()) {
-        throw new PlanItException(String.format("Unable to create Xml writer output directory %s",directory.toString()));
+        throw new PlanItRunTimeException(String.format("Unable to create Xml writer output directory %s",directory.toString()));
       }      
     }
     
@@ -62,7 +62,7 @@ public class PlanitXmlWriterUtils {
       } catch (Exception ex) {
       }       
       LOGGER.severe(e.getMessage());
-      throw new PlanItException("Could not instantiate XML writer",e);
+      throw new PlanItRunTimeException("Could not instantiate XML writer",e);
     }finally {     
     }  
   }
@@ -89,6 +89,9 @@ public class PlanitXmlWriterUtils {
   
   /**
    * Write an empty element (with indentation), e.g. {@code <xmlElementName>}
+   * <p>
+   *   Requires a separate end element to be written
+   * </p>
    * 
    * @param xmlWriter to use
    * @param xmlElementName element to start tag, e.g. {@code <xmlElementName>}
@@ -109,12 +112,85 @@ public class PlanitXmlWriterUtils {
    * @throws XMLStreamException thrown if error
    */
   public static  void writeStartElementNewLine(XMLStreamWriter xmlWriter, String xmlElementName, int indentationLevel) throws XMLStreamException {
-    writeIndentation(xmlWriter,indentationLevel);
-    xmlWriter.writeStartElement(xmlElementName);
+    writeStartElement(xmlWriter, xmlElementName, indentationLevel);
     writeNewLine(xmlWriter);
   }
-   
-  
+
+  /**
+   * Write a start element (with indentation)
+   *
+   * @param xmlWriter to use
+   * @param xmlElementName element to start tag, e.g. {@code <xmlElementName>}
+   * @param indentationLevel to use
+   * @throws XMLStreamException thrown if error
+   */
+  public static void writeStartElement(XMLStreamWriter xmlWriter, String xmlElementName, int indentationLevel) throws XMLStreamException {
+    writeIndentation(xmlWriter,indentationLevel);
+    xmlWriter.writeStartElement(xmlElementName);
+  }
+
+  /**
+   * Write an element without attributes (with indentation) as well as its content and end element, e.g. {@code <xmlElementName><![CDATA[elementCData]]></xmlElementName>}
+   *
+   * @param xmlWriter to use
+   * @param xmlElementName element to start tag, e.g. {@code <xmlElementName>}
+   * @param elementCData to include
+   * @param indentationLevel to use
+   * @throws XMLStreamException thrown if error
+   */
+  public static void writeElementWithCData(XMLStreamWriter xmlWriter, String xmlElementName, String elementCData, int indentationLevel) throws XMLStreamException {
+    writeIndentation(xmlWriter, indentationLevel);
+    xmlWriter.writeStartElement(xmlElementName);
+    xmlWriter.writeCData(elementCData);
+    xmlWriter.writeEndElement();
+  }
+
+  /**
+   * Write an element CDATA without attributes (with indentation) as well as its content and end element, e.g. {@code <xmlElementName><![CDATA[elementCData]]></xmlElementName>}.
+   * Add newline afterwards
+   *
+   * @param xmlWriter to use
+   * @param xmlElementName element to start tag, e.g. {@code <xmlElementName>}
+   * @param elementCData to include
+   * @param indentationLevel to use
+   * @throws XMLStreamException thrown if error
+   */
+  public static void writeElementWithCDataNewLine(XMLStreamWriter xmlWriter, String xmlElementName, String elementCData, int indentationLevel) throws XMLStreamException {
+    writeElementWithCData(xmlWriter, xmlElementName, elementCData, indentationLevel);
+    writeNewLine(xmlWriter);
+  }
+
+  /**
+   * Write an element without attributes (with indentation) as well as its content and end element, e.g. {@code <xmlElementName>value</xmlElementName>}.
+   * Add newline afterwards
+   *
+   * @param xmlWriter to use
+   * @param xmlElementName element to start tag, e.g. {@code <xmlElementName>}
+   * @param elementValue to include
+   * @param indentationLevel to use
+   * @throws XMLStreamException thrown if error
+   */
+  public static void writeElementWithValueWithNewLine(XMLStreamWriter xmlWriter, String xmlElementName, String elementValue, int indentationLevel) throws XMLStreamException {
+    writeElementWithValue(xmlWriter, xmlElementName, elementValue, indentationLevel);
+    writeNewLine(xmlWriter);
+  }
+
+  /**
+   * Write an element CDATA without attributes (with indentation) as well as its content and end element, e.g. {@code <xmlElementName>value</xmlElementName>}.
+
+   *
+   * @param xmlWriter to use
+   * @param xmlElementName element to start tag, e.g. {@code <xmlElementName>}
+   * @param elementValue to include
+   * @param indentationLevel to use
+   * @throws XMLStreamException thrown if error
+   */
+  public static void writeElementWithValue(XMLStreamWriter xmlWriter, String xmlElementName, String elementValue, int indentationLevel) throws XMLStreamException {
+    writeStartElement(xmlWriter, xmlElementName, indentationLevel);
+    xmlWriter.writeCharacters(elementValue);
+    xmlWriter.writeEndElement();
+  }
+
   /**
    * Write an end element and add newline afterwards
    * 
@@ -163,5 +239,6 @@ public class PlanitXmlWriterUtils {
 
     writer.flush();
     writer.close();
-  }  
+  }
+
 }

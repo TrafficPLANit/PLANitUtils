@@ -3,7 +3,6 @@ package org.goplanit.utils.graph.directed;
 import java.util.logging.Logger;
 
 import org.goplanit.utils.exceptions.PlanItException;
-import org.goplanit.utils.graph.EdgeSegment;
 import org.goplanit.utils.graph.GraphEntities;
 
 /**
@@ -12,7 +11,7 @@ import org.goplanit.utils.graph.GraphEntities;
  * 
  * @author markr
  */
-public interface EdgeSegments extends GraphEntities<EdgeSegment> {
+public interface EdgeSegments extends GraphEntities<EdgeSegment> {   
   
   /**
    * Register a edge segment (not registered on nodes and edge)
@@ -42,5 +41,11 @@ public interface EdgeSegments extends GraphEntities<EdgeSegment> {
    * clone edge segments
    */
   @Override
-  public abstract EdgeSegments clone();   
+  public abstract EdgeSegments shallowClone();
+
+  /**
+   * clone edge segments
+   */
+  @Override
+  public abstract EdgeSegments deepClone();
 }

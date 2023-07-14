@@ -1,5 +1,8 @@
 package org.goplanit.utils.zoning;
 
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -25,6 +28,51 @@ public interface TransferZone extends Zone {
    * @return transfer zone specific id
    */
   public abstract long getTransferZoneId();
+
+  /** Unmodifiable list of registered platform names for this transfer zone (if any).
+   *
+   * @return transfer zone platform names if any were registered
+   */
+  public abstract List<String> getTransferZonePlatformNames();
+
+  /** Add platform name for this transfer zone
+   *
+   * @param platformName to add
+   * @return true if newly added, false otherwise
+   */
+  public abstract boolean addTransferZonePlatformName(String platformName);
+
+  /** Remove a platform name if present
+   *
+   * @param platformName to remove
+   * @return true when removed, false otherwise
+   */
+  public abstract boolean removeTransferZonePlatformName(String platformName);
+
+  /**
+   * Verify if any platform names are present
+   *
+   * @return true when present, false otherwise
+   */
+  public default boolean hasPlatformNames(){
+    return getTransferZonePlatformNames() != null && !getTransferZonePlatformNames().isEmpty();
+  }
+
+  /** Add all platform names provided
+   *
+   * @param platformNames to add
+   */
+  public default void addTransferZonePlatformNames(String[] platformNames){
+    addTransferZonePlatformNames(Arrays.asList(platformNames));
+  }
+
+  /** Add all platform names provided
+   *
+   * @param platformNames to add
+   */
+  public default void addTransferZonePlatformNames(Collection<String> platformNames){
+    platformNames.forEach( s -> addTransferZonePlatformName(s));
+  }
 
   /** set the type of this transfer zone
    * 
@@ -72,13 +120,18 @@ public interface TransferZone extends Zone {
    * remove this transfer zone from all groups it is registered on (and also update the group references
    */
   public abstract void removeFromAllTransferZoneGroups();
-  
-  
+
   /**
    * {@inheritDoc}
    */
   @Override
-  public abstract TransferZone clone();
+  public abstract TransferZone shallowClone();
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public abstract TransferZone deepClone();
   
   /**
    * {@inheritDoc}

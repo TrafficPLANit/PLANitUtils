@@ -1,5 +1,6 @@
 package org.goplanit.utils.id;
 
+import org.goplanit.utils.exceptions.PlanItRunTimeException;
 import org.goplanit.utils.id.IdGroupingToken;
 
 /**
@@ -22,6 +23,14 @@ public abstract class ManagedIdEntityFactoryImpl<E extends ManagedId> implements
   protected ManagedIdEntityFactoryImpl(IdGroupingToken groupIdToken) {
     this.groupIdToken = groupIdToken;
   }
+  
+  /**
+   * Constructor. Do not use unless it is guaranteed that the ManagedId entity is able to (re)create its id without relying on a group id token
+   * 
+   */
+  protected ManagedIdEntityFactoryImpl() {
+    this.groupIdToken = null;
+  }  
 
   /**
    * {@inheritDoc}
@@ -43,10 +52,22 @@ public abstract class ManagedIdEntityFactoryImpl<E extends ManagedId> implements
    * {@inheritDoc}
    */
   @Override
-  public E createUniqueCopyOf(ManagedId entityToCopy) {
+  public E createUniqueShallowCopyOf(ManagedId entityToCopy) {
     /* shallow copy as is */
+    E copy = (E) entityToCopy.shallowClone();
+    /* recreate id and register */
+    copy.recreateManagedIds(getIdGroupingToken());
+    return copy;
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public E createUniqueDeepCopyOf(ManagedId entityToCopy) {
+    /* deep copy as is */
     @SuppressWarnings("unchecked")
-    E copy = (E) entityToCopy.clone();
+    E copy = (E) entityToCopy.deepClone();
     /* recreate id and register */
     copy.recreateManagedIds(getIdGroupingToken());
     return copy;

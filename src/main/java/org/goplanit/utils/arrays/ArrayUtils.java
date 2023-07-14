@@ -3,6 +3,7 @@ package org.goplanit.utils.arrays;
 import java.util.Arrays;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
+import java.util.logging.Logger;
 
 /**
  * General methods for arrays
@@ -11,6 +12,9 @@ import java.util.function.Consumer;
  *
  */
 public class ArrayUtils {
+  
+  /** logger to use */
+  private static final Logger LOGGER = Logger.getLogger(ArrayUtils.class.getCanonicalName());
 
   /**
    * Add the values of a second array element-wise to the first array
@@ -23,6 +27,11 @@ public class ArrayUtils {
    *          number of elements in array to be updated
    */
   public static void addTo(double[] destination, double[] addToDestination, int numberOfElements) {
+    if(addToDestination.length < Math.min(numberOfElements,destination.length)) {
+      LOGGER.warning("addToDestination array has less elements than number of elements/destination array to add to, addTo failed");
+      return;
+    }
+    
     for (int index = 0; index < numberOfElements; ++index) {
       destination[index] += addToDestination[index];
     }
@@ -37,11 +46,85 @@ public class ArrayUtils {
    *          array of values to be added to destination array
    */
   public static void addTo(double[] destination, double[] addToDestination) {
+    if(addToDestination.length < destination.length) {
+      LOGGER.warning("addToDestination array has less elements than destination array to add to, addTo failed");
+      return;
+    }
+    
     int length = destination.length;
     for (int index = 0; index < length; ++index) {
       destination[index] += addToDestination[index];
     }
   }  
+  
+  /** divide each entry in array by given diviser. When divisor is zero, all entries are set to divideByZeroResult
+   * 
+   * @param destination array to apply to
+   * @param diviser to divide by
+   * @param divideByZeroResult result if provided division value is zero
+   */
+  public static void divideBy(final double[] destination, double diviser, double divideByZeroResult) {
+    if (diviser>0) {
+      for (int index = 0; index < destination.length; ++index) {
+        destination[index] /= diviser;
+      }
+    } else {
+      for (int index = 0; index < destination.length; ++index) {
+        destination[index] = divideByZeroResult;
+      }
+    }
+  }
+  
+  /**
+   * Divide the values of the first array by the the second array (element-wise) 
+   * 
+   * @param destination the array to be updated
+   * @param diviserArray to divide by these values
+   * @param divideByZeroResult to use in case the diviser is zero
+   */
+  public static void divideBy(double[] destination, double[] diviserArray, double divideByZeroResult) {
+    if(diviserArray.length < destination.length) {
+      LOGGER.warning("Diviser array has less elements than destination array to divide, divideBy failed");
+      return;
+    }    
+    for (int index = 0; index < destination.length; ++index) {
+      double divisor = diviserArray[index];
+      destination[index] = divisor>0 ? destination[index]/diviserArray[index] : divideByZeroResult;
+    }
+  }
+
+  /** multiply each entry in array by given multiplicator.
+   * 
+   * @param destination array to apply to
+   * @param multiplicator to multiply with
+   */
+  public static void multiplyBy(final double[] destination, double multiplicator) {
+    for (int index = 0; index < destination.length; ++index) {
+      destination[index] *= multiplicator;
+    }
+  }  
+
+  /** divide each entry in array by the sum of the entries. When divisor is zero, all entries are set to divideByZeroResult
+   * 
+   * @param destination array to apply to
+   * @param divideByZeroResult result if provided division value is zero
+   */
+  public static void divideBySum(double[] destination, int divideByZeroResult) {
+    divideBy(destination, sumOf(destination), divideByZeroResult);
+  }
+
+  /** sum of each entry in array
+   * 
+   * @param array to apply to
+   * @return computed sum
+   */
+  public static double sumOf(final double[] array) {
+    double sum = 0;
+    for (int index = 0; index < array.length; ++index) {
+      sum += array[index];
+    }
+    return sum;
+  }
 
   /**
    * Return the dot product of two arrays

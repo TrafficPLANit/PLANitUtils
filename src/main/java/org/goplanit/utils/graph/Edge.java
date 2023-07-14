@@ -3,9 +3,15 @@ package org.goplanit.utils.graph;
 import java.io.Serializable;
 
 import org.geotools.geometry.jts.JTS;
-import org.goplanit.utils.exceptions.PlanItException;
+import org.goplanit.utils.exceptions.PlanItRunTimeException;
+import org.goplanit.utils.geo.PlanitJtsUtils;
+import org.goplanit.utils.math.Precision;
+import org.goplanit.utils.misc.Pair;
+import org.goplanit.utils.network.layer.macroscopic.MacroscopicLink;
 import org.locationtech.jts.geom.Envelope;
+import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.LineString;
+import org.locationtech.jts.linearref.LinearLocation;
 import org.opengis.geometry.MismatchedDimensionException;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.TransformException;
@@ -20,7 +26,16 @@ public interface Edge extends Serializable, GraphEntity {
   
   /** id class for generating ids */
   public static final Class<Edge> EDGE_ID_CLASS = Edge.class;   
-    
+      
+  /** Verify if passed in vertex is the same object reference as vertex A
+   * 
+   * @param vertex to check
+   * @return true when identical object instance, false otherwise
+   */
+  public default boolean isVertexA(Vertex vertex) {
+    return getVertexA() == vertex;
+  }
+
   /**
    * Collect the geometry of this line
    * @return lineString
@@ -32,6 +47,31 @@ public interface Edge extends Serializable, GraphEntity {
    * @param lineString to set
    */
   public abstract void setGeometry(LineString lineString);
+
+  /**
+   * Utilising the A and B vertex construct a direct line between the two points as the geometry
+   *
+   * @param overwrite  when true, overwrite existing geometry, otherwise ignore
+   * @return true when successful, false otherwise
+   */
+  public default boolean populateBasicGeometry(boolean overwrite){
+    if(hasGeometry() && !overwrite){
+      return false;
+    }
+
+    if(getVertexA()==null || getVertexB() == null){
+      return false;
+    }
+
+    var posA = getVertexA().getPosition();
+    var posB = getVertexB().getPosition();
+    if(posA == null || posB == null){
+      return false;
+    }
+
+    setGeometry(PlanitJtsUtils.createLineString(posA.getCoordinate(),posB.getCoordinate()));
+    return true;
+  }
    
   /**
    * Remove vertex from edge 
@@ -107,16 +147,22 @@ public interface Edge extends Serializable, GraphEntity {
    * @param vertextoReplace the vertex to replace
    * @param vertexToReplaceWith the vertex to replace with
    * @return true when replaced, false otherwise
-   * @throws PlanItException thrown if error
    */
-  public abstract boolean replace(final Vertex vertextoReplace, final Vertex vertexToReplaceWith) throws PlanItException;
+  public abstract boolean replace(final Vertex vertextoReplace, final Vertex vertexToReplaceWith);
   
   /**
-   * Clone the edge as is, all shared members are shallow copied, fully owned members are deep copied
+   * Shallow copy
    * 
    * @return copy of this edge
    */
-  public abstract Edge clone();
+  public abstract Edge shallowClone();
+
+  /**
+   * Deep copy, non-owned members are reference copied
+   *
+   * @return copy of this edge
+   */
+  public abstract Edge deepClone();
   
   /** validate the contents of this edge 
    * @return true when valid, false otherwise
@@ -127,7 +173,7 @@ public interface Edge extends Serializable, GraphEntity {
    * All edges use the EDGE_ID_CLASS to generate the unique internal ids
    */
   @Override
-  public default Class<Edge> getIdClass() {
+  public default Class<? extends Edge> getIdClass() {
     return EDGE_ID_CLASS;
   }   
   
@@ -145,6 +191,33 @@ public interface Edge extends Serializable, GraphEntity {
   public default boolean hasVertex(Vertex vertex) {
     return getVertexA().equals(vertex) || getVertexB().equals(vertex); 
   }
+
+  /**
+   * Verify if vertex A is available
+   *
+   * @return true when present, false otherwise
+   */
+  public default boolean hasVertexA(){
+    return getVertexA() != null;
+  }
+
+  /**
+   * Verify if vertex B is available
+   *
+   * @return true when present, false otherwise
+   */
+  public default boolean hasVertexB(){
+    return getVertexB() != null;
+  }
+
+  /**
+   * Verify if vertex A and B are available
+   *
+   * @return true when present, false otherwise
+   */
+  public default boolean hasVertices(){
+    return hasVertexA() && hasVertexB();
+  }
   
   /**
    * check if geometry is available
@@ -155,14 +228,54 @@ public interface Edge extends Serializable, GraphEntity {
     return getGeometry()!=null;
   }
   
-  /** verify if the geometry is in the A to B direction of the link 
+  /** verify if the geometry is in the A to B direction of the link, both vertices must have geometry present.
    * @return true if in A to B direction, false otherwise
    */
   public default boolean isGeometryInAbDirection() {
-    boolean isVertexAStartPoint = getGeometry().getStartPoint().equals(getVertexA().getPosition());
-    boolean isVertexBEndPoint = getGeometry().getEndPoint().equals(getVertexB().getPosition());
-    return isVertexAStartPoint && isVertexBEndPoint;     
-  }  
+    return isGeometryInAbDirection(false);
+  }
+
+  /** verify if the geometry is in the A to B direction of the edge. When one of the vertices has no geometry, we may or may not allow for
+   * this. If this is the case, we enforce that at least one end of the geometry is matched to the other vertex's geometry to
+   * infer direction.
+   *
+   * @param allowSingleVertexWithoutGeometry when true, we assume that geometry of edge is ok to be not matching vertex on one end
+   * @return true if in A to B direction, false otherwise
+   */
+  public default boolean isGeometryInAbDirection(boolean allowSingleVertexWithoutGeometry) {
+
+    var vertexAHasGeometry = getVertexA().hasPosition();
+    var vertexBHasGeometry = getVertexB().hasPosition();
+    if(!vertexAHasGeometry && !vertexBHasGeometry){
+      throw new PlanItRunTimeException("Unable to identify direction as both vertices of edge %s have no geometry", this.getIdsAsString());
+    }else if(!allowSingleVertexWithoutGeometry && !(vertexAHasGeometry && vertexBHasGeometry)){
+      throw new PlanItRunTimeException("One of the vertices has no geometry for edge %s, this is not allowed", this.getIdsAsString());
+    }
+
+    // Given difficulty of ensuring consistency in rounding between various geometries
+    // we check both, ideally we make sure we have a precision model throughout, but this is not implemented yet
+    boolean isVertexAStartPoint = vertexAHasGeometry ?
+        getGeometry().getStartPoint().getCoordinate().equals2D(getVertexA().getPosition().getCoordinate(), Precision.EPSILON_6) : false;
+    boolean isVertexBEndPoint = vertexBHasGeometry ?
+        getGeometry().getEndPoint().getCoordinate().equals2D(getVertexB().getPosition().getCoordinate(), Precision.EPSILON_6) : false;
+    if(isVertexAStartPoint && isVertexBEndPoint){
+      return true;
+    }else if(isVertexAStartPoint && !vertexBHasGeometry){
+      return true;
+    }else if(isVertexBEndPoint && !vertexAHasGeometry){
+      return true;
+    }
+
+    boolean isVertexAEndPoint = vertexBHasGeometry ?
+        getGeometry().getStartPoint().getCoordinate().equals2D(getVertexB().getPosition().getCoordinate(), Precision.EPSILON_6) : false;
+    boolean isVertexBStartPoint = vertexAHasGeometry?
+        getGeometry().getEndPoint().getCoordinate().equals2D(getVertexA().getPosition().getCoordinate(), Precision.EPSILON_6) : false;
+    if(isVertexBStartPoint && isVertexAEndPoint){
+      return false;
+    }
+
+    throw new PlanItRunTimeException("Unable to identify direction as vertex locations do not match internal geometry of edge within reason it appears");
+  }
   
   /** transform the line string information of this edge using the passed in MathTransform
    * 
@@ -172,7 +285,22 @@ public interface Edge extends Serializable, GraphEntity {
    */
   public default void transformGeometry(MathTransform transformer) throws MismatchedDimensionException, TransformException {
     setGeometry((LineString) JTS.transform(getGeometry(),transformer));
-  }    
+  }
+
+  /**
+   * Update the geometry by taking the current geometry and inject a coordinate at the projected location between existing coordinates using the passed in location.
+   * this replaces the existing geometry instance which is returned.
+   *
+   * @param projectedLinearLocation to use as reference point of new coordinate
+   * @return old geometry that is now replaced
+   */
+  public default Geometry updateGeometryInjectCoordinateAtProjectedLocation(LinearLocation projectedLinearLocation){
+    var oldGeometry = getGeometry();
+    Pair<LineString, LineString> splitLineString = PlanitJtsUtils.splitLineString(getGeometry(),projectedLinearLocation);
+    LineString linkGeometryWithExplicitProjectedCoordinate = PlanitJtsUtils.mergeLineStrings(splitLineString.first(),splitLineString.second());
+    setGeometry(linkGeometryWithExplicitProjectedCoordinate);
+    return oldGeometry;
+  }
   
   /** collect the bounding box of the geometry of this link
    * 
@@ -183,6 +311,6 @@ public interface Edge extends Serializable, GraphEntity {
       return getGeometry().getEnvelopeInternal();
     }
     return null;
-  }  
-    
+  }
+
 }

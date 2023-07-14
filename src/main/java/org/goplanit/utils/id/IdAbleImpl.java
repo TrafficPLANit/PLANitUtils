@@ -82,12 +82,18 @@ public abstract class IdAbleImpl implements IdAble {
   @Override
   public boolean equals(Object o) {
     return idEquals(o);
-  }  
-  
+  }
+
+
   /**
    * {@inheritDoc}
-   */   
+   */
   @Override
-  public abstract IdAble clone();
-  
+  public abstract IdAble shallowClone();
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public abstract IdAble deepClone();
 }

@@ -1,13 +1,16 @@
 package org.goplanit.utils.misc;
 
-import java.io.File;
-import java.io.FilenameFilter;
+import java.io.*;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.function.Consumer;
 import java.util.logging.Logger;
 
 import org.goplanit.utils.exceptions.PlanItException;
+import org.goplanit.utils.exceptions.PlanItRunTimeException;
+import org.xml.sax.InputSource;
 
 /**
  * Lightweight File utilities
@@ -45,15 +48,14 @@ public class FileUtils {
    * @param pathToDir path to dir
    * @param fileExtension the file extension, e.g. ".xml"
    * @return the list of files that match this extension in the dir
-   * @throws PlanItException thrown if error
    */
-  public static File[] getFilesWithExtensionFromDir(final String pathToDir, final String fileExtension) throws PlanItException {
-    PlanItException.throwIfNull(pathToDir,String.format("path directory is null when collecting files"));
-    PlanItException.throwIfNull(fileExtension,String.format("file extension to use is null when collecting files from directory"));
+  public static File[] getFilesWithExtensionFromDir(final String pathToDir, final String fileExtension){
+    PlanItRunTimeException.throwIf(StringUtils.isNullOrBlank(pathToDir),String.format("Path directory is null or blank when collecting files"));
+    PlanItRunTimeException.throwIf(StringUtils.isNullOrBlank(fileExtension),String.format("File extension to use is null or blank when collecting files from directory"));
     
     /* the dir */
-    File directoryPath = new File(pathToDir);    
-    PlanItException.throwIf(!directoryPath.isDirectory(),String.format("%s is not a valid directory",directoryPath ));    
+    File directoryPath = new File(pathToDir);
+    PlanItRunTimeException.throwIf(!directoryPath.isDirectory(),String.format("%s is not a valid directory",directoryPath ));
     
     /* the filter */
     FilenameFilter fileExtensionFilter = new FilenameFilter(){
@@ -142,6 +144,57 @@ public class FileUtils {
         }
     }
     return directoryToDelete.delete();
-  }    
-   
+  }
+
+  /**
+   * Given a location, construct input source
+   *
+   * @param filePath to use
+   * @param charSetEncoding to apply
+   * @return created input source
+   * @throws FileNotFoundException thrown if error
+   * @throws UnsupportedEncodingException  thrown if error
+   */
+  public static InputSource getFileContentAsInputSource(String filePath, String charSetEncoding) throws FileNotFoundException, UnsupportedEncodingException {
+    File file = new File(filePath);
+    InputStream inputStream= new FileInputStream(file);
+    Reader reader = new InputStreamReader(inputStream, charSetEncoding);
+    InputSource is = new InputSource(reader);
+    is.setEncoding(charSetEncoding);
+    return is;
+  }
+
+  /**
+   * Construct a string based on the file contents
+   *
+   * @param filePath to use
+   * @param charSetEncoding to apply
+   * @return created string representation
+   * @throws IOException thrown if error
+   */
+  public static String parseFileContentAsString(String filePath, String charSetEncoding) throws IOException {
+    // input source
+    InputSource is = getFileContentAsInputSource(filePath, charSetEncoding);
+
+    // convert to string
+    Reader r= is.getCharacterStream();
+    StringBuilder stringBuilder = new StringBuilder();
+    int c;
+    while((c = r.read()) > -1)
+      stringBuilder.appendCodePoint(c);
+
+    return stringBuilder.toString();
+  }
+
+  /**
+   * Construct a string based on the file contents in UTF8 character encouding
+   *
+   * @param filePath to use
+   * @return created string representation
+   * @throws IOException thrown if error
+   */
+  public static String parseUtf8FileContentAsString(String filePath) throws IOException {
+    return parseFileContentAsString(filePath, "UTF8");
+  }
+
 }

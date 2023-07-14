@@ -19,7 +19,7 @@ import org.goplanit.utils.zoning.Zone;
 public abstract class OdHashedImpl<T> extends OdDataImpl<T> implements OdHashed<T> {
 
   /** the hashed OD values where the key is based on the combined ids of origin and destination */
-  private final HashMap<Integer, T> odHashed;
+  protected final HashMap<Integer, T> odHashed;
 
   /**
    * Constructor
@@ -34,13 +34,14 @@ public abstract class OdHashedImpl<T> extends OdDataImpl<T> implements OdHashed<
   }
 
   /**
-   * Copy constructor (shallow copy of contents)
+   * Copy constructor, only shallow copy implemented, deep copy is to be implemented by parent because we do not
+   * want to enforce more type information on values
    * 
    * @param other to copy from
    */
   public OdHashedImpl(final OdHashedImpl<T> other) {
     super(other);
-    this.odHashed = new HashMap<Integer, T>(other.odHashed);
+    this.odHashed = new HashMap<>(other.odHashed);
   }
 
   /**
@@ -79,7 +80,13 @@ public abstract class OdHashedImpl<T> extends OdDataImpl<T> implements OdHashed<
    * {@inheritDoc}
    */
   @Override
-  public abstract OdHashedImpl<T> clone();
+  public abstract OdHashedImpl<T> shallowClone();
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public abstract OdHashedImpl<T> deepClone();
 
   // getters - setters
 

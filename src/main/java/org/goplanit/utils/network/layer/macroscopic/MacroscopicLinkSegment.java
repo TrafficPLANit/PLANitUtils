@@ -5,7 +5,9 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.goplanit.utils.mode.Mode;
+import org.goplanit.utils.network.layer.physical.Link;
 import org.goplanit.utils.network.layer.physical.LinkSegment;
+import org.goplanit.utils.network.layer.physical.Node;
 import org.goplanit.utils.pcu.PcuCapacitated;
 
 /**
@@ -15,21 +17,6 @@ import org.goplanit.utils.pcu.PcuCapacitated;
  *
  */
 public interface MacroscopicLinkSegment extends LinkSegment, PcuCapacitated {
-  
-  /**
-   * Returns whether vehicles of a specified mode are allowed through this link
-   * 
-   * @param mode the specified mode
-   * @return true if vehicles of this mode can drive along this link, false otherwise
-   */
-  public abstract boolean isModeAllowed(Mode mode);
-  
-  /**
-   * Returns the modes that are allowed on the link segment
-   * 
-   * @return allowed modes
-   */
-  public abstract Set<Mode> getAllowedModes();    
 
   /**
    * Compute the free flow travel time by mode, i.e. when the link's maximum speed
@@ -42,7 +29,7 @@ public interface MacroscopicLinkSegment extends LinkSegment, PcuCapacitated {
    * @return freeFlowTravelTime for this mode
    */
   public abstract double computeFreeFlowTravelTimeHour(Mode mode);
-  
+
   /**
    * Collect the maximum speed limit for the mode by taking the minimum of: (i) physical speed limit, (ii) mode's maximum speed limit, (iii) link segment type's mode specific speed
    * limit.
@@ -91,18 +78,24 @@ public interface MacroscopicLinkSegment extends LinkSegment, PcuCapacitated {
     return getLinkSegmentType()!=null;
   }
 
-  /** collect the allowed modes from the passed in modes
-   * @param modes to choose from
-   * @return allowed modes
+  /**
+   * {@inheritDoc}
    */
-  public default Set<Mode> getAllowedModesFrom(Collection<Mode> modes){
-    Set<Mode> allowedModes = new HashSet<Mode>();
-    for(Mode mode : modes) {
-      if(isModeAllowed(mode)) {
-        allowedModes.add(mode);
-      }
-    }
-    return allowedModes;
+  @Override
+  public abstract Node getUpstreamVertex();
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public abstract Node getDownstreamVertex();
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public default MacroscopicLink getParentLink() {
+    return (MacroscopicLink) LinkSegment.super.getParentLink();
   }
   
     
@@ -121,5 +114,16 @@ public interface MacroscopicLinkSegment extends LinkSegment, PcuCapacitated {
   public default double getCapacityOrDefaultPcuHLane() {
     return getLinkSegmentType().getExplicitCapacityPerLaneOrDefault();
   }
-  
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public abstract MacroscopicLinkSegment shallowClone();
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public abstract MacroscopicLinkSegment deepClone();
 }

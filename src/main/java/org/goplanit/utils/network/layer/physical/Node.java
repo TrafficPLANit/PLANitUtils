@@ -1,11 +1,10 @@
 package org.goplanit.utils.network.layer.physical;
 
 import java.util.Collection;
-import java.util.Set;
 
 import org.goplanit.utils.graph.Edge;
-import org.goplanit.utils.graph.EdgeSegment;
 import org.goplanit.utils.graph.directed.DirectedVertex;
+import org.goplanit.utils.graph.directed.EdgeSegment;
 import org.goplanit.utils.id.IdGenerator;
 import org.goplanit.utils.id.IdGroupingToken;
 
@@ -37,8 +36,8 @@ public interface Node extends DirectedVertex {
    * @param tokenId contiguous id generation within this group for instances of this class
    * @return nodeId
    */
-  public static long generateNodeId(final IdGroupingToken tokenId) {
-    return IdGenerator.generateId(tokenId, Node.class);
+  public default long generateNodeId(final IdGroupingToken tokenId) {
+    return IdGenerator.generateId(tokenId, getNodeIdClass());
   }  
  
   /**
@@ -61,7 +60,19 @@ public interface Node extends DirectedVertex {
    * @param name of the node
    */
   public abstract void setName(String name);
-  
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public abstract Node shallowClone();
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public abstract Node deepClone();
+
   /**
    * It is expected that nodes are used in conjunction with links. If so, this method will cast the edges of the node to a links collection
    * for readability when collecting a node's edges
@@ -82,8 +93,8 @@ public interface Node extends DirectedVertex {
    * @return edgeSegments as collection of linkSegments
    */
   @SuppressWarnings("unchecked")  
-  public default <LS extends EdgeSegment> Set<LS> getEntryLinkSegments() {
-    return (Set<LS>) getEntryEdgeSegments();
+  public default <LS extends EdgeSegment> Iterable<LS> getEntryLinkSegments() {
+    return (Iterable<LS>) getEntryEdgeSegments();
   }
   
   /**
@@ -94,8 +105,8 @@ public interface Node extends DirectedVertex {
    * @return edgeSegments as collection of linkSegments
    */
   @SuppressWarnings("unchecked")  
-  public default <LS extends EdgeSegment> Set<LS> getExitLinkSegments() {
-    return (Set<LS>) getExitEdgeSegments();
+  public default <LS extends EdgeSegment> Iterable<LS> getExitLinkSegments() {
+    return (Iterable<LS>) getExitEdgeSegments();
   }
 
 
@@ -132,6 +143,14 @@ public interface Node extends DirectedVertex {
   @SuppressWarnings("unchecked")
   public default <LS extends EdgeSegment> LS getFirstExitLinkSegment(){
     return (LS) getExitLinkSegments().iterator().next();
-  }  
-  
+  }
+
+  /**
+   * Check if node has links
+   *
+   * @return true when links are present, false otherwise
+   */
+  public default boolean hasLinks(){
+    return !getLinks().isEmpty();
+  }
 }

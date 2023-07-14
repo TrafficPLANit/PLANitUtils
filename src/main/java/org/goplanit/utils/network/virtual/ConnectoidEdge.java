@@ -1,7 +1,11 @@
 package org.goplanit.utils.network.virtual;
 
 import org.goplanit.utils.exceptions.PlanItException;
+import org.goplanit.utils.graph.Vertex;
 import org.goplanit.utils.graph.directed.DirectedEdge;
+import org.goplanit.utils.zoning.Centroid;
+
+import java.util.logging.Logger;
 
 /**
  * the connecting component between centroid and a first physical node in the network.
@@ -11,7 +15,7 @@ import org.goplanit.utils.graph.directed.DirectedEdge;
  *
  */
 public interface ConnectoidEdge extends DirectedEdge{
-  
+
   /** additional id class for generating connectoid edge ids */
   public static Class<ConnectoidEdge> CONNECTOID_EDGE_ID_CLASS = ConnectoidEdge.class;
   
@@ -20,9 +24,21 @@ public interface ConnectoidEdge extends DirectedEdge{
    * 
    * @return class type
    */
-  public default Class<ConnectoidEdge> getConnectoidSegmentIdClass(){
+  public default Class<ConnectoidEdge> getConnectoidEdgeIdClass(){
     return CONNECTOID_EDGE_ID_CLASS;
-  }    
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public abstract ConnectoidEdge shallowClone();
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public abstract ConnectoidEdge deepClone();
 
   /**
    * Register connectoidSegment.
@@ -33,10 +49,8 @@ public interface ConnectoidEdge extends DirectedEdge{
    * @param connectoidSegment connectoid segment to be registered
    * @param directionAB direction of travel
    * @return replaced ConnectoidSegment
-   * @throws PlanItException thrown if there is an error
    */
-  ConnectoidSegment registerConnectoidSegment(ConnectoidSegment connectoidSegment, boolean directionAB)
-      throws PlanItException;
+  public abstract ConnectoidSegment registerConnectoidSegment(ConnectoidSegment connectoidSegment, boolean directionAB);
 
   /**
    * 
@@ -44,6 +58,27 @@ public interface ConnectoidEdge extends DirectedEdge{
    * 
    * @return id of this connectoid edge
    */
-  long getConnectoidEdgeId();
+  public abstract long getConnectoidEdgeId();
+
+  /** Collect the non-centroid vertex attached to the connectoid, which should always exist and only be a single one
+   * @return non-centroid found, null if not found
+   */
+  public default Vertex getNonCentroidVertex() {
+    var centroidVertex = getCentroidVertex();
+    return getVertexB() == centroidVertex ? getVertexA() : getVertexB();
+  }
+
+  /** Collect the centroid vertex attached to the connectoid, which should always exist and only be a single one
+   * @return centroid found, null if not found
+   */
+  public default CentroidVertex getCentroidVertex() {
+    if(getVertexA() instanceof CentroidVertex) {
+      return (CentroidVertex) getVertexA();
+    }else if (getVertexB() instanceof CentroidVertex) {
+      return (CentroidVertex) getVertexB();
+    }else {
+      return null;
+    }
+  }
 
 }

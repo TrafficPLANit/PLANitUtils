@@ -1,5 +1,6 @@
 package org.goplanit.utils.network.layer;
 
+import org.goplanit.utils.network.layer.modifier.ServiceNetworkLayerModifier;
 import org.goplanit.utils.network.layer.service.ServiceLeg;
 import org.goplanit.utils.network.layer.service.ServiceLegSegment;
 import org.goplanit.utils.network.layer.service.ServiceLegSegments;
@@ -14,7 +15,19 @@ import org.goplanit.utils.network.layer.service.ServiceNodes;
  * @author markr
  */
 public interface ServiceNetworkLayer extends UntypedDirectedGraphLayer<ServiceNode, ServiceLeg, ServiceLegSegment> {
-    
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public abstract ServiceNetworkLayer shallowClone();
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public abstract ServiceNetworkLayer deepClone();
+
   /**
    * Collect the parent layer of this service layer
    * 
@@ -42,5 +55,13 @@ public interface ServiceNetworkLayer extends UntypedDirectedGraphLayer<ServiceNo
    * @return the nodes
    */
   public abstract ServiceNodes getServiceNodes();
+
+  /**
+   * Service networks have additional modifier options as per the service network layer modifier
+   *
+   * @return service network layer modifier
+   */
+  @Override
+  public abstract ServiceNetworkLayerModifier<ServiceNode, ServiceLeg, ServiceLegSegment> getLayerModifier();
   
 }

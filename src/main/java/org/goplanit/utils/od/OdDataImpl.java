@@ -63,6 +63,11 @@ public abstract class OdDataImpl<T> extends IdAbleImpl implements OdData<T> {
    * {@inheritDoc}
    */
   @Override
-  public abstract OdDataImpl<T> clone();
+  public abstract OdDataImpl<T> shallowClone();
 
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public abstract OdDataImpl<T> deepClone();
 }

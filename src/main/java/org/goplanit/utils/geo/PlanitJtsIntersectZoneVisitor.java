@@ -41,7 +41,7 @@ public class PlanitJtsIntersectZoneVisitor<T extends Zone> extends PlanitJtsItem
       }else if(zone.hasCentroid() && zone.getCentroid().hasPosition()) {
         return zone.getCentroid().getPosition();
       }else {
-        LOGGER.severe(String.format("Zone %s has no geotry information available",zone.getXmlId()));
+        LOGGER.severe(String.format("Zone %s has no geometry information available",zone.getXmlId()));
       }
       return null;
     }

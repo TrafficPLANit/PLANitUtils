@@ -26,6 +26,7 @@ public enum PredefinedModeType {
   TRAIN("train"), 
   TRAM("tram"),
   LIGHTRAIL("light_rail"),
+  FERRY("ferry"),
   GOODS_VEHICLE("goods"),            /* non-articulated goods vehicle, up to 3.5 tonnes */
   HEAVY_GOODS_VEHICLE("hgv"),        /* non-articulated goods vehicle, over to 3.5 tonnes */
   LARGE_HEAVY_GOODS_VEHICLE("lhgv"); /* articulated large truck */  
@@ -77,7 +78,10 @@ public enum PredefinedModeType {
       return HEAVY_GOODS_VEHICLE;
     }else if(LARGE_HEAVY_GOODS_VEHICLE.value().equals(predefinedModeTypeValue)) {
       return LARGE_HEAVY_GOODS_VEHICLE;
-    }else {
+    }else if(FERRY.value().equals(predefinedModeTypeValue)) {
+      return FERRY;
+    }
+    else {
       return CUSTOM;
     }
   }

@@ -32,16 +32,5 @@ public interface ServiceLegFactory extends GraphEntityFactory<ServiceLeg> {
    * @return the created service leg
    */
   public abstract ServiceLeg registerNew(final ServiceNode nodeA, final ServiceNode nodeB, boolean registerOnNodes);  
-  
-  /**
-   * Create new link on links container, allow to be registered on nodes if indicated)
-   *
-   * @param nodeA           the first node in this leg
-   * @param nodeB           the second node in this leg
-   * @param networkLayerLinks  the underlying parent links that make up this leg
-   * @param registerOnNodes choice to register new leg on the service nodes or not
-   * @return the created service leg
-   */
-  public abstract ServiceLeg registerNew(final ServiceNode nodeA, final ServiceNode nodeB, final List<Link> networkLayerLinks, boolean registerOnNodes);      
-  
+
 }

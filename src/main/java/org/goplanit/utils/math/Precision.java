@@ -2,11 +2,14 @@ package org.goplanit.utils.math;
 
 import java.text.DecimalFormat;
 
-/** compare doubles with a certain precision
+/** Compare doubles with a certain precision
  * @author markr
  *
  */
 public class Precision {
+
+  /** no tolerance, i.e., 0.0 */
+  public static final double EPSILON_0 = 0.0;
   
   public static final double EPSILON_18 = 0.000000000000000001;
   
@@ -38,8 +41,8 @@ public class Precision {
    * @param epsilon epsilon value
    * @return true when equal within epsilon, false otherwise
    */
-  public static boolean isEqual(double d1, double d2, double epsilon) {
-    return !isSmaller(d1, d2, epsilon) && !isGreater(d1, d2, epsilon); 
+  public static boolean equal(double d1, double d2, double epsilon) {
+    return !smaller(d1, d2, epsilon) && !greater(d1, d2, epsilon); 
   }
      
   /** Compare using a Precision.EPSILON_6
@@ -47,8 +50,8 @@ public class Precision {
    * @param d2 double2
    * @return true when equal within epsilon, false otherwise
    */
-  public static boolean isEqual(double d1, double d2) {
-    return isEqual(d1,d2,EPSILON_6);
+  public static boolean equal(double d1, double d2) {
+    return equal(d1,d2,EPSILON_6);
   }
   
   /** isSmallerEqual with epsilon
@@ -57,7 +60,7 @@ public class Precision {
    * @param epsilon epsilon value
    * @return true when {@code d1 <= (d2 + epsilon)}
    */
-  public static boolean isSmallerEqual(double d1, double d2, double epsilon) {
+  public static boolean smallerEqual(double d1, double d2, double epsilon) {
     return d1 <= (d2 + epsilon); 
   }
   
@@ -66,8 +69,8 @@ public class Precision {
    * @param d2 double2
    * @return true when  {@code (d1 + epsilon) < d2}
    */
-  public static boolean isSmaller(double d1, double d2) {
-    return isSmaller(d1,d2,EPSILON_6);
+  public static boolean smaller(double d1, double d2) {
+    return smaller(d1,d2,EPSILON_6);
   }  
   
   /** isSmaller with epsilon
@@ -76,7 +79,7 @@ public class Precision {
    * @param epsilon epsilon value
    * @return true when  {@code (d1 +epsilon) < d2 }
    */
-  public static boolean isSmaller(double d1, double d2, double epsilon) {
+  public static boolean smaller(double d1, double d2, double epsilon) {
     return (d1 + epsilon) < d2; 
   }
   
@@ -85,8 +88,8 @@ public class Precision {
    * @param d2 double2
    * @return true when  {@code d1 <= (d2 + epsilon)}
    */
-  public static boolean isSmallerEqual(double d1, double d2) {
-    return isSmallerEqual(d1,d2,EPSILON_6);
+  public static boolean smallerEqual(double d1, double d2) {
+    return smallerEqual(d1,d2,EPSILON_6);
   }    
   
   /** isGreaterEqual with epsilon
@@ -95,7 +98,7 @@ public class Precision {
    * @param epsilon epsilon value
    * @return true when  {@code d1 >= (d2 - epsilon)}
    */
-  public static boolean isGreaterEqual(double d1, double d2, double epsilon) {
+  public static boolean greaterEqual(double d1, double d2, double epsilon) {
     return d1 >= (d2- epsilon);
   }
   
@@ -104,8 +107,8 @@ public class Precision {
    * @param d2 double2
    * @return true when  {@code d1 >= (d2- epsilon)}
    */
-  public static boolean isGreaterEqual(double d1, double d2) {
-    return isGreaterEqual(d1,d2,EPSILON_6);
+  public static boolean greaterEqual(double d1, double d2) {
+    return greaterEqual(d1,d2,EPSILON_6);
   }   
   
   /** isGreaterEqual with epsilon
@@ -114,7 +117,7 @@ public class Precision {
    * @param epsilon epsilon value
    * @return true when  {@code (d1 - epsilon) > d2}
    */
-  public static boolean isGreater(double d1, double d2, double epsilon) {
+  public static boolean greater(double d1, double d2, double epsilon) {
     return (d1 - epsilon) > d2;
   }
   
@@ -123,26 +126,64 @@ public class Precision {
    * @param d2 double2
    * @return true when  {@code (d1 - epsilon) > d2}
    */
-  public static boolean isGreater(double d1, double d2) {
-    return isGreater(d1,d2,EPSILON_6);
+  public static boolean greater(double d1, double d2) {
+    return greater(d1,d2,EPSILON_6);
   }
 
   /** Verify if positive with Precision.EPSILON_6
    * @param d1 double 1
    * @return true when {@code d1 > EPSILON_6} 
    */
-  public static boolean isPositive(double d1) {
-    return isGreater(d1,0,EPSILON_6);
+  public static boolean positive(double d1) {
+    return greater(d1,0,EPSILON_6);
+  }
+  
+  /** Verify if positive with Precision.EPSILON_6
+   * @param d1 double 1
+   * @param epsilon to consider
+   * @return true when {@code d1 > epsilon} 
+   */
+  public static boolean positive(double d1, double epsilon) {
+    return greater(d1,0,epsilon);
+  }  
+  
+  /** Verify if negative with Precision.EPSILON_6
+   * @param d1 double 1
+   * @return true when {@code d1 < -EPSILON_6} 
+   */
+  public static boolean negative(double d1) {
+    return smaller(d1,0,EPSILON_6);
+  }    
+  
+  /** Verify if non-zero with Precision.EPSILON_6
+   * 
+   * @param d1 double 1
+   * @return true when {@code d1 < -EPSILON_6 or d1 > EPSILON_6} 
+   */
+  public static boolean nonZero(double d1) {
+    return positive(d1) || negative(d1);
   }
 
-  /** Opposite of {@link #isEqual(double, double)}
+  /** Opposite of {@link #equal(double, double)}
    * 
    * @param d1 to use
    * @param d2 to use
    * @return true when not equal, false otherwise
    */
-  public static boolean isNotEqual(double d1, double d2) {
-    return !isEqual(d1, d2);
-  }    
+  public static boolean notEqual(double d1, double d2) {
+    return !equal(d1, d2);
+  }
+  
+  /** Opposite of {@link #equal(double, double, double)}
+   * 
+   * @param d1 to use
+   * @param d2 to use
+   * @param epsilon to use
+   * @return true when not equal, false otherwise
+   */
+  public static boolean notEqual(double d1, double d2, double epsilon) {
+    return !equal(d1, d2, epsilon);
+  }  
+
 
 }

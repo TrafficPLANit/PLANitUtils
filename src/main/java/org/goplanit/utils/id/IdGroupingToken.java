@@ -25,7 +25,7 @@ public final class IdGroupingToken {
   /**
    * a global token that can be used for ids that are defined globally
    */
-  private static final IdGroupingToken GLOBALTOKEN = new IdGroupingToken("global"); 
+  private static final IdGroupingToken GLOBALTOKEN = IdGroupingToken.create("global");
   
   /** Constructor
    * 
@@ -38,7 +38,17 @@ public final class IdGroupingToken {
     String uuid = UUID.randomUUID().toString();
     this.token = description+":"+uuid;
   }
-  
+
+  /**
+   * Factory method
+   *
+   * @param groupDescription to use
+   * @return created token
+   */
+  public static IdGroupingToken create(String groupDescription) {
+    return new IdGroupingToken(groupDescription);
+  }
+
   /**
    * {@inheritDoc}
    */  

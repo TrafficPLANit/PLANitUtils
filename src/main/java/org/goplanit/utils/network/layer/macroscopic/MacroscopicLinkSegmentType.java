@@ -7,7 +7,9 @@ import java.util.stream.Collectors;
 import org.goplanit.utils.id.ExternalIdAble;
 import org.goplanit.utils.id.ManagedId;
 import org.goplanit.utils.macroscopic.MacroscopicConstants;
+import org.goplanit.utils.misc.StringUtils;
 import org.goplanit.utils.mode.Mode;
+import org.goplanit.utils.mode.PredefinedModeType;
 
 /**
  * The macroscopic link segment type characteristics are contained in this class
@@ -15,21 +17,37 @@ import org.goplanit.utils.mode.Mode;
  * @author markr
  *
  */
-public interface MacroscopicLinkSegmentType extends Cloneable, ExternalIdAble, ManagedId {
+public interface MacroscopicLinkSegmentType extends ExternalIdAble, ManagedId {
   
   /** id class for generating ids */
   public static final Class<MacroscopicLinkSegmentType> MACROSCOPIC_LINK_SEGMENT_TYPE_ID_CLASS = MacroscopicLinkSegmentType.class;   
   
   /**
-   * If no macroscopic link segment type is defined the default takes on an XML id of 1 
+   * If no macroscopic link segment type is defined the default takes on "default" 
    */
-  public static final String DEFAULT_XML_ID = "1";   
+  public static final String DEFAULT_XML_ID = "default";
+  
+  /**
+   * Default capacity per lane if not set is 1800 pcu/lane/hour
+   */
+  public static final double DEFAULT_CAPACITY_PER_LANE = MacroscopicConstants.DEFAULT_CAPACITY_PCU_HOUR_LANE;
+
+  /**
+   * Default capacity per lane if not set is 180 pcu/lane/km
+   */
+  public static final double DEFAULT_MAX_DENSITY_PER_LANE = MacroscopicConstants.DEFAULT_MAX_DENSITY_PCU_KM_LANE;
 
   /**
    * {@inheritDoc}
    */
   @Override
-  public abstract MacroscopicLinkSegmentType clone();
+  public abstract MacroscopicLinkSegmentType shallowClone();
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public abstract MacroscopicLinkSegmentType deepClone();
 
   /**
    * Return the name of this macroscopic link segment type
@@ -140,8 +158,17 @@ public interface MacroscopicLinkSegmentType extends Cloneable, ExternalIdAble, M
    * @param mode to verify
    * @return available modes
    */
-  public abstract boolean isModeAllowed(final Mode mode);   
-  
+  public abstract boolean isModeAllowed(final Mode mode);
+
+  /**
+   * Verify if predefined mode type is available on type. Note that for custom modes all custom modes are type with CUSTOM
+   * so a match based on mode type has little meaning in this context
+   *
+   * @param modeType to verify
+   * @return available modes
+   */
+  public abstract boolean isModeTypeAllowed(final PredefinedModeType modeType);
+
   /**
    * return the available modes present in one of the access groups that have been registered
    * 
@@ -233,5 +260,21 @@ public interface MacroscopicLinkSegmentType extends Cloneable, ExternalIdAble, M
   public default void removeModeAccess(final Set<Mode> toBeRemovedModes) {
     toBeRemovedModes.forEach( mode -> removeModeAccess(mode));
   }
-  
+
+  /**
+   * Add a new access mode to an existing access group properties on this link segment type
+   *
+   * @param accessMode to add
+   * @param accessGroupProperties to add the mode to
+   */
+  public abstract void registerModeOnAccessGroup(Mode accessMode, AccessGroupProperties accessGroupProperties);
+
+  /**
+   * Verify if name is present or not
+   *
+   * @return true when name is set, false otherwise
+   */
+  public default boolean hasName(){
+    return !StringUtils.isNullOrBlank(getName());
+  }
 }

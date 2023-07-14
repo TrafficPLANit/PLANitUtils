@@ -1,19 +1,31 @@
 package org.goplanit.utils.network.layer.service;
 
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.List;
+import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 import org.goplanit.utils.graph.directed.DirectedEdge;
 import org.goplanit.utils.network.layer.physical.Link;
 
 /**
- * Service leg interface which extends the Edge interface. A service leg comprises of one or more underlying physical links
- * and represents an uninterrupted service route between two service nodes.
+ * Service leg interface which extends the Edge interface. A service leg comprises one or more underlying physical links, e.g., an uninterrupted service route between two stops for example in a public transport context
+ * with scheduled stops at either end, namely the two service nodes.
  * 
  * @author markr
  *
  */
-public interface ServiceLeg extends DirectedEdge {  
+public interface ServiceLeg extends DirectedEdge {
+
+  /**
+   * Types of lengths that can be queries for a service leg based on available underlying physical links
+   */
+  public enum LengthType {
+    MAX,
+    MIN,
+    AVERAGE
+  }
     
   /** collect vertex A as something extending service node which is to be expected for any service leg. Convenience method
    * for readability
@@ -103,26 +115,26 @@ public interface ServiceLeg extends DirectedEdge {
     return (Collection<LS>) getEdgeSegments();
   }
   
-  /** Collect the links that make up this leg ordered and in direction from A to B
-   * 
-   * @return parent links this leg represents
+  /**
+   * determine length based on desired length type (in case both service leg segments are mapped to the leg and
+   * have different lengths due to different underlying physical link segments)
+   *
+   * @param lengthType to apply
+   * @return found length, if no underlying service leg segments are present, length is set to infinite
    */
-  public abstract List<Link> getParentLinks();
-  
-  /** Collect the first parent link
-   * 
-   * @return first parent link
+  public abstract double getLengthKm(LengthType lengthType);
+
+  /**
+   * {@inheritDoc}
    */
-  public default Link getFirstParentLink() {
-    return getParentLinks().get(0);
-  }
-  
-  /** Collect the last parent link
-   * 
-   * @return last parent link
+  @Override
+  public abstract ServiceLeg shallowClone();
+
+  /**
+   * {@inheritDoc}
    */
-  public default Link getLastParentLink() {
-    return getParentLinks().get(getParentLinks().size()-1);
-  }  
+  @Override
+  public abstract ServiceLeg deepClone();
   
+
 }

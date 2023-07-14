@@ -3,6 +3,8 @@ package org.goplanit.utils.mode;
 import org.goplanit.utils.id.ExternalIdAble;
 import org.goplanit.utils.id.ManagedId;
 
+import java.util.Arrays;
+
 /**
  * Interface to represent a mode
  * 
@@ -110,4 +112,13 @@ public interface Mode extends ExternalIdAble, ManagedId {
     return getName()!=null && !getName().isBlank();
   }
 
+  /** verify, given separator, if the provided string exists as external id
+   *
+   * @param separator to use
+   * @param externalId to check for
+   * @return true if present, false otherwise
+   */
+  public default boolean containsExternalId(char separator, String externalId){
+    return Arrays.stream(getSplitExternalId(separator)).anyMatch(e -> e.equals(separator));
+  }
 }

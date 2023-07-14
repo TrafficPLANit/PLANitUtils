@@ -7,7 +7,7 @@ package org.goplanit.utils.id;
  * @author markr
  *
  */
-public interface IdAble extends Comparable<IdAble>, Cloneable {
+public interface IdAble extends Comparable<IdAble> {
   
   /** Convenience method to generate an id using a unique class identifier and idToken which in turn delegates to
    * the {@code IdGenerator.generateId()}
@@ -31,7 +31,15 @@ public interface IdAble extends Comparable<IdAble>, Cloneable {
    * 
    * @return shallow copy of entity
    */
-  public abstract IdAble clone();
+  public abstract IdAble shallowClone();
+
+  /**
+   * An id entity should always support a deep copy, i.e., all "owned" members will be deep copied when a clone
+   * of this instance is created via this call. To be used with caution if not called by managed id container related code
+   *
+   * @return deep copy of entity
+   */
+  public abstract IdAble deepClone();
 
   /**
    * equals based on id

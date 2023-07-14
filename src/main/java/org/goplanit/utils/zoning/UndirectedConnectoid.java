@@ -25,4 +25,16 @@ public interface UndirectedConnectoid extends Connectoid{
   public default Class<UndirectedConnectoid> getUndirectedConnectoidIdClass(){
     return UNDIRECTED_CONNECTOID_ID_CLASS;
   }
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public abstract UndirectedConnectoid shallowClone();
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public abstract UndirectedConnectoid deepClone();
 }

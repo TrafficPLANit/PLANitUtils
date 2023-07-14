@@ -3,6 +3,8 @@ package org.goplanit.utils.zoning;
 import org.goplanit.utils.id.ManagedIdEntities;
 import org.goplanit.utils.zoning.modifier.event.ZoningModifierListener;
 
+import java.util.function.BiConsumer;
+
 /**
  * A Container for transfer zone groups which also acts as a factory for creating new transfer zone groups
  * 
@@ -21,6 +23,18 @@ public interface TransferZoneGroups extends ManagedIdEntities<TransferZoneGroup>
    * {@inheritDoc}
    */
   @Override
-  public abstract TransferZoneGroups clone();   
+  public abstract TransferZoneGroups shallowClone();
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public abstract TransferZoneGroups deepClone();
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public abstract TransferZoneGroups deepCloneWithMapping(BiConsumer<TransferZoneGroup, TransferZoneGroup> mapper);
   
 }

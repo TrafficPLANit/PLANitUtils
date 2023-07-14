@@ -1,5 +1,6 @@
 package org.goplanit.utils.od;
 
+import java.util.Arrays;
 import java.util.logging.Logger;
 
 import org.goplanit.utils.id.IdAble;
@@ -8,7 +9,7 @@ import org.goplanit.utils.zoning.OdZones;
 import org.goplanit.utils.zoning.Zone;
 
 /**
- * This class contains common methods for handling origin-demand matrices where values are non primitive types, i.e. Objects of some type. Data container used is a raw array of a
+ * This class contains common methods for handling origin-demand matrices where values are non-primitive types, i.e. Objects of some type. Data container used is a raw array of a
  * fixed size based on the Od number of zones. Cells that have no value entry will still take up space in this implementation. If the matrix is dense and contains very little empty
  * cells, this is likely the most computationally efficient implementation, if not, consider other implementations that deal better with sparse matrices in terms of memory usage.
  * 
@@ -34,7 +35,8 @@ public abstract class OdNonPrimitiveMatrix<T> extends OdMatrixImpl<T, T[][]> {
   }
 
   /**
-   * Copy constructor
+   * Copy constructor for shallow copies only as we do not want to enforce a particular type upon T that supports
+   * deeo cloning
    * 
    * @param other to copy from
    */
