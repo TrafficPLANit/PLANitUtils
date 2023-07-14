@@ -33,6 +33,12 @@ public interface DirectedVertices extends GraphEntities<DirectedVertex> {
    * clone vertices
    */
   @Override
-  public abstract DirectedVertices clone();  
-  
+  public abstract DirectedVertices shallowClone();
+
+  /**
+   * clone vertices
+   */
+  @Override
+  public abstract DirectedVertices deepClone();
+
 }

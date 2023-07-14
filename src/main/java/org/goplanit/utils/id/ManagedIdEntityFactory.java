@@ -1,8 +1,6 @@
 package org.goplanit.utils.id;
 
-import org.goplanit.utils.id.IdGroupingToken;
-
-/** A base abstract class for factories that create entities with a managed internal id. 
+/** A base abstract class for factories that create entities with a managed internal id.
  * No methods because it is used as a placeholder to be able to let
  * derived classes override the return type of the super class's access to this factory 
  * for a more specific factory implementation 
@@ -35,6 +33,15 @@ public interface ManagedIdEntityFactory<E extends ManagedId> {
    * @param entityToCopy the entity to copy
    * @return new entity based on passed in entity
    */
-  public abstract E createUniqueCopyOf(ManagedId entityToCopy); 
-     
+  public abstract E createUniqueShallowCopyOf(ManagedId entityToCopy);
+
+  /**
+   * Create a deep copy of the passed in entity, including unique internal ids. Not registered
+   * on the container.
+   *
+   * @param entityToCopy the entity to copy
+   * @return new entity based on passed in entity
+   */
+  public abstract E createUniqueDeepCopyOf(ManagedId entityToCopy);
+
 }

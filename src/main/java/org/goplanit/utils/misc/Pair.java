@@ -1,9 +1,12 @@
 package org.goplanit.utils.misc;
 
+import org.opengis.feature.simple.SimpleFeatureType;
+
 import java.util.Objects;
+import java.util.function.Consumer;
 
 /**
- * Custom pair class similar to C++. By default we compare based on the first
+ * Custom pair class similar to C++.
  * value
  * 
  * @author markr
@@ -45,8 +48,19 @@ public class Pair<A, B> {
    * @return new pair
    */
   public static <A,B> Pair<A, B> of(A valueA, B valueB) {
-    return new Pair<A,B>(valueA, valueB);
-  }  
+    return new Pair<>(valueA, valueB);
+  }
+
+  /**
+   * Create empty pair of nulls
+   * @return null pair
+   * @param <A> typeA
+   * @param <B> typeB
+   */
+  public static <A,B> Pair<A,B> empty() {
+    return Pair.of(null, null);
+  }
+
 
   /**
    * @see java.lang.Object#hashCode()
@@ -58,7 +72,7 @@ public class Pair<A, B> {
   }
 
   /**
-   * Compare to another pair
+   * Check equality to another pair
    * 
    * @see java.lang.Object#equals(java.lang.Object)
    * @param other pair being compared to
@@ -79,8 +93,16 @@ public class Pair<A, B> {
    * 
    * @see java.lang.Object#toString()
    */
+  @Override
   public String toString() {
     return "(" + first + ", " + second + ")";
+  }
+  
+  /** shallow copy of this pair
+   * @return shallow copy
+   */
+  public Pair<A,B> copy(){
+    return Pair.of(first, second);
   }
 
   // Getters
@@ -117,6 +139,13 @@ public class Pair<A, B> {
     return first()!=null && second()!=null;
   }
 
+  /** check if any values are null
+   * @return true when any are null, false otherwise
+   */  
+  public boolean anyIsNull() {
+    return !bothNotNull();
+  }
+
   /**
    * @return true when exactly one of the two is not null
    */
@@ -133,6 +162,48 @@ public class Pair<A, B> {
     }else {
       return second();
     }
-  }  
-   
+  }
+
+  /** Apply consumer to both entries. Throws ClassCastException when pair contains entries not compatible with type parameter of consumer
+   * 
+   * @param <T> consumer type assumed to be compatible with both pair entries
+   * @param pairEntryConsumer to apply
+   */
+  @SuppressWarnings("unchecked")
+  public <T> void both(Consumer<T> pairEntryConsumer) {
+    pairEntryConsumer.accept( (T) first);
+    pairEntryConsumer.accept( (T) second);
+  }
+
+  /**
+   * Check if first is non null
+   * @return true when the case, false otherwise
+   */
+  public boolean firstNotNull() {
+    return first() != null;
+  }
+
+  /**
+   * Check if second is non null
+   * @return true when the case, false otherwise
+   */
+  public boolean secondNotNull() {
+    return second() != null;
+  }
+
+  /**
+   * Check if entries are not equal
+   * @return true when first does not equal second, false otherwise
+   */
+  public boolean different(){
+    return !first().equals(second());
+  }
+
+  /**
+   * check both entries are null
+   * @return true when both null, false otherwise
+   */
+  public boolean bothNull() {
+    return first()==null && second() == null;
+  }
 }

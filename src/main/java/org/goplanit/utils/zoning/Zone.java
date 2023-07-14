@@ -56,6 +56,20 @@ public interface Zone extends ExternalIdAble, ManagedId {
    * @return geometry of the zone
    */
   public abstract Geometry getGeometry();
+
+  /** Collect the geometry of this zone and allow it to return its internal centroid location in case it has no
+   * geometry of its own by means of provided flag.
+   *
+   * @param considerCentroid when false centroid geometry is ignored, when true it is returned in case no explicit geoemetry is set
+   * @return geometry of the zone
+   */
+  public default Geometry getGeometry(boolean considerCentroid){
+    var geometry = getGeometry();
+    if(considerCentroid && geometry == null && getCentroid() != null && getCentroid().hasPosition()){
+      geometry = getCentroid().getPosition();
+    }
+    return geometry;
+  }
   
   /** Name of the zone 
    * 
@@ -68,12 +82,18 @@ public interface Zone extends ExternalIdAble, ManagedId {
    * @return name of the zone
    */
   public abstract String getName();
-  
+
   /**
    * {@inheritDoc}
    */
   @Override
-  public abstract Zone clone();
+  public abstract Zone shallowClone();
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public abstract Zone deepClone();
   
   /**
    * {@inheritDoc}

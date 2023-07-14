@@ -1,5 +1,6 @@
 package org.goplanit.utils.args;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Logger;
@@ -82,7 +83,7 @@ public class ArgumentParser {
       /* parse key */
       if(parseKey) {
         if (!trimmedArg.startsWith("--")) {
-          throw new PlanItException("keys should start with \\\"--\" but found %s", arg);
+          throw new PlanItException("keys should start with \"--\" but found %s on %s", arg, Arrays.toString(args));
         }
         key = trimmedArg.substring(2);
         parseKey = false;

@@ -3,6 +3,8 @@ package org.goplanit.utils.network.layer.macroscopic;
 import org.goplanit.utils.graph.ManagedGraphEntities;
 import org.goplanit.utils.mode.Mode;
 
+import java.util.function.BiConsumer;
+
 /**
  * Primary managed container for MacroscopicLinkSegments explicitly and create them on the container via
  * its dedicated factory class
@@ -21,13 +23,25 @@ public interface MacroscopicLinkSegments extends ManagedGraphEntities<Macroscopi
    * {@inheritDoc}
    */
   @Override
-  public abstract MacroscopicLinkSegmentFactory getFactory();  
-  
+  public abstract MacroscopicLinkSegmentFactory getFactory();
+
   /**
    * {@inheritDoc}
    */
   @Override
-  public abstract MacroscopicLinkSegments clone();    
+  public abstract MacroscopicLinkSegments shallowClone();
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public abstract MacroscopicLinkSegments deepClone();
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public abstract MacroscopicLinkSegments deepCloneWithMapping(BiConsumer<MacroscopicLinkSegment, MacroscopicLinkSegment> mapper);
   
   /** Create a raw array of all free flow travel times of the registered macroscopic link segments where the index in the array corresponds
    * to the link segment id (not id). 

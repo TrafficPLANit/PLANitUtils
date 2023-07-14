@@ -1,6 +1,12 @@
 package org.goplanit.utils.misc;
 
+import org.goplanit.utils.geo.PlanitJtsCrsUtils;
 import org.goplanit.utils.time.TimePeriod;
+import org.locationtech.jts.geom.Envelope;
+import org.locationtech.jts.geom.Geometry;
+
+import java.util.function.Predicate;
+import java.util.logging.Logger;
 
 /**
  * some utilities for consistent logging message creation in PLANit
@@ -25,7 +31,7 @@ public class LoggingUtils {
    * @param runId the run id
    * @return runId prefix
    */
-  public static String createRunIdPrefix(long runId) {
+  public static String runIdPrefix(long runId) {
     return surroundwithBrackets(String.format("run id: %d", runId));
   }
   
@@ -36,7 +42,7 @@ public class LoggingUtils {
    * @param projectId the project id
    * @return project prefix
    */  
-  public static String createProjectPrefix(long projectId) {
+  public static String projectPrefix(long projectId) {
     return surroundwithBrackets(String.format("project id: %d", projectId));
   }
   
@@ -47,9 +53,20 @@ public class LoggingUtils {
    * @param networkId the network id
    * @return network prefix
    */    
-  public static String createNetworkPrefix(long networkId) {
+  public static String networkPrefix(long networkId) {
     return surroundwithBrackets(String.format("network id: %d", networkId));
-  }   
+  }
+
+  /**
+   * Create a prefix for the logger so that all logging items specific to a particular network layer
+   * are prefixed with the exact same string, i.e.  {@code [n-layer id: <id> ]}
+   *
+   * @param layerId the network layerid
+   * @return network layer prefix
+   */
+  public static String networkLayerPrefix(long layerId) {
+    return surroundwithBrackets(String.format("n-layer id: %d", layerId));
+  }
   
   /**
    * Create a prefix for the logger so that all logging items specific to a particular zoning
@@ -58,7 +75,7 @@ public class LoggingUtils {
    * @param zoningId the zoning id
    * @return zoning prefix
    */   
-  public static String createZoningPrefix(long zoningId) {
+  public static String zoningPrefix(long zoningId) {
     return surroundwithBrackets(String.format("zoning id: %d", zoningId));
   }  
   
@@ -69,7 +86,7 @@ public class LoggingUtils {
    * @param demandsId the demands id
    * @return demands prefix
    */   
-  public static String createDemandsPrefix(long demandsId) {
+  public static String demandsPrefix(long demandsId) {
     return surroundwithBrackets(String.format("demands id: %d", demandsId));
   }  
   
@@ -80,10 +97,21 @@ public class LoggingUtils {
    * @param serviceNetworkId the id
    * @return service network prefix
    */    
-  public static String createServiceNetworkPrefix(long serviceNetworkId) {
+  public static String serviceNetworkPrefix(long serviceNetworkId) {
     return surroundwithBrackets(String.format("services network id: %d", serviceNetworkId));
-  }    
-  
+  }
+
+  /**
+   * Create a prefix for the logger so that all logging items specific to a particular service network layer
+   * are prefixed with the exact same string, i.e.  {@code [s_layer id: <id> ]}
+   *
+   * @param serviceNetworkLayerId the id
+   * @return service network prefix
+   */
+  public static String serviceNetworkLayerPrefix(long serviceNetworkLayerId) {
+    return surroundwithBrackets(String.format("s_layer id: %d", serviceNetworkLayerId));
+  }
+
   /**
    * Create a prefix for the logger so that all logging items specific to a particular routed services
    * are prefixed with the exact same string, i.e.  {@code [routed services id: <id> ]}
@@ -91,9 +119,21 @@ public class LoggingUtils {
    * @param routedServicesId the routed services id
    * @return routed services prefix
    */    
-  public static String createRoutedServicesPrefix(long routedServicesId) {
+  public static String routedServicesPrefix(long routedServicesId) {
     return surroundwithBrackets(String.format("routed services id: %d", routedServicesId));
-  }  
+  }
+
+  /**
+   * Create a prefix for the logger so that all logging items specific to a particular routed services layer
+   * are prefixed with the exact same string, i.e.  {@code [rs_layer id: <id> ]}
+   *
+   * @param routedServiceLayerId the routed services id
+   * @return routed services prefix
+   */
+  public static String routedServiceLayerPrefix(long routedServiceLayerId) {
+    return surroundwithBrackets(String.format("rs_layer id: %d", routedServiceLayerId));
+  }
+
   
   /**
    * Create a prefix for the logger so that all logging items specific to a particular od path sets
@@ -102,7 +142,7 @@ public class LoggingUtils {
    * @param odPathSetsId the odPathSets id
    * @return od path sets Prefix
    */     
-  public static String createOdPathSetsPrefix(long odPathSetsId) {
+  public static String odPathSetsPrefix(long odPathSetsId) {
     return surroundwithBrackets(String.format("od path sets id: %d", odPathSetsId));
   }  
   
@@ -113,7 +153,7 @@ public class LoggingUtils {
    * @param outputFormatterId the output formatter id
    * @return output formatter prefix
    */     
-  public static String createOutputFormatterPrefix(long outputFormatterId) {
+  public static String outputFormatterPrefix(long outputFormatterId) {
     return surroundwithBrackets(String.format("output formatter id: %d", outputFormatterId));
   }  
   
@@ -125,7 +165,7 @@ public class LoggingUtils {
    * @param timePeriod the time period to create it for
    * @return time period prefix
    */
-  public static String createTimePeriodPrefix(TimePeriod timePeriod) {
+  public static String timePeriodPrefix(TimePeriod timePeriod) {
     String timePeriodReference = timePeriod.hasExternalId() ? "external id: " + timePeriod.getExternalId() : (timePeriod.hasXmlId() ? "xml id: "+timePeriod.getXmlId() : "");
     return surroundwithBrackets(String.format("time period: %s (id %d)", timePeriodReference, timePeriod.getId()));
   }  
@@ -137,7 +177,7 @@ public class LoggingUtils {
    * @param iterationIndex the iteration index
    * @return iteration prefix
    */  
-  public static String createIterationPrefix(int iterationIndex) {
+  public static String iterationPrefix(int iterationIndex) {
     return surroundwithBrackets(String.format("iteration: %d", iterationIndex));
   }  
   
@@ -147,7 +187,7 @@ public class LoggingUtils {
    * @return the string (de)activated :  {@code <simple class name>}
    */
   public static String logActiveStateByClassName(Object item, boolean activate) {
-    return (activate ? "activated: " : "deactivated :") + item.getClass().getSimpleName();
+    return (activate ? "activated: " : "deactivated:") + item.getClass().getSimpleName();
   }
   
   /** create a string that gets the class simple name and surrounds them with brackets
@@ -158,4 +198,66 @@ public class LoggingUtils {
     return surroundwithBrackets(item.getClass().getSimpleName());
   }
 
-}
+  /** surround the string with repetitions of given character
+   * 
+   * @param theString to surround
+   * @param c character to us
+   * @param repeat num reptitions on either side
+   * @return created string
+   */
+  public static String surround(String theString, char c, int repeat) {
+    var sb = new StringBuilder();
+    for(int i = 0 ; i < repeat ; i++) {
+      sb.append(c);
+    }
+    sb.append(" ").append(theString).append(" ");
+    for(int i = 0 ; i < repeat ; i++) {
+      sb.append(c);
+    }
+    
+    return sb.toString();
+  }
+
+  /**
+   * Log severe message when null
+   *
+   * @param object to check
+   * @param logger to use
+   * @param message to log
+   * @param arguments arguments of message
+   */
+  public static void LogSevereIfNull(Object object, Logger logger, String message, Object... arguments){
+    if(object==null){
+      logger.severe(String.format(message, arguments));
+    }
+  }
+
+  /**
+   * Log fine message when null
+   *
+   * @param object to check
+   * @param logger to use
+   * @param message to log
+   * @param arguments arguments of message
+   */
+  public static void LogFineIfNull(Object object, Logger logger, String message, Object... arguments){
+    if(object==null){
+      logger.fine(String.format(message, arguments));
+    }
+  }
+
+  /** log the given warning message if predicate holds
+   *
+   * @param <T> type of test object to aply predicate to
+   * @param logger the logger to use
+   * @param message to log if not too close to bounding box
+   * @param testObject to test on
+   * @param predicate to use
+   */
+  public static <T> void logWarningIf(Logger logger, String message, T testObject, Predicate<T> predicate) {
+    if(predicate.test(testObject)) {
+      logger.warning(message);
+    }
+  }
+
+  }

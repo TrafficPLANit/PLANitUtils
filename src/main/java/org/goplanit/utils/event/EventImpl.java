@@ -2,6 +2,7 @@ package org.goplanit.utils.event;
 
 import java.util.logging.Logger;
 
+import org.goplanit.utils.exceptions.PlanItRunTimeException;
 import org.goplanit.utils.id.IdAbleImpl;
 import org.goplanit.utils.id.IdGenerator;
 import org.goplanit.utils.id.IdGroupingToken;
@@ -60,9 +61,9 @@ public abstract class EventImpl extends IdAbleImpl implements Event{
     this.type = type;
     this.sourceId = source;
     this.content = new Object[] {content};
-  }  
+  }
 
-  /** 
+  /**
    * {@inheritDoc} 
    */
   @Override
@@ -82,11 +83,19 @@ public abstract class EventImpl extends IdAbleImpl implements Event{
    * While events are id able, they cannot be cloned. and null is always returned
    * upon calling this method
    */
-  @Override
-  public EventImpl clone() {
+  public EventImpl shallowClone() {
     LOGGER.warning("IGNORED, Events are not cloneable");
     return null;
-  }  
+  }
+
+  /**
+   * While events are id able, they cannot be cloned. and null is always returned
+   * upon calling this method
+   */
+  @Override
+  public EventImpl deepClone() {
+    return shallowClone();
+  }
 
   /** 
    * {@inheritDoc} 

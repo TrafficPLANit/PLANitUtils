@@ -2,6 +2,8 @@ package org.goplanit.utils.zoning;
 
 import org.goplanit.utils.id.ManagedIdEntities;
 
+import java.util.function.BiConsumer;
+
 /**
  * Interface to manage zones
  * 
@@ -11,7 +13,7 @@ import org.goplanit.utils.id.ManagedIdEntities;
  */
 public interface Zones<Z extends Zone> extends ManagedIdEntities<Z> {
      
-  /** Each zone has exactly one centroid, so this is functionally equivalent to calling {@link size()}
+  /** Each zone has exactly one centroid, so this is functionally equivalent to calling size()
    * 
    * @return number of centroids
    */
@@ -25,8 +27,25 @@ public interface Zones<Z extends Zone> extends ManagedIdEntities<Z> {
    * @return zone found, null if not present
    */
   public default Z getByXmlId(String xmlId) {
-    return findFirst(zone -> zone.getXmlId().equals(xmlId));
+    return firstMatch(zone -> zone.getXmlId().equals(xmlId));
   }
 
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public abstract Zones shallowClone();
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public abstract Zones deepClone();
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public abstract Zones deepCloneWithMapping(BiConsumer<Z, Z> mapper);
 
 }

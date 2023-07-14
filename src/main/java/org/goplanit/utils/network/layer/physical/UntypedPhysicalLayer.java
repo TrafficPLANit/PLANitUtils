@@ -1,8 +1,11 @@
 package org.goplanit.utils.network.layer.physical;
 
 import org.goplanit.utils.graph.GraphEntities;
+import org.goplanit.utils.graph.GraphEntity;
+import org.goplanit.utils.id.ExternalIdAble;
 import org.goplanit.utils.network.layer.UntypedDirectedGraphLayer;
-import org.goplanit.utils.network.layer.physical.UntypedPhysicalLayer;
+
+import java.util.function.Consumer;
 
 /**
  * Physical topological Network consisting of nodes, links and link segments 
@@ -33,6 +36,18 @@ public interface UntypedPhysicalLayer<N extends Node, L extends Link, LS extends
   public abstract GraphEntities<N> getNodes();
 
   /**
+   * {@inheritDoc}
+   */
+  @Override
+  public abstract UntypedPhysicalLayer shallowClone();
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public abstract UntypedPhysicalLayer deepClone();
+
+  /**
    * Number of nodes
    * 
    * @return number of nodes
@@ -58,4 +73,5 @@ public interface UntypedPhysicalLayer<N extends Node, L extends Link, LS extends
   public default long getNumberOfLinkSegments() {
     return getLinkSegments().size();
   }
+
 }

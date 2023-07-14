@@ -2,6 +2,8 @@ package org.goplanit.utils.network.layer.service;
 
 import org.goplanit.utils.graph.ManagedGraphEntities;
 
+import java.util.function.BiConsumer;
+
 /**
  * Service node container and factory
  * 
@@ -20,10 +22,34 @@ public interface ServiceNodes extends ManagedGraphEntities<ServiceNode> {
    */
   @Override
   public abstract ServiceNodeFactory getFactory();
-  
+
   /**
    * {@inheritDoc}
    */
   @Override
-  public abstract ServiceNodes clone();
+  public abstract ServiceNodes shallowClone();
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public abstract ServiceNodes deepClone();
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public abstract ServiceNodes deepCloneWithMapping(BiConsumer<ServiceNode, ServiceNode> mapper);
+
+  public default boolean hasServiceNode(long serviceNodeId){
+    return containsKey(serviceNodeId);
+  }
+
+  public default boolean hasServiceNode(ServiceNode serviceNode){
+    if(serviceNode == null){
+      return false;
+    }
+    return hasServiceNode(serviceNode.getId());
+  }
+
 }

@@ -11,6 +11,13 @@ import org.goplanit.utils.event.EventProducer;
 public interface ZoningModifierEventProducer extends EventProducer {
 
   /**
+   * Register listener for all its supported event types fired by a zoning modifier
+   *
+   *  @param listener to register
+   */
+  public abstract void addListener(final ZoningModifierListener listener);
+
+  /**
    * Register listeners for events fired by a zoning modifier
    * 
    *  @param listener to register

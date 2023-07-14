@@ -14,10 +14,9 @@ public interface ConnectoidSegmentFactory extends GraphEntityFactory<ConnectoidS
    * Create and register connectoid segment in AB direction on container
    * 
    * @param parent      the connectoid which will contain this connectoid segment
-   * @param directionAB direction of travel
+   * @param directionAb direction of travel
    * @return created connectoid segment
-   * @throws PlanItException thrown if there is an error
    */
-  public abstract ConnectoidSegment registerNew(ConnectoidEdge parent, boolean directionAB) throws PlanItException;
+  public abstract ConnectoidSegment registerNew(ConnectoidEdge parent, boolean directionAb);
  
 }

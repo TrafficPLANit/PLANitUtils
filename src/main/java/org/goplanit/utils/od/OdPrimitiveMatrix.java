@@ -34,11 +34,13 @@ public abstract class OdPrimitiveMatrix<T extends Number> extends OdMatrixImpl<T
 
   /**
    * Copy Constructor
-   * 
+   *
    * @param other to copy
+   * @param contentFactory to use
    */
-  public OdPrimitiveMatrix(OdPrimitiveMatrix<T> other) {
+  public OdPrimitiveMatrix(OdPrimitiveMatrix<T> other, Array2D.Factory<T> contentFactory) {
     super(other);
+    this.matrixContents = contentFactory.copy(other.matrixContents); // shallow copy
   }
 
   /**
@@ -68,7 +70,16 @@ public abstract class OdPrimitiveMatrix<T extends Number> extends OdMatrixImpl<T
    * {@inheritDoc}
    */
   @Override
-  public abstract OdPrimitiveMatrix<T> clone();
+  public abstract OdPrimitiveMatrix<T> shallowClone();
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public OdPrimitiveMatrix<T> deepClone(){
+    /* for a primitive matrix the deep clone is the same as a shallow copy since contents are immutable */
+    return shallowClone();
+  }
 
   /**
    * Returns an iterator which can iterate through all the origin-destination cells in the matrix
@@ -77,4 +88,5 @@ public abstract class OdPrimitiveMatrix<T extends Number> extends OdMatrixImpl<T
    */
   @Override
   public abstract OdMatrixIterator<T, Array2D<T>> iterator();
+  
 }

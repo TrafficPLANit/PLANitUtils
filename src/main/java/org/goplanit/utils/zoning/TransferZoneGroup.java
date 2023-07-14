@@ -33,6 +33,15 @@ public interface TransferZoneGroup extends ExternalIdAble, ManagedId, Iterable<T
    * @return previousTransferZone under same id (if any)
    */
   public abstract TransferZone addTransferZone(TransferZone transferZone);
+
+  /**
+   * Add all transferZones provided
+   *
+   * @param transferZonesToAdd to add
+   */
+  public default void addAllTransferZones(Collection<TransferZone> transferZonesToAdd){
+    transferZonesToAdd.forEach( tz -> addTransferZone(tz));
+  }
   
   /** remove a transfer zone from the group, and also remove the reference on the transfer zone at the same time
    * 
@@ -58,13 +67,19 @@ public interface TransferZoneGroup extends ExternalIdAble, ManagedId, Iterable<T
    * 
    * @return registered transfer zones
    */
-  public abstract Collection<TransferZone> getTransferZones();  
-  
+  public abstract Collection<TransferZone> getTransferZones();
+
   /**
    * {@inheritDoc}
    */
   @Override
-  public abstract TransferZoneGroup clone();
+  public abstract TransferZoneGroup shallowClone();
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public abstract TransferZoneGroup deepClone();
   
   /** Collect first transfer zone that would be returned by the iterator
    * @return transfer zone
@@ -101,7 +116,6 @@ public interface TransferZoneGroup extends ExternalIdAble, ManagedId, Iterable<T
   @Override
   public default Class<TransferZoneGroup> getIdClass() {
     return TRANSFER_ZONE_GROUP_ID_CLASS;
-  }  
-    
+  }
 
 }

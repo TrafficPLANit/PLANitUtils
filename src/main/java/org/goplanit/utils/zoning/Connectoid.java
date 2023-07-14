@@ -87,6 +87,15 @@ public interface Connectoid extends ExternalIdAble, ManagedId, Iterable<Zone> {
    * @return overwritten zone if any
    */
   public abstract Zone addAccessZone(Zone zone);
+
+  /**
+   * Add all provided access zones
+   *
+   * @param accessZonesToAdd to add
+   */
+  public default void addAllAccessZones(Collection<Zone> accessZonesToAdd){
+    accessZonesToAdd.forEach( z -> addAccessZone(z));
+  }
   
   /** Check if zone is registered as access zone
    * 
@@ -105,27 +114,25 @@ public interface Connectoid extends ExternalIdAble, ManagedId, Iterable<Zone> {
    * 
    * @return number of accessible zones
    */
-  public abstract long getNumberOfAccessZones();
+  public abstract int getNumberOfAccessZones();
   
   /** length can be used to virtually assign a length to the connectoid/zone combination
    * 
    * @param accessZone to collect length for
    * @return length in km(null if zone is not registered)
-   * @throws PlanItException thrown if error
    */
-  public abstract Optional<Double> getLengthKm(Zone accessZone) throws PlanItException;
+  public abstract Optional<Double> getLengthKm(Zone accessZone);
   
   /** Verify if a mode is allowed access to the zone via this connectoid
    * 
    * @param accessZone to verify
    * @param mode to verify if allowed
    * @return true when allowed, false otherwise
-   * @throws PlanItException thrown if provided zone is not valid
    */
-  public abstract boolean isModeAllowed(Zone accessZone, Mode mode) throws PlanItException;
+  public abstract boolean isModeAllowed(Zone accessZone, Mode mode);
   
   /** collect modes that are explicitly allowed for this zone (unmodifiable). Note that if no explicit allowed
-   * modes are present, all modes are implicitly allowed. When there exist explicitly allowed modes, any mdoes 
+   * modes are present, all modes are implicitly allowed. When there exist explicitly allowed modes, any modes
    * in the network not included in the explicitly allowed modes are regarded to not be allowed.
    * 
    * @param accessZone to check
@@ -170,7 +177,7 @@ public interface Connectoid extends ExternalIdAble, ManagedId, Iterable<Zone> {
    * @param transferZone to add allowed mode(s) to
    * @param allowedModes to add
    */  
-  public default void addAllowedModes(TransferZone transferZone, Set<Mode> allowedModes) {
+  public default void addAllowedModes(Zone transferZone, Collection<Mode> allowedModes) {
     allowedModes.forEach( mode -> addAllowedMode(transferZone, mode));
   }
 
@@ -202,7 +209,7 @@ public interface Connectoid extends ExternalIdAble, ManagedId, Iterable<Zone> {
   public default boolean hasLength(Zone accessZone) {    
     try {
       return getLengthKm(accessZone).isEmpty();
-    } catch (PlanItException e) {
+    } catch (Exception e) {
       return false;
     }
   }
@@ -213,7 +220,17 @@ public interface Connectoid extends ExternalIdAble, ManagedId, Iterable<Zone> {
   public default boolean hasAccessZones() {
     return getNumberOfAccessZones()>0;
   }
- 
-  
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public abstract Connectoid shallowClone();
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public abstract Connectoid deepClone();
 
 }

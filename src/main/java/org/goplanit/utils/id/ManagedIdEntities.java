@@ -1,6 +1,15 @@
 package org.goplanit.utils.id;
 
+import org.goplanit.utils.network.layer.macroscopic.MacroscopicLinkSegmentType;
+import org.goplanit.utils.network.layer.macroscopic.MacroscopicLinkSegmentTypes;
+import org.goplanit.utils.service.routed.RoutedTripSchedule;
 import org.goplanit.utils.wrapper.LongMapWrapper;
+
+import java.util.*;
+import java.util.function.BiConsumer;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /** Container class for any managed id derived entities and a factory to create them
  * 
@@ -8,7 +17,7 @@ import org.goplanit.utils.wrapper.LongMapWrapper;
  *
  * @param <E> type of managed id entity
  */
-public interface ManagedIdEntities<E extends ManagedId> extends LongMapWrapper<E>, Cloneable {
+public interface ManagedIdEntities<E extends ManagedId> extends LongMapWrapper<E> {
 
   /** Factory to create instance of managed id entity (for this container class)
    * 
@@ -24,19 +33,34 @@ public interface ManagedIdEntities<E extends ManagedId> extends LongMapWrapper<E
   public abstract Class<? extends ManagedId> getManagedIdClass();  
       
   /**
-   * Recreate the ids for all registered entities with or without resetting 
+   * Recreate the ids for all registered entities with or without resetting, this includes child managed ids, i.e., nested magedidentities containers if so indicated
    * 
-   * @param resetManagedIdClass when true we reset the managedId's counter to zero (via its id class) before recreating the ids, otherwise we simply recreate the managed id by 
-   * starting with the next available id without resetting
+   * @param resetManagedIdClass when true we reset the managedId's counter to zero (via its id class) before recreating the ids, otherwise we simply recreate the managed id by
+   *                            starting with the next available id without resetting
    */
-  public abstract void recreateIds(boolean resetManagedIdClass);  
+  public abstract void recreateIds(boolean resetManagedIdClass);
     
   /**
-   * Force clone implementation
+   * Shallow clone implementation
    * 
    * @return clone of entities
    */
-  public abstract ManagedIdEntities<E> clone();  
+  public abstract ManagedIdEntities<E> shallowClone();
+
+  /**
+   * Deep clone implementation
+   *
+   * @return deep copy of entities
+   */
+  public abstract ManagedIdEntities<E> deepClone();
+
+  /**
+   * Deep clone implementation where the mapping for its internal copies is captured by the provided mapper
+   *
+   * @param mapper to apply to each mapping between original and copy
+   * @return copy
+   */
+  public abstract ManagedIdEntities<E> deepCloneWithMapping(BiConsumer<E, E> mapper);
     
   /** Verify if present
    * 
@@ -66,5 +90,26 @@ public interface ManagedIdEntities<E extends ManagedId> extends LongMapWrapper<E
     clear();
     IdGenerator.reset(getFactory().getIdGroupingToken(), getManagedIdClass());     
   }
-  
+
+  /**
+   * Convenience method to perform group by based on uncerlying streaming mechanisms
+   *
+   * @param classifier for group by
+   * @return map with key containing the classifier and value being a list of matched entities in the container
+   * @param <K> classifier to apply
+   */
+  public default <K> Map<K, List<E>> groupBy(Function<? super E, ? extends K> classifier){
+    return this.stream().collect(Collectors.groupingBy(classifier));
+  }
+
+  /** Stream the container sorted by the given sort function
+   *
+   * @param sortFunction to apply
+   * @return sorted stream
+   * @param <T> the type to sort on which must be comparable
+   * @param <F> the return type of the stream entries
+   */
+  public default <T extends Comparable, F extends E> Stream<F> streamSortedBy(Function<? super E, T> sortFunction){
+    return this.stream().sorted(Comparator.comparing(e -> sortFunction.apply((F) e)));
+  }
 }

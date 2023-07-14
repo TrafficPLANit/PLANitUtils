@@ -28,9 +28,8 @@ public interface ModeFactory extends ManagedIdEntityFactory<Mode> {
    *
    * @param modeType the predefined mode type
    * @return new mode created, or existing mode when already present
-   * @throws PlanItException thrown if error
    */
-  public abstract PredefinedMode registerNew(PredefinedModeType modeType) throws PlanItException;  
+  public abstract PredefinedMode registerNew(PredefinedModeType modeType);  
   
   /**
    * create a predefined mode instance without registering it on the container. Use with caution as it can mess up the internal id structure if not registered subsequently

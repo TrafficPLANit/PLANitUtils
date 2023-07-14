@@ -1,22 +1,26 @@
 package org.goplanit.utils.wrapper;
 
-import java.util.Collection;
-import java.util.Set;
+import org.goplanit.utils.misc.IterableUtils;
+
+import java.util.*;
 import java.util.function.Consumer;
+import java.util.function.Function;
 import java.util.function.Predicate;
+import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
 
 /**
- * Wrap a map as a named class
+ * Wrap a map as a named class for a non-null key
  * 
  * @author markr
  *
  * @param <K> key type
  * @param <V> value type
  */
-public interface MapWrapper<K, V> extends Iterable<V>, Cloneable {
+public interface MapWrapper<K, V> extends Iterable<V> {
   
   /**
-   * Register on the internal container
+   * Register on the internal container (no null keys allowed which will trigger a warning and the value not to be registered)
    * 
    * @param value to register
    * @return old value if any
@@ -30,6 +34,22 @@ public interface MapWrapper<K, V> extends Iterable<V>, Cloneable {
    * @return removed entry if any
    */
   public abstract V remove(V value);
+
+  /**
+   * Remove all entries in provided collection.
+   *
+   * @param toBeRemoved the to be removed entries
+   */
+  public default void removeAll(Collection<V> toBeRemoved){
+    toBeRemoved.forEach(e -> remove(e));
+  }
+
+  /**
+   * Remove all values that satisfy the given condition
+   *
+   * @param condition to remove
+   */
+  public abstract void removeIf(Predicate<V> condition);
   
   /**
    * Clear all entries from map
@@ -64,7 +84,7 @@ public interface MapWrapper<K, V> extends Iterable<V>, Cloneable {
    * @param value to verify
    * @return true if present, false otherwise
    */
-  public abstract boolean contains(V value);
+  public abstract boolean containsValue(V value);
 
   /**
    * Collect values as unmodifiable collection
@@ -76,7 +96,7 @@ public interface MapWrapper<K, V> extends Iterable<V>, Cloneable {
   /**
    * Create a copy of the map's distinct values as a set 
    * 
-   * @return copt of values as set
+   * @return copy of values as set
    */
   public abstract Set<V> valuesAsNewSet();
   
@@ -86,7 +106,7 @@ public interface MapWrapper<K, V> extends Iterable<V>, Cloneable {
    * @param valuePredicate that checks a property of the value and the first which matches is returned
    * @return the retrieved entry, or null if no traveler type was found
    */
-  public abstract V findFirst(Predicate<V> valuePredicate);
+  public abstract V firstMatch(Predicate<V> valuePredicate);
 
   /**
    * Each map wrapper should be cloneable where the contents are references of the original where possible
@@ -94,7 +114,7 @@ public interface MapWrapper<K, V> extends Iterable<V>, Cloneable {
    * 
    * @return copy
    */
-  public abstract MapWrapper<K, V> clone();
+  public abstract MapWrapper<K, V> shallowClone();
   
   /** collect the key used for the given value
    * 
@@ -130,8 +150,39 @@ public interface MapWrapper<K, V> extends Iterable<V>, Cloneable {
    * @param consumer to apply
    */
   public default <T extends V> void forEachIn(final Collection<T> values, final Consumer<T> consumer) {
-    values.forEach( (v) -> { if(contains(v)){consumer.accept(v);};});
+    values.forEach( (v) -> { if(containsValue(v)){consumer.accept(v);}});
   }
-    
+
+  /**
+   * Convert to a map with a custom key obtained from entries
+   *
+   * @param getCustomKey function to extract key from entries
+   * @return populated map
+   *
+   * @param <K> type of key
+   */
+  public default <K> Map<K, V> toMap(Function<V,K> getCustomKey){
+    return IterableUtils.toMap(this, getCustomKey, new HashMap<>());
+  }
+
+  /**
+   * Create a stream from this iterable
+   *
+   * @return stream of all entries (values)
+   */
+  public default Stream<V> stream(){
+    return StreamSupport.stream(this.spliterator(), false);
+  }
+
+  /**
+   * stream in a sorted manner to allow for a specific ordering other than the underlying key used
+   *
+   * @param <M> type of comparable
+   * @param comparingFunction to apply to sorted stream
+   * @return stream of all entries (values) ordered by given comparing function
+   */
+  public default <M extends Comparable> Stream<V> streamSorted(Function<V,M> comparingFunction){
+    return stream().sorted(Comparator.comparing(comparingFunction));
+  }
 
 }

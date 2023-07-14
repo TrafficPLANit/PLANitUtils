@@ -99,10 +99,8 @@ public interface Unit {
    * @param to to unit 
    * @param value value to convert
    * @return converted value
-   * 
-   * @throws PlanItException thrown if not possible to perform conversion
    */
-  public abstract double convertTo(Unit to, double value) throws PlanItException;
+  public abstract double convertTo(Unit to, double value);
   
   /** Verify if unit can be converted to the desired unit
    * 

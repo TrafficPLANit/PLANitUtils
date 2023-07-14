@@ -2,6 +2,8 @@ package org.goplanit.utils.mode;
 
 import org.goplanit.utils.id.ManagedIdEntities;
 
+import java.util.function.BiConsumer;
+
 /**
  * container class and factory methods for modes with some
  * 
@@ -33,10 +35,22 @@ public interface Modes extends ManagedIdEntities<Mode> {
   public Mode getByXmlId(String xmlId);
 
   /**
-   * clone modes container
+   * {@inheritDoc}
    */
   @Override
-  public abstract Modes clone();
+  public abstract Modes shallowClone();
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public abstract Modes deepClone();
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public abstract Modes deepCloneWithMapping(BiConsumer<Mode, Mode> mapper);
 
   /**
    * Collect the mode factory to use for creating instances

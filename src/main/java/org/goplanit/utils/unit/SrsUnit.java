@@ -3,6 +3,7 @@ package org.goplanit.utils.unit;
 import java.util.logging.Logger;
 
 import org.goplanit.utils.exceptions.PlanItException;
+import org.goplanit.utils.exceptions.PlanItRunTimeException;
 
 /** Unit class for all spatial reference system related units
  * 
@@ -31,12 +32,11 @@ public class SrsUnit extends SimpleUnit{
    * {@inheritDoc}
    */
   @Override
-  public double convertTo(Unit to, double value) throws PlanItException {
+  public double convertTo(Unit to, double value) {
     if(!to.isCombinedUnit() && ((SrsUnit)to).unitType.equals(UnitType.SRS)) {
       return value;
     }else {
-      throw new PlanItException(
-          String.format("conversion illegal or not supported yet from %s --> %s",UnitType.SRS, to));
+      throw new PlanItRunTimeException("Conversion illegal or not supported yet from %s --> %s",UnitType.SRS, to);
     }   
   }
   

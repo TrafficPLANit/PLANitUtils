@@ -27,5 +27,20 @@ public interface DirectedEdges extends GraphEntities<DirectedEdge> {
      * implement this method to provide access to an actual instance */
     Logger.getLogger(DirectedEdges.class.getCanonicalName()).warning("getFactory not implemented yet for directed edges implementation");
     return null;
-  }  
+  }
+
+  /**
+   * Force clone implementation
+   *
+   * @return clone of entities
+   */
+  @Override
+  public abstract DirectedEdges shallowClone();
+
+  /**
+   * Deep clone implementation
+   *
+   * @return deep copy of entities
+   */
+  public abstract DirectedEdges deepClone();
 }

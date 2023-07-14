@@ -1,16 +1,14 @@
 package org.goplanit.utils.zoning;
 
-import org.goplanit.utils.graph.EdgeSegment;
+import org.goplanit.utils.graph.directed.EdgeSegment;
 import org.goplanit.utils.network.layer.physical.LinkSegment;
 import org.goplanit.utils.network.layer.physical.Node;
 
 /**
- * A directed connectoid is referring to an edge segment in a network (layer) which is directed for access
- * hence, the connectoid also being directed
- * 
- * TODO: we can potentially get rid of UndirectedConnectoid and let DirectedConnectoid extend from base since they
- * now both rely on accessNodes
- * 
+ * A directed connectoid is referring to an access edge segment in a network (layer) which is directed for access
+ * hence, the connectoid also being directed. It is used in situations where not all segments connected to the access node may
+ * be available to access the connectoid
+ *
  * @author markr
  *
  */
@@ -26,7 +24,19 @@ public interface DirectedConnectoid extends Connectoid{
    * 
    * @return directed connectoid id
    */
-  public abstract long getDirectedConnectoidId();  
+  public abstract long getDirectedConnectoidId();
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public abstract DirectedConnectoid shallowClone();
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public abstract DirectedConnectoid deepClone();
 
   /** The edge segment that provides access
    * 
@@ -37,9 +47,9 @@ public interface DirectedConnectoid extends Connectoid{
   /**
    * Replace the access link segment for this connectoid
    * 
-   * @param exitEdgeSegment to use
+   * @param accessEdgeSegment to use
    */
-  public abstract void replaceAccessLinkSegment(EdgeSegment exitEdgeSegment);  
+  public abstract void replaceAccessLinkSegment(LinkSegment accessEdgeSegment);
   
   /** set if the node access is downstream or not
    * 
@@ -69,9 +79,9 @@ public interface DirectedConnectoid extends Connectoid{
    */
   public default Node getAccessNode() {
     if(isNodeAccessDownstream()) {
-      return (Node)getAccessLinkSegment().getDownstreamVertex();
+      return getAccessLinkSegment().getDownstreamVertex();
     }else {
-      return (Node)getAccessLinkSegment().getUpstreamVertex();
+      return getAccessLinkSegment().getUpstreamVertex();
     }
   }
 

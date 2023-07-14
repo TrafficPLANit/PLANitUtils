@@ -1,11 +1,10 @@
 package org.goplanit.utils.network.layer.service;
 
 import java.util.Collection;
-import java.util.Set;
 
 import org.goplanit.utils.graph.Edge;
-import org.goplanit.utils.graph.EdgeSegment;
 import org.goplanit.utils.graph.directed.DirectedVertex;
+import org.goplanit.utils.graph.directed.EdgeSegment;
 import org.goplanit.utils.network.layer.physical.Node;
 
 /**
@@ -17,6 +16,18 @@ import org.goplanit.utils.network.layer.physical.Node;
  *
  */
 public interface ServiceNode extends DirectedVertex {
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public abstract ServiceNode shallowClone();
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public abstract ServiceNode deepClone();
      
   /**
    * Identical to {@link #getEdges()}
@@ -33,7 +44,7 @@ public interface ServiceNode extends DirectedVertex {
    * @return entryLegSegments
    */
  
-  public default  Set<EdgeSegment> getEntryLegSegments() {
+  public default  Iterable<? extends EdgeSegment> getEntryLegSegments() {
     return getEntryEdgeSegments();
   }
   
@@ -43,7 +54,7 @@ public interface ServiceNode extends DirectedVertex {
    * @return exitLegSegments
    */
  
-  public default Set<EdgeSegment> getExitLegSegments() {
+  public default Iterable<? extends EdgeSegment> getExitLegSegments() {
     return getExitEdgeSegments();
   }
 
@@ -79,10 +90,24 @@ public interface ServiceNode extends DirectedVertex {
   }  
   
   /**
-   * Provide access to the underlying network node
+   * Provide access to the underlying network node(s)
    * 
-   * @return networkLayerNode
+   * @return networkLayerNode(s)
    */
-  public abstract Node getParentNode();
-  
+  public abstract Collection<Node> getPhysicalParentNodes();
+
+  /**
+   * Verify if a physical parent node is linked to this service node
+   *
+   * @return true when present false otherwise
+   */
+  public abstract boolean hasPhysicalParentNodes();
+
+  /**
+   * Verify if provided node is registered as a physical parent node of this service node
+   *
+   * @param physicalParentNode to verify
+   * @return true when registered, false otherwise
+   */
+  public abstract boolean isMappedToPhysicalParentNode(Node physicalParentNode);
 }

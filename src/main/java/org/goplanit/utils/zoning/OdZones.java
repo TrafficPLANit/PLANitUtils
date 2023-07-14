@@ -20,7 +20,19 @@ public interface OdZones extends Zones<OdZone>{
    * {@inheritDoc}
    */
   @Override
-  public abstract OdZones clone();
+  public abstract OdZones shallowClone();
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public abstract OdZones deepClone();
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public abstract OdZones deepCloneWithMapping(BiConsumer<OdZone, OdZone> mapper);
   
   /** Loop over all origin destination combinations possible given the registered zones and apply the 
    * provided consumer

@@ -79,7 +79,6 @@ final class LocalIdGenerator {
   /**
    * Reset the id for class to the given offset
    * 
-   * @param groupId to reset
    * @param theClass to reset
    * @param offset to use
    */    

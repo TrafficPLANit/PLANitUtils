@@ -10,9 +10,11 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.file.FileSystem;
 import java.nio.file.FileSystems;
+import java.nio.file.Path;
 import java.util.Collections;
 import java.util.logging.Logger;
 
+import org.goplanit.utils.exceptions.PlanItRunTimeException;
 import org.goplanit.utils.misc.UriUtils;
 
 /** Utilities to access resources in the Java environment
@@ -24,29 +26,45 @@ public class ResourceUtils {
   /** logger to use */
   private static final Logger LOGGER = Logger.getLogger(ResourceUtils.class.getCanonicalName());
   
-  /** find the resource URL via this class' classloader
+  /** find the resource URL via this class' classloader. The resource location is expected to be a (relative) path with
+   * forward slashes. If the provided path contains backward slashes, these will be replaced to avoid issues
    * 
    * @param resourceLocation to find URL for
    * @return the URL of the resource
    */
   public static URL getResourceUrl(final String resourceLocation) {
+    var resourceLocationResourceCompatible = resourceLocation.replace('\\','/');
     /* collect the resource assuming it is available in the context where the utils are made available */
-    return ResourceUtils.class.getClassLoader().getResource(resourceLocation);
+    return ResourceUtils.class.getClassLoader().getResource(resourceLocationResourceCompatible);
+  }
+
+  /** find the resource URL via this class' classloader. The resource location is expected to be a (relative) path with
+   * forward slashes. If the provided path contains backward slashes, these will be replaced to avoid issues
+   *
+   * @param resourceLocation to find URL for
+   * @return the URL of the resource
+   */
+  public static URL getResourceUrl(final Path resourceLocation) {
+    return getResourceUrl(resourceLocation.toString());
   }
   
   /** find the resource URI via this class' class loader
    * 
    * @param resourceLocation to find URI for
    * @return the URI of the resource
-   * @throws URISyntaxException thrown if error
    */
-  public static URI getResourceUri(final String resourceLocation) throws URISyntaxException{
+  public static URI getResourceUri(final String resourceLocation) {
     URL url = getResourceUrl(resourceLocation);
     if(url==null) {
       LOGGER.warning(String.format("Unable to create resource URL and therefore URI for %s",resourceLocation));
       return null;
     }
-    return url.toURI(); 
+
+    try {
+      return url.toURI();
+    }catch(Exception e){
+      throw new PlanItRunTimeException("Error while obtaining resource URI for location %s", resourceLocation, e);
+    }
   }  
   
   /** Collect the jar as a FileSystem to access its internals

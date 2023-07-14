@@ -8,17 +8,23 @@ import org.goplanit.utils.network.layer.ServiceNetworkLayer;
  * @author markr
  *
  */
-public interface ServiceNetworkLayers extends UntypedDirectedGraphLayers<ServiceNetworkLayer> {
+public interface ServiceNetworkLayers extends TopologicalLayers<ServiceNetworkLayer> {
     
   /**
    * {@inheritDoc}
    */
   @Override
-  public abstract ServiceNetworkLayerFactory getFactory();   
-  
+  public abstract ServiceNetworkLayerFactory getFactory();
+
   /**
-   * clone container
+   * {@inheritDoc}
    */
   @Override
-  public abstract ServiceNetworkLayers clone(); 
+  public abstract ServiceNetworkLayers shallowClone();
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public abstract ServiceNetworkLayers deepClone();
 }

@@ -2,14 +2,16 @@ package org.goplanit.utils.network.layer.physical;
 
 import org.goplanit.utils.graph.ManagedGraphEntities;
 
+import java.util.function.BiConsumer;
+
 /**
- *rimary managed container class for links with access to factory capable of creating new links and registering them on the container
+ *Primary managed container class for links with access to factory capable of creating new links and registering them on the container
  * directly
  * 
  * @author markr
  *
  */
-public interface Links extends ManagedGraphEntities<Link> {
+public interface Links<L extends Link> extends ManagedGraphEntities<L> {
   /* do not derive from DirectedEdges<E> since we require to override the factory method return type. This is only
    * allowed when the return type directly derives from the original return type. LinkFactory cannot
    * derive from DirectedEdgeFactory since the signature of the factory methods differs. Hence, we must derive from
@@ -26,7 +28,19 @@ public interface Links extends ManagedGraphEntities<Link> {
    * {@inheritDoc}
    */
   @Override
-  public abstract Links clone();
+  public abstract Links shallowClone();
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public abstract Links deepClone();
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public abstract Links deepCloneWithMapping(BiConsumer<L, L> mapper);
 
   /**
    * verify if link is present

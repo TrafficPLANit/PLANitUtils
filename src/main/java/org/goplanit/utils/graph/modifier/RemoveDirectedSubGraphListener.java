@@ -1,6 +1,6 @@
 package org.goplanit.utils.graph.modifier;
 
-import org.goplanit.utils.graph.EdgeSegment;
+import org.goplanit.utils.graph.directed.EdgeSegment;
 
 /**
  * A listener interface to be triggered whenever planit entities are removed from the network due to a sub graph being

@@ -2,9 +2,9 @@ package org.goplanit.utils.graph.directed;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.function.Consumer;
 
 import org.goplanit.utils.graph.Edge;
-import org.goplanit.utils.graph.EdgeSegment;
 
 /**
  * Directed Edge interface connecting two vertices in a directional fashion. Each edge has one or
@@ -39,8 +39,44 @@ public interface DirectedEdge extends Edge {
    * @param directionAB direction of travel
    * @return replaced egeSegment (if any)
    */
-  public abstract EdgeSegment registerEdgeSegment(final EdgeSegment edgeSegment, final boolean directionAB);
+  public default EdgeSegment registerEdgeSegment(final EdgeSegment edgeSegment, final boolean directionAB){
+    return registerEdgeSegment(edgeSegment, directionAB, false);
+  }
+
+  /**
+   * Register EdgeSegment.
+   *
+   * If there already exists an edgeSegment for that direction it is replaced and returned. If the edge segment
+   * has no parent edge, this edge is set. If there is a discrepancy between the edge segment's parent edge and this edge
+   * a warning is issued and the edge segment is not registered
+   *
+   * @param edgeSegment the edgeSegment to be registered
+   * @param directionAB direction of travel
+   * @param force when true the provided edge segment is always set (even if null or inconsistent, without warning)
+   * @return replaced egeSegment (if any)
+   */
+  public abstract EdgeSegment registerEdgeSegment(final EdgeSegment edgeSegment, final boolean directionAB, final boolean force);
   
+  /**
+   * Remove edge segments from this edge. Be careful doing this as it because it might affect the contiguous ids if the edge segment is garbage collected
+   */
+  public default void removeEdgeSegments() {
+    removeEdgeSegmentAb();
+    removeEdgeSegmentBa();
+  }
+
+  /**
+   * Remove edge segmentAb from this edge. Be careful doing this as it because it might affect the contiguous ids if the edge segment is garbage collected
+   * @return removed edge segment
+   */
+  public abstract EdgeSegment removeEdgeSegmentAb();
+  
+  /**
+   * Remove edge segmentAb from this edge. Be careful doing this as it because it might affect the contiguous ids if the edge segment is garbage collected
+   * @return removed edge segment
+   */
+  public abstract EdgeSegment removeEdgeSegmentBa();
+
   /**
    * Edge segment in the direction from A to B
    * 
@@ -60,7 +96,19 @@ public interface DirectedEdge extends Edge {
    * @param edgeSegmentToReplace the one to replace
    * @param edgeSegmentToReplaceWith the one to replace it with
    */
-  public abstract void replace(EdgeSegment edgeSegmentToReplace, EdgeSegment edgeSegmentToReplaceWith);  
+  public abstract void replace(EdgeSegment edgeSegmentToReplace, EdgeSegment edgeSegmentToReplaceWith);
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public abstract DirectedEdge shallowClone();
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public abstract DirectedEdge deepClone();
   
   /**
    * Edge segment in the direction indicated
@@ -87,6 +135,14 @@ public interface DirectedEdge extends Edge {
   public default boolean hasEdgeSegmentAb() {
     return getEdgeSegmentAb() != null;
   }
+
+  /** Verify if any edge segment exists
+   *
+   * @return true if present, false otherwise
+   */
+  public default boolean hasEdgeSegment() {
+    return hasEdgeSegmentAb() || hasEdgeSegmentBa();
+  }
   
   /** collect all edge segments available on the edge 
    * 
@@ -106,4 +162,32 @@ public interface DirectedEdge extends Edge {
     return edgeSegments;
   }
 
+  /**
+   * Apply consumer to each edge segment of directed egde when present
+   *
+   * @param edgeSegmentConsumer to apply
+   * @param <T> type of edge segment
+   */
+  default <T extends EdgeSegment> void forEachSegment(Consumer<T> edgeSegmentConsumer){
+    if(hasEdgeSegmentAb()){
+      edgeSegmentConsumer.accept( (T) getEdgeSegmentAb());
+    }
+    if(hasEdgeSegmentBa()){
+      edgeSegmentConsumer.accept( (T) getEdgeSegmentBa());
+    }
+  }
+
+  /**
+   * Remove given edge segment from edge. If the edge segment is not a child nothing is removed
+   *
+   * @param edgeSegment to remove
+   * @return removed edge segment, null if none is removed
+   */
+  public default EdgeSegment removeEdgeSegment(EdgeSegment edgeSegment){
+    if(!edgeSegment.getParent().equals(this)){
+      return null;
+    }
+
+    return edgeSegment.isDirectionAb() ? removeEdgeSegmentAb() : removeEdgeSegmentBa();
+  }
 }

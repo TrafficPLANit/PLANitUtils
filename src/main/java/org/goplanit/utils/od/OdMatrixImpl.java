@@ -56,6 +56,12 @@ public abstract class OdMatrixImpl<T, U> extends OdDataImpl<T> implements OdMatr
    * {@inheritDoc}
    */
   @Override
-  public abstract OdMatrixImpl<T, U> clone();
+  public abstract OdMatrixImpl<T, U> shallowClone();
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public abstract OdMatrixImpl<T, U> deepClone();
 
 }
