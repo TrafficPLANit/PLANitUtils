@@ -1,11 +1,11 @@
 package org.goplanit.utils;
 
 
-import static org.junit.Assert.assertEquals;
-
 import org.goplanit.utils.reflection.StackWalkerUtil;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * Test the Reflection utils
@@ -15,7 +15,7 @@ import org.junit.Test;
  */
 public class ReflectionTest {
 
-  @Before
+  @BeforeEach
   public void intialise() {
   }
   

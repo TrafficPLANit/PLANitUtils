@@ -6,7 +6,7 @@
 	<parent>
     <groupId>org.goplanit.parentpom</groupId>
     <artifactId>planit-parentpom</artifactId>
-		<version>0.3.1a1</version>
+		<version>0.4.0</version>
 	</parent>
 
 	<groupId>org.goplanit.utils</groupId>
@@ -47,8 +47,8 @@
 		</dependency>
 		
 		<dependency>
-			<groupId>junit</groupId>
-			<artifactId>junit</artifactId>
+			<groupId>org.junit.jupiter</groupId>
+			<artifactId>junit-jupiter-engine</artifactId>
 			<!-- only used locally for testing so not an actual dependency for using the API -->
 			<optional>true</optional>
 		</dependency>		
