@@ -18,6 +18,19 @@ import java.util.stream.StreamSupport;
  * @param <V> value type
  */
 public interface MapWrapper<K, V> extends Iterable<V> {
+
+  /**
+   * Collect first match by iterating through map based on some predicate
+   *
+   * @param <KK> key type
+   * @param <VV> value type
+   * @param mapWrapper the wrapper to apply to
+   * @param valuePredicate the filter to apply to obtain the first match
+   * @return found match
+   */
+  public static <KK,VV> VV firstMatch(MapWrapper<KK,VV> mapWrapper, Predicate<VV> valuePredicate) {
+    return mapWrapper.stream().filter(valuePredicate).findFirst().get();
+  }
   
   /**
    * Register on the internal container (no null keys allowed which will trigger a warning and the value not to be registered)

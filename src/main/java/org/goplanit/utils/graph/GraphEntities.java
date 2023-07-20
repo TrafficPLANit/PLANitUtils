@@ -9,6 +9,7 @@ import java.util.function.Consumer;
 import org.goplanit.utils.id.IdAble;
 import org.goplanit.utils.misc.Pair;
 import org.goplanit.utils.wrapper.LongMapWrapper;
+import org.goplanit.utils.wrapper.MapWrapper;
 
 /** Container class for any graph entities and a factory to create them
  * 
@@ -17,6 +18,22 @@ import org.goplanit.utils.wrapper.LongMapWrapper;
  * @param <E> type of graph entity
  */
 public interface GraphEntities<E extends GraphEntity> extends LongMapWrapper<E>, Cloneable  {
+
+  /**
+   * find by XML id
+   *
+   * Note: not an efficient implementation since it loops over all entities in linear time to identify the correct one,
+   * preferably use {@link #get(Object)} instead whenever possible.
+   *
+   * @param <EE> entity type
+   * @param container the container to apply to
+   * @param xmlId to find match for
+   * @return found match, null if none found
+   */
+  public static <EE extends GraphEntity> EE getByXmlId(GraphEntities<EE> container, String xmlId)
+  {
+    return container.firstMatch(entity -> xmlId.equals(entity.getXmlId()));
+  }
 
   /** Factory to create instance of graph entity (for this container class)
    * 
@@ -49,16 +66,11 @@ public interface GraphEntities<E extends GraphEntity> extends LongMapWrapper<E>,
       
   /**
    * Return an entity by its XML id
-   * 
-   * Note: not an efficient implementation since it loops over all entities in linear time to identify the correct one, 
-   * preferably use {@link #get(Object)} instead whenever possible.
-   * 
+   *
    * @param xmlId the XML id of the entity
    * @return the specified entity instance
    */
-  public default E getByXmlId(String xmlId) {
-    return firstMatch(entity -> xmlId.equals(entity.getXmlId()));
-  }  
+  public abstract E getByXmlId(String xmlId);
   
   /** Collect all entities based on a matching external id. Entities are not indexed by external id so this is
    *  a very inefficient linear search through all registered entities.

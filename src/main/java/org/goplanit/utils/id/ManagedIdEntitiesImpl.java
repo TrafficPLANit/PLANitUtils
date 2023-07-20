@@ -68,7 +68,7 @@ public abstract class ManagedIdEntitiesImpl<E extends ManagedId> extends LongMap
   }
 
   /**
-   * updates the container keys based on currently presiding ids. Only to be used when an external force has changed already registered edges' their ids
+   * updates the container keys based on currently presiding ids. Only to be used when an external force has changed already registered entity their ids
    */
   protected void updateIdMapping() {
     /* redo mapping */
@@ -92,7 +92,7 @@ public abstract class ManagedIdEntitiesImpl<E extends ManagedId> extends LongMap
   @Override
   public void recreateIds(boolean resetManagedIdClass) {
     if(resetManagedIdClass == true && managedIdClass!=null) {
-      IdGenerator.reset(getFactory().getIdGroupingToken(), getManagedIdClass() /* e.g. Edge.class, vertex.class etc. */);
+      IdGenerator.reset(getFactory().getIdGroupingToken(), getManagedIdClass() /* e.g. managed id class */);
     }
     
     if (!isEmpty()) {

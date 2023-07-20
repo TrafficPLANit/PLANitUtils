@@ -1,5 +1,6 @@
 package org.goplanit.utils.graph;
 
+import org.goplanit.utils.id.ManagedId;
 import org.goplanit.utils.id.ManagedIdEntities;
 import org.goplanit.utils.network.virtual.ConnectoidSegment;
 import org.goplanit.utils.network.virtual.ConnectoidSegments;
@@ -12,7 +13,7 @@ import java.util.function.BiConsumer;
  *
  * @param <E> type of graph entity
  */
-public interface ManagedGraphEntities<E extends GraphEntity> extends GraphEntities<E>, ManagedIdEntities<E>{
+public interface ManagedGraphEntities<E extends GraphEntity & ManagedId> extends GraphEntities<E>, ManagedIdEntities<E>{
       
   /**
    * shallow clone implementation

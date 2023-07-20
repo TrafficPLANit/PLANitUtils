@@ -49,7 +49,7 @@ public class MapWrapperImpl<K, V> implements MapWrapper<K, V>{
     }
     return null;
   }
-  
+
   /** Collect the function used to map value to key
    * 
    * @return valueToKey
@@ -205,12 +205,7 @@ public class MapWrapperImpl<K, V> implements MapWrapper<K, V>{
    */
   @Override
   public V firstMatch(Predicate<V> valuePredicate) {
-    for (V value: this) {
-      if (valuePredicate.test(value)) {
-        return value;
-      }
-    }
-    return null;
+    return MapWrapper.firstMatch(this, valuePredicate);
   }  
   
   /**

@@ -1,6 +1,6 @@
 package org.goplanit.utils.network.virtual;
 
-import org.goplanit.utils.graph.GraphEntities;
+import org.goplanit.utils.graph.ManagedGraphEntities;
 
 import java.util.function.BiConsumer;
 
@@ -11,7 +11,7 @@ import java.util.function.BiConsumer;
  * @author markr
  *
  */
-public interface ConjugateConnectoidSegments extends GraphEntities<ConjugateConnectoidSegment>{
+public interface ConjugateConnectoidSegments extends ManagedGraphEntities<ConjugateConnectoidSegment> {
   
   /**
    * {@inheritDoc}
