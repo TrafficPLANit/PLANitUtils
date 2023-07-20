@@ -29,7 +29,7 @@ public interface MapWrapper<K, V> extends Iterable<V> {
    * @return found match
    */
   public static <KK,VV> VV firstMatch(MapWrapper<KK,VV> mapWrapper, Predicate<VV> valuePredicate) {
-    return mapWrapper.stream().filter(valuePredicate).findFirst().get();
+    return mapWrapper.stream().filter(valuePredicate).findFirst().orElse(null);
   }
   
   /**
