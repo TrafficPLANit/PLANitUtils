@@ -90,9 +90,9 @@ public class UrlUtils {
     } catch (Exception e) {
     }
 
-    /* try again, now as local file rather than web based */
+    /* try again, now as local file or resource rather than web based */
     try {
-      return createFromLocalPath(path);
+      return createFromLocalPathOrResource(path);
     }catch (Exception e) {
       throw new PlanItRunTimeException("Unable to extract URL from %s",path);
     }
