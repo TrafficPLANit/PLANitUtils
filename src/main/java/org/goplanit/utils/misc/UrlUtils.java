@@ -1,5 +1,6 @@
 package org.goplanit.utils.misc;
 
+import org.goplanit.utils.exceptions.PlanItRunTimeException;
 import org.goplanit.utils.resource.ResourceUtils;
 
 import java.io.File;
@@ -75,6 +76,26 @@ public class UrlUtils {
   public static boolean hasHost(URL url) {
     String host = url.getHost();
     return host != null && !"".equals(host);
+  }
+
+  /** Construct a URL based on a given a location either local or not
+   *
+   * @param path to convert
+   * @return URL representation
+   */
+  public static URL createFrom(String path) {
+    try {
+      var result = new URL(path);
+      return result;
+    } catch (Exception e) {
+    }
+
+    /* try again, now as local file rather than web based */
+    try {
+      return createFromLocalPath(path);
+    }catch (Exception e) {
+      throw new PlanItRunTimeException("Unable to extract URL from %s",path);
+    }
   }
   
   /** Construct a URL based on a given local file location
