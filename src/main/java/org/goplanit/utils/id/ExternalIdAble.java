@@ -105,10 +105,11 @@ public interface ExternalIdAble extends IdAble {
    */
   public default void appendExternalId(final String appendWith, final Character separator){
     PlanItRunTimeException.throwIfNull(separator,"Separator null");
+    if(StringUtils.isNullOrBlank(appendWith)){
+      return;
+    }
     if(!hasExternalId()){
       setExternalId(appendWith);
-    }
-    if(StringUtils.isNullOrBlank(appendWith)){
       return;
     }
     setExternalId(String.join(separator.toString(), getExternalId(), appendWith));
