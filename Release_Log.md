@@ -2,6 +2,19 @@
 
 PLANitUtils release log.
 
+## 0.4.0
+
+**Enhancements**
+* [GENERAL] Improved architecture for service network, and routed services
+* [GENERAL] General improvements and extensions to util classes
+* #14 Upgrade to JUnit5
+* #13 Add CI support by building and running tests upon push
+* #12 Add support for conjugate directed graphs (edge-to-vertex-duals)
+* #11 Extend reflection utils to easily obtain field names and values
+
+**Bug fixes**
+* #10 Suppress warnings of geotools epsg factory when finding matching epsg code for CRS
+
 ## 0.3.0
 
 * support stops, platforms and other PT related infrastructure in PLANit memory model via service network and transfer zone interfaces (PLANitOSM/#8)
