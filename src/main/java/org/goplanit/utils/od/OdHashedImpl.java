@@ -30,7 +30,7 @@ public abstract class OdHashedImpl<T> extends OdDataImpl<T> implements OdHashed<
    */
   public OdHashedImpl(Class<? extends IdAble> idClass, final IdGroupingToken groupId, final OdZones zones) {
     super(idClass, groupId, zones);
-    this.odHashed = new HashMap<Integer, T>();
+    this.odHashed = new HashMap<>();
   }
 
   /**
