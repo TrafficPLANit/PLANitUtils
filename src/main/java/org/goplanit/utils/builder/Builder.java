@@ -31,6 +31,15 @@ public abstract class Builder<T> {
    * @throws PlanItException thrown if error
    */
   protected abstract Configurator<T> createConfigurator() throws PlanItException;
+
+  /**
+   * Set the configurator directly. Not recommended to use unless you know what you're doing
+   *
+   * @param configurator to set
+   */
+  protected void setConfigurator(Configurator<T> configurator){
+    this.configurator = configurator;
+  }
   
   /** 
    * collect the class to build
