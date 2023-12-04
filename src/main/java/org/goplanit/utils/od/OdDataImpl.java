@@ -45,7 +45,7 @@ public abstract class OdDataImpl<T> extends IdAbleImpl implements OdData<T> {
    * 
    * @param other to copy
    */
-  public OdDataImpl(OdDataImpl<T> other) {
+  public OdDataImpl(OdDataImpl<? extends T> other) {
     super(other);
     this.zones = other.zones;
   }

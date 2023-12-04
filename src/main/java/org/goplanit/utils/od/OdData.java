@@ -23,12 +23,34 @@ public interface OdData<T> extends IdAble, Iterable<T> {
 
   /**
    * Returns the value for a specified origin and destination by their internal id
+   *
+   * @param origin      specified origin
+   * @param destination specified destination
+   * @return value at the specified cell
+   */
+  public default boolean hasValue(Zone origin, Zone destination){
+    return hasValue(origin.getId(), destination.getId());
+  }
+
+  /**
+   * Returns the value for a specified origin and destination by their internal id
    * 
    * @param originId      specified origin
    * @param destinationId specified destination
    * @return value at the specified cell
    */
   public T getValue(long originId, long destinationId);
+
+  /**
+   * Returns the value for a specified origin and destination by their internal id
+   *
+   * @param originId      specified origin
+   * @param destinationId specified destination
+   * @return value at the specified cell
+   */
+  public default boolean hasValue(long originId, long destinationId){
+    return getValue(originId, destinationId) != null;
+  }
 
   /**
    * Sets the value for a specified origin and destination

@@ -12,7 +12,7 @@ import org.goplanit.utils.zoning.Zone;
  * @author markr
  *
  */
-public abstract class OdHashedIterator<T> implements OdDataIterator<T> {
+public class OdHashedIterator<T> implements OdDataIterator<T> {
 
   private final OdHashed<T> container;
 

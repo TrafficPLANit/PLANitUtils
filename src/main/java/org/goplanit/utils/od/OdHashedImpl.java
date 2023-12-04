@@ -10,7 +10,7 @@ import org.goplanit.utils.zoning.Zone;
 
 /**
  * This class stores paths by their origin and destination by creating a unique hash for the combined ids of the od zones. This results in a memory efficient implementation
- * requiring only a single hash based container, instead of having as many containers as their are origins. It also means only conducting a single lookup despite the fact we have
+ * requiring only a single hash based container, instead of having as many containers as there are origins. It also means only conducting a single lookup despite the fact we have
  * two keys (o and d).
  *
  * @author markr
@@ -39,7 +39,7 @@ public abstract class OdHashedImpl<T> extends OdDataImpl<T> implements OdHashed<
    * 
    * @param other to copy from
    */
-  public OdHashedImpl(final OdHashedImpl<T> other) {
+  public OdHashedImpl(final OdHashedImpl<? extends T> other) {
     super(other);
     this.odHashed = new HashMap<>(other.odHashed);
   }
@@ -50,7 +50,7 @@ public abstract class OdHashedImpl<T> extends OdDataImpl<T> implements OdHashed<
   @Override
   public T getValue(Zone origin, Zone destination) {
     /* hash to single key */
-    return odHashed.get(Arrays.hashCode(new long[] { origin.getId(), destination.getId() }));
+    return odHashed.get(OdHashed.generateHashKey(origin.getId(), destination.getId()));
   }
 
   /**
@@ -59,15 +59,15 @@ public abstract class OdHashedImpl<T> extends OdDataImpl<T> implements OdHashed<
   @Override
   public T getValue(long originId, long destinationId) {
     /* hash to single key */
-    return odHashed.get(Arrays.hashCode(new long[] { originId, destinationId }));
+    return odHashed.get(OdHashed.generateHashKey(originId, destinationId));
   }
 
   /**
    * {@inheritDoc}
    */
   @Override
-  public void setValue(Zone origin, Zone destination, T path) {
-    odHashed.put(Arrays.hashCode(new long[] { origin.getId(), destination.getId() }), path);
+  public void setValue(Zone origin, Zone destination, T value) {
+    odHashed.put(OdHashed.generateHashKey(origin.getId(), destination.getId()), value);
   }
 
   /**
