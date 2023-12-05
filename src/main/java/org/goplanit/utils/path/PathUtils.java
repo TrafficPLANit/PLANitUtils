@@ -1,5 +1,6 @@
 package org.goplanit.utils.path;
 
+import java.util.Collection;
 import java.util.function.Function;
 
 import org.goplanit.utils.graph.Vertex;
@@ -53,5 +54,37 @@ public class PathUtils {
     builder.deleteCharAt(builder.length() - 1);
     builder.append("]");
     return new String(builder);
-  }  
+  }
+
+  /**
+   * Compute path cost by summing the edge segment costs provided based on id as index in cost array for ech provided path
+   *
+   * @param paths to get cost for
+   * @param edgeSegmentCostsById array with costs per edge segment
+   * @return path cost array found in order of collection
+   */
+  public static double[] computeEdgeSegmentAdditivePathCost(Collection<? extends SimpleDirectedPath> paths, double[] edgeSegmentCostsById){
+    final double pathCosts[] = new double[paths.size()];
+    int index = 0;
+    for(var path : paths){
+      pathCosts[index++] = computeEdgeSegmentAdditivePathCost(path, edgeSegmentCostsById);
+    }
+    return pathCosts;
+  }
+
+  /**
+   * Compute path cost by summing the edge segment costs provided based on id as index in cost array
+   *
+   * @param path to get cost for
+   * @param edgeSegmentCostsById array with costs per edge segment
+   * @return path cost found
+   */
+  public static double computeEdgeSegmentAdditivePathCost(SimpleDirectedPath path, double[] edgeSegmentCostsById){
+    double pathCost = 0.0;
+    for(var iter = path.iterator(); iter.hasNext();){
+      var currEdgeSegment = iter.next();
+      pathCost += edgeSegmentCostsById[ (int) currEdgeSegment.getId()];
+    }
+    return pathCost;
+  }
 }
