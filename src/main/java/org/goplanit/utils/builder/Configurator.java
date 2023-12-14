@@ -9,6 +9,7 @@ import java.util.Map;
 import java.util.logging.Logger;
 
 import org.goplanit.utils.exceptions.PlanItException;
+import org.goplanit.utils.exceptions.PlanItRunTimeException;
 
 /**
  * 
@@ -67,8 +68,8 @@ public class Configurator<T> {
    * @throws SecurityException         thrown if error
    */
   protected void callVoidMethod(T instance, String methodName, Object... parameters)
-      throws IllegalAccessException, IllegalArgumentException, InvocationTargetException, PlanItException, NoSuchMethodException, SecurityException {
-    PlanItException.throwIf(instance == null, "The instance to configure by calling " + methodName + " is not available");
+      throws IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException {
+    PlanItRunTimeException.throwIf(instance == null, "The instance to configure by calling " + methodName + " is not available");
     
     // check if each parameter is assignable for the method at hand. first match we choose
     boolean matches = false;
@@ -129,7 +130,7 @@ public class Configurator<T> {
         break;
       }
     } 
-    PlanItException.throwIf(!matches, String.format(
+    PlanItRunTimeException.throwIf(!matches, String.format(
         "unable to call registered method call %s no match found (or invalid argument list) on instance of type %s",
         methodName, instance.getClass().getCanonicalName()));
   }
@@ -187,9 +188,8 @@ public class Configurator<T> {
    * Configure the passed in instance with the registered method calls
    * 
    * @param toConfigureInstance the instance to configure
-   * @throws PlanItException thrown if error
    */
-  public void configure(T toConfigureInstance) throws PlanItException {
+  public void configure(T toConfigureInstance){
     /* cycle through unique method calls */
     for (Map.Entry<String, List<Object[]>> methodCall : delayedMethodCalls.entrySet()) {
       try {
@@ -199,7 +199,8 @@ public class Configurator<T> {
         }
       } catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException | NoSuchMethodException | SecurityException e) {
         LOGGER.severe(e.getMessage());
-        throw new PlanItException("could not call configurator delayed method call to " + methodCall.getKey() + " on class " + toConfigureInstance.getClass().getCanonicalName());
+        throw new PlanItRunTimeException(
+                "Could not call configurator delayed method call to %s on class %s",methodCall.getKey(), toConfigureInstance.getClass().getCanonicalName());
       }
     }
   }
