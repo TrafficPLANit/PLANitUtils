@@ -55,8 +55,30 @@ public class ArrayUtils {
     for (int index = 0; index < length; ++index) {
       destination[index] += addToDestination[index];
     }
-  }  
-  
+  }
+
+  /**
+   * Add the values of a second array element-wise to the first array
+   *
+   * @param origin
+   *          the array to subtract from
+   * @param subtractFromOrigin
+   *          array of values to be subtracted from origin array
+   @param destination
+   *          store result in this array
+   */
+  public static void subtractFrom(double[] origin, double[] subtractFromOrigin, double[] destination) {
+    int length = subtractFromOrigin.length;
+    if(origin.length < destination.length || length < destination.length) {
+      LOGGER.warning("elements not compatible with subtractFrom operator");
+      return;
+    }
+
+    for (int index = 0; index < length; ++index) {
+      destination[index] = origin[index] - subtractFromOrigin[index];
+    }
+  }
+
   /** divide each entry in array by given diviser. When divisor is zero, all entries are set to divideByZeroResult
    * 
    * @param destination array to apply to
@@ -215,5 +237,52 @@ public class ArrayUtils {
     for(int index=0;index<length;++index) {
       consumer.accept(array[index]);
     }
-  }   
+  }
+
+  /**
+   * Simple wrapper around copy of raw array
+   * @param original
+   * @return
+   */
+    public static double[] shallowCopy(double[] original) {
+      return Arrays.copyOf(original, original.length);
+    }
+
+    /**
+     * Get index with the largest value
+     *
+     * @param array to check
+     * @return index of max value entry
+     */
+    public static int findMaxValueIndex(double[] array) {
+      int length = array.length;
+      double maxValue = Double.MIN_VALUE;
+      int maxValueIndex = -1;
+      for(int index=0;index<length;++index) {
+        if(array[index] > maxValue){
+          maxValue = array[index];
+          maxValueIndex = index;
+        }
+      }
+      return maxValueIndex;
+    }
+
+  /**
+   * Get index with the smallest value
+   *
+   * @param array to check
+   * @return index of min value entry
+   */
+  public static int findMinValueIndex(double[] array) {
+    int length = array.length;
+    double minValue = Double.MAX_VALUE;
+    int minValueIndex = -1;
+    for(int index=0;index<length;++index) {
+      if(array[index] < minValue){
+        minValue = array[index];
+        minValueIndex = index;
+      }
+    }
+    return minValueIndex;
+  }
 }
