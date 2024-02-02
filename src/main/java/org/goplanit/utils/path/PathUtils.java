@@ -3,6 +3,7 @@ package org.goplanit.utils.path;
 import java.util.Collection;
 import java.util.function.Function;
 
+import org.goplanit.utils.arrays.ArrayUtils;
 import org.goplanit.utils.graph.Vertex;
 import org.goplanit.utils.graph.directed.EdgeSegment;
 import org.goplanit.utils.network.layer.physical.Node;
@@ -57,36 +58,55 @@ public class PathUtils {
   }
 
   /**
-   * Compute path cost by summing the edge segment costs provided based on id as index in cost array for ech provided path
+   * Compute path cost by summing the edge segment values provided based on id as index in value array for ech provided path
    *
    * @param paths to get cost for
-   * @param edgeSegmentCostsById array with costs per edge segment
-   * @return path cost array found in order of collection
+   * @param edgeSegmentValuesById array with values, e.g., costs per edge segment
+   * @return path value array found in order of collection
    */
-  public static double[] computeEdgeSegmentAdditivePathCost(Collection<? extends SimpleDirectedPath> paths, double[] edgeSegmentCostsById){
-    final double pathCosts[] = new double[paths.size()];
+  public static double[] computeEdgeSegmentAdditiveValues(Collection<? extends SimpleDirectedPath> paths, double[] edgeSegmentValuesById){
+    final double pathValues[] = new double[paths.size()];
     int index = 0;
     for(var path : paths){
-      pathCosts[index++] = computeEdgeSegmentAdditivePathCost(path, edgeSegmentCostsById);
+      pathValues[index++] = computeEdgeSegmentAdditiveValues(path, edgeSegmentValuesById);
     }
-    return pathCosts;
+    return pathValues;
   }
 
   /**
-   * Compute path cost by summing the edge segment costs provided based on id as index in cost array
+   * Compute path cost by summing the edge segment values provided based on id as index in value array
    *
-   * @param path to get cost for
-   * @param edgeSegmentCostsById array with costs per edge segment
+   * @param path to get summed value for
+   * @param edgeSegmentCostsById array with values per edge segment
    * @return path cost found
    */
-  public static double computeEdgeSegmentAdditivePathCost(SimpleDirectedPath path, double[] edgeSegmentCostsById){
-    double pathCost = 0.0;
+  public static double computeEdgeSegmentAdditiveValues(SimpleDirectedPath path, double[] edgeSegmentCostsById){
+    double pathAdditiveValue = 0.0;
     for(var iter = path.iterator(); iter.hasNext();){
       var currEdgeSegment = iter.next();
-      pathCost += edgeSegmentCostsById[ (int) currEdgeSegment.getId()];
+      pathAdditiveValue += edgeSegmentCostsById[ (int) currEdgeSegment.getId()];
     }
-    return pathCost;
+    return pathAdditiveValue;
   }
 
 
+  /**
+   * Find path overlap between two paths by it shared link segment ids
+   *
+   * @param path1 to check against path2
+   * @param path2 to check against path 1
+   * @return shared link segment ids
+   */
+  public static int[] getOverlappingPathLinkIndices(SimpleDirectedPath path1, SimpleDirectedPath path2) {
+    int[] overlappingIndices = new int[(int)path1.size()];
+    int overlapIndex = 0;
+    for(var p1LinkSegment : path1){
+      if(path2.containsLinkSegmentId(p1LinkSegment.getId())){
+        overlappingIndices[overlapIndex++] = (int)p1LinkSegment.getId();
+      }
+    }
+    int[] overlappingIndicesTrimmed = new int[overlapIndex];
+    System.arraycopy(overlappingIndices, 0, overlappingIndicesTrimmed, 0, overlapIndex);
+    return overlappingIndicesTrimmed;
+  }
 }

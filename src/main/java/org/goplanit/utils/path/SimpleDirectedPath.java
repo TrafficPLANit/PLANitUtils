@@ -76,4 +76,12 @@ public interface SimpleDirectedPath extends Iterable<EdgeSegment> {
    */
   public abstract int hashCode();
 
+  public default boolean containsLinkSegmentId(long id){
+    for(var linkIter = iterator() ; linkIter.hasNext();){
+      if(linkIter.next().getId() == id){
+        return true;
+      }
+    }
+    return false;
+  }
 }
