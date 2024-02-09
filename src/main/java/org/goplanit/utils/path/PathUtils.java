@@ -3,9 +3,9 @@ package org.goplanit.utils.path;
 import java.util.Collection;
 import java.util.function.Function;
 
-import org.goplanit.utils.arrays.ArrayUtils;
 import org.goplanit.utils.graph.Vertex;
 import org.goplanit.utils.graph.directed.EdgeSegment;
+import org.goplanit.utils.misc.Pair;
 import org.goplanit.utils.network.layer.physical.Node;
 
 /**
@@ -108,5 +108,38 @@ public class PathUtils {
     int[] overlappingIndicesTrimmed = new int[overlapIndex];
     System.arraycopy(overlappingIndices, 0, overlappingIndicesTrimmed, 0, overlapIndex);
     return overlappingIndicesTrimmed;
+  }
+
+  /**
+   * Find path overlap distance between two paths by it shared link segment lengths, where the portion found relates
+   * to path1 overlapping with path2
+   *
+   * @param path1 to check against overlap with path2
+   * @param path2 to use as reference
+   * @return distance overlapping with path 2 and path 1 total distance in km
+   */
+  public static Pair<Double, Double> getOverlappingPathLinkDistanceKm(SimpleDirectedPath path1, SimpleDirectedPath path2){
+    double distanceP1 = 0;
+    double overlapDistance = 0;
+    for(var p1LinkSegment : path1){
+      distanceP1 += p1LinkSegment.getLengthKm();
+      if(path2.containsLinkSegmentId(p1LinkSegment.getId())){
+        overlapDistance += p1LinkSegment.getLengthKm();
+      }
+    }
+    return Pair.of(overlapDistance, distanceP1);
+  }
+
+  /**
+   * Find path overlap between two paths by it shared link segment lengths, where the portion found relates
+   * to path1 overlapping with path2
+   *
+   * @param path1 to check against overlap with path2
+   * @param path2 to use as reference
+   * @return portion overlapping in terms of distance between 0 (nothing) and 1 (full overlap)
+   */
+  public static double getOverlapFactor(SimpleDirectedPath path1, SimpleDirectedPath path2){
+    var absoluteOverlapResult = getOverlappingPathLinkDistanceKm(path1, path2);
+    return absoluteOverlapResult.first()/absoluteOverlapResult.second();
   }
 }

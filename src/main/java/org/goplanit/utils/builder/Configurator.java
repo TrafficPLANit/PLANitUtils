@@ -144,10 +144,20 @@ public class Configurator<T> {
   protected void registerDelayedMethodCall(String methodName, Object... parameters) {
     List<Object[]> parametersPerCall = delayedMethodCalls.get(methodName);
     if(parametersPerCall == null) {
-      parametersPerCall = new ArrayList<Object[]>();
+      parametersPerCall = new ArrayList<>();
       delayedMethodCalls.put(methodName, parametersPerCall);  
     }
     parametersPerCall.add(parameters);    
+  }
+
+  /**
+   * Verify whether delayed method call is registered
+   *
+   * @param methodName to verify
+   * @return true when present, false otherwise
+   */
+  protected boolean hasRegisteredDelayedMethodCall(String methodName){
+    return delayedMethodCalls.containsKey(methodName);
   }
 
   /** Collect the first parameter submitted with (last) registered delayed method call of given signature. If not available null is returned.
@@ -174,7 +184,7 @@ public class Configurator<T> {
    */
   public Configurator(Class<T> instanceType) {
     this.configuratorClassType = instanceType;
-    this.delayedMethodCalls = new HashMap<String, List<Object[]>>();
+    this.delayedMethodCalls = new HashMap<>();
   }
   
   /** collect the class type we are configuring for

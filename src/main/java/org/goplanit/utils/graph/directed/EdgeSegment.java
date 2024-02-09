@@ -164,6 +164,15 @@ public interface EdgeSegment extends Serializable, GraphEntity {
   }
 
   /**
+   * Verify f opposite direction segment exists
+   *
+   * @return true when exists, false otherwise
+   */
+  public default boolean hasOppositeDirectionSegment(){
+    return getOppositeDirectionSegment()!=null;
+  }
+
+  /**
    * Assuming geometry is present, if not false is returned, we verify if the geometry is provided in the direction of the
    * segment or not
    *
