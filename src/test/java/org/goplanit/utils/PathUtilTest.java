@@ -17,11 +17,11 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class PathUtilTest {
 
-  private SimpleDirectedPathImpl path1;
-  private SimpleDirectedPathImpl path2;
+  private static SimpleDirectedPathImpl path1;
+  private static SimpleDirectedPathImpl path2;
 
   @BeforeAll
-  public void setup(){
+  public static void setup(){
     //todo: before we can do testing here we need simple implementations (non graph entities) in util repo for edge/directed edge/vertex and directed vertex as well
     //todo: too much work for now, but if time is found this would be helpful to do, for now park this test
     path1 = new SimpleDirectedPathImpl();
@@ -30,7 +30,7 @@ public class PathUtilTest {
   }
 
   @AfterAll
-  public void afterAll(){
+  public static void afterAll(){
     IdGenerator.reset();
   }
 

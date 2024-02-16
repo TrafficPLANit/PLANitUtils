@@ -8,6 +8,7 @@ import java.util.Set;
 import java.util.logging.Logger;
 
 import org.geotools.geometry.jts.JTS;
+import org.goplanit.utils.network.layer.physical.Node;
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.Point;
 import org.opengis.geometry.MismatchedDimensionException;
@@ -153,7 +154,7 @@ public interface Vertex extends Serializable, GraphEntity {
    * @return edges for which this holds, if none hold an empty set is returned
    */
   public default Set<? extends Edge> getEdges(Vertex otherVertex) {
-    Set<Edge> edges = new HashSet<Edge>();
+    Set<Edge> edges = new HashSet<>();
     for (Edge edge : getEdges()) {
       if (edge.getVertexA().getId() == this.getId() && edge.getVertexB().getId() == otherVertex.getId()) {
         edges.add(edge);
@@ -162,7 +163,24 @@ public interface Vertex extends Serializable, GraphEntity {
       }
     }
     return edges;
-  }  
+  }
+
+  /**
+   * verify if the edge exists based on the other vertex
+   *
+   * @param otherVertex that defines the edge
+   * @return true if an edge exists
+   */
+  public default boolean hasEdge(Vertex otherVertex){
+    for (Edge edge : getEdges()) {
+      if (edge.getVertexA().getId() == this.getId() && edge.getVertexB().getId() == otherVertex.getId()) {
+        return true;
+      } else if (edge.getVertexB().getId() == this.getId() && edge.getVertexA().getId() == otherVertex.getId()) {
+        return true;
+      }
+    }
+    return false;
+  }
   
   /**
    * Number of entries in edge segments
