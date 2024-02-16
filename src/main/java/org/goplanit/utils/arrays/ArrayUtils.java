@@ -241,8 +241,8 @@ public class ArrayUtils {
 
   /**
    * Simple wrapper around copy of raw array
-   * @param original
-   * @return
+   * @param original to copy
+   * @return shallow copy
    */
     public static double[] shallowCopy(double[] original) {
       return Arrays.copyOf(original, original.length);

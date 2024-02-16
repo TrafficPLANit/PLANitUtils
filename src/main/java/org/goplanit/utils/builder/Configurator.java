@@ -63,7 +63,6 @@ public class Configurator<T> {
    * @throws IllegalAccessException    thrown if error
    * @throws IllegalArgumentException  thrown if error
    * @throws InvocationTargetException thrown if error
-   * @throws PlanItException           thrown if instance or its class are unknown
    * @throws NoSuchMethodException     thrown if error
    * @throws SecurityException         thrown if error
    */
