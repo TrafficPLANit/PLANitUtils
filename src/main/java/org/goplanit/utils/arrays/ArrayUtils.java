@@ -256,7 +256,7 @@ public class ArrayUtils {
      */
     public static int findMaxValueIndex(double[] array) {
       int length = array.length;
-      double maxValue = Double.MIN_VALUE;
+      double maxValue = -Double.MAX_VALUE;
       int maxValueIndex = -1;
       for(int index=0;index<length;++index) {
         if(array[index] > maxValue){

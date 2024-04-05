@@ -150,6 +150,16 @@ public class Configurator<T> {
   }
 
   /**
+   * UnRegister all previously registered method calls to a method
+   *
+   * @param methodName the method name
+   * @return true when succeeded, false otherwise
+   */
+  protected boolean unregisterDelayedMethodCalls(String methodName) {
+    return delayedMethodCalls.remove(methodName) != null;
+  }
+
+  /**
    * Verify whether delayed method call is registered
    *
    * @param methodName to verify
