@@ -285,4 +285,15 @@ public class ArrayUtils {
     }
     return minValueIndex;
   }
+
+  /**
+   * Modify array by taking log of each value
+   *
+   * @param array to apply Math.log to
+   */
+  public static void logOf(double[] array) {
+    for (int index = 0; index < array.length; ++index) {
+      array[index] = Math.log(array[index]);
+    }
+  }
 }
