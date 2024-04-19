@@ -25,10 +25,12 @@ public abstract class OdPrimitiveMatrix<T extends Number> extends OdMatrixImpl<T
    * 
    * @param idTokenClass   to use for id generation
    * @param idToken        to use for the matrix id
+   * @param valueClass class of the values in container
    * @param zones          holder for zones considered in the matrix
    * @param matrixContents container for the matrix contents
    */
-  public OdPrimitiveMatrix(Class<? extends IdAble> idTokenClass, IdGroupingToken idToken, Class<T> valueClass, OdZones zones, Array2D<T> matrixContents) {
+  public OdPrimitiveMatrix(
+          Class<? extends IdAble> idTokenClass, IdGroupingToken idToken, Class<T> valueClass, OdZones zones, Array2D<T> matrixContents) {
     super(idTokenClass, idToken, valueClass, zones, matrixContents);
   }
 

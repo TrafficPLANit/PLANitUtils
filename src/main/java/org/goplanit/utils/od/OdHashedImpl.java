@@ -26,9 +26,11 @@ public abstract class OdHashedImpl<T> extends OdDataImpl<T> implements OdHashed<
    *
    * @param idClass concrete class to use for id generation
    * @param groupId contiguous id generation within this group for instances of this class
+   * @param valueClass class of the values in container
    * @param zones   the zones being used
    */
-  public OdHashedImpl(Class<? extends IdAble> idClass, final IdGroupingToken groupId, Class<T> valueClass, final OdZones zones) {
+  public OdHashedImpl(
+          Class<? extends IdAble> idClass, final IdGroupingToken groupId, Class<T> valueClass, final OdZones zones) {
     super(idClass, groupId, valueClass, zones);
     this.odHashed = new HashMap<>();
   }

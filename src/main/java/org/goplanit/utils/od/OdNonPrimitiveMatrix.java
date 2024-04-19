@@ -27,10 +27,12 @@ public abstract class OdNonPrimitiveMatrix<T> extends OdMatrixImpl<T, T[][]> {
    * 
    * @param idTokenClass   to use for id generation
    * @param idToken        to use for the matrix id
+   * @param valueClass class of the values in container
    * @param zones          holder for zones considered in the matrix
    * @param matrixContents container for the matrix contents
    */
-  public OdNonPrimitiveMatrix(final Class<? extends IdAble> idTokenClass, final IdGroupingToken idToken, Class<T> valueClass, final OdZones zones, final T[][] matrixContents) {
+  public OdNonPrimitiveMatrix(
+          final Class<? extends IdAble> idTokenClass, final IdGroupingToken idToken, Class<T> valueClass, final OdZones zones, final T[][] matrixContents) {
     super(idTokenClass, idToken, valueClass, zones, matrixContents);
   }
 
