@@ -41,7 +41,7 @@ public interface ExternalIdAble extends IdAble {
     }
   }
 
-  /** get id based on the id mapping type (ID, XML_ID, EXETERNAL_ID)
+  /** get id based on the id mapping type (ID, XML_ID, EXTERNAL_ID)
    *
    * @param idMappingType type of id mapping
    * @return id (in string format)

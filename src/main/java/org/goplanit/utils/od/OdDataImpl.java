@@ -14,6 +14,8 @@ import org.goplanit.utils.zoning.OdZones;
  */
 public abstract class OdDataImpl<T> extends IdAbleImpl implements OdData<T> {
 
+  protected Class<T> dataClass;
+
   /**
    * holder for zones considered in the matrix
    */
@@ -21,10 +23,10 @@ public abstract class OdDataImpl<T> extends IdAbleImpl implements OdData<T> {
 
   /**
    * Access to underlying zones
-   * 
+   *
    * @return odZones
    */
-  protected OdZones getOdZones() {
+  public OdZones getOdZones() {
     return zones;
   }
 
@@ -33,11 +35,13 @@ public abstract class OdDataImpl<T> extends IdAbleImpl implements OdData<T> {
    * 
    * @param idTokenClass to use for id grouping
    * @param idToken      to use for id generation
+   * @param dataClass    class of the entries for each od
    * @param zones        zones considered in the matrix
    */
-  public OdDataImpl(final Class<? extends IdAble> idTokenClass, IdGroupingToken idToken, final OdZones zones) {
+  public OdDataImpl(final Class<? extends IdAble> idTokenClass, IdGroupingToken idToken, Class<T> dataClass, final OdZones zones) {
     super(generateId(idToken, idTokenClass));
     this.zones = zones;
+    this.dataClass = dataClass;
   }
 
   /**
@@ -48,6 +52,14 @@ public abstract class OdDataImpl<T> extends IdAbleImpl implements OdData<T> {
   public OdDataImpl(OdDataImpl<? extends T> other) {
     super(other);
     this.zones = other.zones;
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public Class<T> getDataClass() {
+    return dataClass;
   }
 
   /**

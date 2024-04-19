@@ -2,10 +2,7 @@ package org.goplanit.utils.reflection;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.logging.Logger;
@@ -42,10 +39,9 @@ public class ReflectionUtils {
    * @param className of the class to be instantiated
    * @param constructorParameters parameters for constructor
    * @return created instance
-   * @throws PlanItException when error occurs during instantiation
    */
   @SuppressWarnings("unchecked")
-  public static <T> T createTypedInstance(String className, Object...constructorParameters) throws PlanItException {
+  public static <T> T createTypedInstance(String className, Object...constructorParameters){
     return (T) createInstance(className, constructorParameters);
   }
   
@@ -149,5 +145,19 @@ public class ReflectionUtils {
     }
     
     return fieldValueMap;
-  }   
+  }
+
+  /**
+   * For a container with known data class, explicitly cast the internal generics of the collection to this class
+   *
+   * @param collectionClass the collection class with unattainable class data type
+   * @param dataTypeClass of entries of colection
+   * @return collection with data type of correct type
+   * @param <U> collection type U of ?
+   * @param <V> data type
+   * @param <W> explicit collection type U with data type V
+   */
+  public static <U extends Collection<?>, V, W extends Collection<V>> Class<W> injectClassIntoContainerGenerics(Class<U> collectionClass, Class<V> dataTypeClass){
+    return (Class<W>) collectionClass;
+  }
 }

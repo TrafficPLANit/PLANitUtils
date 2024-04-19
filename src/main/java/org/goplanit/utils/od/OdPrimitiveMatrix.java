@@ -28,8 +28,8 @@ public abstract class OdPrimitiveMatrix<T extends Number> extends OdMatrixImpl<T
    * @param zones          holder for zones considered in the matrix
    * @param matrixContents container for the matrix contents
    */
-  public OdPrimitiveMatrix(Class<? extends IdAble> idTokenClass, IdGroupingToken idToken, OdZones zones, Array2D<T> matrixContents) {
-    super(idTokenClass, idToken, zones, matrixContents);
+  public OdPrimitiveMatrix(Class<? extends IdAble> idTokenClass, IdGroupingToken idToken, Class<T> valueClass, OdZones zones, Array2D<T> matrixContents) {
+    super(idTokenClass, idToken, valueClass, zones, matrixContents);
   }
 
   /**
@@ -40,7 +40,7 @@ public abstract class OdPrimitiveMatrix<T extends Number> extends OdMatrixImpl<T
    */
   public OdPrimitiveMatrix(OdPrimitiveMatrix<T> other, Array2D.Factory<T> contentFactory) {
     super(other);
-    this.matrixContents = contentFactory.copy(other.matrixContents); // shallow copy
+    this.matrixContainer = contentFactory.copy(other.matrixContainer); // shallow copy
   }
 
   /**
@@ -48,14 +48,14 @@ public abstract class OdPrimitiveMatrix<T extends Number> extends OdMatrixImpl<T
    */
   @Override
   public void setValue(Zone origin, Zone destination, T value) {
-    matrixContents.set(origin.getId(), destination.getId(), value);
+    matrixContainer.set(origin.getId(), destination.getId(), value);
   }
 
   /**
    * {@inheritDoc}
    */
   public T getValue(Zone origin, Zone destination) {
-    return matrixContents.get(origin.getId(), destination.getId());
+    return matrixContainer.get(origin.getId(), destination.getId());
   }
 
   /**
@@ -63,7 +63,7 @@ public abstract class OdPrimitiveMatrix<T extends Number> extends OdMatrixImpl<T
    */
   @Override
   public T getValue(long originId, long destinationId) {
-    return matrixContents.get(originId, destinationId);
+    return matrixContainer.get(originId, destinationId);
   }
 
   /**

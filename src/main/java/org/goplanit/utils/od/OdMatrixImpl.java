@@ -21,7 +21,7 @@ public abstract class OdMatrixImpl<T, U> extends OdDataImpl<T> implements OdMatr
   /**
    * matrix of data values
    */
-  protected U matrixContents;
+  protected U matrixContainer;
 
   /**
    * Constructor for Od matrix containing primitives, i.e. number based
@@ -29,11 +29,12 @@ public abstract class OdMatrixImpl<T, U> extends OdDataImpl<T> implements OdMatr
    * @param idTokenClass   to use for id generation
    * @param idToken        to use for the matrix id
    * @param zones          holder for zones considered in the matrix
-   * @param matrixContents container for the matrix contents
+   * @param matrixContainer container for the matrix contents
+   * @param valueClass class of the values within matrix
    */
-  public OdMatrixImpl(Class<? extends IdAble> idTokenClass, IdGroupingToken idToken, OdZones zones, U matrixContents) {
-    super(idTokenClass, idToken, zones);
-    this.matrixContents = matrixContents;
+  public OdMatrixImpl(Class<? extends IdAble> idTokenClass, IdGroupingToken idToken, Class<T> valueClass,  OdZones zones, U matrixContainer) {
+    super(idTokenClass, idToken, valueClass, zones);
+    this.matrixContainer = matrixContainer;
   }
 
   /**
@@ -43,7 +44,7 @@ public abstract class OdMatrixImpl<T, U> extends OdDataImpl<T> implements OdMatr
    */
   public OdMatrixImpl(final OdMatrixImpl<T, U> other) {
     super(other);
-    this.matrixContents = other.matrixContents;
+    this.matrixContainer = other.matrixContainer;
   }
 
   /**

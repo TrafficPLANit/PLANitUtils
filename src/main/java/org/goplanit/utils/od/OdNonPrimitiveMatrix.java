@@ -1,6 +1,5 @@
 package org.goplanit.utils.od;
 
-import java.util.Arrays;
 import java.util.logging.Logger;
 
 import org.goplanit.utils.id.IdAble;
@@ -31,8 +30,8 @@ public abstract class OdNonPrimitiveMatrix<T> extends OdMatrixImpl<T, T[][]> {
    * @param zones          holder for zones considered in the matrix
    * @param matrixContents container for the matrix contents
    */
-  public OdNonPrimitiveMatrix(final Class<? extends IdAble> idTokenClass, final IdGroupingToken idToken, final OdZones zones, final T[][] matrixContents) {
-    super(idTokenClass, idToken, zones, matrixContents);
+  public OdNonPrimitiveMatrix(final Class<? extends IdAble> idTokenClass, final IdGroupingToken idToken, Class<T> valueClass, final OdZones zones, final T[][] matrixContents) {
+    super(idTokenClass, idToken, valueClass, zones, matrixContents);
   }
 
   /**
@@ -54,7 +53,7 @@ public abstract class OdNonPrimitiveMatrix<T> extends OdMatrixImpl<T, T[][]> {
    */
   @Override
   public void setValue(Zone origin, Zone destination, T value) {
-    matrixContents[(int) origin.getId()][(int) destination.getId()] = value;
+    matrixContainer[(int) origin.getId()][(int) destination.getId()] = value;
   }
 
   /**
@@ -62,7 +61,7 @@ public abstract class OdNonPrimitiveMatrix<T> extends OdMatrixImpl<T, T[][]> {
    */
   @Override
   public T getValue(Zone origin, Zone destination) {
-    return matrixContents[(int) origin.getId()][(int) destination.getId()];
+    return matrixContainer[(int) origin.getId()][(int) destination.getId()];
   }
 
   /**
@@ -70,7 +69,7 @@ public abstract class OdNonPrimitiveMatrix<T> extends OdMatrixImpl<T, T[][]> {
    */
   @Override
   public T getValue(long originId, long destinationId) {
-    return matrixContents[(int) originId][(int) destinationId];
+    return matrixContainer[(int) originId][(int) destinationId];
   }
 
   /**

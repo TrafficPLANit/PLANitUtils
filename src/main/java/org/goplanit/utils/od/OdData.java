@@ -13,6 +13,13 @@ import org.goplanit.utils.zoning.Zone;
 public interface OdData<T> extends IdAble, Iterable<T> {
 
   /**
+   * Access to class of the chosen data type
+   *
+   * @return clazz
+   */
+  public Class<T> getDataClass();
+
+  /**
    * Returns the value for a specified origin and destination
    * 
    * @param origin      specified origin
