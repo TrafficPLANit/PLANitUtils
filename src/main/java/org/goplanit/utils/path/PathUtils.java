@@ -25,18 +25,23 @@ public class PathUtils {
    */
   public static String getNodePathString(final ManagedDirectedPath path, final Function<Vertex, Object> idMapper) {
     final StringBuilder builder = new StringBuilder("[");
-    for (final EdgeSegment edgeSegment : path) {
-      final Vertex vertex = edgeSegment.getUpstreamVertex();
-      if (vertex instanceof Node) {
-        final Node node = (Node) vertex;
-        builder.append(idMapper.apply(node));
-        if (edgeSegment.getDownstreamVertex() instanceof Node) {
+    if(path != null) {
+      for (final EdgeSegment edgeSegment : path) {
+        final Vertex vertex = edgeSegment.getUpstreamVertex();
+        if (vertex instanceof Node) {
+          final Node node = (Node) vertex;
+          builder.append(idMapper.apply(node));
           builder.append(",");
         }
       }
     }
+
+    if(builder.length() > 1){
+      builder.deleteCharAt(builder.length() - 1);
+    }
+
     builder.append("]");
-    return new String(builder);
+    return builder.toString();
   }
 
   /**
@@ -48,13 +53,19 @@ public class PathUtils {
    */
   public static String getEdgeSegmentPathString(final ManagedDirectedPath path, final Function<EdgeSegment, Object> idGetter) {
     final StringBuilder builder = new StringBuilder("[");
-    for (final EdgeSegment edgeSegment : path) {
-      builder.append(idGetter.apply(edgeSegment));
-      builder.append(",");
+    if(path != null) {
+      for (final EdgeSegment edgeSegment : path) {
+        builder.append(idGetter.apply(edgeSegment));
+        builder.append(",");
+      }
     }
-    builder.deleteCharAt(builder.length() - 1);
+
+    if(builder.length() > 1){
+      builder.deleteCharAt(builder.length() - 1);
+    }
+
     builder.append("]");
-    return new String(builder);
+    return builder.toString();
   }
 
   /**
