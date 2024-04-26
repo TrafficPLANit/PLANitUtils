@@ -75,6 +75,9 @@ public interface UntypedACyclicSubGraph<V extends DirectedVertex, E extends Edge
    */
   public default Iterator<V> getTopologicalIterator(boolean update, boolean descendingIterator) {
     var topologicallySortedVertices = topologicalSort(update);
+    if(topologicallySortedVertices == null){
+      return null;
+    }
     return descendingIterator ? topologicallySortedVertices.descendingIterator() : topologicallySortedVertices.iterator();
   }
 
