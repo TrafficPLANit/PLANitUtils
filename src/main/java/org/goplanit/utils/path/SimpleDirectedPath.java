@@ -4,6 +4,7 @@ import org.goplanit.utils.graph.directed.EdgeSegment;
 import org.goplanit.utils.id.ExternalIdAble;
 import org.goplanit.utils.id.ManagedId;
 import org.goplanit.utils.misc.IterableUtils;
+import org.locationtech.jts.geom.Geometry;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -84,4 +85,11 @@ public interface SimpleDirectedPath extends Iterable<EdgeSegment> {
     }
     return false;
   }
+
+  /** construct geometry from underlying link (segments) in the form of one contiguous
+   * result from start to finish
+   *
+   * @return geometry (typically a line string)
+   */
+  public abstract Geometry createGeometry();
 }
