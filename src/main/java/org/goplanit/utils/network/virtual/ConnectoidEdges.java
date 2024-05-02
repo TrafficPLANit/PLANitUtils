@@ -1,6 +1,7 @@
 package org.goplanit.utils.network.virtual;
 
 import org.goplanit.utils.graph.GraphEntities;
+import org.goplanit.utils.graph.ManagedGraphEntities;
 
 import java.util.function.BiConsumer;
 
@@ -10,7 +11,7 @@ import java.util.function.BiConsumer;
  * @author markr
  *
  */
-public interface ConnectoidEdges extends GraphEntities<ConnectoidEdge>{
+public interface ConnectoidEdges extends ManagedGraphEntities<ConnectoidEdge> {
   
   /**
    * {@inheritDoc}

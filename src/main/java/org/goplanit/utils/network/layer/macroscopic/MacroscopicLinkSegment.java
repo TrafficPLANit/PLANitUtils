@@ -1,11 +1,6 @@
 package org.goplanit.utils.network.layer.macroscopic;
 
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Set;
-
 import org.goplanit.utils.mode.Mode;
-import org.goplanit.utils.network.layer.physical.Link;
 import org.goplanit.utils.network.layer.physical.LinkSegment;
 import org.goplanit.utils.network.layer.physical.Node;
 import org.goplanit.utils.pcu.PcuCapacitated;

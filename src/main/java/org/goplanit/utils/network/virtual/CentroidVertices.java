@@ -1,8 +1,6 @@
 package org.goplanit.utils.network.virtual;
 
-import org.goplanit.utils.graph.GraphEntities;
-import org.goplanit.utils.graph.Vertex;
-import org.goplanit.utils.graph.VertexFactory;
+import org.goplanit.utils.graph.ManagedGraphEntities;
 
 import java.util.function.BiConsumer;
 
@@ -11,7 +9,7 @@ import java.util.function.BiConsumer;
  * 
  * @author markr
  */
-public interface CentroidVertices extends GraphEntities<CentroidVertex> {
+public interface CentroidVertices extends ManagedGraphEntities<CentroidVertex> {
       
   /**
    * Collect the vertex factory to use for creating instances

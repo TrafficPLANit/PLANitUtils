@@ -1,5 +1,6 @@
 package org.goplanit.utils.network.virtual;
 
+import org.goplanit.utils.exceptions.PlanItRunTimeException;
 import org.goplanit.utils.graph.GraphEntityDeepCopyMapper;
 import org.goplanit.utils.id.IdGroupingToken;
 import org.goplanit.utils.misc.CollectionUtils;
@@ -111,5 +112,17 @@ public interface VirtualNetwork {
    */
   public default boolean hasConnectoidSegments(){
     return !IterableUtils.nullOrEmpty(getConnectoidSegments());
+  }
+
+  /**
+   * Recreate the ids for all registered entities with or without resetting, this includes child managed ids, i.e., nested managedIdentities containers if so indicated
+   *
+   * @param resetManagedIdClass when true we reset the managedId's counter to zero (via its id class) before recreating the ids, otherwise we simply recreate the managed id by
+   *                            starting with the next available id without resetting
+   */
+  public default void recreateManagedIds(boolean resetManagedIdClass){
+    getConnectoidSegments().recreateIds(resetManagedIdClass);
+    getConnectoidEdges().recreateIds(resetManagedIdClass);
+    getCentroidVertices().recreateIds(resetManagedIdClass);
   }
 }
