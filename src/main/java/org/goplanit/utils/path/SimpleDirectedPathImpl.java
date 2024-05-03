@@ -192,7 +192,8 @@ public class SimpleDirectedPathImpl implements SimpleDirectedPath {
       LOGGER.warning(String.format("Found path where one or more links have no geometry or node positions, path geometry incomplete"));
     }
 
-    return PlanitJtsUtils.concatenate(linkGeometries.toArray(LineString[]::new));
+    // deduplicate shared vertices between link (segments) when concatenating
+    return PlanitJtsUtils.createCopyWithoutAdjacentDuplicateCoordinates(PlanitJtsUtils.concatenate(linkGeometries.toArray(LineString[]::new)));
   }
 
 }

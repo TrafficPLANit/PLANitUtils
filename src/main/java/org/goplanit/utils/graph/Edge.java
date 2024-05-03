@@ -243,6 +243,9 @@ public interface Edge extends Serializable, GraphEntity {
    * @return true if in A to B direction, false otherwise
    */
   public default boolean isGeometryInAbDirection(boolean allowSingleVertexWithoutGeometry) {
+    if(!hasGeometry()){
+      throw new PlanItRunTimeException("Unable to identify direction as edge (%s) has no geometry of its own", this.getIdsAsString());
+    }
 
     var vertexAHasGeometry = getVertexA().hasPosition();
     var vertexBHasGeometry = getVertexB().hasPosition();
