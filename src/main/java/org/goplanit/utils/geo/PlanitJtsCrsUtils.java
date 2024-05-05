@@ -1,6 +1,7 @@
 package org.goplanit.utils.geo;
 
 import java.awt.geom.Point2D;
+import java.util.Arrays;
 import java.util.logging.Logger;
 import org.geotools.geometry.jts.JTS;
 import org.geotools.geometry.jts.JTSFactoryFinder;
@@ -353,7 +354,7 @@ public class PlanitJtsCrsUtils {
   public double getClosestDistanceInMetersToPolygon(Coordinate reference, Polygon geometry){
     double minDistanceInMetersForLineSegment = Double.POSITIVE_INFINITY;
     /* explore line segments and project location to find closest distance for each segment */
-    Coordinate[] coords = ((Polygon)geometry).getCoordinates();
+    Coordinate[] coords = geometry.getCoordinates();
     if(coords != null) {
       Coordinate prevCoord = coords[0];
       for(int index=1;index<coords.length;++index) {
@@ -727,7 +728,22 @@ public class PlanitJtsCrsUtils {
     }else {
       throw new PlanItRunTimeException("Unsupported geometry type provided when checking if it is near bounding box");
     }
-    return (distanceMeters + Precision.EPSILON_6) <= maxDistanceMeters;
+    return Precision.smallerEqual(distanceMeters, maxDistanceMeters, Precision.EPSILON_6);
+  }
+
+  /** Verify if any existing coordinate on the passed in geometry1 is within the maximum provided distance of the other
+   * geometry.
+   *
+   * @param geometry1 to check
+   * @param geometry2 to check
+   * @param maxDistanceMeters to consider
+   * @return true when within maximum distance of bounding box, false otherwise
+   */
+  public boolean isGeometryNearGeometry(Geometry geometry1,  Geometry geometry2, double maxDistanceMeters){
+    /* if any of the coordinates of geometry 1 is within range of geometry2 we return true */
+    return Arrays.stream(geometry1.getCoordinates()).anyMatch(c ->
+        Precision.smallerEqual(
+            getClosestDistanceInMeters(c, geometry2), maxDistanceMeters, Precision.EPSILON_6));
   }
 
 }

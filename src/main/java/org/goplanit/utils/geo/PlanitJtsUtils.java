@@ -1,11 +1,7 @@
 package org.goplanit.utils.geo;
 
 import java.text.DecimalFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
@@ -685,5 +681,60 @@ public class PlanitJtsUtils {
    */
   public static double minDiffAngleInDegrees(double angleDegrees1, double angleDegrees2) {
     return Angle.toDegrees(Angle.diff(Angle.normalize(Angle.toRadians(angleDegrees1)),Angle.normalize(Angle.toRadians(angleDegrees2))));
+  }
+
+  /**
+   * Add coord array contiguously in correct order to either the front or back of current contiguous coords by checking
+   * shared start/end nodes and if needed reverse adding to front or back depending on match found. the shared coordinate
+   * is not added to avoid duplicates in result
+   *
+   * @param contiguousCoords to add to
+   * @param coordArrayToAdd to add to contiguous coords
+   * @return true if success, false otherwise
+   */
+  public static boolean addCoordsContiguous(final Deque<Coordinate> contiguousCoords, final Coordinate[] coordArrayToAdd) {
+    var currFirstCoord = coordArrayToAdd[0];
+    var currLastCoord = coordArrayToAdd[coordArrayToAdd.length-1];
+    var contiguousFirstCoord = contiguousCoords.getFirst();
+    var contiguousLastCoord = contiguousCoords.getLast();
+
+    Boolean reverseAdd = null;
+    Boolean addFront = null;
+    if(currFirstCoord.equals2D(contiguousFirstCoord)){
+      addFront = true;
+      reverseAdd = false;
+    }else if(currFirstCoord.equals2D(contiguousLastCoord)){
+      reverseAdd = false;
+      addFront = false;
+    }else if(currLastCoord.equals2D(contiguousLastCoord)){
+      reverseAdd = true;
+      addFront = false;
+    }else if(currLastCoord.equals2D(contiguousFirstCoord)){
+      reverseAdd = true;
+      addFront = true;
+    }
+
+    if(reverseAdd==null || addFront==null){
+      return false;
+    }
+
+    // start at correct location and skip shared coord
+    int index = reverseAdd ? coordArrayToAdd.length-2: 1;
+    while(true){
+      if(reverseAdd) {
+        contiguousCoords.push(coordArrayToAdd[index]);
+        --index;
+        if(index < 0 ){
+          break;
+        }
+      }else{
+        contiguousCoords.add(coordArrayToAdd[index]);
+        ++index;
+        if(index >= coordArrayToAdd.length){
+          break;
+        }
+      }
+    }
+    return true;
   }
 }
