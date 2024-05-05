@@ -12,6 +12,7 @@ import org.goplanit.utils.exceptions.PlanItException;
 import org.goplanit.utils.exceptions.PlanItRunTimeException;
 import org.goplanit.utils.math.Precision;
 import org.goplanit.utils.misc.Pair;
+import org.goplanit.utils.network.layer.physical.Link;
 import org.locationtech.jts.algorithm.Angle;
 import org.locationtech.jts.algorithm.RobustDeterminant;
 import org.locationtech.jts.geom.*;
@@ -344,6 +345,19 @@ public class PlanitJtsUtils {
     }
     return false;
   }
+
+  /** check if coord linked list is closed, i.e., first coordinate is the same as the last
+   *  in 2D
+   *
+   * @param coordList to check
+   * @return true when closed, false otherwise
+   */
+  public static boolean isClosed2D(LinkedList<Coordinate> coordList) {
+    if(coordList != null && coordList.size()>2) {
+      return coordList.getFirst().equals2D(coordList.getLast());
+    }
+    return false;
+  }
   
   /** create a copy of the passed in coord array and close it by adding a new coordinate at the end that matches the first.
    * If the array is already closed, it is returned as is. If not eligible for closing, exception is thrown.
@@ -363,7 +377,26 @@ public class PlanitJtsUtils {
     }else {
       throw new PlanItException("Cannot make passed in coordinates closed 2D");
     }
-  }  
+  }
+
+  /** create a copy of the passed in coord list and close it by adding a new coordinate at the end that matches the first.
+   * If the list is already closed, it is returned as is. If not eligible for closing, exception is thrown.
+   *
+   * @param coordinateList to make closed if possible
+   * @return closed version of original (copy + coord)
+   */
+  public static LinkedList<Coordinate> makeClosed2D(final LinkedList<Coordinate> coordinateList){
+    if(coordinateList!= null && coordinateList.size() >=2) {
+      if(!isClosed2D(coordinateList)) {
+        var closedList = new LinkedList<>(coordinateList);
+        closedList.addFirst(closedList.getLast().copy());
+        return closedList;
+      }
+      return coordinateList;
+    }else {
+      throw new PlanItRunTimeException("Cannot make passed in coordinates list closed 2D");
+    }
+  }
 
   /**
    * Remove all coordinates in the line string up to but not including the first occurrence of the passed in position. In case the position cannot be found, an exception will be
@@ -413,7 +446,7 @@ public class PlanitJtsUtils {
   public static LineString createCopyWithoutCoordinatesAfter(Point position, LineString geometry){
     Optional<Integer> offset = findFirstCoordinatePosition(position.getCoordinate(), geometry, Precision.EPSILON_0);
 
-    if (!offset.isPresent()) {
+    if (offset.isEmpty()) {
       throw new PlanItRunTimeException(String.format("Point (%s) does not exist on line string %s, unable to create copy from this location", position.toString(), geometry.toString()));
     }
 
@@ -466,7 +499,7 @@ public class PlanitJtsUtils {
         coordinateList.add(coordinate);
       }
     }
-    return jtsGeometryFactory.createLineString(coordinateList.stream().toArray(Coordinate[]::new));
+    return jtsGeometryFactory.createLineString(coordinateList.toArray(Coordinate[]::new));
   }
   
   /**
@@ -574,7 +607,7 @@ public class PlanitJtsUtils {
   public static LineString convertToJtsLineString(org.opengis.geometry.coordinate.LineString openGisLineString) throws PlanItException {
     PointArray samplePoints = openGisLineString.getSamplePoints();
     List<Coordinate> coordinates = samplePoints.stream().map(point -> createCoordinate(point.getDirectPosition())).collect(Collectors.toList());
-    return jtsGeometryFactory.createLineString((Coordinate[]) coordinates.toArray());
+    return jtsGeometryFactory.createLineString(coordinates.toArray(Coordinate[]::new));
   }
 
   /**
