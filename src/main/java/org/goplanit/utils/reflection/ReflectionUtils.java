@@ -20,6 +20,38 @@ import org.goplanit.utils.exceptions.PlanItRunTimeException;
 public class ReflectionUtils {
   
   private static final Logger LOGGER = Logger.getLogger(ReflectionUtils.class.getCanonicalName());
+
+  /**
+   * Given fields get the key value map version based on filter
+   * @param <K> key in result map
+   * @param <V> value in result map
+   *
+   * @param fields to collect from
+   * @param keyFunction transforms field to key entry in map
+   * @param valueFunction transforms field to value entry in map
+   * @param modifierFilter applied to the fields of the class, when false we exclude the field, when true we keep it
+   * @return map with entries, or empty if none could be found or something went wrong
+   */
+  private static <K,V> Map<K,V> convertFieldsOnInstanceToKeyValueMap(
+          Field[] fields,
+          Object compatibleInstance,
+          Function<Field,K> keyFunction,
+          BiFunction<Field,Object,V> valueFunction,
+          Function<Integer,Boolean> modifierFilter) {
+    Map<K,V> fieldValueMap = new HashMap<>();
+    for (int index = 0; index < fields.length; ++index) {
+      var field = fields[index];
+      try {
+        if(modifierFilter.apply(field.getModifiers())) {
+          fieldValueMap.put(keyFunction.apply(field),valueFunction.apply(field, compatibleInstance));
+        }
+      }catch (Exception e) {
+        // do nothing
+      }
+    }
+
+    return fieldValueMap;
+  }
   
   /** Method that constructs the parameter types that go with the passed in parameters.
    * 
@@ -94,29 +126,58 @@ public class ReflectionUtils {
   }
 
   /** Collect all declared fields of instance in Map in name, value format
+   *
+   * @param clazz to identify fields from
+   * @param compatibleClazzInstance to collect from, should be compatible with class provided
+   * @param modifierFilter applied to the fields of the class, when false we exclude the field, when true we keep it
+   * @return map with entries, or empty if none could be found or something went wrong
+   */
+  public static Map<String,Object> declaredFieldsNameValueMap(Class<?> clazz, Object compatibleClazzInstance, Function<Integer,Boolean> modifierFilter) {
+    /* value is the field value regardless of accessibility */
+    BiFunction<Field, Object, Object> biFunction = (field, object) -> {
+      Object value = null;
+      try {
+        var old = field.canAccess(object);
+        field.setAccessible(true);
+        value = field.get(object);
+        field.setAccessible(old);
+      }catch (Exception e) {
+        // do nothing
+      };
+      return value;
+    };
+
+    /* key is field name */
+    return declaredFieldsToMap(clazz, compatibleClazzInstance, Field::getName, biFunction, modifierFilter);
+  }
+
+  /** Collect all declared fields of instance in Map in name, value format
    * 
    * @param settingsClazzInstance to collect from
    * @param modifierFilter applied to the fields of the class, when false we exclude the field, when true we keep it
    * @return map with entries, or empty if none could be found or something went wrong
    */
-  public static Map<String,Object> declaredFieldsNameValueMap(Object settingsClazzInstance, Function<Integer,Boolean> modifierFilter) {    
-    /* value is the field value regardless of accessibility */
-    BiFunction<Field, Object, Object> biFunction = (field, object) -> {
-      Object value = null; 
-      try {
-          var old = field.canAccess(object);
-          field.setAccessible(true);
-          value = field.get(object);
-          field.setAccessible(old);
-        }catch (Exception e) {
-        // do nothing
-        };
-        return value;        
-      };
-    
-    /* key is field name */
-    return declaredFieldsToMap(settingsClazzInstance, Field::getName, biFunction, modifierFilter);
-  }   
+  public static Map<String,Object> declaredFieldsNameValueMap(Object settingsClazzInstance, Function<Integer,Boolean> modifierFilter) {
+    return declaredFieldsNameValueMap(settingsClazzInstance.getClass(), settingsClazzInstance, modifierFilter);
+  }
+
+  /** Collect all declared fields of instance in Map based on functions passed in
+   *
+   *
+   * @param <K> key in result map
+   * @param <V> value in result map
+   *
+   * @param compatibleInstance to collect from
+   * @param keyFunction transforms field to key entry in map
+   * @param valueFunction transforms field to value entry in map
+   * @param modifierFilter applied to the fields of the class, when false we exclude the field, when true we keep it
+   * @return map with entries, or empty if none could be found or something went wrong
+   */
+  public static <K,V> Map<K,V> declaredFieldsToMap(
+          Class<?> clazz, Object compatibleInstance, Function<Field,K> keyFunction,  BiFunction<Field,Object,V> valueFunction, Function<Integer,Boolean> modifierFilter) {
+    var fields = clazz.getDeclaredFields();
+    return convertFieldsOnInstanceToKeyValueMap(fields, compatibleInstance, keyFunction, valueFunction, modifierFilter);
+  }
   
   /** Collect all declared fields of instance in Map based on functions passed in 
    * 
@@ -130,28 +191,16 @@ public class ReflectionUtils {
    * @param modifierFilter applied to the fields of the class, when false we exclude the field, when true we keep it
    * @return map with entries, or empty if none could be found or something went wrong
    */
-  public static <K,V> Map<K,V> declaredFieldsToMap(Object settingsClazzInstance, Function<Field,K> keyFunction,  BiFunction<Field,Object,V> valueFunction, Function<Integer,Boolean> modifierFilter) {    
+  public static <K,V> Map<K,V> declaredFieldsToMap(Object settingsClazzInstance, Function<Field,K> keyFunction,  BiFunction<Field,Object,V> valueFunction, Function<Integer,Boolean> modifierFilter) {
     var fields = settingsClazzInstance.getClass().getDeclaredFields();
-    Map<K,V> fieldValueMap = new HashMap<>();    
-    for (int index = 0; index < fields.length; ++index) {
-      var field = fields[index];
-      try {
-        if(modifierFilter.apply(field.getModifiers())) {
-          fieldValueMap.put(keyFunction.apply(field),valueFunction.apply(field, settingsClazzInstance));
-        }        
-      }catch (Exception e) {
-        // do nothing
-      }
-    }
-    
-    return fieldValueMap;
+    return convertFieldsOnInstanceToKeyValueMap(fields, settingsClazzInstance, keyFunction, valueFunction, modifierFilter);
   }
 
   /**
    * For a container with known data class, explicitly cast the internal generics of the collection to this class
    *
    * @param collectionClass the collection class with unattainable class data type
-   * @param dataTypeClass of entries of colection
+   * @param dataTypeClass of entries of collection
    * @return collection with data type of correct type
    * @param <U> collection type U of ?
    * @param <V> data type
