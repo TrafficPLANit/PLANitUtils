@@ -51,10 +51,20 @@ public interface MacroscopicLinkSegments extends ManagedGraphEntities<Macroscopi
    */
   public default double[] getFreeFlowTravelTimeHourPerLinkSegment(Mode mode) {
     double[] linkSegmentFreeFlowTravelTimes = new double[size()];
-    for(MacroscopicLinkSegment linkSegment : this){
-      linkSegmentFreeFlowTravelTimes[(int) linkSegment.getLinkSegmentId()] = linkSegment.computeFreeFlowTravelTimeHour(mode);
-    }
+    populateFreeFlowTravelTimeHourPerLinkSegment(mode, linkSegmentFreeFlowTravelTimes);
     return linkSegmentFreeFlowTravelTimes;
+  }
+
+  /** populate a pre-initialised raw array of all free flow travel times of the registered macroscopic link segments
+   * where the index in the array corresponds  to the link segment id (not id).
+   *
+   * @param mode to use
+   * @return free flow travel times for all link segments for the given mode
+   */
+  public default void populateFreeFlowTravelTimeHourPerLinkSegment(Mode mode, double[] costsToFill) {
+    for(MacroscopicLinkSegment linkSegment : this){
+      costsToFill[(int) linkSegment.getLinkSegmentId()] = linkSegment.computeFreeFlowTravelTimeHour(mode);
+    }
   }
 
 }
