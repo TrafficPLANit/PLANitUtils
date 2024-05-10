@@ -59,7 +59,7 @@ public interface MacroscopicLinkSegments extends ManagedGraphEntities<Macroscopi
    * where the index in the array corresponds  to the link segment id (not id).
    *
    * @param mode to use
-   * @return free flow travel times for all link segments for the given mode
+   * @param costsToFill array to fill
    */
   public default void populateFreeFlowTravelTimeHourPerLinkSegment(Mode mode, double[] costsToFill) {
     for(MacroscopicLinkSegment linkSegment : this){

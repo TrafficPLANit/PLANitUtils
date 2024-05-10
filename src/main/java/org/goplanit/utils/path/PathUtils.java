@@ -75,7 +75,7 @@ public class PathUtils {
    * @param edgeSegmentValuesById array with values, e.g., costs per edge segment
    * @return path value array found in order of collection
    */
-  public static double[] computeEdgeSegmentAdditiveValues(Collection<? extends SimpleDirectedPath> paths, double[] edgeSegmentValuesById){
+  public static <T extends SimpleDirectedPath> double[] computeEdgeSegmentAdditiveValues(Collection<T> paths, double[] edgeSegmentValuesById){
     final double pathValues[] = new double[paths.size()];
     int index = 0;
     for(var path : paths){
