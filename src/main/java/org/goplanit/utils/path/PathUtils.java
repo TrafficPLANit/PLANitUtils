@@ -71,6 +71,7 @@ public class PathUtils {
   /**
    * Compute path cost by summing the edge segment values provided based on id as index in value array for ech provided path
    *
+   * @param <T> type of path
    * @param paths to get cost for
    * @param edgeSegmentValuesById array with values, e.g., costs per edge segment
    * @return path value array found in order of collection

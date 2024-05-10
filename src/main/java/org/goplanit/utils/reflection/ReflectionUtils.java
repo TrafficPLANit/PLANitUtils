@@ -167,7 +167,8 @@ public class ReflectionUtils {
    * @param <K> key in result map
    * @param <V> value in result map
    *
-   * @param compatibleInstance to collect from
+   * @param clazz specific class to get declared fields for
+   * @param compatibleInstance to collect from, should be compatible with class, so instance of it or derived class instance
    * @param keyFunction transforms field to key entry in map
    * @param valueFunction transforms field to value entry in map
    * @param modifierFilter applied to the fields of the class, when false we exclude the field, when true we keep it
