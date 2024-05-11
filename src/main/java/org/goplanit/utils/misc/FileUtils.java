@@ -5,6 +5,7 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.function.Consumer;
 import java.util.logging.Logger;
 
@@ -197,4 +198,21 @@ public class FileUtils {
     return parseFileContentAsString(filePath, "UTF8");
   }
 
+  /**
+   * Convenience method to create directories from provided string if they do not exist. In case
+   * of an IO exception a warning is issued and exception is caught
+   *
+   * @param outputDirectory to create if needed
+   * @return true if directory already existed of exists after creation, false otherwise
+   */
+  public static boolean createDirectoryFrom(String outputDirectory) {
+    try {
+      var outputDir = Paths.get(outputDirectory);
+      Files.createDirectories(outputDir);
+      return Files.exists(outputDir);
+    } catch (IOException e) {
+      LOGGER.warning("Unable to create directory" + outputDirectory);
+    }
+    return false;
+  }
 }
