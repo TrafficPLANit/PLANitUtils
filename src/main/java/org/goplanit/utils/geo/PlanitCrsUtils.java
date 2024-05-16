@@ -26,7 +26,14 @@ public class PlanitCrsUtils {
     /* also ignore intermediate warnings while searching for EPSG matches */
     Logger.getLogger("org.geotools.referencing.factory").setLevel(Level.SEVERE);    
   }
-  
+
+  /** shorthand for EPSG:4326 code (WGS84) */
+  public static String EPSG_4326 = "EPSG:4326";
+
+  /** shorthand for WGS 84 EPSG code */
+  public static String EPSG_CODE_FOR_WGS84 = EPSG_4326;
+
+
   /**
    * create a coordinate reference system instance based on String representation, e.g. "EPSG:4326" for WGS84", using the underlying geotools hsql authority factory. see also
    * {@code https://docs.geotools.org/latest/userguide/library/referencing/crs.html} on some context on why we include the hsql dependency in the planit build to ensure that the
