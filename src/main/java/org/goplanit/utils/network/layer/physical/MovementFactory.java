@@ -2,6 +2,7 @@ package org.goplanit.utils.network.layer.physical;
 
 import org.goplanit.utils.exceptions.PlanItException;
 import org.goplanit.utils.graph.GraphEntityFactory;
+import org.goplanit.utils.graph.directed.EdgeSegment;
 import org.goplanit.utils.id.ManagedIdEntityFactory;
 
 /** Factory to create movements and register them on its container
@@ -18,7 +19,7 @@ public interface MovementFactory extends ManagedIdEntityFactory<Movement> {
    * @param to the to segment
    * @return the created movement
    */
-  public abstract Movement create(final LinkSegment from, final LinkSegment to);
+  public abstract Movement create(final EdgeSegment from, final EdgeSegment to);
 
   /**
    * Create movement and register it
@@ -27,6 +28,6 @@ public interface MovementFactory extends ManagedIdEntityFactory<Movement> {
    * @param to the to segment
    * @return the created and registered movement
    */
-  public abstract Movement registerNew(final LinkSegment from, final LinkSegment to);
+  public abstract Movement registerNew(final EdgeSegment from, final EdgeSegment to);
 
 }

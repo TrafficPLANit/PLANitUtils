@@ -1,5 +1,6 @@
 package org.goplanit.utils.network.layer.physical;
 
+import org.goplanit.utils.graph.directed.EdgeSegment;
 import org.goplanit.utils.id.ExternalIdAble;
 import org.goplanit.utils.id.ManagedId;
 
@@ -18,32 +19,32 @@ public interface Movement extends ExternalIdAble, ManagedId, Serializable {
   public static final Class<Movement> MOVEMENT_ID_CLASS = Movement.class;
 
 
-  /** collect link segment from, i.e., the incoming leg of the movement
+  /** collect edge segment from, i.e., the incoming leg of the movement
    *
    * @return link segment from
    */
-  public abstract LinkSegment getLinkSegmentFrom();
+  public abstract EdgeSegment getSegmentFrom();
   
-  /** verify if linkSegment from is present
+  /** verify if edge Segment from is present
    * 
    * @return true when present, false otherwise
    */
-  public default boolean hasLinkSegmentFrom() {
-    return getLinkSegmentFrom() != null;
+  public default boolean hasSegmentFrom() {
+    return getSegmentFrom() != null;
   }
 
-  /** collect link segment to, i.e., the outgoing leg of the movement
+  /** collect edge segment to, i.e., the outgoing leg of the movement
    *
-   * @return link segment to
+   * @return edge segment to
    */
-  public abstract LinkSegment getLinkSegmentTo();
+  public abstract EdgeSegment getSegmentTo();
 
-  /** verify if linkSegment to is present
+  /** verify if edge Segment to is present
    *
    * @return true when present, false otherwise
    */
-  public default boolean hasLinkSegmentTo() {
-    return getLinkSegmentTo() != null;
+  public default boolean hasSegmentTo() {
+    return getSegmentTo() != null;
   }
 
   /**
