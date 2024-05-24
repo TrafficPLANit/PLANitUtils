@@ -58,7 +58,7 @@ public interface IdAble extends Comparable<IdAble> {
     }
     
     if(o != null) {
-      return Long.valueOf(this.getId()).equals(Long.valueOf(((IdAble)o).getId()));
+      return this.getId() == ((IdAble) o).getId();
     }
     
     return false;
