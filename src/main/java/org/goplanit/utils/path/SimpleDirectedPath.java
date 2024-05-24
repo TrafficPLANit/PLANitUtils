@@ -54,7 +54,7 @@ public interface SimpleDirectedPath extends Iterable<EdgeSegment> {
    * @return total length of path in km
    */
   public default double computeLengthKm(){
-    return StreamSupport.stream(this.spliterator(),false).mapToDouble( es -> es.getLengthKm()).sum();
+    return StreamSupport.stream(this.spliterator(),false).mapToDouble(EdgeSegment::getLengthKm).sum();
   }
 
   /**
