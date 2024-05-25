@@ -1,6 +1,7 @@
 package org.goplanit.utils.path;
 
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.function.Function;
 
 import org.goplanit.utils.graph.Vertex;
@@ -76,7 +77,8 @@ public class PathUtils {
    * @param edgeSegmentValuesById array with values, e.g., costs per edge segment
    * @return path value array found in order of collection
    */
-  public static <T extends SimpleDirectedPath> double[] computeEdgeSegmentAdditiveValues(Collection<T> paths, double[] edgeSegmentValuesById){
+  public static <T extends SimpleDirectedPath> double[] computeEdgeSegmentAdditiveValues(
+      Collection<T> paths, double[] edgeSegmentValuesById){
     final double pathValues[] = new double[paths.size()];
     int index = 0;
     for(var path : paths){
@@ -153,5 +155,45 @@ public class PathUtils {
   public static double getOverlapFactor(SimpleDirectedPath path1, SimpleDirectedPath path2){
     var absoluteOverlapResult = getOverlappingPathLinkDistanceKm(path1, path2);
     return absoluteOverlapResult.first()/absoluteOverlapResult.second();
+  }
+
+  /**
+   * Verify if the super path contains the sub path
+   *
+   * @param superPathIter iterator representing the super path
+   * @param subPathIter iterator representing the subpath
+   * @return true when sub path exists, false otherwise
+   */
+  public static boolean containsSubPath(
+      Iterator<? extends EdgeSegment> superPathIter, Iterator<? extends EdgeSegment> subPathIter) {
+    if (superPathIter == null && superPathIter.hasNext()) {
+      return false;
+    }
+
+    if (subPathIter == null && subPathIter.hasNext()) {
+      return false;
+    }
+
+    EdgeSegment subPathSegment = subPathIter.next();
+    boolean started = false;
+    while (superPathIter.hasNext()) {
+      var edgeSegment = superPathIter.next();
+      if(started){
+        subPathSegment = subPathIter.next();
+      }
+
+      if (edgeSegment.idEquals(subPathSegment)) {
+        started = true;
+      } else if (started) {
+        started = false;
+        break;
+      }
+
+      if (!subPathIter.hasNext()) {
+        break;
+      }
+    }
+
+    return started && !subPathIter.hasNext();
   }
 }

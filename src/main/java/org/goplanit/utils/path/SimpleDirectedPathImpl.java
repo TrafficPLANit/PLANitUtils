@@ -3,6 +3,7 @@ package org.goplanit.utils.path;
 import org.goplanit.utils.geo.PlanitJtsUtils;
 import org.goplanit.utils.graph.EdgeUtils;
 import org.goplanit.utils.graph.directed.EdgeSegment;
+import org.goplanit.utils.graph.directed.EdgeSegmentUtils;
 import org.goplanit.utils.misc.IterableUtils;
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.GeometryFactory;
@@ -89,30 +90,7 @@ public class SimpleDirectedPathImpl implements SimpleDirectedPath {
    */
   @Override
   public boolean containsSubPath(Iterator<? extends EdgeSegment> subPathIter) {
-    if (subPathIter == null && subPathIter.hasNext()) {
-      return false;
-    }
-
-    EdgeSegment subPathSegment = subPathIter.next();
-    boolean started = false;
-    for (EdgeSegment edgeSegment : path) {
-      if (started){
-        subPathSegment = subPathIter.next();
-      }
-
-      if (edgeSegment.idEquals(subPathSegment)) {
-        started = true;
-      } else if (started) {
-        started = false;
-        break;
-      }
-
-      if (!subPathIter.hasNext()) {
-        break;
-      }
-    }
-
-    return started && !subPathIter.hasNext();
+    return PathUtils.containsSubPath(iterator(), subPathIter);
   }
 
   /**
@@ -137,7 +115,7 @@ public class SimpleDirectedPathImpl implements SimpleDirectedPath {
    * @param edgeSegments to add
    */
   public void append(EdgeSegment... edgeSegments){
-    Arrays.stream(edgeSegments).forEach(e -> this.path.add(e));
+    this.path.addAll(Arrays.asList(edgeSegments));
   }
 
   /**
@@ -146,7 +124,7 @@ public class SimpleDirectedPathImpl implements SimpleDirectedPath {
    * @param edgeSegments to add
    */
   public void prepend(EdgeSegment... edgeSegments){
-    Arrays.stream(edgeSegments).forEach(e -> this.path.push(e));
+    Arrays.stream(edgeSegments).forEach(this.path::push);
   }
 
   /**
@@ -164,36 +142,7 @@ public class SimpleDirectedPathImpl implements SimpleDirectedPath {
    */
   @Override
   public Geometry createGeometry() {
-    if(path == null || path.isEmpty()){
-      return null;
-    }
-
-    List<LineString> linkGeometries = new ArrayList<>(this.path.size());
-    for(var es : this){
-      if(!es.hasParent()){
-        LOGGER.warning(String.format("Found path where one or more links have no geometry, path geometry incomplete"));
-        break;
-      }
-      LineString result =
-        es.getParent().hasGeometry() ? es.getParent().getGeometry() : EdgeUtils.createLineStringFromVertexLocations(es.getParent(), es.isDirectionAb());
-      if(result == null){
-        continue;
-      }
-
-      linkGeometries.add(result);
-    }
-
-    if(linkGeometries.isEmpty()){
-      LOGGER.warning(String.format("Found path where no links have a geometry nor their nodes, path geometry unavailable"));
-      return null;
-    }
-
-    if(linkGeometries.size() < path.size()){
-      LOGGER.warning(String.format("Found path where one or more links have no geometry or node positions, path geometry incomplete"));
-    }
-
-    // deduplicate shared vertices between link (segments) when concatenating
-    return PlanitJtsUtils.createCopyWithoutAdjacentDuplicateCoordinates(PlanitJtsUtils.concatenate(linkGeometries.toArray(LineString[]::new)));
+    return EdgeSegmentUtils.createGeometryFrom(iterator());
   }
 
 }
