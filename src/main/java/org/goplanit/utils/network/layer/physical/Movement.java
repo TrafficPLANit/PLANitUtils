@@ -1,5 +1,6 @@
 package org.goplanit.utils.network.layer.physical;
 
+import org.goplanit.utils.graph.directed.DirectedVertex;
 import org.goplanit.utils.graph.directed.EdgeSegment;
 import org.goplanit.utils.id.ExternalIdAble;
 import org.goplanit.utils.id.ManagedId;
@@ -45,6 +46,15 @@ public interface Movement extends ExternalIdAble, ManagedId, Serializable {
    */
   public default boolean hasSegmentTo() {
     return getSegmentTo() != null;
+  }
+
+  /**
+   * Get the vertex in the centre of the movement connecting the two edge segments
+   *
+   * @return centre vertex
+   */
+  public default DirectedVertex getCentreVertex(){
+    return getSegmentFrom().getDownstreamVertex();
   }
 
   /**
