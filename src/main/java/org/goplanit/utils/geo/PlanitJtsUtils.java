@@ -62,7 +62,8 @@ public class PlanitJtsUtils {
   }
 
   /**
-   * Transform given geometry based on provided transformer, checkedd exceptions are converted to PLANitRunTimeException instead
+   * Transform given geometry based on provided transformer,
+   * checked exceptions are converted to PLANitRunTimeException instead
    *
    * @param geometry to transform
    * @param transformer to apply transformation
@@ -74,6 +75,27 @@ public class PlanitJtsUtils {
     }catch(Exception e){
       throw new PlanItRunTimeException("Unable to transform geometry %s",geometry, e);
     }
+  }
+
+  /**
+   * Transform given geometry based on provided transformer, If transformer is not available original geometry
+   * is returned, only when transformation fails issue is logged and null is returned
+   *
+   * @param geometry to transform
+   * @param transformer to apply transformation
+   * @return transformed geometry
+   */
+  public static Geometry transformGeometrySafe(Geometry geometry, MathTransform transformer){
+    try {
+      if(transformer!=null) {
+        return JTS.transform(geometry, transformer);
+      }
+      return geometry;
+    }catch (Exception e) {
+      LOGGER.severe(e.getMessage());
+      LOGGER.severe(String.format("Unable to transform geometry from %s ",geometry.toString()));
+    }
+    return null;
   }
 
   /**
