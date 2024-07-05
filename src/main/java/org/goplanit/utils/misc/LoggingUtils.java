@@ -225,11 +225,14 @@ public class LoggingUtils {
    * @param logger to use
    * @param message to log
    * @param arguments arguments of message
+   * @return result of null test
    */
-  public static void LogSevereIfNull(Object object, Logger logger, String message, Object... arguments){
-    if(object==null){
+  public static boolean LogSevereIfNull(Object object, Logger logger, String message, Object... arguments){
+    boolean testResult = object==null;
+    if(testResult){
       logger.severe(String.format(message, arguments));
     }
+    return testResult;
   }
 
   /**
@@ -239,11 +242,14 @@ public class LoggingUtils {
    * @param logger to use
    * @param message to log
    * @param arguments arguments of message
+   * @return result of null test
    */
-  public static void LogFineIfNull(Object object, Logger logger, String message, Object... arguments){
-    if(object==null){
+  public static boolean LogFineIfNull(Object object, Logger logger, String message, Object... arguments){
+    boolean testResult = object==null;
+    if(testResult){
       logger.fine(String.format(message, arguments));
     }
+    return testResult;
   }
 
   /** log the given warning message if predicate holds
@@ -253,11 +259,14 @@ public class LoggingUtils {
    * @param message to log if not too close to bounding box
    * @param testObject to test on
    * @param predicate to use
+   * @return result of predicate
    */
-  public static <T> void logWarningIf(Logger logger, String message, T testObject, Predicate<T> predicate) {
-    if(predicate.test(testObject)) {
+  public static <T> boolean logWarningIf(Logger logger, String message, T testObject, Predicate<T> predicate) {
+    boolean testResult = predicate.test(testObject);
+    if(testResult) {
       logger.warning(message);
     }
+    return testResult;
   }
 
   }
