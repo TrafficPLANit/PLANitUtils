@@ -25,16 +25,18 @@ public class ArrayUtils {
    *          array of values to be added to destination array
    * @param numberOfElements
    *          number of elements in array to be updated
+   * @return destination array
    */
-  public static void addTo(double[] destination, double[] addToDestination, int numberOfElements) {
+  public static double[] addTo(double[] destination, double[] addToDestination, int numberOfElements) {
     if(addToDestination.length < Math.min(numberOfElements,destination.length)) {
       LOGGER.warning("addToDestination array has less elements than number of elements/destination array to add to, addTo failed");
-      return;
+      return destination;
     }
     
     for (int index = 0; index < numberOfElements; ++index) {
       destination[index] += addToDestination[index];
     }
+    return destination;
   }
   
   /**
@@ -44,39 +46,40 @@ public class ArrayUtils {
    *          the array to be updated
    * @param addToDestination
    *          array of values to be added to destination array
+   * @return destination array
    */
-  public static void addTo(double[] destination, double[] addToDestination) {
+  public static double[] addTo(double[] destination, double[] addToDestination) {
     if(addToDestination.length < destination.length) {
       LOGGER.warning("addToDestination array has less elements than destination array to add to, addTo failed");
-      return;
+      return destination;
     }
     
     int length = destination.length;
     for (int index = 0; index < length; ++index) {
       destination[index] += addToDestination[index];
     }
+    return destination;
   }
 
   /**
    * Add the values of a second array element-wise to the first array
    *
-   * @param origin
-   *          the array to subtract from
-   * @param subtractFromOrigin
-   *          array of values to be subtracted from origin array
-   @param destination
-   *          store result in this array
+   * @param origin  the array to subtract from
+   * @param subtractFromOrigin array of values to be subtracted from origin array
+   * @param destination store result in this array
+   * @return destination array
    */
-  public static void subtractFrom(double[] origin, double[] subtractFromOrigin, double[] destination) {
+  public static double[] subtractFrom(double[] origin, double[] subtractFromOrigin, double[] destination) {
     int length = subtractFromOrigin.length;
     if(origin.length < destination.length || length < destination.length) {
       LOGGER.warning("elements not compatible with subtractFrom operator");
-      return;
+      return destination;
     }
 
     for (int index = 0; index < length; ++index) {
       destination[index] = origin[index] - subtractFromOrigin[index];
     }
+    return destination;
   }
 
   /** divide each entry in array by given diviser. When divisor is zero, all entries are set to divideByZeroResult
@@ -84,8 +87,9 @@ public class ArrayUtils {
    * @param destination array to apply to
    * @param diviser to divide by
    * @param divideByZeroResult result if provided division value is zero
+   * @return destination array
    */
-  public static void divideBy(final double[] destination, double diviser, double divideByZeroResult) {
+  public static double[] divideBy(final double[] destination, double diviser, double divideByZeroResult) {
     if (diviser>0) {
       for (int index = 0; index < destination.length; ++index) {
         destination[index] /= diviser;
@@ -95,6 +99,7 @@ public class ArrayUtils {
         destination[index] = divideByZeroResult;
       }
     }
+    return destination;
   }
   
   /**
@@ -103,36 +108,41 @@ public class ArrayUtils {
    * @param destination the array to be updated
    * @param diviserArray to divide by these values
    * @param divideByZeroResult to use in case the diviser is zero
+   * @return destination array
    */
-  public static void divideBy(double[] destination, double[] diviserArray, double divideByZeroResult) {
+  public static double[] divideBy(double[] destination, double[] diviserArray, double divideByZeroResult) {
     if(diviserArray.length < destination.length) {
       LOGGER.warning("Diviser array has less elements than destination array to divide, divideBy failed");
-      return;
+      return destination;
     }    
     for (int index = 0; index < destination.length; ++index) {
       double divisor = diviserArray[index];
       destination[index] = divisor>0 ? destination[index]/diviserArray[index] : divideByZeroResult;
     }
+    return destination;
   }
 
   /** multiply each entry in array by given multiplicator.
    * 
    * @param destination array to apply to
    * @param multiplicator to multiply with
+   * @return destination array
    */
-  public static void multiplyBy(final double[] destination, double multiplicator) {
+  public static double[] multiplyBy(final double[] destination, double multiplicator) {
     for (int index = 0; index < destination.length; ++index) {
       destination[index] *= multiplicator;
     }
+    return destination;
   }  
 
   /** divide each entry in array by the sum of the entries. When divisor is zero, all entries are set to divideByZeroResult
    * 
    * @param destination array to apply to
    * @param divideByZeroResult result if provided division value is zero
+   * @return destination array
    */
-  public static void divideBySum(double[] destination, int divideByZeroResult) {
-    divideBy(destination, sumOf(destination), divideByZeroResult);
+  public static double[] divideBySum(double[] destination, int divideByZeroResult) {
+    return divideBy(destination, sumOf(destination), divideByZeroResult);
   }
 
   /** sum of each entry in array
@@ -189,11 +199,16 @@ public class ArrayUtils {
    * @return maximum value
    */
   public static double getMaximum(double[] array) {
-    double max = Double.NEGATIVE_INFINITY;
-    for(double entry: array) {
-        max = Math.max(max, entry);
-    }
-    return max;
+    return array[findMaxValueIndex(array)];
+  }
+
+  /**
+   * find the minimum of an array of doubles
+   * @param array to check
+   * @return maximum value
+   */
+  public static double getMinimum(double[] array) {
+    return array[findMinValueIndex(array)];
   }
   
   /**
