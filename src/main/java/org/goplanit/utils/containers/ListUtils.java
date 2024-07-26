@@ -70,9 +70,9 @@ public class ListUtils {
    * Transpose the given list of lists, e.g., [[1,2,3,4],["a","b","c","d"]] becomes [[1,"a"],[2,"b"],[3,"c"],[4,"d"]]
    *
    * @param <V> value type of list
-   * @param <R> mapped resturn value of transposed list
+   * @param <R> mapped return value of transposed list
    * @param original the original list of lists
-   * @param mapEachValue apply map functino to each value while transposing
+   * @param mapEachValue apply map function to each value while transposing
    * @return transpose the transposed list of lists
    */
   public static <V,R> List<? extends List<R>> transpose(List<? extends List<V>> original, Function<V,R> mapEachValue) {
