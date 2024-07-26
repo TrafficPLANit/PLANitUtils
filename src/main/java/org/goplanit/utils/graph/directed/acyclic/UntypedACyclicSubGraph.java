@@ -72,15 +72,15 @@ public interface UntypedACyclicSubGraph<V extends DirectedVertex, E extends Edge
    * 
    * @param update             when true the topological sort is conducted based on the current state of the subgraph,
    *                           when false the most recent (if any) result is returned
-   * @param descendingIterator when true, iterator direction is reversed, when false it is not
+   * @param reverseIterator when true, iterator direction is reversed, when false it is not
    * @return iterator
    */
-  public default Iterator<V> getTopologicalIterator(boolean update, boolean descendingIterator) {
+  public default Iterator<V> getTopologicalIterator(boolean update, boolean reverseIterator) {
     var topologicallySortedVertices = topologicalSort(update);
     if(topologicallySortedVertices == null){
       return null;
     }
-    return descendingIterator ? topologicallySortedVertices.descendingIterator() : topologicallySortedVertices.iterator();
+    return reverseIterator ? topologicallySortedVertices.descendingIterator() : topologicallySortedVertices.iterator();
   }
 
   /**
