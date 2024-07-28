@@ -1,6 +1,7 @@
 package org.goplanit.utils.math;
 
 import java.text.DecimalFormat;
+import java.util.Comparator;
 
 /** Compare doubles with a certain precision
  * @author markr
@@ -183,7 +184,43 @@ public class Precision {
    */
   public static boolean notEqual(double d1, double d2, double epsilon) {
     return !equal(d1, d2, epsilon);
-  }  
+  }
 
+  /**
+   * A double based compare with delta comparator where the (closed range) precision determines
+   * whether something is considered equal
+   *
+   * @param d1 first
+   * @param d2 second
+   * @param precision to apply
+   * @return 0 when equal, -1 when d1 is smaller than s2, +1 when d2 is larger than d1
+   */
+  public static int compareWithEpsilon(Double d1, Double d2, double precision) {
+    if(Precision.equal(d1,d2, precision)){
+      return 0;
+    }else if(Precision.smaller(d1,d2)){
+      return -1;
+    }else{
+      return 1;
+    }
+  }
 
+  /**
+   * Create a double based comparator with a configurable precision
+   *
+   * @param epsilon to apply
+   */
+  public static Comparator<Double> createComparator(double epsilon){
+    return (o1, o2) -> compareWithEpsilon(o1, o2, epsilon);
+  }
+
+  /**
+   * Create a double based comparator that takes objects and casts them to doubles before comparing
+   * with a configurable precision
+   *
+   * @param epsilon to apply
+   */
+  public static Comparator<Object> createComparatorWithCast(double epsilon){
+    return (o1, o2) -> compareWithEpsilon((Double) o1, (Double) o2, epsilon);
+  }
 }
