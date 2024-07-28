@@ -209,6 +209,7 @@ public class Precision {
    * Create a double based comparator with a configurable precision
    *
    * @param epsilon to apply
+   * @return double comparator
    */
   public static Comparator<Double> createComparator(double epsilon){
     return (o1, o2) -> compareWithEpsilon(o1, o2, epsilon);
@@ -219,6 +220,7 @@ public class Precision {
    * with a configurable precision
    *
    * @param epsilon to apply
+   * @return double comparator disguised as object comparator
    */
   public static Comparator<Object> createComparatorWithCast(double epsilon){
     return (o1, o2) -> compareWithEpsilon((Double) o1, (Double) o2, epsilon);
