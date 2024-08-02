@@ -63,6 +63,7 @@ public interface MacroscopicLinkSegmentTypes extends ManagedIdEntities<Macroscop
    * {@inheritDoc}
    */
   @Override
-  public abstract MacroscopicLinkSegmentTypes deepCloneWithMapping(BiConsumer<MacroscopicLinkSegmentType, MacroscopicLinkSegmentType> mapper);
+  public abstract MacroscopicLinkSegmentTypes deepCloneWithMapping(
+          BiConsumer<MacroscopicLinkSegmentType, MacroscopicLinkSegmentType> mapper);
 
 }
