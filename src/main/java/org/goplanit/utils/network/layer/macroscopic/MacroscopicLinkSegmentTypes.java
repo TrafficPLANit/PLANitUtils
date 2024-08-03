@@ -65,11 +65,7 @@ public interface MacroscopicLinkSegmentTypes extends ManagedIdEntities<Macroscop
       for(var ls2 : this) {
         if(skipSet.contains(ls2)) continue;
 
-        boolean isEqual = Objects.equals(ls1.getExplicitCapacityPerLaneOrDefault(), ls2.getExplicitCapacityPerLaneOrDefault()) &&
-          Objects.equals(ls1.getExplicitMaximumDensityPerLaneOrDefault(), ls2.getExplicitMaximumDensityPerLaneOrDefault()) &&
-          Objects.equals(ls1.getAllowedModes(), ls2.getAllowedModes()) &&
-          ls1.getAllowedModes().stream().allMatch( m -> Objects.equals(ls1.getAccessProperties(m), ls2.getAccessProperties(m)));
-        if(isEqual){
+        if(ls1.isFunctionalEqual(ls2)){
           duplicatesForLs1 = duplicates.stream().filter(e -> e.contains(ls1)).findFirst().orElseGet(TreeSet::new);
           if(duplicatesForLs1.isEmpty()){
             duplicates.add(duplicatesForLs1);

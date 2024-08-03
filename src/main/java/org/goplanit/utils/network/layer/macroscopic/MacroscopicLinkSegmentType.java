@@ -277,4 +277,12 @@ public interface MacroscopicLinkSegmentType extends ExternalIdAble, ManagedId {
   public default boolean hasName(){
     return !StringUtils.isNullOrBlank(getName());
   }
+
+  /**
+   * Verify if other is functionally identical, so excluding name, and id fields
+   * but considering all other fields with meaning
+   *
+   * @return true if functionally equal, false otherwise
+   */
+  public abstract boolean isFunctionalEqual(MacroscopicLinkSegmentType other);
 }
