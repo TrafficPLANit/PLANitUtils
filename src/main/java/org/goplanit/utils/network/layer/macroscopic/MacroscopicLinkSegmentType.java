@@ -282,6 +282,7 @@ public interface MacroscopicLinkSegmentType extends ExternalIdAble, ManagedId {
    * Verify if other is functionally identical, so excluding name, and id fields
    * but considering all other fields with meaning
    *
+   * @param other to verify
    * @return true if functionally equal, false otherwise
    */
   public abstract boolean isFunctionalEqual(MacroscopicLinkSegmentType other);
