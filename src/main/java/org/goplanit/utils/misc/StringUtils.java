@@ -1,8 +1,7 @@
 package org.goplanit.utils.misc;
 
-import org.apache.commons.lang3.CharSet;
-
 import java.nio.charset.Charset;
+import java.util.regex.Pattern;
 
 /**
  * Some simple string utilities
@@ -12,16 +11,16 @@ import java.nio.charset.Charset;
  */
 public class StringUtils {
 
+  /** precompiled regex pattern to split a string based on encountering a non-alphanumeric character */
+  public static final Pattern SPLIT_BY_NON_ALPHA_NUMERIC = Pattern.compile("[^a-zA-Z0-9]");
+
   /**
    * Create string ot use in String.format of form "0numPadding%d"
    * @param numPadding to apply
    * @return created String
    */
   private static String createPaddingFormatString(int numPadding){
-    var sb = new StringBuilder("%0");
-    sb.append(numPadding);
-    sb.append("d");
-    return sb.toString();
+    return "%0" + numPadding + "d";
   }
 
   /**
@@ -36,13 +35,13 @@ public class StringUtils {
     return value.replace("\uFeFF","");
   }
   
-  /** split string by anything but alpha numeric characters, i.e., a-zA-Z0-9
+  /** split string by anything but alphanumeric characters, i.e., a-zA-Z0-9
    *  
    * @param toSplit string to split
    * @return split string
    */
   public static String[] splitByAnythingExceptAlphaNumeric(String toSplit) {
-    return toSplit.split("[^a-zA-Z0-9]");
+    return SPLIT_BY_NON_ALPHA_NUMERIC.split(toSplit);
   }
 
   /** Verify if null or blank
@@ -92,15 +91,15 @@ public class StringUtils {
    */
   public static String printBytes(String str, final Charset encoding) {
     byte[] bytes = str.getBytes(encoding);
-    String output = str + "= byte[";
+    StringBuilder output = new StringBuilder(str + "= byte[");
     for (int i = 0; i < bytes.length; i++) {
-      output += Byte.toString(bytes[i]);
+      output.append(bytes[i]);
       if (i < bytes.length - 1) {
-        output += ", ";
+        output.append(", ");
       }
     }
-    output += "]";
-    return output;
+    output.append("]");
+    return output.toString();
   }
 
   /** print chars of the String
@@ -110,14 +109,14 @@ public class StringUtils {
    */
   public static String printChars(String str) {
     char[] chars = str.toCharArray();
-    String output = str + "= char[";
+    StringBuilder output = new StringBuilder(str + "= char[");
     for (int i = 0; i < chars.length; i++) {
-      output += String.valueOf(chars[i]);
+      output.append(chars[i]);
       if (i < chars.length - 1) {
-        output += ", ";
+        output.append(", ");
       }
     }
-    output += "]";
-    return output;
+    output.append("]");
+    return output.toString();
   }
 }
