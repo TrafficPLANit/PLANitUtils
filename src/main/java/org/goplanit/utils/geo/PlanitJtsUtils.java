@@ -2,6 +2,7 @@ package org.goplanit.utils.geo;
 
 import java.text.DecimalFormat;
 import java.util.*;
+import java.util.function.Consumer;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
@@ -773,17 +774,17 @@ public class PlanitJtsUtils {
       return false;
     }
 
+    Consumer<Coordinate> applyInsert = addFront ? contiguousCoords::push : contiguousCoords::add;
     // start at correct location and skip shared coord
     int index = reverseAdd ? coordArrayToAdd.length-2: 1;
     while(true){
+      applyInsert.accept(coordArrayToAdd[index]);
       if(reverseAdd) {
-        contiguousCoords.push(coordArrayToAdd[index]);
         --index;
         if(index < 0 ){
           break;
         }
       }else{
-        contiguousCoords.add(coordArrayToAdd[index]);
         ++index;
         if(index >= coordArrayToAdd.length){
           break;
