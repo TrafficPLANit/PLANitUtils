@@ -61,6 +61,15 @@ public class Pair<A, B> {
     return Pair.of(null, null);
   }
 
+  /** check if pair is null or empty
+   *
+   * @param pair to check
+   * @return true when null or empty, false othewise
+   */
+  public static boolean nullOrEmpty(Pair<Integer, Integer> pair) {
+    return pair == null || pair.bothNull();
+  }
+
 
   /**
    * @see java.lang.Object#hashCode()
