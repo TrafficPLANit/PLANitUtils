@@ -52,6 +52,42 @@ public class StringUtils {
     return string==null || string.isBlank();
   }
 
+  /**
+   *  check if the line contains the string when converted to lower case and removing all spaces
+   *
+   * @param checkThisIfIt the string to check and see if it contains the containsThis
+   * @param containsThis the sub string to check for
+   * @return true when it does contain it, false otherwise
+   */
+  public static boolean containsInLowerCaseNoSpaces(String checkThisIfIt, String containsThis) {
+    return checkThisIfIt.replace(" ","").toLowerCase().contains(
+            containsThis.replace(" ","").toLowerCase());
+  }
+
+  /**
+   *  check if the line starts with the string when converted to lower case and removing all spaces
+   *
+   * @param checkThisIfIt the string to check and see if it starts with the startsWithThis
+   * @param startsWithThis the sub string to check for
+   * @return true when it does contain it, false otherwise
+   */
+  public static boolean startsWithInLowerCaseNoSpaces(String checkThisIfIt, String startsWithThis) {
+    return checkThisIfIt.replace(" ","").toLowerCase().startsWith(
+            startsWithThis.replace(" ","").toLowerCase());
+  }
+
+  /**
+   *  check if the line ends with the string when converted to lower case and removing all spaces
+   *
+   * @param checkThisIfIt the string to check and see if it ends with the startsWithThis
+   * @param endsWithThis the sub string to check for
+   * @return true when it does contain it, false otherwise
+   */
+  public static boolean endsWithInLowerCaseNoSpaces(String checkThisIfIt, String endsWithThis) {
+    return checkThisIfIt.replace(" ","").toLowerCase().endsWith(
+            endsWithThis.replace(" ","").toLowerCase());
+  }
+
   /** Remove the given string from the beginning of the string if present and return result
    * 
    * @param theString to alter

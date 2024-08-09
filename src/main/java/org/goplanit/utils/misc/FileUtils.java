@@ -6,6 +6,7 @@ import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Scanner;
 import java.util.function.Consumer;
 import java.util.logging.Logger;
 
@@ -156,7 +157,9 @@ public class FileUtils {
    * @throws FileNotFoundException thrown if error
    * @throws UnsupportedEncodingException  thrown if error
    */
-  public static InputSource getFileContentAsInputSource(String filePath, String charSetEncoding) throws FileNotFoundException, UnsupportedEncodingException {
+  public static InputSource getFileContentAsInputSource(
+          String filePath, String charSetEncoding) throws FileNotFoundException, UnsupportedEncodingException {
+
     File file = new File(filePath);
     InputStream inputStream= new FileInputStream(file);
     Reader reader = new InputStreamReader(inputStream, charSetEncoding);
@@ -196,6 +199,29 @@ public class FileUtils {
    */
   public static String parseUtf8FileContentAsString(String filePath) throws IOException {
     return parseFileContentAsString(filePath, "UTF8");
+  }
+
+  /**
+   * Parse a file by means of a lambda function that is passed in. The wrappr method simply creates the
+   * Scanner resource and closes it after completion and takes care of any exceptions thrown during parsing
+   *
+   * @param fileToParse the file to parse using the scanner
+   * @param scannerConsumer functionality applied to the created scanner
+   */
+  public static void wrapFileScanner(
+          File fileToParse, Consumer<Scanner> scannerConsumer){
+
+    // wrap
+    try (Scanner scanner = new Scanner(fileToParse)) {
+
+      // delegate
+      scannerConsumer.accept(scanner);
+
+    }catch (final Exception e) {
+      LOGGER.severe(e.getMessage());
+      e.printStackTrace();
+      throw new PlanItRunTimeException(String.format("Error when parsing file %s", fileToParse.toString()),e);
+    }
   }
 
   /**
