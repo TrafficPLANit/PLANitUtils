@@ -20,7 +20,7 @@ public class CustomIndexTracker {
   private static final Logger LOGGER = Logger.getLogger(CustomIndexTracker.class.getCanonicalName());
 
   /** track PLANit entities by any single property via this map */
-  protected final Map<Class<?>, MapWrapper<?, ?>> entitiyByIndexTracker = new HashMap<>();
+  protected final Map<Class<?>, MapWrapper<?, ?>> entityByIndexTracker = new HashMap<>();
 
   /**
    * Stores an object by its source Id, after checking whether the external Id is a duplicate
@@ -43,7 +43,7 @@ public class CustomIndexTracker {
   public <U, V> void register(Class<U> theClazz, final V obj){
 
     @SuppressWarnings("unchecked")
-    var mapWrapper = (MapWrapper<U, V>) entitiyByIndexTracker.get(theClazz);
+    var mapWrapper = (MapWrapper<U, V>) entityByIndexTracker.get(theClazz);
     if(mapWrapper == null) {
       throw new PlanItRunTimeException("No source id container registered for PLANit entity of type %s, unable to register, perhaps consider registering via its superclass explicitly",
           obj.getClass().getName());
@@ -65,10 +65,10 @@ public class CustomIndexTracker {
    * @param valueToKey function mapping value to key
    */
   public <K, V> void initialiseEntityContainer(Class<V> clazz, final Function<V, K> valueToKey) {
-    if (entitiyByIndexTracker.containsKey(clazz)) {
+    if (entityByIndexTracker.containsKey(clazz)) {
       LOGGER.warning(String.format("Unable to register PLANit entity tracker for %s, already present", clazz.getName()));
     }
-    entitiyByIndexTracker.put(clazz, new MapWrapperImpl<>(new HashMap<>(), valueToKey));
+    entityByIndexTracker.put(clazz, new MapWrapperImpl<>(new HashMap<>(), valueToKey));
   }
 
   /**
@@ -95,7 +95,7 @@ public class CustomIndexTracker {
    */
   @SuppressWarnings("unchecked")
   public <V> MapWrapper<?, V> getEntityContainer(Class<V> clazz) {
-    return (MapWrapper<?, V>) entitiyByIndexTracker.get(clazz);
+    return (MapWrapper<?, V>) entityByIndexTracker.get(clazz);
   }
 
   /**
@@ -109,13 +109,13 @@ public class CustomIndexTracker {
    */
   @SuppressWarnings("unchecked")
   public <V, K> V get(Class<V> clazz, K key) {
-    return ((MapWrapper<K, V>) entitiyByIndexTracker.get(clazz)).get(key);
+    return ((MapWrapper<K, V>) entityByIndexTracker.get(clazz)).get(key);
   }
 
   /** reset all tracked content
    *
    */
   public void reset(){
-    entitiyByIndexTracker.clear();
+    entityByIndexTracker.clear();
   }
 }

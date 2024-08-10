@@ -98,6 +98,20 @@ public interface Edge extends Serializable, GraphEntity {
   public abstract Vertex getVertexB();
 
   /**
+   * set vertex B. Use with care.
+   *
+   * @param vertexB to set
+   */
+  public abstract void setVertexB(Vertex vertexB);
+
+  /**
+   * set vertex A. Use with care
+   *
+   * @param vertexA to set
+   */
+  public abstract void setVertexA(Vertex vertexA);
+
+  /**
    * set the name of the edge
    * @param name to set
    */
@@ -144,11 +158,11 @@ public interface Edge extends Serializable, GraphEntity {
   /**
    * Replace one of the vertices of the link
    * 
-   * @param vertextoReplace the vertex to replace
+   * @param vertexToReplace the vertex to replace
    * @param vertexToReplaceWith the vertex to replace with
    * @return true when replaced, false otherwise
    */
-  public abstract boolean replace(final Vertex vertextoReplace, final Vertex vertexToReplaceWith);
+  public abstract boolean replace(final Vertex vertexToReplace, final Vertex vertexToReplaceWith);
   
   /**
    * Shallow copy
@@ -257,10 +271,8 @@ public interface Edge extends Serializable, GraphEntity {
 
     // Given difficulty of ensuring consistency in rounding between various geometries
     // we check both, ideally we make sure we have a precision model throughout, but this is not implemented yet
-    boolean isVertexAStartPoint = vertexAHasGeometry ?
-        getGeometry().getStartPoint().getCoordinate().equals2D(getVertexA().getPosition().getCoordinate(), Precision.EPSILON_6) : false;
-    boolean isVertexBEndPoint = vertexBHasGeometry ?
-        getGeometry().getEndPoint().getCoordinate().equals2D(getVertexB().getPosition().getCoordinate(), Precision.EPSILON_6) : false;
+    boolean isVertexAStartPoint = vertexAHasGeometry && getGeometry().getStartPoint().getCoordinate().equals2D(getVertexA().getPosition().getCoordinate(), Precision.EPSILON_6);
+    boolean isVertexBEndPoint = vertexBHasGeometry && getGeometry().getEndPoint().getCoordinate().equals2D(getVertexB().getPosition().getCoordinate(), Precision.EPSILON_6);
     if(isVertexAStartPoint && isVertexBEndPoint){
       return true;
     }else if(isVertexAStartPoint && !vertexBHasGeometry){
@@ -269,10 +281,8 @@ public interface Edge extends Serializable, GraphEntity {
       return true;
     }
 
-    boolean isVertexAEndPoint = vertexBHasGeometry ?
-        getGeometry().getStartPoint().getCoordinate().equals2D(getVertexB().getPosition().getCoordinate(), Precision.EPSILON_6) : false;
-    boolean isVertexBStartPoint = vertexAHasGeometry?
-        getGeometry().getEndPoint().getCoordinate().equals2D(getVertexA().getPosition().getCoordinate(), Precision.EPSILON_6) : false;
+    boolean isVertexAEndPoint = vertexBHasGeometry && getGeometry().getStartPoint().getCoordinate().equals2D(getVertexB().getPosition().getCoordinate(), Precision.EPSILON_6);
+    boolean isVertexBStartPoint = vertexAHasGeometry && getGeometry().getEndPoint().getCoordinate().equals2D(getVertexA().getPosition().getCoordinate(), Precision.EPSILON_6);
     if(isVertexBStartPoint && isVertexAEndPoint){
       return false;
     }
