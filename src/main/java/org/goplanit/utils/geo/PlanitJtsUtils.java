@@ -154,7 +154,24 @@ public class PlanitJtsUtils {
    */
   public static LineSegment createLineSegment(Coordinate coordinate1, Coordinate coordinate2) {
     return new LineSegment(coordinate1, coordinate2);
-  }  
+  }
+
+  /**
+   * Create a Coordinate array from the doubles passed in (list of doubles containing x1,y1,x2,y2,etc. coordinates
+   *
+   * @param coordinateList source
+   * @return created coordinate array
+   */
+  public static Coordinate[] createCoordinates(List<Double> coordinateList){
+    PlanItRunTimeException.throwIf(coordinateList.size() % 2 != 0, "coordinate list must contain an even number of entries to correctly identify (x,y) pairs");
+    Iterator<Double> iter = coordinateList.iterator();
+    Coordinate[] coordinateArray = new Coordinate[coordinateList.size() / 2];
+    int index = 0;
+    while (iter.hasNext()) {
+      coordinateArray[index++] = new Coordinate(iter.next(), iter.next());
+    }
+    return coordinateArray;
+  }
 
   /**
    * Create a JTS line string from the doubles passed in (list of doubles containing x1,y1,x2,y2,etc. coordinates
@@ -163,14 +180,7 @@ public class PlanitJtsUtils {
    * @return created line string
    */
   public static LineString createLineString(List<Double> coordinateList){
-    PlanItRunTimeException.throwIf(coordinateList.size() % 2 != 0, "coordinate list must contain an even number of entries to correctly identify (x,y) pairs");
-    Iterator<Double> iter = coordinateList.iterator();
-    Coordinate[] coordinateArray = new Coordinate[coordinateList.size() / 2];
-    int index = 0;
-    while (iter.hasNext()) {
-      coordinateArray[index++] = new Coordinate(iter.next(), iter.next());
-    }
-    return createLineString(coordinateArray);
+    return createLineString(createCoordinates(coordinateList));
   }
 
   /**

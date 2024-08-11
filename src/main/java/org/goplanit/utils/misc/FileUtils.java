@@ -6,6 +6,7 @@ import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Objects;
 import java.util.Scanner;
 import java.util.function.Consumer;
 import java.util.logging.Logger;
@@ -52,8 +53,8 @@ public class FileUtils {
    * @return the list of files that match this extension in the dir
    */
   public static File[] getFilesWithExtensionFromDir(final String pathToDir, final String fileExtension){
-    PlanItRunTimeException.throwIf(StringUtils.isNullOrBlank(pathToDir),String.format("Path directory is null or blank when collecting files"));
-    PlanItRunTimeException.throwIf(StringUtils.isNullOrBlank(fileExtension),String.format("File extension to use is null or blank when collecting files from directory"));
+    PlanItRunTimeException.throwIf(StringUtils.isNullOrBlank(pathToDir), "Path directory is null or blank when collecting files");
+    PlanItRunTimeException.throwIf(StringUtils.isNullOrBlank(fileExtension), "File extension to use is null or blank when collecting files from directory");
     
     /* the dir */
     File directoryPath = new File(pathToDir);
@@ -100,7 +101,7 @@ public class FileUtils {
     if(callBack == null) {
       LOGGER.warning(String.format("No callback provided for any file in %s",pathToDir));
     }
-    File[] filesInDir = new File(pathToDir).listFiles();
+    File[] filesInDir = Objects.requireNonNull(new File(pathToDir).listFiles());
     for(int index=0;index<filesInDir.length;++index) {
       callBack.accept(filesInDir[index]);
     } 

@@ -11,6 +11,7 @@ import org.goplanit.utils.graph.Vertex;
 import org.goplanit.utils.graph.directed.EdgeSegment;
 import org.goplanit.utils.math.Precision;
 import org.goplanit.utils.misc.Pair;
+import org.goplanit.utils.network.layer.physical.Node;
 import org.goplanit.utils.zoning.Zone;
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.Envelope;
@@ -220,7 +221,31 @@ public class PlanitGraphGeoUtils {
     
     /* find minimum entry */
     return findMinimumValuePair(result);
-  }  
+  }
+
+  /**
+   * Find the index of the vertex closest to the coordinate provided
+   *
+   * @param coordinate to check against
+   * @param geoUtils to use
+   * @param vertices to find closest one for
+   * @return index of closest vertex, -1 if something went wrong
+   */
+  public static int findVertexClosestTo(Coordinate coordinate, PlanitJtsCrsUtils geoUtils, Vertex... vertices) {
+    int closestIndex = -1;
+    double distance = Double.POSITIVE_INFINITY;
+    for(int index = 0; index < vertices.length ; ++index) {
+      var currVertex = vertices[index];
+      if(currVertex.hasPosition()) {
+        double currDistance = geoUtils.getDistanceInMetres(coordinate, vertices[index].getPosition().getCoordinate());
+        if(currDistance < distance){
+          distance = currDistance;
+          closestIndex = index;
+        }
+      }
+    }
+    return closestIndex;
+  }
    
 
   /** Find the edge closest to the passed in geometry using a projection from any existing coordinate on the geometry to the geometry of the link.
@@ -411,5 +436,6 @@ public class PlanitGraphGeoUtils {
   public static boolean isVertexNearBoundingBox(
       Vertex node, Envelope boundingBox, double maxDistanceMeters, PlanitJtsCrsUtils geoUtils) {
     return geoUtils.isGeometryNearBoundingBox(node.getPosition(), boundingBox, maxDistanceMeters);
-  }  
+  }
+
 }
