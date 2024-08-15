@@ -64,6 +64,8 @@ public class RunTimesTracker {
 
   /**
    * perform shallow clone
+   *
+   * @return copy
    */
   public RunTimesTracker shallowClone() {
     return new RunTimesTracker(this, false);
@@ -71,6 +73,8 @@ public class RunTimesTracker {
 
   /**
    * perform deep clone
+   *
+   * @return copy
    */
   public RunTimesTracker deepClone() {
     return  new RunTimesTracker(this, true);
