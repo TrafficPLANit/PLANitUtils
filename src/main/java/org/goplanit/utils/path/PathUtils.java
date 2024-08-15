@@ -70,37 +70,48 @@ public class PathUtils {
   }
 
   /**
-   * Compute path cost by summing the edge segment values provided based on id as index in value array for ech provided path
+   * Compute summed path value by combining the edge segment values provided based on id as index in value array for ech provided path
    *
    * @param <T> type of path
-   * @param paths to get cost for
+   * @param paths to get sum for
    * @param edgeSegmentValuesById array with values, e.g., costs per edge segment
    * @return path value array found in order of collection
    */
-  public static <T extends SimpleDirectedPath> double[] computeEdgeSegmentAdditiveValues(
+  public static <T extends SimpleDirectedPath> double[] computeEdgeSegmentsSummedValue(
       Collection<T> paths, double[] edgeSegmentValuesById){
     final double pathValues[] = new double[paths.size()];
     int index = 0;
     for(var path : paths){
-      pathValues[index++] = computeEdgeSegmentAdditiveValues(path, edgeSegmentValuesById);
+      pathValues[index++] = computeEdgeSegmentsSummedValue(path, edgeSegmentValuesById);
     }
     return pathValues;
   }
 
   /**
-   * Compute path cost by summing the edge segment values provided based on id as index in value array
+   * Compute a path relevant total value by summing the edge segment values provided based on id as index in value array
    *
    * @param path to get summed value for
-   * @param edgeSegmentCostsById array with values per edge segment
-   * @return path cost found
+   * @param edgeSegmentValuesById array with values per edge segment
+   * @return path total found
    */
-  public static double computeEdgeSegmentAdditiveValues(SimpleDirectedPath path, double[] edgeSegmentCostsById){
+  public static double computeEdgeSegmentsSummedValue(SimpleDirectedPath path, double[] edgeSegmentValuesById){
     double pathAdditiveValue = 0.0;
     for(var iter = path.iterator(); iter.hasNext();){
       var currEdgeSegment = iter.next();
-      pathAdditiveValue += edgeSegmentCostsById[ (int) currEdgeSegment.getId()];
+      pathAdditiveValue += edgeSegmentValuesById[ (int) currEdgeSegment.getId()];
     }
     return pathAdditiveValue;
+  }
+
+  /**
+   * Compute a path relevant average value by summing the edge segment values provided based on id as index in value array
+   *
+   * @param path to get average value for
+   * @param edgeSegmentValuesById array with values per edge segment
+   * @return path average found
+   */
+  public static double computeEdgeSegmentsAverageValue(SimpleDirectedPath path, double[] edgeSegmentValuesById) {
+    return computeEdgeSegmentsSummedValue(path, edgeSegmentValuesById)/path.size();
   }
 
 
@@ -196,4 +207,5 @@ public class PathUtils {
 
     return started && !subPathIter.hasNext();
   }
+
 }

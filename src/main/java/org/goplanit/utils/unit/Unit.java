@@ -29,6 +29,11 @@ public interface Unit {
    * predefined SECOND TimeUnit
    */
   public static final TimeUnit SECOND =(TimeUnit) Unit.of(UnitType.SECOND);
+
+  /**
+   * predefined SECOND TimeUnit
+   */
+  public static final TimeUnit MILLISECOND = (TimeUnit) Unit.of(UnitType.MILLISECOND);
   
   /**
    * predefined KM DistanceUnit
