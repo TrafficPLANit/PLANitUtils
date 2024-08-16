@@ -38,6 +38,11 @@ public interface MacroscopicLinkSegmentType extends ExternalIdAble, ManagedId {
   public static final double DEFAULT_MAX_DENSITY_PER_LANE = MacroscopicConstants.DEFAULT_MAX_DENSITY_PCU_KM_LANE;
 
   /**
+   * Default critical speed if not set is 80 km/h
+   */
+  public static final double DEFAULT_CRITICAL_SPEED = MacroscopicConstants.DEFAULT_CRITICAL_SPEED;
+
+  /**
    * {@inheritDoc}
    */
   @Override
@@ -231,9 +236,11 @@ public interface MacroscopicLinkSegmentType extends ExternalIdAble, ManagedId {
     return getAccessProperties(mode).getMaximumSpeedOrDefaultKmH(mode.getMaximumSpeedKmH());
   }
   
-  /** Collect the critical speed based on the combination of the mode and any restrictions imposed by the type on this mode.
+  /** Collect the critical speed based on the combination of the mode, any restrictions imposed by the type on this mode, and
+   * the default critical speed.
    * If the mode is not available on this type null is returned, otherwise it is the minimum speed of the mode maximum speed
-   * and the restricted critical speed of the type for this mode
+   * the restricted critical speed of the type for this mode. If no critical speed is set, it is the minimum of the mode's
+   * ,aximum speed and the default critical speed instead.
    * 
    * @param mode to use
    * @return the critical speed in km/h
@@ -242,7 +249,8 @@ public interface MacroscopicLinkSegmentType extends ExternalIdAble, ManagedId {
     if(!isModeAllowed(mode)) {
       return null;
     }
-    return getAccessProperties(mode).getCriticalSpeedOrDefaultKmH(mode.getMaximumSpeedKmH());
+    return getAccessProperties(mode).getCriticalSpeedOrDefaultKmH(
+            Math.min(DEFAULT_CRITICAL_SPEED, mode.getMaximumSpeedKmH()));
   }  
 
   /**
