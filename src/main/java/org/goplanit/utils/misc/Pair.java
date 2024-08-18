@@ -61,8 +61,10 @@ public class Pair<A, B> {
 
   /** check if pair is null or empty
    *
+   * @param <A> typeA
+   * @param <B> typeB
    * @param pair to check
-   * @return true when null or empty, false othewise
+   * @return true when null or empty, false otherwise
    */
   public static <A,B> boolean isNullOrEmpty(Pair<A, B> pair) {
     return pair == null || pair.bothNull();
