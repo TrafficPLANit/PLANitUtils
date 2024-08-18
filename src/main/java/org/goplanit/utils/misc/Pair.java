@@ -1,7 +1,5 @@
 package org.goplanit.utils.misc;
 
-import org.opengis.feature.simple.SimpleFeatureType;
-
 import java.util.Objects;
 import java.util.function.Consumer;
 
@@ -66,7 +64,7 @@ public class Pair<A, B> {
    * @param pair to check
    * @return true when null or empty, false othewise
    */
-  public static boolean nullOrEmpty(Pair<Integer, Integer> pair) {
+  public static <A,B> boolean isNullOrEmpty(Pair<A, B> pair) {
     return pair == null || pair.bothNull();
   }
 

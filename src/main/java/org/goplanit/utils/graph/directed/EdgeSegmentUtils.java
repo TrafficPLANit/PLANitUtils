@@ -2,6 +2,8 @@ package org.goplanit.utils.graph.directed;
 
 import org.goplanit.utils.geo.PlanitJtsUtils;
 import org.goplanit.utils.graph.EdgeUtils;
+import org.goplanit.utils.id.IdMapperType;
+import org.goplanit.utils.id.IdMappingUtils;
 import org.locationtech.jts.geom.LineString;
 
 import java.util.*;
@@ -76,5 +78,18 @@ public class EdgeSegmentUtils {
 
     // deduplicate shared vertices between link (segments) when concatenating
     return PlanitJtsUtils.createCopyWithoutAdjacentDuplicateCoordinates(PlanitJtsUtils.concatenate(linkGeometries.toArray(LineString[]::new)));
+  }
+
+  /**
+   * BAsed on edge segment construct an id string based on parent link id (configurable which) and the direction resulting
+   * in "link_id_mapping-direction" where direction is either BA or BA, e.g. 4-AB.
+   *
+   * @param edgeSegment to use
+   * @param idMapperType parent link id mapping
+   * @return string form of proposed id
+   */
+  public static String createParentLinkDerivedId(final EdgeSegment edgeSegment, IdMapperType idMapperType) {
+    var linkId =  IdMappingUtils.getIdMappingFunction(idMapperType).apply(edgeSegment.getParent());
+    return String.format("%s-%s",linkId, (edgeSegment.isDirectionAb() ? "AB" : "BA"));
   }
 }

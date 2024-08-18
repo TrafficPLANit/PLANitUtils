@@ -87,6 +87,18 @@ public class CustomIndexTracker {
   }
 
   /**
+   * check if the container with custom Ids exists
+   *
+   * @param <V>   value of the container
+   * @param clazz to collect container for
+   * @return true if registered, false otherwise
+   */
+  @SuppressWarnings("unchecked")
+  public <V> boolean containsEntityContainer(Class<V> clazz) {
+    return entityByIndexTracker.containsKey(clazz);
+  }
+
+  /**
    * access to the container with custom Ids
    *
    * @param <V>   value of the container
@@ -95,7 +107,12 @@ public class CustomIndexTracker {
    */
   @SuppressWarnings("unchecked")
   public <V> MapWrapper<?, V> getEntityContainer(Class<V> clazz) {
-    return (MapWrapper<?, V>) entityByIndexTracker.get(clazz);
+    var entry = entityByIndexTracker.get(clazz);
+    if(entry == null){
+      LOGGER.warning(String.format("Trying to access container that is not available based on %s", clazz.getName()));
+      return null;
+    }
+    return (MapWrapper<?, V>) entry;
   }
 
   /**
