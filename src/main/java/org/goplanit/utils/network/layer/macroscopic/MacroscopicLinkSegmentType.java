@@ -240,7 +240,7 @@ public interface MacroscopicLinkSegmentType extends ExternalIdAble, ManagedId {
    * the default critical speed.
    * If the mode is not available on this type null is returned, otherwise it is the minimum speed of the mode maximum speed
    * the restricted critical speed of the type for this mode. If no critical speed is set, it is the minimum of the mode's
-   * ,aximum speed and the default critical speed instead.
+   * ,maximum speed and the default critical speed instead.
    * 
    * @param mode to use
    * @return the critical speed in km/h
@@ -250,7 +250,7 @@ public interface MacroscopicLinkSegmentType extends ExternalIdAble, ManagedId {
       return null;
     }
     return getAccessProperties(mode).getCriticalSpeedOrDefaultKmH(
-            Math.min(DEFAULT_CRITICAL_SPEED, mode.getMaximumSpeedKmH()));
+            Math.min(DEFAULT_CRITICAL_SPEED, getMaximumSpeedKmH(mode)));
   }  
 
   /**
@@ -266,7 +266,7 @@ public interface MacroscopicLinkSegmentType extends ExternalIdAble, ManagedId {
    * @param toBeRemovedModes all the modes to make i
    */
   public default void removeModeAccess(final Set<Mode> toBeRemovedModes) {
-    toBeRemovedModes.forEach( mode -> removeModeAccess(mode));
+    toBeRemovedModes.forEach(this::removeModeAccess);
   }
 
   /**
