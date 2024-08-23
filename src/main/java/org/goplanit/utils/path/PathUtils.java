@@ -236,8 +236,8 @@ public class PathUtils {
   }
 
   /**
-   * Find all link segment ids (in order) after the first time the predicate matches, e.g., when test is ls -> ls.getId() > 2 and
-   * the path has ids of [0,1,2,3,4], then this produces [3, 4]
+   * Find all link segment ids (in order) after the first time the predicate matches, e.g., when test is:
+   * ls.getId() greater than 2 and  the path has ids of [0,1,2,3,4], then this produces [3, 4]
    *
    * @param path to use
    * @param predicate to apply
