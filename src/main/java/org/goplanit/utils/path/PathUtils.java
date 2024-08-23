@@ -3,6 +3,7 @@ package org.goplanit.utils.path;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.function.Function;
+import java.util.function.Predicate;
 
 import org.goplanit.utils.graph.Vertex;
 import org.goplanit.utils.graph.directed.EdgeSegment;
@@ -52,7 +53,8 @@ public class PathUtils {
    * @param idGetter lambda function to get the required Id value
    * @return the path as a String of comma-separated link segment Id or external Id values
    */
-  public static String getEdgeSegmentPathString(final ManagedDirectedPath path, final Function<EdgeSegment, Object> idGetter) {
+  public static String getEdgeSegmentPathString(
+          final ManagedDirectedPath path, final Function<EdgeSegment, Object> idGetter) {
     final StringBuilder builder = new StringBuilder("[");
     if(path != null) {
       for (final EdgeSegment edgeSegment : path) {
@@ -79,7 +81,7 @@ public class PathUtils {
    */
   public static <T extends SimpleDirectedPath> double[] computeEdgeSegmentsSummedValue(
       Collection<T> paths, double[] edgeSegmentValuesById){
-    final double pathValues[] = new double[paths.size()];
+    final double[] pathValues = new double[paths.size()];
     int index = 0;
     for(var path : paths){
       pathValues[index++] = computeEdgeSegmentsSummedValue(path, edgeSegmentValuesById);
@@ -114,6 +116,40 @@ public class PathUtils {
     return computeEdgeSegmentsSummedValue(path, edgeSegmentValuesById)/path.size();
   }
 
+  /**
+   * Find path overlap between two paths by it shared link segment ids, but ignore any path link segments
+   * on and beyond a given link segment id for each path (optionally)
+   *
+   * @param path1 to check against path2
+   * @param path1SegmentToStop stops checking for overlap on path 1 after finding this link segment on the path (may be null(
+   * @param path2 to check against path 1
+   * @param path2SegmentToStop stops checking for overlap on path 1 after finding this link segment on the path (may be null)
+   * @return shared link segment ids
+   */
+  public static int[] getOverlappingPathLinkIndices(
+          SimpleDirectedPath path1, Long path1SegmentToStop, SimpleDirectedPath path2, Long path2SegmentToStop) {
+    int[] overlappingIndices = new int[(int)path1.size()];
+    int overlapIndex = 0;
+    for(var p1LinkSegment : path1){
+      // loop in order, so when match for 1 then we stop entirely
+      if(path1SegmentToStop!=null && p1LinkSegment.getId() == path1SegmentToStop){
+        break;
+      }
+
+      for(var p2LinkSegment : path2){
+        // loop in order, so when match for 2 we break from finding any match in 2
+        if(path2SegmentToStop!=null && p2LinkSegment.getId() == path2SegmentToStop){
+          break;
+        }
+        if(p2LinkSegment.equals(p1LinkSegment)){
+          overlappingIndices[overlapIndex++] = (int)p1LinkSegment.getId();
+        }
+      }
+    }
+    int[] overlappingIndicesTrimmed = new int[overlapIndex];
+    System.arraycopy(overlappingIndices, 0, overlappingIndicesTrimmed, 0, overlapIndex);
+    return overlappingIndicesTrimmed;
+  }
 
   /**
    * Find path overlap between two paths by it shared link segment ids
@@ -123,16 +159,7 @@ public class PathUtils {
    * @return shared link segment ids
    */
   public static int[] getOverlappingPathLinkIndices(SimpleDirectedPath path1, SimpleDirectedPath path2) {
-    int[] overlappingIndices = new int[(int)path1.size()];
-    int overlapIndex = 0;
-    for(var p1LinkSegment : path1){
-      if(path2.containsLinkSegmentId(p1LinkSegment.getId())){
-        overlappingIndices[overlapIndex++] = (int)p1LinkSegment.getId();
-      }
-    }
-    int[] overlappingIndicesTrimmed = new int[overlapIndex];
-    System.arraycopy(overlappingIndices, 0, overlappingIndicesTrimmed, 0, overlapIndex);
-    return overlappingIndicesTrimmed;
+    return getOverlappingPathLinkIndices(path1, null, path2, null);
   }
 
   /**
@@ -208,4 +235,29 @@ public class PathUtils {
     return started && !subPathIter.hasNext();
   }
 
+  /**
+   * Find all link segment ids (in order) after the first time the predicate matches, e.g., when test is ls -> ls.getId() > 2 and
+   * the path has ids of [0,1,2,3,4], then this produces [3, 4]
+   *
+   * @param path to use
+   * @param predicate to apply
+   * @return link segment ids in raw array that were found
+   */
+  public static int[] getLinkSegmentIndicesAfterInitialMatch(SimpleDirectedPath path, Predicate<EdgeSegment> predicate) {
+    var iter = path.iterator();
+    int index = 0;
+    int offsetIndex = -1;
+    int[] linkSegmentIndicesMatched = null;
+    while(iter.hasNext()){
+      var linkSegment = iter.next();
+      if(linkSegmentIndicesMatched != null){
+        linkSegmentIndicesMatched[index - offsetIndex] = (int) linkSegment.getId();
+      }else if(predicate.test(linkSegment)){
+        offsetIndex = index +1;
+        linkSegmentIndicesMatched = new int[((int)path.size())-offsetIndex];
+      }
+      ++index;
+    }
+    return linkSegmentIndicesMatched;
+  }
 }
