@@ -28,6 +28,14 @@ public interface DirectedSubGraph <V extends DirectedVertex, E extends EdgeSegme
    * @return true when registered, false otherwise
    */
   public abstract boolean containsEdgeSegment(E edgeSegment);
+
+  /**
+   * Verify if the bush contains the given edge segment
+   *
+   * @param edgeSegmentId to verify
+   * @return true when present, false otherwise
+   */
+  public abstract boolean containsEdgeSegment(long edgeSegmentId);
   
   /**
    * The number of registered vertices. This method provides the number of vertices corresponding to these registered edge
