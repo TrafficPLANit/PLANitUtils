@@ -57,8 +57,36 @@ public class Triple<A, B, C> {
    */
   public static <A,B,C> Triple<A, B, C> of(A valueA, B valueB, C valueC) {
     return new Triple<>(valueA, valueB, valueC);
-  }  
-  
+  }
+
+  /** Factory method
+   *
+   * @param <A> type of valueA
+   * @param <B> type of valueB
+   * @param <C> type of valueC
+   *
+   * @param valueAb first and second
+   * @param valueC third
+   * @return new triple
+   */
+  public static <A,B,C> Triple<A, B, C> of(Pair<A,B> valueAb, C valueC) {
+    return new Triple<>(valueAb.first(), valueAb.second(), valueC);
+  }
+
+  /** Factory method
+   *
+   * @param <A> type of valueA
+   * @param <B> type of valueB
+   * @param <C> type of valueC
+   *
+   * @param valueA first
+   * @param valueBc second and third
+   * @return new triple
+   */
+  public static <A,B,C> Triple<A, B, C> of(A valueA, Pair<B,C> valueBc) {
+    return new Triple<>(valueA, valueBc.first(), valueBc.second());
+  }
+
 
   /**
    * @see Object#hashCode()
