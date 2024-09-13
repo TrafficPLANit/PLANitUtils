@@ -97,7 +97,7 @@ public interface UntypedACyclicSubGraph<V extends DirectedVertex, E extends Edge
    */
   public default Pair<Integer, V> bfsToReachableVertexPartition(
           V startVertex, Set<V>... disjunctVertexPartitions){
-    //TODO: implement this method by doing a BFS
+    //TODO: implement this method by doing a BFS 
     //do not use topological iterator, but just do BFS
   }
 
