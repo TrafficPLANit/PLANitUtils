@@ -7,6 +7,7 @@ import java.util.Set;
 import org.goplanit.utils.graph.directed.DirectedSubGraph;
 import org.goplanit.utils.graph.directed.DirectedVertex;
 import org.goplanit.utils.graph.directed.EdgeSegment;
+import org.goplanit.utils.misc.Pair;
 
 /**
  * 
@@ -81,6 +82,23 @@ public interface UntypedACyclicSubGraph<V extends DirectedVertex, E extends Edge
       return null;
     }
     return reverseIterator ? topologicallySortedVertices.descendingIterator() : topologicallySortedVertices.iterator();
+  }
+
+  /**
+   * Do a breadth first search from start vertex to see with what partition of provided vertices
+   * it can reach. It is required that both partitions are disjunct and that it does not matter
+   * what vertex in the partition is reached. This only determines what partition can be reached (which
+   * then implies the others cannot be reached.
+   *
+   * @param startVertex to use
+   * @param disjunctVertexPartitions to check agains
+   * @return partition index that a match was found to and the vertex that was found to be reachable first, null if no
+   *  match could be found across partitions
+   */
+  public default Pair<Integer, V> bfsToReachableVertexPartition(
+          V startVertex, Set<V>... disjunctVertexPartitions){
+    //TODO: implement this method by doing a BFS
+    //do not use topological iterator, but just do BFS
   }
 
   /**
