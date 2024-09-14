@@ -78,6 +78,19 @@ public interface DirectedSubGraph <V extends DirectedVertex, E extends EdgeSegme
   }
 
   /**
+   * identical to {@link #breadthFirstSearch(DirectedVertex, boolean, Predicate, BiPredicate, BiPredicate)}
+   * except no conditions are imposed on initial and regular traversal, oly a termination condition exists.
+   *
+   */
+  public default Pair<V, Map<V, E>> breadthFirstSearch(
+      V startVertex,
+      boolean invertDirection,
+      BiPredicate<V,E> vertexSegmentTerminationCondition){
+    return breadthFirstSearch(
+        startVertex, invertDirection, es -> true, (prevEs,es) -> true, vertexSegmentTerminationCondition);
+  }
+
+  /**
    * Perform a breadth-first search from a starting vertex in a given direction with conditions
    * on:
    * <ul>
