@@ -84,6 +84,8 @@ public interface UntypedACyclicSubGraph<V extends DirectedVertex, E extends Edge
     return reverseIterator ? topologicallySortedVertices.descendingIterator() : topologicallySortedVertices.iterator();
   }
 
+
+
   /**
    * Do a breadth first search from start vertex to see with what partition of provided vertices
    * it can reach. It is required that both partitions are disjunct and that it does not matter
@@ -99,6 +101,7 @@ public interface UntypedACyclicSubGraph<V extends DirectedVertex, E extends Edge
           V startVertex, Set<V>... disjunctVertexPartitions){
     //TODO: implement this method by doing a BFS 
     //do not use topological iterator, but just do BFS
+    return null;
   }
 
   /**

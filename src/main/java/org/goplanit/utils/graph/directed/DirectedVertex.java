@@ -22,11 +22,12 @@ public interface DirectedVertex extends Vertex {
   
   /** Collect lambda function that collects either up or downstream edge segments
    * 
-   * @param entrySegments flag indicating if entry segments lambda to collect for a given vertex
+   * @param getEntrySegments flag indicating if entry segments lambda to collect for a given vertex
    * @return lambda function
    */
-  public static Function<DirectedVertex, Iterable<? extends EdgeSegment>> getEdgeSegmentsForVertexLambda(boolean entrySegments) {
-    return entrySegments ? getEntryEdgeSegments : getExitEdgeSegments;
+  public static Function<DirectedVertex, Iterable<? extends EdgeSegment>> getEdgeSegmentsForVertexLambda(
+      boolean getEntrySegments) {
+    return getEntrySegments ? getEntryEdgeSegments : getExitEdgeSegments;
   }
 
   /**
