@@ -25,6 +25,8 @@ public class DirectedGraphUtils {
    *   <li>what constitutes a successful search by defining a termination condition</li>
    * </ul>
    *
+   * @param <ES> edge segment type
+   * @param <V> directed vertex type
    * @param startVertex to start search from
    * @param invertDirection direction for searching, when true invert direction from downstream to upstream
    * @param initialVertexSegmentInclusionCondition predicate for initial condition on edge segments to consider
