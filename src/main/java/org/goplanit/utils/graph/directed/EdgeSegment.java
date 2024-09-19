@@ -2,6 +2,7 @@ package org.goplanit.utils.graph.directed;
 
 import java.io.Serializable;
 import java.util.function.Function;
+import java.util.function.Predicate;
 
 import org.goplanit.utils.graph.GraphEntity;
 import org.goplanit.utils.network.layer.physical.LinkSegment;
@@ -72,6 +73,18 @@ public interface EdgeSegment extends Serializable, GraphEntity {
    */
   public default DirectedVertex getDownstreamVertex() {
     return isDirectionAb() ? getParent().getVertexB() : getParent().getVertexA();
+  }
+
+  /**
+   * Test if predicate yields true on any of the two vertices of the segment
+   *
+   * @param matcher to apply
+   * @return true when any vertex matches, false otherwise
+   */
+  public default boolean anyVertexMatches(Predicate<DirectedVertex> matcher) {
+    var parentEdge = getParent();
+    return (parentEdge.hasVertexA() && matcher.test(parentEdge.getVertexA())) ||
+            (parentEdge.hasVertexB() && matcher.test(parentEdge.getVertexB()));
   }
   
   /**
