@@ -5,7 +5,6 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 
 import org.goplanit.utils.graph.GraphEntity;
-import org.goplanit.utils.network.layer.physical.LinkSegment;
 
 /**
  * EdgeSegment represents an edge in a particular (single) direction. Each edge
@@ -73,6 +72,21 @@ public interface EdgeSegment extends Serializable, GraphEntity {
    */
   public default DirectedVertex getDownstreamVertex() {
     return isDirectionAb() ? getParent().getVertexB() : getParent().getVertexA();
+  }
+
+  /**
+   * Check if any of the provided vertices are the same as the one related to this segment
+   *
+   * @param vertices to check
+   * @return true if present, false otherwise
+   */
+  public default boolean hasAnyVertex(DirectedVertex... vertices){
+    for(var theVertex : vertices){
+      if(getUpstreamVertex().equals(theVertex) || getDownstreamVertex().equals(theVertex)){
+        return true;
+      }
+    }
+    return false;
   }
 
   /**
