@@ -50,6 +50,7 @@ public interface MacroscopicLinkSegmentFactory extends GraphEntityFactory<Macros
    * @param registerOnLink option to register the new segment on the underlying link
    * @return the created segment
    */
-  public MacroscopicLinkSegment registerNew(MacroscopicLink parentLink, MacroscopicLinkSegmentType type, boolean directionAb, boolean registerOnLink);
+  public MacroscopicLinkSegment registerNew(
+          MacroscopicLink parentLink, MacroscopicLinkSegmentType type, boolean directionAb, boolean registerOnLink);
 
 }
