@@ -162,7 +162,7 @@ public interface ExternalIdAble extends IdAble {
    * @return string representation
    */
   public default String getIdsAsString(){
-    return String.format("id: %d, xmlId: %s, extId: %s", getId(), getXmlId(), getExternalId());
+    return String.format("id: %d, xmlId: %s, extId: %s", getId(), hasXmlId() ? getXmlId() : "-", hasExternalId() ? getExternalId() : "-");
   }
 
 }
