@@ -180,8 +180,12 @@ public class Pair<A, B> {
    */
   @SuppressWarnings("unchecked")
   public <T> void both(Consumer<T> pairEntryConsumer) {
-    pairEntryConsumer.accept( (T) first);
-    pairEntryConsumer.accept( (T) second);
+    if(first != null){
+      pairEntryConsumer.accept( (T) first);
+    }
+    if(second != null) {
+      pairEntryConsumer.accept((T) second);
+    }
   }
 
   /**
