@@ -2,6 +2,7 @@ package org.goplanit.utils.graph.directed;
 
 import java.util.Collection;
 import java.util.function.Function;
+import java.util.stream.Stream;
 
 import org.goplanit.utils.graph.Vertex;
 import org.goplanit.utils.misc.IterableUtils;
@@ -15,10 +16,10 @@ import org.goplanit.utils.misc.IterableUtils;
 public interface DirectedVertex extends Vertex {
   
   /** Function collecting entry edge segments for vertex */
-  public static final Function<DirectedVertex, Iterable<? extends EdgeSegment>> getEntryEdgeSegments = v -> v.getEntryEdgeSegments();
+  public static final Function<DirectedVertex, Iterable<? extends EdgeSegment>> getEntryEdgeSegments = DirectedVertex::getEntryEdgeSegments;
 
   /** Function collecting exit edge segments for vertex */
-  public static final Function<DirectedVertex, Iterable<? extends EdgeSegment>> getExitEdgeSegments = v -> v.getExitEdgeSegments();
+  public static final Function<DirectedVertex, Iterable<? extends EdgeSegment>> getExitEdgeSegments = DirectedVertex::getExitEdgeSegments;
   
   /** Collect lambda function that collects either up or downstream edge segments
    * 
@@ -52,9 +53,15 @@ public interface DirectedVertex extends Vertex {
    * 
    * @return edgeSegments
    */
-  public Iterable<? extends EdgeSegment> getExitEdgeSegments();  
-  
+  public Iterable<? extends EdgeSegment> getExitEdgeSegments();
 
+  /**
+   * Provide a stream of all edge segments adjacent to this vertex
+   * @return stream of edge segments
+   */
+  public default Stream<? extends EdgeSegment> streamEdgeSegments(){
+    return Stream.concat(IterableUtils.asStream(getEntryEdgeSegments()),IterableUtils.asStream(getExitEdgeSegments()));
+  }
   
   /** collect the first edge segment corresponding to the provided other vertex
    * 
