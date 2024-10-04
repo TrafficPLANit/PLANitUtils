@@ -165,7 +165,7 @@ public class Precision {
     return positive(d1) || negative(d1);
   }
 
-  /** Opposite of {@link #equal(double, double)}
+  /** Opposite of {@link #equal(double, double)}, using a Precision.EPSILON_6
    * 
    * @param d1 to use
    * @param d2 to use
