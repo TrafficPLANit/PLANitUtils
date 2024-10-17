@@ -311,4 +311,28 @@ public class ArrayUtils {
       array[index] = Math.log(array[index]);
     }
   }
+
+  /**
+   * Perform element wise multiplication
+   * @param array1 to use
+   * @param array2 to use
+   * @return result, null if problem found
+   */
+  public static double[] multiplyElementWise(double[] array1, double[] array2) {
+    if(array1 == null){
+      LOGGER.warning("Cannot perform element wise multiplication on null array(s)");
+      return null;
+    }
+
+    if(array1.length != array2.length){
+      LOGGER.warning("Cannot perform element wise multiplication on two arrays with different lengths");
+      return null;
+    }
+
+    double[] result = new double[array1.length];
+    for(int index = 0 ; index < array1.length ; ++index){
+      result[index] = array1[index] * array2[index];
+    }
+    return result;
+  }
 }
