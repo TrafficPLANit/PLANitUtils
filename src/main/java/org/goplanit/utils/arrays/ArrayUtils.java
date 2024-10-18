@@ -124,12 +124,14 @@ public class ArrayUtils {
 
   /** multiply each entry in array by given multiplicator.
    * 
-   * @param destination array to apply to
+   * @param origin array to apply to
    * @param multiplicator to multiply with
+   * @param createCopy when true returned result is copy and no in place changes are made
    * @return destination array
    */
-  public static double[] multiplyBy(final double[] destination, double multiplicator) {
-    for (int index = 0; index < destination.length; ++index) {
+  public static double[] multiplyBy(final double[] origin, double multiplicator, boolean createCopy) {
+    double[] destination = createCopy ? Arrays.copyOf(origin, origin.length) : origin;
+    for (int index = 0; index < origin.length; ++index) {
       destination[index] *= multiplicator;
     }
     return destination;
