@@ -114,8 +114,7 @@ public class CountryNames {
   public static final String SINGAPORE = "Singapore";
   
   public static final String SOlOMON_ISLANDS = "Solomon Islands";
-  
-  public static final String SOUNTH_AFRICA = "South Africa";
+    public static final String SOUTH_AFRICA = "South Africa";
   
   public static final String SRI_LANKA = "Sri Lanka";
   
@@ -147,5 +146,6 @@ public class CountryNames {
   
   public static final String UNITED_STATES_OF_AMERICA = "United States";
   
-  public static final String NETHERLANDS = "Netherlands";                       
+  public static final String NETHERLANDS = "Netherlands";
+  public static final String BELGIUM = "Belgium";
 }
