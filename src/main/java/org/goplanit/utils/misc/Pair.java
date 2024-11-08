@@ -2,6 +2,7 @@ package org.goplanit.utils.misc;
 
 import java.util.Objects;
 import java.util.function.Consumer;
+import java.util.function.Predicate;
 
 /**
  * Custom pair class similar to C++.
@@ -173,7 +174,8 @@ public class Pair<A, B> {
     }
   }
 
-  /** Apply consumer to both entries. Throws ClassCastException when pair contains entries not compatible with type parameter of consumer
+  /** Apply consumer to both entries. Throws ClassCastException when pair contains entries not
+   * compatible with type parameter of consumer
    * 
    * @param <T> consumer type assumed to be compatible with both pair entries
    * @param pairEntryConsumer to apply
@@ -186,6 +188,28 @@ public class Pair<A, B> {
     if(second != null) {
       pairEntryConsumer.accept((T) second);
     }
+  }
+
+  /** Apply predicate to find any match. Throws ClassCastException when pair contains entries not
+   * compatible with type parameter of consumer
+   *
+   * @param <T> consumer type assumed to be compatible with both pair entries
+   * @param pred to apply
+   * @return true when any match, false otherwise
+   */
+  public <T> boolean anyMatch(Predicate<T> pred) {
+    boolean result = false;
+    if(first != null){
+      result = pred.test((T) first);
+    }
+    if(result){
+      return result;
+    }
+
+    if(second != null){
+      result = pred.test((T) second);
+    }
+    return result;
   }
 
   /**
@@ -219,4 +243,5 @@ public class Pair<A, B> {
   public boolean bothNull() {
     return first()==null && second() == null;
   }
+
 }
