@@ -139,7 +139,7 @@ public class Precision {
     return greater(d1,0,EPSILON_6);
   }
   
-  /** Verify if positive with Precision.EPSILON_6
+  /** Verify if positive with epsilon
    * @param d1 double 1
    * @param epsilon to consider
    * @return true when {@code d1 > epsilon} 
