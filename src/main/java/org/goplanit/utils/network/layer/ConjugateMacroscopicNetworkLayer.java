@@ -1,15 +1,16 @@
 package org.goplanit.utils.network.layer;
 
 import org.goplanit.utils.network.layer.physical.*;
-import org.goplanit.utils.network.layer.service.ServiceNode;
 
 /**
- * Conjugate Macroscopic physical network layer consisting of conjugate nodes, conjugate links and conjugate macroscopic link segments. Note that conjugate links are undirected turns whereas conjugate edge segments are directed turns  
+ * Conjugate Macroscopic physical network layer consisting of conjugate nodes, conjugate links and
+ * conjugate macroscopic link segments. Note that conjugate links are undirected turns whereas conjugate
+ * edge segments are directed turns
  *
  * @author markr
  */
 public interface ConjugateMacroscopicNetworkLayer extends
-        UntypedDirectedGraphLayer<ConjugateNode, ConjugateLink, ConjugateLinkSegment> {
+        UntypedPhysicalLayer<ConjugateNode, ConjugateLink, ConjugateLinkSegment> {
 
   /**
    * {@inheritDoc}
@@ -28,21 +29,24 @@ public interface ConjugateMacroscopicNetworkLayer extends
    * 
    * @return the undirected turns
    */
-  public abstract ConjugateLinks getConjugateLinks();
+  @Override
+  public abstract ConjugateLinks getLinks();
 
   /**
    * Collect the turns, i.e. conjugate link segments
    * 
    * @return the turns
    */
-  public abstract ConjugateLinkSegments getConjugateLinkSegments();
+  @Override
+  public abstract ConjugateLinkSegments getLinkSegments();
 
   /**
    * Collect the conjugate nodes, i.e., links/link segments in original network
    * 
    * @return the conjugate nodes
    */
-  public abstract ConjugateNodes getConjugateNodes(); 
+  @Override
+  public abstract ConjugateNodes getNodes();
   
   /** Reference to original layer this conjugate layer represents
    * 
