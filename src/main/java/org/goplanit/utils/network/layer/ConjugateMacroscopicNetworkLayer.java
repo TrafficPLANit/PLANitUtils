@@ -1,11 +1,6 @@
 package org.goplanit.utils.network.layer;
 
-import org.goplanit.utils.network.layer.physical.ConjugateLink;
-import org.goplanit.utils.network.layer.physical.ConjugateLinkSegment;
-import org.goplanit.utils.network.layer.physical.ConjugateLinkSegments;
-import org.goplanit.utils.network.layer.physical.ConjugateLinks;
-import org.goplanit.utils.network.layer.physical.ConjugateNode;
-import org.goplanit.utils.network.layer.physical.ConjugateNodes;
+import org.goplanit.utils.network.layer.physical.*;
 import org.goplanit.utils.network.layer.service.ServiceNode;
 
 /**
@@ -13,7 +8,8 @@ import org.goplanit.utils.network.layer.service.ServiceNode;
  *
  * @author markr
  */
-public interface ConjugateMacroscopicNetworkLayer extends UntypedDirectedGraphLayer<ConjugateNode, ConjugateLink, ConjugateLinkSegment>  {
+public interface ConjugateMacroscopicNetworkLayer extends
+        UntypedDirectedGraphLayer<ConjugateNode, ConjugateLink, ConjugateLinkSegment> {
 
   /**
    * {@inheritDoc}

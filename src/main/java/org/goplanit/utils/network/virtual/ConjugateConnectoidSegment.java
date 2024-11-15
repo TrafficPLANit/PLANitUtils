@@ -6,12 +6,13 @@ import org.goplanit.utils.network.layer.physical.LinkSegment;
 import org.goplanit.utils.pcu.PcuCapacitated;
 
 /**
- * Conjugate connectoid segment represents a directional virtual segment connecting two conjugate connectoid nodes, however, one is a dummy and one of the original underlying link segments is null.
+ * Conjugate connectoid segment represents a directional virtual segment connecting two conjugate
+ * connectoid nodes, however, one is a dummy and one of the original underlying link segments is null.
  * 
  * @author markr
  *
  */
-public interface ConjugateConnectoidSegment extends ConjugateEdgeSegment, PcuCapacitated {
+public interface ConjugateConnectoidSegment extends ConjugateEdgeSegment, PcuCapacitated, ConnectoidSegment {
 
   /**
    * {@inheritDoc}

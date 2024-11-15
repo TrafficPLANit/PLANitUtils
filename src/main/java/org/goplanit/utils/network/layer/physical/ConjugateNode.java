@@ -8,7 +8,7 @@ import org.goplanit.utils.graph.directed.ConjugateDirectedVertex;
  * @author markr
  *
  */
-public interface ConjugateNode extends ConjugateDirectedVertex {
+public interface ConjugateNode extends ConjugateDirectedVertex, Node {
   
   /** id class for generating ids */
   public static final Class<ConjugateNode> CONJUGATE_NODE_ID_CLASS = ConjugateNode.class; 

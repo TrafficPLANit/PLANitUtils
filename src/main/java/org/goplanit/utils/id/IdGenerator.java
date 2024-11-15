@@ -129,6 +129,14 @@ public final class IdGenerator {
     return -1;
   }
 
+  /** Check if token exists
+   * @param token to use
+   * @return true if present, false otherwise
+   */
+  public static boolean hasToken(IdGroupingToken token) {
+    return idGroups.containsKey(token);
+  }
+
 
 
 

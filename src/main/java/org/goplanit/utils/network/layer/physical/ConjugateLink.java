@@ -11,7 +11,7 @@ import org.goplanit.utils.network.layer.macroscopic.MacroscopicLinkSegment;
  * @author markr
  *
  */
-public interface ConjugateLink extends ConjugateDirectedEdge {
+public interface ConjugateLink extends ConjugateDirectedEdge, Link {
   
   /** id class for generating ids */
   public static final Class<ConjugateLink> CONJUGATE_LINK_ID_CLASS = ConjugateLink.class;     
@@ -47,8 +47,8 @@ public interface ConjugateLink extends ConjugateDirectedEdge {
   public default boolean hasConjugateLinkSegmentAb() {
     return hasEdgeSegmentAb();
   }   
-  
-  public default <LS extends ConjugateLinkSegment> LS getLinkSegmentBa() {
+
+  public default <LS extends ConjugateLinkSegment> LS getConjugateLinkSegmentBa() {
     return getConjugateLinkSegment(false);
   } 
   

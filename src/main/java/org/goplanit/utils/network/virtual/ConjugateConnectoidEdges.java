@@ -1,6 +1,7 @@
 package org.goplanit.utils.network.virtual;
 
 import org.goplanit.utils.graph.GraphEntities;
+import org.goplanit.utils.graph.ManagedGraphEntities;
 import org.goplanit.utils.network.layer.service.ServiceNode;
 import org.goplanit.utils.network.layer.service.ServiceNodes;
 
@@ -12,7 +13,7 @@ import java.util.function.BiConsumer;
  * @author markr
  *
  */
-public interface ConjugateConnectoidEdges extends GraphEntities<ConjugateConnectoidEdge>{
+public interface ConjugateConnectoidEdges extends ManagedGraphEntities<ConjugateConnectoidEdge> {
   
   /**
    * {@inheritDoc}
@@ -36,5 +37,6 @@ public interface ConjugateConnectoidEdges extends GraphEntities<ConjugateConnect
    * {@inheritDoc}
    */
   @Override
-  public abstract ConjugateConnectoidEdges deepCloneWithMapping(BiConsumer<ConjugateConnectoidEdge, ConjugateConnectoidEdge> mapper);
+  public abstract ConjugateConnectoidEdges deepCloneWithMapping(
+          BiConsumer<ConjugateConnectoidEdge, ConjugateConnectoidEdge> mapper);
 }

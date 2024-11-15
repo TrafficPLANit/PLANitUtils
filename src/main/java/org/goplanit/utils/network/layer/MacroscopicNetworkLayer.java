@@ -86,6 +86,7 @@ public interface MacroscopicNetworkLayer extends UntypedPhysicalLayer<Node, Macr
    * @param conjugateVirtualNetwork to use for encountered connections to zones, when null connectoid edges/edge segments are ignored 
    * @return conjugate version of this layer
    */
-  public abstract ConjugateMacroscopicNetworkLayer createConjugate(final IdGroupingToken idToken, final ConjugateVirtualNetwork conjugateVirtualNetwork);
+  public abstract ConjugateMacroscopicNetworkLayer createConjugate(
+          final IdGroupingToken idToken, final ConjugateVirtualNetwork conjugateVirtualNetwork);
 
 }

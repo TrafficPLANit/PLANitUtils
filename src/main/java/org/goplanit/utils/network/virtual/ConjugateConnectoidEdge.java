@@ -13,7 +13,7 @@ import org.goplanit.utils.network.layers.UntypedPhysicalNetworkLayers;
  * @author markr
  *
  */
-public interface ConjugateConnectoidEdge extends ConjugateDirectedEdge {
+public interface ConjugateConnectoidEdge extends ConjugateDirectedEdge, ConnectoidEdge {
 
   /**
    * {@inheritDoc}
@@ -26,19 +26,6 @@ public interface ConjugateConnectoidEdge extends ConjugateDirectedEdge {
    */
   @Override
   public abstract ConjugateConnectoidEdge deepClone();
- 
-  /** additional id class for generating conjugate connectoid edge ids */
-  public static Class<ConjugateConnectoidEdge> CONJUGATE_CONNECTOID_EDGE_ID_CLASS = ConjugateConnectoidEdge.class;
-  
-  /**
-   * Return class used to generate unique conjugate connectoid edge ids via the id generator
-   * 
-   * @return class type
-   */
-  public default Class<ConjugateConnectoidEdge> getConnectoidEdgeIdClass(){
-    return CONJUGATE_CONNECTOID_EDGE_ID_CLASS;
-  }    
-
 
   /**
    * {@inheritDoc}

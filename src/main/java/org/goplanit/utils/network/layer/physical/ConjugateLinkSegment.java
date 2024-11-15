@@ -9,7 +9,7 @@ import org.goplanit.utils.misc.Pair;
  * @author markr
  *
  */
-public interface ConjugateLinkSegment extends ConjugateEdgeSegment {
+public interface ConjugateLinkSegment extends ConjugateEdgeSegment, LinkSegment {
   
   /** additional id class for generating link segment ids */
   public static final Class<ConjugateLinkSegment> CONJUGATE_LINK_SEGMENT_ID_CLASS = ConjugateLinkSegment.class;   

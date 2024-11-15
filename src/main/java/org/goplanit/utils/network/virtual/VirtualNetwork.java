@@ -1,9 +1,7 @@
 package org.goplanit.utils.network.virtual;
 
-import org.goplanit.utils.exceptions.PlanItRunTimeException;
 import org.goplanit.utils.graph.GraphEntityDeepCopyMapper;
 import org.goplanit.utils.id.IdGroupingToken;
-import org.goplanit.utils.misc.CollectionUtils;
 import org.goplanit.utils.misc.IterableUtils;
 
 import java.util.logging.Logger;
@@ -13,50 +11,19 @@ import java.util.logging.Logger;
  * 
  * @author markr
  */
-public interface VirtualNetwork {
-
-  public static final Logger LOGGER = Logger.getLogger(VirtualNetwork.class.getCanonicalName());
+public interface VirtualNetwork extends UntypedVirtualNetwork<VirtualNetworkLayer>{
 
   /**
-   * Access to connectoid segments
-   * 
-   * @return connectoidSegments
-   */
-  public abstract ConnectoidSegments getConnectoidSegments();
-
-  /**
-   * Access to connectoid edges
-   * 
-   * @return connectoidEdges
-   */
-  public abstract ConnectoidEdges getConnectoidEdges();
-
-  /**
-   * Access each centroid's vertex
-   *
-   * @return connectoidEdges
-   */
-  public abstract CentroidVertices getCentroidVertices();
-
-  /**
-   * free up memory by clearing contents for garbage collection
-   */
-  public abstract void clear();
-  
-  /**
-   * identical {@link #clear()} only now all underlying managed ids are also reset
-   */
-  public abstract void reset();   
-
-  /**
-   * Create a conjugate version of this virtual network, also known as the edge-to-vertex-dual representation, where all connectoidedges/edge segments become (dangling) conjugate
-   * vertices.
+   * Create a conjugate version of this virtual network, also known as the edge-to-vertex-dual representation, where
+   * all connectoidedges/edge segments become (dangling) conjugate vertices.
    * <p>
-   * It is recommended to first create the conjugate of this virtual network BEFORE creating conjugates of network layers. The latter takes a conjugate zoning as input such that it
-   * can connect the conjugate virtual nodes to the conjugate network layer where appropriate, otherwise these connections are ignored
+   * It is recommended to first create the conjugate of this virtual network BEFORE creating conjugates of network
+   * layers. The latter takes a conjugate zoning as input such that it can connect the conjugate virtual nodes to
+   * the conjugate network layer where appropriate, otherwise these connections are ignored
+   * </p>
    * 
    * @param idToken to use for conjugate entity creation 
-   * @return conjugate version of this virtual network's edges/edgesgments
+   * @return conjugate version of this virtual network
    */
   public abstract ConjugateVirtualNetwork createConjugate(IdGroupingToken idToken);
 
@@ -65,6 +32,7 @@ public interface VirtualNetwork {
    *
    * @return shallow copy
    */
+  @Override
   public abstract VirtualNetwork shallowClone();
 
   /**
@@ -72,6 +40,7 @@ public interface VirtualNetwork {
    *
    * @return deep copy
    */
+  @Override
   public abstract VirtualNetwork deepClone();
 
   /**
@@ -82,47 +51,30 @@ public interface VirtualNetwork {
    * @param centroidVertexMapper to use for tracking mapping between original and copied entity (may be null)
    * @return deep copy
    */
+  @Override
   public VirtualNetwork deepCloneWithMapping(
-      GraphEntityDeepCopyMapper<ConnectoidEdge> connectoidEdgeMapper,
-      GraphEntityDeepCopyMapper<ConnectoidSegment> connectoidSegmentMapper,
-      GraphEntityDeepCopyMapper<CentroidVertex> centroidVertexMapper);
+          GraphEntityDeepCopyMapper<? extends ConnectoidEdge> connectoidEdgeMapper,
+          GraphEntityDeepCopyMapper<? extends ConnectoidSegment> connectoidSegmentMapper,
+          GraphEntityDeepCopyMapper<? extends CentroidVertex> centroidVertexMapper);
 
-  /**
-   * Verify if entire network is empty
-   *
-   * @return true if network is empty, false otherwise
-   */
-  public default boolean isEmpty(){
-    return getCentroidVertices().isEmpty() && getConnectoidEdges().isEmpty() && getConnectoidSegments().isEmpty();
-  }
 
-  /**
-   * Verify if entire connectoid edges are empty
-   *
-   * @return true if empty, false otherwise
-   */
-  public default boolean hasConnectoidEdges(){
-    return !IterableUtils.nullOrEmpty(getConnectoidEdges());
-  }
 
-  /**
-   * Verify if entire connectoid segments are empty
-   *
-   * @return true if empty, false otherwise
-   */
-  public default boolean hasConnectoidSegments(){
-    return !IterableUtils.nullOrEmpty(getConnectoidSegments());
-  }
+//  /**
+//   * Verify if entire connectoid edges are empty
+//   *
+//   * @return true if empty, false otherwise
+//   */
+//  public default boolean hasConnectoidEdges(){
+//    return !IterableUtils.nullOrEmpty(getConnectoidEdges());
+//  }
+//
+//  /**
+//   * Verify if entire connectoid segments are empty
+//   *
+//   * @return true if empty, false otherwise
+//   */
+//  public default boolean hasConnectoidSegments(){
+//    return !IterableUtils.nullOrEmpty(getConnectoidSegments());
+//  }
 
-  /**
-   * Recreate the ids for all registered entities with or without resetting, this includes child managed ids, i.e., nested managedIdentities containers if so indicated
-   *
-   * @param resetManagedIdClass when true we reset the managedId's counter to zero (via its id class) before recreating the ids, otherwise we simply recreate the managed id by
-   *                            starting with the next available id without resetting
-   */
-  public default void recreateManagedIds(boolean resetManagedIdClass){
-    getConnectoidSegments().recreateIds(resetManagedIdClass);
-    getConnectoidEdges().recreateIds(resetManagedIdClass);
-    getCentroidVertices().recreateIds(resetManagedIdClass);
-  }
 }

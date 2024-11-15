@@ -12,7 +12,8 @@ import java.util.function.Consumer;
  *
  * @author markr
  */
-public interface UntypedPhysicalLayer<N extends Node, L extends Link, LS extends LinkSegment> extends UntypedDirectedGraphLayer<N, L, LS> {
+public interface UntypedPhysicalLayer<N extends Node, L extends Link, LS extends LinkSegment>
+        extends UntypedDirectedGraphLayer<N, L, LS> {
 
   /**
    * Collect the links
