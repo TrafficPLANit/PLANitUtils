@@ -31,7 +31,8 @@ public interface ConjugateDirectedEdge extends DirectedEdge {
    * {@inheritDoc}
    */  
   @Override
-  public abstract ConjugateEdgeSegment registerEdgeSegment(final EdgeSegment edgeSegment, final boolean directionAB, final boolean force);
+  public abstract ConjugateEdgeSegment registerEdgeSegment(
+      final EdgeSegment edgeSegment, final boolean directionAB, final boolean force);
   
   /**
    * {@inheritDoc}

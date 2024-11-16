@@ -45,5 +45,14 @@ public interface ConjugateDirectedVertex extends DirectedVertex{
    * @return original edge 
    */
   public abstract DirectedEdge getOriginalEdge();
+
+  /**
+   * Verify if original edge is present
+   *
+   * @return true when present, false otherwise
+   */
+  public default boolean hasOriginalEdge(){
+    return getOriginalEdge()!=null;
+  }
     
 }

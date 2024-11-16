@@ -64,11 +64,14 @@ public interface ConjugateEdgeSegment extends EdgeSegment{
     return (ConjugateEdgeSegment) EdgeSegment.super.getOppositeDirectionSegment();  
   }
 
+  // NEW and specific to conjugate aspect of class
+
   /**
    * Adjacent edge segments in original graph for this conjugate
+   *
    * @return edge segment pair
    */
-  public default Pair<? extends EdgeSegment,? extends EdgeSegment> getOriginalAdjcentEdgeSegments(){
+  public default Pair<? extends EdgeSegment,? extends EdgeSegment> getOriginalAdjacentEdgeSegments(){
     return getParent().getOriginalAdjacentEdgeSegments(isDirectionAb());
   }
 

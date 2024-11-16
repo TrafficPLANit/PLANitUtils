@@ -1,11 +1,10 @@
 package org.goplanit.utils.network.virtual;
 
-import org.goplanit.utils.exceptions.PlanItException;
 import org.goplanit.utils.graph.Vertex;
 import org.goplanit.utils.graph.directed.DirectedEdge;
-import org.goplanit.utils.zoning.Centroid;
-
-import java.util.logging.Logger;
+import org.goplanit.utils.id.IdGenerator;
+import org.goplanit.utils.id.IdGroupingToken;
+import org.goplanit.utils.zoning.Connectoid;
 
 /**
  * the connecting component between centroid and a first physical node in the network.
@@ -15,6 +14,16 @@ import java.util.logging.Logger;
  *
  */
 public interface ConnectoidEdge extends DirectedEdge{
+
+  /**
+   * Generate connectoid id
+   *
+   * @param tokenId contiguous id generation within this group for instances of this class
+   * @return id of connectoid edge
+   */
+  public static long generateConnectoidEdgeId(final IdGroupingToken tokenId) {
+    return IdGenerator.generateId(tokenId, Connectoid.class);
+  }
 
   /** additional id class for generating connectoid edge ids */
   public static Class<ConnectoidEdge> CONNECTOID_EDGE_ID_CLASS = ConnectoidEdge.class;

@@ -10,7 +10,7 @@ import org.goplanit.utils.network.layer.physical.ConjugateNodes;
  * @author markr
  */
 public interface ConjugateVirtualNetworkLayer extends
-        UntypedVirtualLayer<ConjugateNode, ConjugateConnectoidEdge, ConjugateConnectoidSegment> {
+        UntypedVirtualLayer<ConjugateConnectoidNode, ConjugateConnectoidEdge, ConjugateConnectoidSegment> {
 
   /**
    * {@inheritDoc}
@@ -41,11 +41,18 @@ public interface ConjugateVirtualNetworkLayer extends
   public abstract ConjugateConnectoidSegments getConnectoidSegments();
 
   /**
-   * Access conjugate nodes
+   * Access conjugate connectoid nodes
    *
-   * @return conjugate nodes
+   * @return conjugate connectoid nodes
    */
   @Override
-  public abstract ConjugateNodes getVertices();
+  public abstract ConjugateConnectoidNodes getVertices();
+
+  /**
+   * Access to original reference layer this conjugate version is based on
+   *
+   * @return referrence layer
+   */
+  public abstract VirtualNetworkLayer getReferenceLayer();
 
 }

@@ -72,8 +72,17 @@ public interface ConjugateConnectoidSegment extends ConjugateEdgeSegment, PcuCap
    * {@inheritDoc}
    */
   @SuppressWarnings("unchecked")
-  public default Pair<? extends LinkSegment,? extends LinkSegment> getOriginalAdjcentEdgeSegments(){
-    return (Pair<? extends LinkSegment, ? extends LinkSegment>) ConjugateEdgeSegment.super.getOriginalAdjcentEdgeSegments();
-  }  
+  public default Pair<? extends LinkSegment,? extends LinkSegment> getOriginalAdjacentEdgeSegments(){
+    return (Pair<? extends LinkSegment, ? extends LinkSegment>) ConjugateEdgeSegment.super.getOriginalAdjacentEdgeSegments();
+  }
+
+  /**
+   * Provide access to the underlying original Centroid vertex of the zone (if available)
+   *
+   * @return centroid vertex, null if not found
+   */
+  public default CentroidVertex getCentroidVertex(){
+    return getParent().getCentroidVertex();
+  }
 
 }

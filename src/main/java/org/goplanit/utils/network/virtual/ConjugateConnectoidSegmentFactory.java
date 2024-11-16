@@ -26,7 +26,8 @@ public interface ConjugateConnectoidSegmentFactory extends GraphEntityFactory<Co
    * @param registerOnNodeAndLink when true register segment on node and link, otherwise not
    * @return created connectoid segment
    */
-  public abstract ConjugateConnectoidSegment registerNew(ConjugateConnectoidEdge parent, boolean directionAb, boolean registerOnNodeAndLink);
+  public abstract ConjugateConnectoidSegment registerNew(
+      ConjugateConnectoidEdge parent, boolean directionAb, boolean registerOnNodeAndLink);
 
 
 }

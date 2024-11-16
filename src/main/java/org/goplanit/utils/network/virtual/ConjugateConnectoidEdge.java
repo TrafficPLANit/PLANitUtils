@@ -43,7 +43,8 @@ public interface ConjugateConnectoidEdge extends ConjugateDirectedEdge, Connecto
    * {@inheritDoc}
    */  
   @Override
-  public abstract ConjugateConnectoidSegment registerEdgeSegment(final EdgeSegment edgeSegment, final boolean directionAB, final boolean force);
+  public abstract ConjugateConnectoidSegment registerEdgeSegment(
+      final EdgeSegment edgeSegment, final boolean directionAB, final boolean force);
   
   /**
    * {@inheritDoc}
@@ -85,6 +86,21 @@ public interface ConjugateConnectoidEdge extends ConjugateDirectedEdge, Connecto
   @Override
   public default Collection<? extends ConjugateConnectoidSegment> getEdgeSegments(){
     return (Collection<? extends ConjugateConnectoidSegment>) ConjugateDirectedEdge.super.getEdgeSegments();
-  } 
+  }
+
+  /**
+   * Provide access to the underlying original Centroid vertex of the zone (if available)
+   *
+   * @return centroid vertex, null if not found
+   */
+  @Override
+  public default CentroidVertex getCentroidVertex(){
+    if(getVertexA() != null && getVertexA().getOriginalEdge() != null){
+      return getVertexA().getOriginalEdge().getCentroidVertex();
+    }else if(getVertexB() != null && getVertexB().getOriginalEdge() != null){
+      return getVertexB().getOriginalEdge().getCentroidVertex();
+    }
+    return null;
+  }
   
 }

@@ -1,6 +1,7 @@
 package org.goplanit.utils.network.virtual;
 
 import org.goplanit.utils.graph.directed.ConjugateDirectedVertex;
+import org.goplanit.utils.graph.directed.DirectedEdge;
 import org.goplanit.utils.network.layer.physical.Node;
 
 /**
@@ -22,4 +23,19 @@ public interface ConjugateConnectoidNode extends ConjugateDirectedVertex, Node {
    */
   @Override
   public abstract ConjugateConnectoidNode deepClone();
+
+  /** Original edge in original directed graph this conjugate represents
+   * @return original edge
+   */
+  @Override
+  public abstract ConnectoidEdge getOriginalEdge();
+
+  /**
+   * Access to original centroid vertex of the zone if available
+   *
+   * @return centroid vertex when available, null otherwise
+   */
+  public default CentroidVertex getCentroidVertex(){
+    return hasOriginalEdge() ? getOriginalEdge().getCentroidVertex() : null;
+  }
 }

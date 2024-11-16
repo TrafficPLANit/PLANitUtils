@@ -32,8 +32,8 @@ public interface DirectedEdge extends Edge {
    * Register EdgeSegment.
    *
    * If there already exists an edgeSegment for that direction it is replaced and returned. If the edge segment
-   * has no parent edge, this edge is set. If there is a discrepancy between the edge segment's parent edge and this edge
-   * a warning is issued and the edge segment is not registered
+   * has no parent edge, this edge is set. If there is a discrepancy between the edge segment's parent edge and
+   * this edge a warning is issued and the edge segment is not registered
    *
    * @param edgeSegment the edgeSegment to be registered
    * @param directionAB direction of travel
@@ -47,18 +47,20 @@ public interface DirectedEdge extends Edge {
    * Register EdgeSegment.
    *
    * If there already exists an edgeSegment for that direction it is replaced and returned. If the edge segment
-   * has no parent edge, this edge is set. If there is a discrepancy between the edge segment's parent edge and this edge
-   * a warning is issued and the edge segment is not registered
+   * has no parent edge, this edge is set. If there is a discrepancy between the edge segment's parent
+   * edge and this edge a warning is issued and the edge segment is not registered
    *
    * @param edgeSegment the edgeSegment to be registered
    * @param directionAB direction of travel
    * @param force when true the provided edge segment is always set (even if null or inconsistent, without warning)
    * @return replaced egeSegment (if any)
    */
-  public abstract EdgeSegment registerEdgeSegment(final EdgeSegment edgeSegment, final boolean directionAB, final boolean force);
+  public abstract EdgeSegment registerEdgeSegment(
+      final EdgeSegment edgeSegment, final boolean directionAB, final boolean force);
   
   /**
-   * Remove edge segments from this edge. Be careful doing this as it because it might affect the contiguous ids if the edge segment is garbage collected
+   * Remove edge segments from this edge. Be careful doing this as it because it might affect the contiguous ids
+   * if the edge segment is garbage collected
    */
   public default void removeEdgeSegments() {
     removeEdgeSegmentAb();
@@ -66,13 +68,17 @@ public interface DirectedEdge extends Edge {
   }
 
   /**
-   * Remove edge segmentAb from this edge. Be careful doing this as it because it might affect the contiguous ids if the edge segment is garbage collected
+   * Remove edge segmentAb from this edge. Be careful doing this as it because it might affect the contiguous ids
+   * if the edge segment is garbage collected
+   *
    * @return removed edge segment
    */
   public abstract EdgeSegment removeEdgeSegmentAb();
   
   /**
-   * Remove edge segmentAb from this edge. Be careful doing this as it because it might affect the contiguous ids if the edge segment is garbage collected
+   * Remove edge segmentAb from this edge. Be careful doing this as it because it might affect the contiguous ids
+   * if the edge segment is garbage collected
+   *
    * @return removed edge segment
    */
   public abstract EdgeSegment removeEdgeSegmentBa();

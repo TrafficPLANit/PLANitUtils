@@ -63,11 +63,11 @@ public interface UntypedVirtualNetwork<L extends
    *
    * @param connectoidEdgeMapper to use for tracking mapping between original and copied entity (may be null)
    * @param connectoidSegmentMapper to use for tracking mapping between original and copied entity (may be null)
-   * @param centroidVertexMapper to use for tracking mapping between original and copied entity (may be null)
+   * @param connectoidVertexMapper to use for tracking mapping between original and copied entity (may be null)
    * @return deep copy
    */
-  public VirtualNetwork deepCloneWithMapping(
+  public UntypedVirtualNetwork<L> deepCloneWithMapping(
           GraphEntityDeepCopyMapper<? extends ConnectoidEdge> connectoidEdgeMapper,
           GraphEntityDeepCopyMapper<? extends ConnectoidSegment> connectoidSegmentMapper,
-          GraphEntityDeepCopyMapper<? extends CentroidVertex> centroidVertexMapper);
+          GraphEntityDeepCopyMapper<? extends DirectedVertex> connectoidVertexMapper);
 }

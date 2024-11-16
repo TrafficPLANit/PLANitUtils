@@ -1,6 +1,7 @@
 package org.goplanit.utils.network.virtual;
 
 import org.goplanit.utils.graph.GraphEntityDeepCopyMapper;
+import org.goplanit.utils.graph.directed.DirectedVertex;
 import org.goplanit.utils.id.IdGroupingToken;
 import org.goplanit.utils.misc.IterableUtils;
 
@@ -55,7 +56,7 @@ public interface VirtualNetwork extends UntypedVirtualNetwork<VirtualNetworkLaye
   public VirtualNetwork deepCloneWithMapping(
           GraphEntityDeepCopyMapper<? extends ConnectoidEdge> connectoidEdgeMapper,
           GraphEntityDeepCopyMapper<? extends ConnectoidSegment> connectoidSegmentMapper,
-          GraphEntityDeepCopyMapper<? extends CentroidVertex> centroidVertexMapper);
+          GraphEntityDeepCopyMapper<? extends DirectedVertex> centroidVertexMapper);
 
 
 
