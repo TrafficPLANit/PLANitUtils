@@ -3,6 +3,7 @@ package org.goplanit.utils.network.virtual;
 import org.goplanit.utils.graph.GraphEntities;
 import org.goplanit.utils.graph.GraphEntityDeepCopyMapper;
 import org.goplanit.utils.graph.directed.DirectedVertex;
+import org.goplanit.utils.id.ManagedIdEntities;
 import org.goplanit.utils.network.layer.UntypedDirectedGraphLayer;
 import org.goplanit.utils.network.layer.physical.Link;
 import org.goplanit.utils.network.layer.physical.LinkSegment;
@@ -21,22 +22,35 @@ public interface UntypedVirtualLayer<V extends DirectedVertex, E extends Connect
    *
    * @return connectoidSegments
    */
-  public abstract GraphEntities<ES> getConnectoidSegments();
+  public abstract ManagedIdEntities<ES> getConnectoidSegments();
 
   /**
    * Access to connectoid edges
    *
    * @return connectoidEdges
    */
-  public abstract GraphEntities<E> getConnectoidEdges();
+  public abstract ManagedIdEntities<E> getConnectoidEdges();
 
   /**
    * Access virtual network vertices
    *
    * @return connectoidEdges
    */
-  public abstract GraphEntities<V> getVertices();
+  public abstract ManagedIdEntities<V> getVertices();
 
+  /**
+   * Recreate the ids for all registered entities with or without resetting, this includes child managed ids, i.e.,
+   * nested managedIdentities containers if so indicated
+   *
+   * @param resetManagedIdClass when true we reset the managedId's counter to zero (via its id class) before
+   *                            recreating the ids, otherwise we simply recreate the managed id by
+   *                            starting with the next available id without resetting
+   */
+  public default void recreateManagedIds(boolean resetManagedIdClass){
+    getConnectoidSegments().recreateIds(resetManagedIdClass);
+    getConnectoidEdges().recreateIds(resetManagedIdClass);
+    getVertices().recreateIds(resetManagedIdClass);
+  }
 
   /**
    * {@inheritDoc}

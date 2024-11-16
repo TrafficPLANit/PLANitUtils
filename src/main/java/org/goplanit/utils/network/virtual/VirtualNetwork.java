@@ -59,7 +59,6 @@ public interface VirtualNetwork extends UntypedVirtualNetwork<VirtualNetworkLaye
           GraphEntityDeepCopyMapper<? extends DirectedVertex> centroidVertexMapper);
 
 
-
 //  /**
 //   * Verify if entire connectoid edges are empty
 //   *

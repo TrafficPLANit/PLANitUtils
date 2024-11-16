@@ -10,19 +10,7 @@ import org.goplanit.utils.misc.Pair;
  *
  */
 public interface ConjugateLinkSegment extends ConjugateEdgeSegment, LinkSegment {
-  
-  /** additional id class for generating link segment ids */
-  public static final Class<ConjugateLinkSegment> CONJUGATE_LINK_SEGMENT_ID_CLASS = ConjugateLinkSegment.class;   
-  
-  /**
-   * Return class used to generate unique link ids via the id generator
-   * 
-   * @return class type
-   */
-  public default Class<? extends ConjugateLinkSegment> getConjugateLinkSegmentIdClass(){
-    return CONJUGATE_LINK_SEGMENT_ID_CLASS;
-  }   
-      
+
   /**
    * {@inheritDoc}
    */

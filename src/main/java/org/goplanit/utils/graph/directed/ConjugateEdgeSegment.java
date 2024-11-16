@@ -9,11 +9,7 @@ import org.goplanit.utils.misc.Pair;
  *
  */
 public interface ConjugateEdgeSegment extends EdgeSegment{
-  
-  /** id class for generating ids */
-  public static final Class<ConjugateEdgeSegment> CONJUGATE_EDGE_SEGMENT_ID_CLASS = ConjugateEdgeSegment.class;
-  
-  
+
   /**
    * {@inheritDoc}
    */
@@ -47,15 +43,7 @@ public interface ConjugateEdgeSegment extends EdgeSegment{
    */
   @Override
   public abstract ConjugateEdgeSegment deepClone();
-  
-  /**
-   * All edges use the CONJUGATE_EDGE_SEGMENT_ID_CLASS to generate the unique internal ids
-   */
-  @Override
-  public default Class<? extends ConjugateEdgeSegment> getIdClass() {
-    return CONJUGATE_EDGE_SEGMENT_ID_CLASS;
-  }   
-   
+
   /**
    * {@inheritDoc}
    */

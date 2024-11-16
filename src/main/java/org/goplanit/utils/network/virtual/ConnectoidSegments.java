@@ -2,6 +2,7 @@ package org.goplanit.utils.network.virtual;
 
 import org.goplanit.utils.graph.GraphEntities;
 import org.goplanit.utils.graph.ManagedGraphEntities;
+import org.goplanit.utils.id.ManagedIdEntities;
 
 import java.util.function.BiConsumer;
 
