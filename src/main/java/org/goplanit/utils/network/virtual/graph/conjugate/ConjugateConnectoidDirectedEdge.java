@@ -1,10 +1,12 @@
-package org.goplanit.utils.network.virtual;
+package org.goplanit.utils.network.virtual.graph.conjugate;
 
 import java.util.Collection;
 
 import org.goplanit.utils.graph.directed.ConjugateDirectedEdge;
 import org.goplanit.utils.graph.directed.EdgeSegment;
-import org.goplanit.utils.network.layers.UntypedPhysicalNetworkLayers;
+import org.goplanit.utils.network.virtual.physical.conjugate.ConjugateConnectoidSegment;
+import org.goplanit.utils.network.virtual.graph.ConnectoidDirectedEdge;
+import org.goplanit.utils.network.virtual.graph.CentroidVertex;
 
 /**
  * the connecting component between centroid and a first physical node in the network.
@@ -13,31 +15,31 @@ import org.goplanit.utils.network.layers.UntypedPhysicalNetworkLayers;
  * @author markr
  *
  */
-public interface ConjugateConnectoidEdge extends ConjugateDirectedEdge, ConnectoidEdge {
+public interface ConjugateConnectoidDirectedEdge extends ConjugateDirectedEdge, ConnectoidDirectedEdge {
 
   /**
    * {@inheritDoc}
    */
   @Override
-  public abstract ConjugateConnectoidEdge shallowClone();
+  public abstract ConjugateConnectoidDirectedEdge shallowClone();
 
   /**
    * {@inheritDoc}
    */
   @Override
-  public abstract ConjugateConnectoidEdge deepClone();
+  public abstract ConjugateConnectoidDirectedEdge deepClone();
 
   /**
    * {@inheritDoc}
    */
   @Override
-  public abstract ConjugateConnectoidNode getVertexA();
+  public abstract ConjugateConnectoidDirectedVertex getVertexA();
 
   /**
    * {@inheritDoc}
-   */  
+   */
   @Override
-  public abstract ConjugateConnectoidNode getVertexB();
+  public abstract ConjugateConnectoidDirectedVertex getVertexB();
 
   /**
    * {@inheritDoc}

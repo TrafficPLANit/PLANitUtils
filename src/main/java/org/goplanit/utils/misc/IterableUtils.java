@@ -1,7 +1,5 @@
 package org.goplanit.utils.misc;
 
-import org.goplanit.utils.network.virtual.ConnectoidEdges;
-
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;

@@ -2,8 +2,6 @@ package org.goplanit.utils.graph;
 
 import org.goplanit.utils.id.ManagedId;
 import org.goplanit.utils.id.ManagedIdEntities;
-import org.goplanit.utils.network.virtual.ConnectoidSegment;
-import org.goplanit.utils.network.virtual.ConnectoidSegments;
 
 import java.util.function.BiConsumer;
 

@@ -1,4 +1,4 @@
-package org.goplanit.utils.network.virtual;
+package org.goplanit.utils.network.virtual.graph;
 
 import org.goplanit.utils.graph.Vertex;
 import org.goplanit.utils.graph.directed.DirectedVertex;

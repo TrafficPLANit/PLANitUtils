@@ -1,7 +1,6 @@
-package org.goplanit.utils.network.virtual;
+package org.goplanit.utils.network.virtual.graph;
 
 import org.goplanit.utils.graph.GraphEntityFactory;
-import org.goplanit.utils.graph.Vertex;
 import org.goplanit.utils.zoning.Centroid;
 
 /** Factory interface for creating centroid vertex instances

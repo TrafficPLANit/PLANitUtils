@@ -1,4 +1,4 @@
-package org.goplanit.utils.network.virtual;
+package org.goplanit.utils.network.virtual.physical.conjugate;
 
 import org.goplanit.utils.graph.GraphEntityFactory;
 
@@ -16,7 +16,7 @@ public interface ConjugateConnectoidSegmentFactory extends GraphEntityFactory<Co
    * @param directionAb direction of travel
    * @return created conjugate connectoid segment
    */
-  public abstract ConjugateConnectoidSegment create(ConjugateConnectoidEdge parent, boolean directionAb);
+  public abstract ConjugateConnectoidSegment create(ConjugateConnectoidLink parent, boolean directionAb);
 
   /**
    * Create and register connectoid segment in AB direction on container
@@ -27,7 +27,7 @@ public interface ConjugateConnectoidSegmentFactory extends GraphEntityFactory<Co
    * @return created connectoid segment
    */
   public abstract ConjugateConnectoidSegment registerNew(
-      ConjugateConnectoidEdge parent, boolean directionAb, boolean registerOnNodeAndLink);
+      ConjugateConnectoidLink parent, boolean directionAb, boolean registerOnNodeAndLink);
 
 
 }

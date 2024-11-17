@@ -3,9 +3,8 @@ package org.goplanit.utils.network.virtual;
 import org.goplanit.utils.graph.GraphEntityDeepCopyMapper;
 import org.goplanit.utils.graph.directed.DirectedVertex;
 import org.goplanit.utils.id.IdGroupingToken;
-import org.goplanit.utils.misc.IterableUtils;
-
-import java.util.logging.Logger;
+import org.goplanit.utils.network.virtual.graph.ConnectoidDirectedEdge;
+import org.goplanit.utils.network.virtual.physical.ConnectoidSegment;
 
 /**
  * Model free virtual network interface which is part of the zoning and holds all the virtual infrastructure connecting the zones to the physical road network.
@@ -54,27 +53,9 @@ public interface VirtualNetwork extends UntypedVirtualNetwork<VirtualNetworkLaye
    */
   @Override
   public VirtualNetwork deepCloneWithMapping(
-          GraphEntityDeepCopyMapper<? extends ConnectoidEdge> connectoidEdgeMapper,
+          GraphEntityDeepCopyMapper<? extends ConnectoidDirectedEdge> connectoidEdgeMapper,
           GraphEntityDeepCopyMapper<? extends ConnectoidSegment> connectoidSegmentMapper,
           GraphEntityDeepCopyMapper<? extends DirectedVertex> centroidVertexMapper);
 
-
-//  /**
-//   * Verify if entire connectoid edges are empty
-//   *
-//   * @return true if empty, false otherwise
-//   */
-//  public default boolean hasConnectoidEdges(){
-//    return !IterableUtils.nullOrEmpty(getConnectoidEdges());
-//  }
-//
-//  /**
-//   * Verify if entire connectoid segments are empty
-//   *
-//   * @return true if empty, false otherwise
-//   */
-//  public default boolean hasConnectoidSegments(){
-//    return !IterableUtils.nullOrEmpty(getConnectoidSegments());
-//  }
 
 }

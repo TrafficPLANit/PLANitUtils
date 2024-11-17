@@ -1,8 +1,10 @@
-package org.goplanit.utils.network.virtual;
+package org.goplanit.utils.network.virtual.physical.conjugate;
 
 import org.goplanit.utils.graph.directed.ConjugateEdgeSegment;
 import org.goplanit.utils.misc.Pair;
 import org.goplanit.utils.network.layer.physical.LinkSegment;
+import org.goplanit.utils.network.virtual.physical.ConnectoidSegment;
+import org.goplanit.utils.network.virtual.graph.CentroidVertex;
 import org.goplanit.utils.pcu.PcuCapacitated;
 
 /**
@@ -50,7 +52,7 @@ public interface ConjugateConnectoidSegment extends ConjugateEdgeSegment, PcuCap
    * {@inheritDoc}
    */
   @Override
-  public abstract ConjugateConnectoidEdge getParent();
+  public abstract ConjugateConnectoidLink getParent();
   
   /**
    * {@inheritDoc}

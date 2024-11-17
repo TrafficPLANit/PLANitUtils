@@ -21,17 +21,13 @@ public interface ConjugateLinkSegment extends ConjugateEdgeSegment, LinkSegment 
    * {@inheritDoc}
    */
   @Override
-  public default ConjugateNode getUpstreamVertex() {
-    return (ConjugateNode) ConjugateEdgeSegment.super.getUpstreamVertex();
-  }
+  public abstract ConjugateNode getUpstreamVertex();
 
   /**
    * {@inheritDoc}
    */
   @Override
-  public default ConjugateNode getDownstreamVertex() {
-    return (ConjugateNode) ConjugateEdgeSegment.super.getDownstreamVertex();
-  }
+  public abstract ConjugateNode getDownstreamVertex();
   
   /**
    * {@inheritDoc}

@@ -1,7 +1,6 @@
 package org.goplanit.utils.network.virtual;
 
-import org.goplanit.utils.network.layer.physical.ConjugateNode;
-import org.goplanit.utils.network.layer.physical.ConjugateNodes;
+import org.goplanit.utils.network.virtual.physical.conjugate.*;
 
 /**
  * Conjugate virtual network layer consisting of conjugate nodes, conjugate connectoid edges and
@@ -10,7 +9,7 @@ import org.goplanit.utils.network.layer.physical.ConjugateNodes;
  * @author markr
  */
 public interface ConjugateVirtualNetworkLayer extends
-        UntypedVirtualLayer<ConjugateConnectoidNode, ConjugateConnectoidEdge, ConjugateConnectoidSegment> {
+        UntypedVirtualLayer<ConjugateConnectoidNode, ConjugateConnectoidLink, ConjugateConnectoidSegment> {
 
   /**
    * {@inheritDoc}
@@ -30,7 +29,7 @@ public interface ConjugateVirtualNetworkLayer extends
    * @return connectoid edges
    */
   @Override
-  public abstract ConjugateConnectoidEdges getConnectoidEdges();
+  public abstract ConjugateConnectoidLinks getConnectoidLinks();
 
   /**
    * Access to connectoid segments

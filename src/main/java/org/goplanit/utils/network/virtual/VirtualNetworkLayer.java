@@ -1,19 +1,19 @@
 package org.goplanit.utils.network.virtual;
 
 import org.goplanit.utils.id.IdGroupingToken;
-import org.goplanit.utils.mode.Mode;
-import org.goplanit.utils.network.layer.ConjugateMacroscopicNetworkLayer;
-import org.goplanit.utils.network.layer.macroscopic.*;
-import org.goplanit.utils.network.layer.physical.Node;
-import org.goplanit.utils.network.layer.physical.Nodes;
-import org.goplanit.utils.network.layer.physical.UntypedPhysicalLayer;
+import org.goplanit.utils.network.virtual.graph.CentroidVertex;
+import org.goplanit.utils.network.virtual.graph.CentroidVertices;
+import org.goplanit.utils.network.virtual.physical.ConnectoidLink;
+import org.goplanit.utils.network.virtual.physical.ConnectoidLinks;
+import org.goplanit.utils.network.virtual.physical.ConnectoidSegment;
+import org.goplanit.utils.network.virtual.physical.ConnectoidSegments;
 
 /**
  * Virtual network layer consisting of centroid vertices, connectoid edges and connectoid segments
  *
  * @author markr
  */
-public interface VirtualNetworkLayer extends UntypedVirtualLayer<CentroidVertex, ConnectoidEdge, ConnectoidSegment> {
+public interface VirtualNetworkLayer extends UntypedVirtualLayer<CentroidVertex, ConnectoidLink, ConnectoidSegment> {
 
   /**
    * {@inheritDoc}
@@ -32,7 +32,7 @@ public interface VirtualNetworkLayer extends UntypedVirtualLayer<CentroidVertex,
    *
    * @return connectoidEdges
    */
-  public abstract ConnectoidEdges getConnectoidEdges();
+  public abstract ConnectoidLinks getConnectoidLinks();
 
   /**
    * Access to connectoid segments

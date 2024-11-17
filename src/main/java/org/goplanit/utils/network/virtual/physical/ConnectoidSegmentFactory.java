@@ -1,6 +1,5 @@
-package org.goplanit.utils.network.virtual;
+package org.goplanit.utils.network.virtual.physical;
 
-import org.goplanit.utils.exceptions.PlanItException;
 import org.goplanit.utils.graph.GraphEntityFactory;
 
 /** Factory interface for connectoid segments
@@ -17,6 +16,6 @@ public interface ConnectoidSegmentFactory extends GraphEntityFactory<ConnectoidS
    * @param directionAb direction of travel
    * @return created connectoid segment
    */
-  public abstract ConnectoidSegment registerNew(ConnectoidEdge parent, boolean directionAb);
+  public abstract ConnectoidSegment registerNew(ConnectoidLink parent, boolean directionAb);
  
 }

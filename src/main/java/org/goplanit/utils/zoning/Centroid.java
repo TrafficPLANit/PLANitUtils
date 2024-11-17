@@ -1,11 +1,6 @@
 package org.goplanit.utils.zoning;
 
-import org.goplanit.utils.graph.directed.DirectedVertex;
-import org.goplanit.utils.id.IdGenerator;
-import org.goplanit.utils.id.IdGroupingToken;
 import org.goplanit.utils.id.ManagedId;
-import org.goplanit.utils.network.layer.macroscopic.MacroscopicLinkSegmentType;
-import org.goplanit.utils.network.virtual.ConnectoidSegment;
 import org.locationtech.jts.geom.Point;
 
 import java.io.Serializable;

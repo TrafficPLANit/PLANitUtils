@@ -1,4 +1,4 @@
-package org.goplanit.utils.network.virtual;
+package org.goplanit.utils.network.virtual.physical.conjugate;
 
 import org.goplanit.utils.graph.ManagedGraphEntities;
 

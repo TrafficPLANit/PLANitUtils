@@ -26,7 +26,7 @@ public interface LinkSegment extends EdgeSegment {
    * 
    * @return class type
    */
-  public default Class<? extends LinkSegment> getLinkSegmentIdClass(){
+  public static Class<? extends LinkSegment> getLinkSegmentIdClass(){
     return LINK_SEGMENT_ID_CLASS;
   }  
   
@@ -36,7 +36,7 @@ public interface LinkSegment extends EdgeSegment {
    * @param groupId, contiguous id generation within this group for instances of this class
    * @return id of this link segment
    */
-  public default long generateLinkSegmentId(final IdGroupingToken groupId) {
+  public static long generateLinkSegmentId(final IdGroupingToken groupId) {
     return IdGenerator.generateId(groupId, getLinkSegmentIdClass());
   }  
 
@@ -180,15 +180,6 @@ public interface LinkSegment extends EdgeSegment {
    */
   @Override
   public abstract LinkSegment deepClone();
-  
-  /**
-   * Return the parent link of this link segment
-   * 
-   * @return Link object which is the parent of this link segment
-   */
-  public default Link getParentLink() {
-    return getParent();
-  }
 
   /** Collect upstream vertex as node
    * 

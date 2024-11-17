@@ -1,8 +1,10 @@
-package org.goplanit.utils.network.virtual;
+package org.goplanit.utils.network.virtual.physical.conjugate;
 
-import org.goplanit.utils.graph.directed.ConjugateDirectedVertex;
-import org.goplanit.utils.graph.directed.DirectedEdge;
-import org.goplanit.utils.network.layer.physical.Node;
+import org.goplanit.utils.network.layer.physical.ConjugateNode;
+import org.goplanit.utils.network.virtual.graph.ConnectoidDirectedEdge;
+import org.goplanit.utils.network.virtual.physical.ConnectoidNode;
+import org.goplanit.utils.network.virtual.graph.CentroidVertex;
+import org.goplanit.utils.network.virtual.graph.conjugate.ConjugateConnectoidDirectedVertex;
 
 /**
  * Conjugate Node is the conjugate of a normal link. It is expected that its id is synced with the original link it represents
@@ -10,7 +12,7 @@ import org.goplanit.utils.network.layer.physical.Node;
  * @author markr
  *
  */
-public interface ConjugateConnectoidNode extends ConjugateDirectedVertex, Node {
+public interface ConjugateConnectoidNode extends ConjugateConnectoidDirectedVertex, ConjugateNode, ConnectoidNode {
 
   /**
    * {@inheritDoc}
@@ -28,7 +30,7 @@ public interface ConjugateConnectoidNode extends ConjugateDirectedVertex, Node {
    * @return original edge
    */
   @Override
-  public abstract ConnectoidEdge getOriginalEdge();
+  public abstract ConnectoidDirectedEdge getOriginalEdge();
 
   /**
    * Access to original centroid vertex of the zone if available

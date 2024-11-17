@@ -1,6 +1,7 @@
-package org.goplanit.utils.network.virtual;
+package org.goplanit.utils.network.virtual.physical;
 
 import org.goplanit.utils.graph.directed.EdgeSegment;
+import org.goplanit.utils.network.layer.physical.LinkSegment;
 import org.goplanit.utils.pcu.PcuCapacitated;
 
 /**
@@ -10,19 +11,13 @@ import org.goplanit.utils.pcu.PcuCapacitated;
  * @author markr
  *
  */
-public interface ConnectoidSegment extends EdgeSegment, PcuCapacitated {
+public interface ConnectoidSegment extends LinkSegment, PcuCapacitated {
 
-  /** additional id class for generating connectoid segment ids */
-  public static Class<ConnectoidSegment> CONNECTOID_SEGMENT_ID_CLASS = ConnectoidSegment.class;
-  
   /**
-   * Return class used to generate unique connectoid edge segment ids via the id generator
-   * 
-   * @return class type
+   * {@inheritDoc}
    */
-  public default Class<ConnectoidSegment> getConnectoidSegmentIdClass(){
-    return CONNECTOID_SEGMENT_ID_CLASS;
-  }
+  @Override
+  public abstract ConnectoidLink getParent();
 
   /**
    * {@inheritDoc}
@@ -35,13 +30,6 @@ public interface ConnectoidSegment extends EdgeSegment, PcuCapacitated {
    */
   @Override
   public abstract ConnectoidSegment deepClone();
-
-  /**
-   * Collect the unqiue connectoid segment id
-   * 
-   * @return connectoid segment id
-   */
-  public abstract long getConnectoidSegmentId();
 
   /**
    * Connectoid segments are not capacity restricted by default, but can be used in conjunction with a capacitated network.

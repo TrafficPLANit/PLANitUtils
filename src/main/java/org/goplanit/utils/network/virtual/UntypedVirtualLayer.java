@@ -1,20 +1,18 @@
 package org.goplanit.utils.network.virtual;
 
-import org.goplanit.utils.graph.GraphEntities;
 import org.goplanit.utils.graph.GraphEntityDeepCopyMapper;
 import org.goplanit.utils.graph.directed.DirectedVertex;
 import org.goplanit.utils.id.ManagedIdEntities;
 import org.goplanit.utils.network.layer.UntypedDirectedGraphLayer;
-import org.goplanit.utils.network.layer.physical.Link;
-import org.goplanit.utils.network.layer.physical.LinkSegment;
-import org.goplanit.utils.network.layer.physical.Node;
+import org.goplanit.utils.network.virtual.graph.ConnectoidDirectedEdge;
+import org.goplanit.utils.network.virtual.physical.ConnectoidSegment;
 
 /**
  * Virtual network layer consisting of vertices (centroids vertices), connectoid edges and connectoid segments
  *
  * @author markr
  */
-public interface UntypedVirtualLayer<V extends DirectedVertex, E extends ConnectoidEdge, ES extends ConnectoidSegment>
+public interface UntypedVirtualLayer<V extends DirectedVertex, E extends ConnectoidDirectedEdge, ES extends ConnectoidSegment>
         extends UntypedDirectedGraphLayer<V, E, ES> {
 
   /**
@@ -29,7 +27,7 @@ public interface UntypedVirtualLayer<V extends DirectedVertex, E extends Connect
    *
    * @return connectoidEdges
    */
-  public abstract ManagedIdEntities<E> getConnectoidEdges();
+  public abstract ManagedIdEntities<E> getConnectoidLinks();
 
   /**
    * Access virtual network vertices
@@ -48,7 +46,7 @@ public interface UntypedVirtualLayer<V extends DirectedVertex, E extends Connect
    */
   public default void recreateManagedIds(boolean resetManagedIdClass){
     getConnectoidSegments().recreateIds(resetManagedIdClass);
-    getConnectoidEdges().recreateIds(resetManagedIdClass);
+    getConnectoidLinks().recreateIds(resetManagedIdClass);
     getVertices().recreateIds(resetManagedIdClass);
   }
 
@@ -67,13 +65,13 @@ public interface UntypedVirtualLayer<V extends DirectedVertex, E extends Connect
   /**
    * Perform a deep clone where mappings between original and copy are captured in the two provided mappers
    *
-   * @param connectoidEdgeMapper to use for tracking mapping between original and copied entity (may be null)
+   * @param connectoidLinkMapper to use for tracking mapping between original and copied entity (may be null)
    * @param connectoidSegmentMapper to use for tracking mapping between original and copied entity (may be null)
    * @param vertexMapper to use for tracking mapping between original and copied entity (may be null)
    * @return deep copy
    */
   public UntypedVirtualLayer<V,E,ES> deepCloneWithMapping(
-          GraphEntityDeepCopyMapper<E> connectoidEdgeMapper,
+          GraphEntityDeepCopyMapper<E> connectoidLinkMapper,
           GraphEntityDeepCopyMapper<ES> connectoidSegmentMapper,
           GraphEntityDeepCopyMapper<V> vertexMapper);
 
@@ -82,7 +80,15 @@ public interface UntypedVirtualLayer<V extends DirectedVertex, E extends Connect
    */
   public default void clear(){
     getVertices().clear();
-    getConnectoidEdges().clear();
+    getConnectoidLinks().clear();
     getConnectoidSegments().clear();
+  }
+
+  public default boolean hasConnectoidLinks(){
+    return getConnectoidLinks()!=null && !getConnectoidLinks().isEmpty();
+  }
+
+  public default boolean hasConnectoidSegments(){
+    return getConnectoidSegments()!=null && !getConnectoidSegments().isEmpty();
   }
 }

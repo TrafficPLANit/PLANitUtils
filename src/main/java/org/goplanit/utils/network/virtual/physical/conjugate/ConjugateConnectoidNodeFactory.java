@@ -1,6 +1,7 @@
-package org.goplanit.utils.network.virtual;
+package org.goplanit.utils.network.virtual.physical.conjugate;
 
 import org.goplanit.utils.graph.GraphEntityFactory;
+import org.goplanit.utils.network.virtual.graph.ConnectoidDirectedEdge;
 
 /** Factory interface for creating conjugate connectoid node instances
  * 
@@ -14,7 +15,7 @@ public interface ConjugateConnectoidNodeFactory extends GraphEntityFactory<Conju
    *@param originalConnectoidEdge this node is the conjugate of
    * @return created conjugate connectoid node
    */
-  public abstract ConjugateConnectoidNode createNew(final ConnectoidEdge originalConnectoidEdge);
+  public abstract ConjugateConnectoidNode createNew(final ConnectoidDirectedEdge originalConnectoidEdge);
   
   /**
    * Create and register new conjugate node. The originalConnectoidEdge may be null in which case it reflects a dummy conjugate node for original network turns where 
@@ -23,6 +24,6 @@ public interface ConjugateConnectoidNodeFactory extends GraphEntityFactory<Conju
    *@param originalConnectoidEdge this node is the conjugate of
    *@return new node created
    */
-  public abstract ConjugateConnectoidNode registerNew(final ConnectoidEdge originalConnectoidEdge);      
+  public abstract ConjugateConnectoidNode registerNew(final ConnectoidDirectedEdge originalConnectoidEdge);
   
 }

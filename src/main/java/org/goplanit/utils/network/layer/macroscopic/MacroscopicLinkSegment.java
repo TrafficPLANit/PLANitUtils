@@ -89,10 +89,8 @@ public interface MacroscopicLinkSegment extends LinkSegment, PcuCapacitated {
    * {@inheritDoc}
    */
   @Override
-  public default MacroscopicLink getParentLink() {
-    return (MacroscopicLink) LinkSegment.super.getParentLink();
-  }
-  
+  public abstract MacroscopicLink getParent();
+
     
   /**
    * {@inheritDoc}

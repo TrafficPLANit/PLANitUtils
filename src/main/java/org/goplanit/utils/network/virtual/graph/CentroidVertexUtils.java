@@ -1,7 +1,5 @@
-package org.goplanit.utils.network.virtual;
+package org.goplanit.utils.network.virtual.graph;
 
-import org.goplanit.utils.graph.directed.DirectedEdge;
-import org.goplanit.utils.graph.directed.EdgeSegment;
 import org.goplanit.utils.zoning.Centroid;
 
 import java.util.function.Function;

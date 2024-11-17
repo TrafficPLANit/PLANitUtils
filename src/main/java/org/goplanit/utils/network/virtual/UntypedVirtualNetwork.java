@@ -2,6 +2,8 @@ package org.goplanit.utils.network.virtual;
 
 import org.goplanit.utils.graph.GraphEntityDeepCopyMapper;
 import org.goplanit.utils.graph.directed.DirectedVertex;
+import org.goplanit.utils.network.virtual.graph.ConnectoidDirectedEdge;
+import org.goplanit.utils.network.virtual.physical.ConnectoidSegment;
 
 /**
  * Untyped Virtual network consisting of single layer since currently we only support a single layer for virtual networks
@@ -9,7 +11,7 @@ import org.goplanit.utils.graph.directed.DirectedVertex;
  * @author markr
  */
 public interface UntypedVirtualNetwork<L extends
-        UntypedVirtualLayer<? extends DirectedVertex,? extends ConnectoidEdge,? extends ConnectoidSegment>> {
+        UntypedVirtualLayer<? extends DirectedVertex,? extends ConnectoidDirectedEdge,? extends ConnectoidSegment>> {
 
   /**
    * Access to the single virtual layer
@@ -52,7 +54,9 @@ public interface UntypedVirtualNetwork<L extends
    *                            recreating the ids, otherwise we simply recreate the managed id by
    *                            starting with the next available id without resetting
    */
-  public abstract void recreateManagedIds(boolean resetManagedIdClass);
+  public default void recreateManagedIds(boolean resetManagedIdClass){
+    getLayer().recreateManagedIds(resetManagedIdClass);
+  }
 
   /**
    * Perform shallow clone
@@ -77,7 +81,7 @@ public interface UntypedVirtualNetwork<L extends
    * @return deep copy
    */
   public UntypedVirtualNetwork<L> deepCloneWithMapping(
-          GraphEntityDeepCopyMapper<? extends ConnectoidEdge> connectoidEdgeMapper,
+          GraphEntityDeepCopyMapper<? extends ConnectoidDirectedEdge> connectoidEdgeMapper,
           GraphEntityDeepCopyMapper<? extends ConnectoidSegment> connectoidSegmentMapper,
           GraphEntityDeepCopyMapper<? extends DirectedVertex> connectoidVertexMapper);
 }
