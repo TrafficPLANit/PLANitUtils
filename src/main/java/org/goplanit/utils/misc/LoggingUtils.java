@@ -1,9 +1,6 @@
 package org.goplanit.utils.misc;
 
-import org.goplanit.utils.geo.PlanitJtsCrsUtils;
 import org.goplanit.utils.time.TimePeriod;
-import org.locationtech.jts.geom.Envelope;
-import org.locationtech.jts.geom.Geometry;
 
 import java.util.function.Predicate;
 import java.util.logging.Logger;
@@ -20,7 +17,7 @@ public class LoggingUtils {
    * @param message to surround with brackets
    * @return bracketed string
    */
-  public static String surroundwithBrackets(String message) {
+  public static String surroundWithBrackets(String message) {
     return String.format("[%s] ", message);
   }
   
@@ -32,7 +29,7 @@ public class LoggingUtils {
    * @return runId prefix
    */
   public static String runIdPrefix(long runId) {
-    return surroundwithBrackets(String.format("run id: %d", runId));
+    return surroundWithBrackets(String.format("run id: %d", runId));
   }
   
   /**
@@ -43,7 +40,7 @@ public class LoggingUtils {
    * @return project prefix
    */  
   public static String projectPrefix(long projectId) {
-    return surroundwithBrackets(String.format("project id: %d", projectId));
+    return surroundWithBrackets(String.format("project id: %d", projectId));
   }
   
   /**
@@ -54,7 +51,7 @@ public class LoggingUtils {
    * @return network prefix
    */    
   public static String networkPrefix(long networkId) {
-    return surroundwithBrackets(String.format("network id: %d", networkId));
+    return surroundWithBrackets(String.format("network id: %d", networkId));
   }
 
   /**
@@ -65,7 +62,18 @@ public class LoggingUtils {
    * @return network layer prefix
    */
   public static String networkLayerPrefix(long layerId) {
-    return surroundwithBrackets(String.format("n-layer id: %d", layerId));
+    return surroundWithBrackets(String.format("n-layer id: %d", layerId));
+  }
+
+  /**
+   * Create a prefix for the logger so that all logging items specific to a particular virtual network layer
+   * are prefixed with the exact same string, i.e.  {@code [vn-layer id: <id> ]}
+   *
+   * @param layerId the network layerid
+   * @return network layer prefix
+   */
+  public static String virtualNetworkLayerPrefix(long layerId) {
+    return surroundWithBrackets(String.format("vn-layer id: %d", layerId));
   }
   
   /**
@@ -76,7 +84,7 @@ public class LoggingUtils {
    * @return zoning prefix
    */   
   public static String zoningPrefix(long zoningId) {
-    return surroundwithBrackets(String.format("zoning id: %d", zoningId));
+    return surroundWithBrackets(String.format("zoning id: %d", zoningId));
   }  
   
   /**
@@ -87,7 +95,7 @@ public class LoggingUtils {
    * @return demands prefix
    */   
   public static String demandsPrefix(long demandsId) {
-    return surroundwithBrackets(String.format("demands id: %d", demandsId));
+    return surroundWithBrackets(String.format("demands id: %d", demandsId));
   }  
   
   /**
@@ -98,7 +106,7 @@ public class LoggingUtils {
    * @return service network prefix
    */    
   public static String serviceNetworkPrefix(long serviceNetworkId) {
-    return surroundwithBrackets(String.format("services network id: %d", serviceNetworkId));
+    return surroundWithBrackets(String.format("services network id: %d", serviceNetworkId));
   }
 
   /**
@@ -109,7 +117,7 @@ public class LoggingUtils {
    * @return service network prefix
    */
   public static String serviceNetworkLayerPrefix(long serviceNetworkLayerId) {
-    return surroundwithBrackets(String.format("s_layer id: %d", serviceNetworkLayerId));
+    return surroundWithBrackets(String.format("s_layer id: %d", serviceNetworkLayerId));
   }
 
   /**
@@ -120,7 +128,7 @@ public class LoggingUtils {
    * @return routed services prefix
    */    
   public static String routedServicesPrefix(long routedServicesId) {
-    return surroundwithBrackets(String.format("routed services id: %d", routedServicesId));
+    return surroundWithBrackets(String.format("routed services id: %d", routedServicesId));
   }
 
   /**
@@ -131,7 +139,7 @@ public class LoggingUtils {
    * @return routed services prefix
    */
   public static String routedServiceLayerPrefix(long routedServiceLayerId) {
-    return surroundwithBrackets(String.format("rs_layer id: %d", routedServiceLayerId));
+    return surroundWithBrackets(String.format("rs_layer id: %d", routedServiceLayerId));
   }
 
   
@@ -143,7 +151,7 @@ public class LoggingUtils {
    * @return od path sets Prefix
    */     
   public static String odPathSetsPrefix(long odPathSetsId) {
-    return surroundwithBrackets(String.format("od path sets id: %d", odPathSetsId));
+    return surroundWithBrackets(String.format("od path sets id: %d", odPathSetsId));
   }  
   
   /**
@@ -154,7 +162,7 @@ public class LoggingUtils {
    * @return output formatter prefix
    */     
   public static String outputFormatterPrefix(long outputFormatterId) {
-    return surroundwithBrackets(String.format("output formatter id: %d", outputFormatterId));
+    return surroundWithBrackets(String.format("output formatter id: %d", outputFormatterId));
   }  
   
   /**
@@ -167,7 +175,7 @@ public class LoggingUtils {
    */
   public static String timePeriodPrefix(TimePeriod timePeriod) {
     String timePeriodReference = timePeriod.hasExternalId() ? "external id: " + timePeriod.getExternalId() : (timePeriod.hasXmlId() ? "xml id: "+timePeriod.getXmlId() : "");
-    return surroundwithBrackets(String.format("time period: %s (id %d)", timePeriodReference, timePeriod.getId()));
+    return surroundWithBrackets(String.format("time period: %s (id %d)", timePeriodReference, timePeriod.getId()));
   }  
   
   /**
@@ -178,7 +186,7 @@ public class LoggingUtils {
    * @return iteration prefix
    */  
   public static String iterationPrefix(int iterationIndex) {
-    return surroundwithBrackets(String.format("iteration: %d", iterationIndex));
+    return surroundWithBrackets(String.format("iteration: %d", iterationIndex));
   }  
   
   /** create a string that states if item is activated or deactivated based and provide the simple class name
@@ -195,7 +203,7 @@ public class LoggingUtils {
    * @return the string  {@code [<class simple name>]}
    */
   public static String getClassNameWithBrackets(Object item) {
-    return surroundwithBrackets(item.getClass().getSimpleName());
+    return surroundWithBrackets(item.getClass().getSimpleName());
   }
 
   /** surround the string with repetitions of given character

@@ -2,6 +2,7 @@ package org.goplanit.utils.network.virtual;
 
 import org.goplanit.utils.graph.GraphEntityDeepCopyMapper;
 import org.goplanit.utils.graph.directed.DirectedVertex;
+import org.goplanit.utils.misc.LoggingUtils;
 import org.goplanit.utils.network.virtual.graph.ConnectoidDirectedEdge;
 import org.goplanit.utils.network.virtual.physical.ConnectoidSegment;
 
@@ -12,6 +13,13 @@ import org.goplanit.utils.network.virtual.physical.ConnectoidSegment;
  */
 public interface UntypedVirtualNetwork<L extends
         UntypedVirtualLayer<? extends DirectedVertex,? extends ConnectoidDirectedEdge,? extends ConnectoidSegment>> {
+
+  /**
+   * Log general information on this virtual network to the user
+   *
+   * @param prefix to use
+   */
+  public abstract void logInfo(String prefix);
 
   /**
    * Access to the single virtual layer
@@ -28,14 +36,6 @@ public interface UntypedVirtualNetwork<L extends
    * identical {@link #clear()} only now all underlying managed ids are also reset
    */
   public abstract void reset();
-
-  /** Log info on this virtual network
-   *
-   * @param prefix to use
-   */
-  public default void logInfo(String prefix){
-      getLayer().logInfo(prefix);
-  }
 
   /**
    * Verify if entire network is empty
