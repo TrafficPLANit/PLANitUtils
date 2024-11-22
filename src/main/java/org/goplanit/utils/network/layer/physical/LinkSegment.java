@@ -1,5 +1,6 @@
 package org.goplanit.utils.network.layer.physical;
 
+import org.goplanit.utils.graph.directed.DirectedVertex;
 import org.goplanit.utils.graph.directed.EdgeSegment;
 import org.goplanit.utils.id.IdGenerator;
 import org.goplanit.utils.id.IdGroupingToken;
@@ -132,13 +133,13 @@ public interface LinkSegment extends EdgeSegment {
    * {@inheritDoc}
    */
   @Override  
-  public abstract Node getUpstreamVertex();
+  public abstract DirectedVertex getUpstreamVertex();
   
   /**
    * {@inheritDoc}
    */
   @Override  
-  public abstract Node getDownstreamVertex();
+  public abstract DirectedVertex getDownstreamVertex();
 
   /**
    * Verify if downstream node matches given node
@@ -186,7 +187,7 @@ public interface LinkSegment extends EdgeSegment {
    * @return upstream node
    */  
   public default Node getUpstreamNode() {
-    return getUpstreamVertex();
+    return (Node) getUpstreamVertex();
   }
   
   /** Collect downstream vertex as node
@@ -194,7 +195,7 @@ public interface LinkSegment extends EdgeSegment {
    * @return downstream node
    */
   public default Node getDownstreamNode() {
-    return getDownstreamVertex();
+    return (Node) getDownstreamVertex();
   }  
 
 }

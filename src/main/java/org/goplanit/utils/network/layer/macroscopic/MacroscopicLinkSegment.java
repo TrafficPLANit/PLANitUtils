@@ -77,18 +77,6 @@ public interface MacroscopicLinkSegment extends LinkSegment, PcuCapacitated {
    * {@inheritDoc}
    */
   @Override
-  public abstract Node getUpstreamVertex();
-
-  /**
-   * {@inheritDoc}
-   */
-  @Override
-  public abstract Node getDownstreamVertex();
-
-  /**
-   * {@inheritDoc}
-   */
-  @Override
   public abstract MacroscopicLink getParent();
 
     
