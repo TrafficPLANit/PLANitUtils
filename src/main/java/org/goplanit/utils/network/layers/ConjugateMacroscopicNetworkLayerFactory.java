@@ -13,7 +13,8 @@ import org.goplanit.utils.network.layer.MacroscopicNetworkLayer;
 public interface ConjugateMacroscopicNetworkLayerFactory extends ManagedIdEntityFactory<ConjugateMacroscopicNetworkLayer> {
  
   /** Create a new conjugate macroscopic conjugate network layer instance based on a given reference macroscopic layer
-   *  
+   *
+   * @param referenceLayer to set as original
    * @return created instance
    */
   public abstract ConjugateMacroscopicNetworkLayer registerNew(MacroscopicNetworkLayer referenceLayer);
