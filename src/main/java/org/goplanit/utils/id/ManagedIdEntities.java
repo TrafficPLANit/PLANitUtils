@@ -76,19 +76,32 @@ public interface ManagedIdEntities<E extends ManagedId> extends LongMapWrapper<E
    */
   public default void recreateIds() {
     recreateIds(true);
-  }  
-  
+  }
+
   /**
-   * When reset it called, it not only clears the entries, but also resets the managedids, such that when the container is reused
-   * the managed ids start from zero again. If any entries are
+   * When reset it called, it clears the entries, but also resets the managedids if requested, such that when the
+   * container is reused the managed ids start from zero again. If any entries are
    * managedEntities themselves or contain managed entities themselves, they are reset as well
+   *
+   * @param resetManagedIdToken when true rest token such that new entries will start from zero
    */
-  public default void reset() {
+  public default void reset(boolean resetManagedIdToken) {
     for(E entry : this) {
       entry.resetChildManagedIdEntities();
     }
     clear();
-    IdGenerator.reset(getFactory().getIdGroupingToken(), getManagedIdClass());     
+    if(resetManagedIdToken) {
+      IdGenerator.reset(getFactory().getIdGroupingToken(), getManagedIdClass());
+    }
+  }
+
+  /**
+   * When reset it called, it not only clears the entries, but also resets the managedids, such that when the
+   * container is reused the managed ids start from zero again. If any entries are
+   * managedEntities themselves or contain managed entities themselves, they are reset as well
+   */
+  public default void reset() {
+    reset(true);
   }
 
   /**

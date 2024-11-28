@@ -22,10 +22,11 @@ public interface VirtualNetwork extends UntypedVirtualNetwork<VirtualNetworkLaye
    * the conjugate network layer where appropriate, otherwise these connections are ignored
    * </p>
    * 
-   * @param idToken to use for conjugate entity creation 
+   * @param idToken to use for conjugate entity creation
+   * @param resetManagedIdToken when true reset token for id generation, when false do not
    * @return conjugate version of this virtual network
    */
-  public abstract ConjugateVirtualNetwork createConjugate(IdGroupingToken idToken);
+  public abstract ConjugateVirtualNetwork createConjugate(IdGroupingToken idToken, boolean resetManagedIdToken);
 
   /**
    * Perform shallow clone

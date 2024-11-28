@@ -53,8 +53,10 @@ public interface VirtualNetworkLayer extends UntypedVirtualLayer<CentroidVertex,
   /** Create a conjugate version of this layer
    * 
    * @param idToken to use for generating ids within the layer
+   * @param resetIdToken when true reset the id token before creating ids, otherwise keep as is
    * @return conjugate version of this layer
    */
-  public abstract ConjugateVirtualNetworkLayer createConjugate(final IdGroupingToken idToken);
+  public abstract ConjugateVirtualNetworkLayer createConjugate(
+          final IdGroupingToken idToken, final boolean resetIdToken);
 
 }

@@ -139,8 +139,15 @@ public interface NetworkLayer extends ExternalIdAble, ManagedId {
   }
 
   /**
+   * Reset the layer indlucing resetting the managed id token
+   */
+  public default void reset(){
+    reset(true);
+  }
+
+  /**
    * Reset the layer
    */
-  public abstract void reset();    
+  public abstract void reset(boolean resetManagedIds);
 
 }
