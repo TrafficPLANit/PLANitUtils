@@ -111,7 +111,7 @@ public interface ConjugateDirectedEdge extends DirectedEdge {
       startEdgeSegment = startEdge.isVertexA(sharedVertex) ? startEdge.getEdgeSegmentBa() : startEdge.getEdgeSegmentAb();
     }
     if(endEdge != null) {
-      endEdgeSegment = endEdge.isVertexA(sharedVertex) ? startEdge.getEdgeSegmentAb() : startEdge.getEdgeSegmentBa();
+      endEdgeSegment = endEdge.isVertexA(sharedVertex) ? endEdge.getEdgeSegmentAb() : endEdge.getEdgeSegmentBa();
     }
   
     return Pair.of(startEdgeSegment, endEdgeSegment);

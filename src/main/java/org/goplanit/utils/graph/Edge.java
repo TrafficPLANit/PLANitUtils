@@ -5,6 +5,7 @@ import java.io.Serializable;
 import org.geotools.geometry.jts.JTS;
 import org.goplanit.utils.exceptions.PlanItRunTimeException;
 import org.goplanit.utils.geo.PlanitJtsUtils;
+import org.goplanit.utils.graph.directed.DirectedEdge;
 import org.goplanit.utils.math.Precision;
 import org.goplanit.utils.misc.Pair;
 import org.goplanit.utils.network.layer.macroscopic.MacroscopicLink;
@@ -326,4 +327,13 @@ public interface Edge extends Serializable, GraphEntity {
     return null;
   }
 
+  /**
+   * Verify if this edge is adjacent to provided edge, as in they share at least one vertex
+   *
+   * @param other to check
+   * @return true when adjacent, false otherwise
+   */
+  public default boolean isAdjacentTo(Edge other){
+    return getVertexA().hasEdge(other) || getVertexB().hasEdge(other);
+  }
 }

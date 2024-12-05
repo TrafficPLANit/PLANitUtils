@@ -181,6 +181,17 @@ public interface Vertex extends Serializable, GraphEntity {
     }
     return false;
   }
+
+  /**
+   * verify if the edge exists
+   *
+   * @param otherEdge to verify
+   * @return true if an edge exists on the vertex
+   */
+  public default boolean hasEdge(Edge otherEdge){
+    return hasEdge(otherEdge.getVertexA()) || hasEdge(otherEdge.getVertexB());
+  }
+
   
   /**
    * Number of entries in edge segments

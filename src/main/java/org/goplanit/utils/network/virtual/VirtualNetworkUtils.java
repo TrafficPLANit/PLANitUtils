@@ -29,7 +29,8 @@ public class VirtualNetworkUtils {
   public static Map<CentroidVertex, ConjugateConnectoidNode> createCentroidVertexToConjugateNodeMapping(
       ConjugateVirtualNetworkLayer conjugateVirtualLayer) {
     var mapping = new HashMap<CentroidVertex, ConjugateConnectoidNode>();
-    conjugateVirtualLayer.getVertices().stream().filter(ConjugateDirectedVertex::hasOriginalEdge).forEach(
+    // use the dummy conjugate node without original, as those are the roots providing access to the centroids
+    conjugateVirtualLayer.getVertices().stream().filter(cn -> !cn.hasOriginalEdge()).forEach(
         cn -> mapping.put(cn.getCentroidVertex(), cn));
     return mapping;
   }
