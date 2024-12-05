@@ -1,5 +1,6 @@
 package org.goplanit.utils.graph.directed;
 
+import org.goplanit.utils.exceptions.PlanItRunTimeException;
 import org.goplanit.utils.misc.Pair;
 
 /**
@@ -63,4 +64,21 @@ public interface ConjugateEdgeSegment extends EdgeSegment{
     return getParent().getOriginalAdjacentEdgeSegments(isDirectionAb());
   }
 
+  /**
+   * Access to the underlying original centre vertex for the two adjacent edge segments that underpin this conjugate
+   * edge segment
+   *
+   * @return original centre (middle) vertex
+   */
+  public default DirectedVertex getOriginalCentreVertex(){
+    if(getOriginalAdjacentEdgeSegments().first() != null){
+      return getOriginalAdjacentEdgeSegments().first().getDownstreamVertex();
+    }else if(getOriginalAdjacentEdgeSegments().second() != null){
+      return getOriginalAdjacentEdgeSegments().second().getUpstreamVertex();
+    }else{
+      throw new PlanItRunTimeException(
+              "At least one original edge segment expected to be present on conjugate segment (%s), but both are null",
+              getIdsAsString());
+    }
+  }
 }
