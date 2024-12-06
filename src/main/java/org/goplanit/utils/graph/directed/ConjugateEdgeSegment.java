@@ -60,6 +60,15 @@ public interface ConjugateEdgeSegment extends EdgeSegment{
    *
    * @return edge segment pair
    */
+  public default boolean hasOriginalEntryEdgeSegment(){
+    return getParent().getOriginalAdjacentEdgeSegments(isDirectionAb()).firstNotNull();
+  }
+
+  /**
+   * Adjacent edge segments (entry/exit) in original graph for this conjugate
+   *
+   * @return edge segment pair
+   */
   public default Pair<? extends EdgeSegment,? extends EdgeSegment> getOriginalAdjacentEdgeSegments(){
     return getParent().getOriginalAdjacentEdgeSegments(isDirectionAb());
   }
