@@ -56,12 +56,21 @@ public interface ConjugateEdgeSegment extends EdgeSegment{
   // NEW and specific to conjugate aspect of class
 
   /**
-   * Adjacent edge segments in original graph for this conjugate
+   * check if original entry segment is not null
    *
-   * @return edge segment pair
+   * @return true when present, false otherwise
    */
   public default boolean hasOriginalEntryEdgeSegment(){
     return getParent().getOriginalAdjacentEdgeSegments(isDirectionAb()).firstNotNull();
+  }
+
+  /**
+   * check if original exit segment is not null
+   *
+   * @return true when present, false otherwise
+   */
+  public default boolean hasOriginalExitEdgeSegment(){
+    return getParent().getOriginalAdjacentEdgeSegments(isDirectionAb()).secondNotNull();
   }
 
   /**
@@ -89,5 +98,30 @@ public interface ConjugateEdgeSegment extends EdgeSegment{
               "At least one original edge segment expected to be present on conjugate segment (%s), but both are null",
               getIdsAsString());
     }
+  }
+
+  /**
+   * Get string rperesentation of original segments underpinning this conjugate edge segment
+   * @return from: (_from_ids_as_string_) to: (_to_ids_as_string_)
+   */
+  public default String getOriginalAdjacentEdgeSegmentsIdsAsString(){
+    if(!hasOriginalEntryEdgeSegment()){
+      return "no original ids available";
+    }
+    StringBuilder sb = new StringBuilder("from: (");
+    if(getOriginalAdjacentEdgeSegments().first()!=null){
+      sb.append(getOriginalAdjacentEdgeSegments().first().getIdsAsString());
+    }else{
+      sb.append("-");
+    }
+
+    sb.append(") to: (");
+    if(getOriginalAdjacentEdgeSegments().second()!=null){
+      sb.append(getOriginalAdjacentEdgeSegments().second().getIdsAsString());
+    }else{
+      sb.append("-");
+    }
+    sb.append(")");
+    return sb.toString();
   }
 }
