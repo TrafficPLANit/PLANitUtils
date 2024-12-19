@@ -3,6 +3,7 @@ package org.goplanit.utils.graph.directed;
 import java.util.Collection;
 
 import org.goplanit.utils.graph.EdgeUtils;
+import org.goplanit.utils.graph.Vertex;
 import org.goplanit.utils.misc.Pair;
 
 /**
@@ -101,19 +102,33 @@ public interface ConjugateDirectedEdge extends DirectedEdge {
    * @return pair of original edge segments (can be partially empty/null if combination does not exist)
    */
   public default Pair<? extends EdgeSegment, ? extends EdgeSegment> getOriginalAdjacentEdgeSegments(boolean directionAb){    
-    DirectedEdge startEdge = directionAb ? getVertexA().getOriginalEdge() : getVertexB().getOriginalEdge();
-    DirectedEdge endEdge = directionAb ? getVertexB().getOriginalEdge() : getVertexA().getOriginalEdge();
-    var sharedVertex = EdgeUtils.getSharedVertex(startEdge, endEdge);
-  
+    DirectedEdge originalStartEdge = directionAb ? getVertexA().getOriginalEdge() : getVertexB().getOriginalEdge();
+    DirectedEdge originalEndEdge = directionAb ? getVertexB().getOriginalEdge() : getVertexA().getOriginalEdge();
+
     EdgeSegment startEdgeSegment = null;
     EdgeSegment endEdgeSegment = null;
-    if(startEdge!=null) {
-      startEdgeSegment = startEdge.isVertexA(sharedVertex) ? startEdge.getEdgeSegmentBa() : startEdge.getEdgeSegmentAb();
-    }
-    if(endEdge != null) {
-      endEdgeSegment = endEdge.isVertexA(sharedVertex) ? endEdge.getEdgeSegmentAb() : endEdge.getEdgeSegmentBa();
-    }
-  
+    if(originalStartEdge == null){
+      // not possible to collect shared vertex. This suggests underlying source node
+      // if endEdge A node is the source, then we get
+      // pairing ( __ -> end edge - segment A->B), otherwise ( __ -> end edge - segment B->A)
+      endEdgeSegment = originalEndEdge.getVertexA().getNumberOfEdges() == 1 ?
+              originalEndEdge.getEdgeSegmentAb() : originalEndEdge.getEdgeSegmentBa();
+    }else if(originalEndEdge==null){
+      // not possible to collect shared vertex. This suggests underlying sink node
+      // if Edge B node is the sink, then we get
+      // pairing ( start edge - segment A->B --> __), otherwise ( start edge - segment B->A --> __)
+      startEdgeSegment = originalStartEdge.getVertexB().getNumberOfEdges() == 1 ?
+              originalStartEdge.getEdgeSegmentAb() : originalStartEdge.getEdgeSegmentBa();
+    }else{
+        // regular approach, use shared vertex to determine direction
+        var originalSharedVertex = EdgeUtils.getSharedVertex(originalStartEdge, originalEndEdge);
+        startEdgeSegment = originalStartEdge.isVertexA(originalSharedVertex) ?
+                originalStartEdge.getEdgeSegmentBa() : originalStartEdge.getEdgeSegmentAb();
+        endEdgeSegment = originalEndEdge.isVertexA(originalSharedVertex) ?
+                  originalEndEdge.getEdgeSegmentAb() : originalEndEdge.getEdgeSegmentBa();
+      }
+
+
     return Pair.of(startEdgeSegment, endEdgeSegment);
   }
   
