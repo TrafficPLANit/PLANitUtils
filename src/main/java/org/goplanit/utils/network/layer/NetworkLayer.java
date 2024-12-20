@@ -147,6 +147,8 @@ public interface NetworkLayer extends ExternalIdAble, ManagedId {
 
   /**
    * Reset the layer
+   *
+   * @param resetManagedIds  when true reset all managed ids of this layer as well
    */
   public abstract void reset(boolean resetManagedIds);
 
