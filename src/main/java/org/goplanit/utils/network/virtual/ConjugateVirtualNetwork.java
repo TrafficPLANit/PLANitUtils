@@ -25,4 +25,10 @@ public interface ConjugateVirtualNetwork extends UntypedVirtualNetwork<Conjugate
   @Override
   public abstract ConjugateVirtualNetworkLayer getLayer();
 
+  /**
+   * For each conjugate entity, log the mapping to its original underlying entity where possible
+   */
+  public default void logConjugateToOriginalMapping(){
+    getLayer().logConjugateToOriginalMapping();
+  }
 }

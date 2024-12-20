@@ -108,13 +108,13 @@ public interface ConjugateDirectedEdge extends DirectedEdge {
     EdgeSegment startEdgeSegment = null;
     EdgeSegment endEdgeSegment = null;
     if(originalStartEdge == null){
-      // not possible to collect shared vertex. This suggests underlying source node
+      // not possible to collect shared vertex. This suggests underlying source node is present
       // if endEdge A node is the source, then we get
       // pairing ( __ -> end edge - segment A->B), otherwise ( __ -> end edge - segment B->A)
       endEdgeSegment = originalEndEdge.getVertexA().getNumberOfEdges() == 1 ?
               originalEndEdge.getEdgeSegmentAb() : originalEndEdge.getEdgeSegmentBa();
     }else if(originalEndEdge==null){
-      // not possible to collect shared vertex. This suggests underlying sink node
+      // not possible to collect shared vertex. This suggests underlying sink node is present
       // if Edge B node is the sink, then we get
       // pairing ( start edge - segment A->B --> __), otherwise ( start edge - segment B->A --> __)
       startEdgeSegment = originalStartEdge.getVertexB().getNumberOfEdges() == 1 ?

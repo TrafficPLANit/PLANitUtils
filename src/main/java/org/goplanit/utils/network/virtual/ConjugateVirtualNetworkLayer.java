@@ -54,4 +54,8 @@ public interface ConjugateVirtualNetworkLayer extends
    */
   public abstract VirtualNetworkLayer getReferenceLayer();
 
+  /**
+   * For each conjugate entity, log the mapping to its original underlying entity where possible
+   */
+  public abstract void logConjugateToOriginalMapping();
 }
