@@ -1,10 +1,10 @@
 package org.goplanit.utils.graph.directed;
 
-import java.util.Collection;
-
+import org.goplanit.utils.graph.ConjugateEdge;
 import org.goplanit.utils.graph.EdgeUtils;
-import org.goplanit.utils.graph.Vertex;
 import org.goplanit.utils.misc.Pair;
+
+import java.util.Collection;
 
 /**
  * Directed Edge interface connecting two vertices in a directional fashion. Each edge has one or
@@ -14,7 +14,7 @@ import org.goplanit.utils.misc.Pair;
  * @author markr
  *
  */
-public interface ConjugateDirectedEdge extends DirectedEdge {
+public interface ConjugateDirectedEdge extends DirectedEdge, ConjugateEdge {
 
   /**
    * {@inheritDoc}
@@ -95,7 +95,7 @@ public interface ConjugateDirectedEdge extends DirectedEdge {
    *  
    * @return directed original adjacent edge pair
    */
-  public abstract Pair<? extends DirectedEdge,? extends DirectedEdge> getOriginalAdjacentEdges(); 
+  public abstract Pair<? extends DirectedEdge,? extends DirectedEdge> getOriginalAdjacentEdges();
   
   /** Collect original pair of edge segments that this conjugate in given direction makes up for
    * @param directionAb conjugate direction to use

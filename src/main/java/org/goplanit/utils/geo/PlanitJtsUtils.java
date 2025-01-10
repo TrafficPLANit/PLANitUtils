@@ -87,6 +87,11 @@ public class PlanitJtsUtils {
    * @return transformed geometry
    */
   public static Geometry transformGeometrySafe(Geometry geometry, MathTransform transformer){
+    if(geometry == null){
+      LOGGER.severe("Geometry absent, unable to perform transformation");
+      return null;
+    }
+
     try {
       if(transformer!=null) {
         return JTS.transform(geometry, transformer);
@@ -130,8 +135,7 @@ public class PlanitJtsUtils {
    * @return point object representing the location
    */
   public static Point createPoint(Coordinate coordinate) {
-    Point newPoint = jtsGeometryFactory.createPoint(coordinate);
-    return newPoint;
+    return jtsGeometryFactory.createPoint(coordinate);
   }  
 
   /**
@@ -194,8 +198,7 @@ public class PlanitJtsUtils {
   public static LineString createLineString(String value, char ts, char cs){
     List<Double> coordinateDoubleList = new ArrayList<>();
     String[] tupleString = value.split("[" + ts + "]");
-    for (int index = 0; index < tupleString.length; ++index) {
-      String xyCoordinateString = tupleString[index];
+    for(String xyCoordinateString : tupleString) {
       String[] coordinateString = xyCoordinateString.split("[" + cs + "]");
       if (coordinateString.length != 2) {
         throw new PlanItRunTimeException(String.format("invalid coordinate encountered, expected two coordinates in tuple, but found %d", coordinateString.length));
@@ -270,8 +273,7 @@ public class PlanitJtsUtils {
    * @return polygon
    */
   public static Polygon createPolygon() {
-    Polygon polygon = jtsGeometryFactory.createPolygon();
-    return polygon;
+    return jtsGeometryFactory.createPolygon();
   }
 
   /**
@@ -442,7 +444,7 @@ public class PlanitJtsUtils {
   public static LineString createCopyWithoutCoordinatesBefore(Point position, LineString geometry){
     Optional<Integer> offset = findFirstCoordinatePosition(position.getCoordinate(), geometry, Precision.EPSILON_0);
 
-    if (!offset.isPresent()) {
+    if (offset.isEmpty()) {
       throw new PlanItRunTimeException(String.format("Point (%s) does not exist on line string (%s), unable to create copy from this location", position.toString(), geometry.toString()));
     }
 

@@ -47,6 +47,6 @@ public interface ConjugateEdge extends Edge {
    * Edges in original graph representing this conjugate
    * @return edges pair 
    */
-  public abstract Pair<Edge,Edge> getOriginalEdges();
+  public abstract Pair<? extends Edge,? extends Edge> getOriginalAdjacentEdges();
     
 }

@@ -1,5 +1,7 @@
 package org.goplanit.utils.graph.directed;
 
+import org.goplanit.utils.graph.ConjugateVertex;
+
 import java.util.Collection;
 
 /**
@@ -8,7 +10,7 @@ import java.util.Collection;
  * @author markr
  *
  */
-public interface ConjugateDirectedVertex extends DirectedVertex{
+public interface ConjugateDirectedVertex extends DirectedVertex, ConjugateVertex {
   
   
   /**
@@ -28,8 +30,7 @@ public interface ConjugateDirectedVertex extends DirectedVertex{
    * {@inheritDoc}
    */
   @Override
-  public abstract Iterable<? extends ConjugateEdgeSegment> getExitEdgeSegments();  
-  
+  public abstract Iterable<? extends ConjugateEdgeSegment> getExitEdgeSegments();
 
 
   /**
@@ -46,13 +47,4 @@ public interface ConjugateDirectedVertex extends DirectedVertex{
    */
   public abstract DirectedEdge getOriginalEdge();
 
-  /**
-   * Verify if original edge is present
-   *
-   * @return true when present, false otherwise
-   */
-  public default boolean hasOriginalEdge(){
-    return getOriginalEdge()!=null;
-  }
-    
 }

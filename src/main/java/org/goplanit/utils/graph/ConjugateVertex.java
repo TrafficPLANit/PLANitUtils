@@ -1,5 +1,9 @@
 package org.goplanit.utils.graph;
 
+import org.goplanit.utils.geo.PlanitJtsUtils;
+import org.locationtech.jts.geom.LineSegment;
+import org.locationtech.jts.geom.Point;
+
 import java.util.Collection;
 import java.util.Set;
 import java.util.logging.Logger;
@@ -16,7 +20,24 @@ public interface ConjugateVertex extends Vertex {
   public static final Logger LOGGER = Logger.getLogger(ConjugateVertex.class.getCanonicalName());
   
   /** id class for generating ids */
-  public static final Class<ConjugateVertex> CONJUGATE_VERTEX_ID_CLASS = ConjugateVertex.class;  
+  public static final Class<ConjugateVertex> CONJUGATE_VERTEX_ID_CLASS = ConjugateVertex.class;
+
+  /**
+   * Conjugate vertex's position is derived on-the-fly from its parent edge. Currently, we simply
+   * take the mid-point of the original edge its two vertices ignoring any projection information
+   * todo: improve by considering projection and possibly the shape of the line string of the original
+   *  edge
+   * @return derived location
+   */
+  @Override
+  public default Point getPosition() {
+    if(!hasOriginalEdge() || !getOriginalEdge().hasVertexA() || !getOriginalEdge().hasVertexB()){
+      return null;
+    }
+    return PlanitJtsUtils.createPoint(LineSegment.midPoint(
+            getOriginalEdge().getVertexA().getPosition().getCoordinate(),
+            getOriginalEdge().getVertexB().getPosition().getCoordinate()));
+  }
 
   /**
    * {@inheritDoc}
@@ -61,4 +82,8 @@ public interface ConjugateVertex extends Vertex {
    * @return original edge
    */
   public abstract Edge getOriginalEdge();
+
+  public default boolean hasOriginalEdge(){
+    return getOriginalEdge() != null;
+  }
 }
