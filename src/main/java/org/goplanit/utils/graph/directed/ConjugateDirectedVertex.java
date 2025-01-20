@@ -47,4 +47,5 @@ public interface ConjugateDirectedVertex extends DirectedVertex, ConjugateVertex
    */
   public abstract DirectedEdge getOriginalEdge();
 
+
 }

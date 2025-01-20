@@ -131,5 +131,5 @@ public interface ConjugateDirectedEdge extends DirectedEdge, ConjugateEdge {
 
     return Pair.of(startEdgeSegment, endEdgeSegment);
   }
-  
+
 }

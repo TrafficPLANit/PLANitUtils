@@ -26,5 +26,28 @@ public interface ConjugateLinkFactory extends GraphEntityFactory<ConjugateLink>{
           final ConjugateDirectedVertex a,
           final ConjugateDirectedVertex b,
           boolean registerOnNodes,
-          final DirectedEdge originalEdge1, final DirectedEdge originalEdge2);
+          final DirectedEdge originalEdge1,
+          final DirectedEdge originalEdge2);
+
+  /**
+   * Same as {@link #registerNew(ConjugateDirectedVertex, ConjugateDirectedVertex, boolean, DirectedEdge, DirectedEdge)}
+   * only now we also populate its XMLId directly based on configuration
+   *
+   * @param a               the first conjugate node on this undirected turn  (conjugate directed edge)
+   * @param b               the second conjugate node on this undirected turn (conjugate directed edge)
+   * @param registerOnNodes choice to register new edge on the conjugate nodes or not
+   * @param originalEdge1   first of two edges this conjugate link represents (edge because it may attach to virtual network)
+   * @param originalEdge2   second of two edges this conjugate link represents (edge because it may attach to virtual network)
+   * @param deriveXmlIdFromOriginalEdges when true use original edge XML ids, otherwise use internal id of conjugates
+   * @param xmlIdPostFix to apply
+   * @return the created undirected turn, i.e. conjugated directed edge
+   */
+  public abstract ConjugateLink registerNew(
+          final ConjugateDirectedVertex a,
+          final ConjugateDirectedVertex b,
+          boolean registerOnNodes,
+          final DirectedEdge originalEdge1,
+          final DirectedEdge originalEdge2,
+          boolean deriveXmlIdFromOriginalEdges,
+          String xmlIdPostFix);
 }

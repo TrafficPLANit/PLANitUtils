@@ -83,7 +83,24 @@ public interface ConjugateVertex extends Vertex {
    */
   public abstract Edge getOriginalEdge();
 
+  /**
+   * Verify if original edge is present or not
+   *
+   * @return true when present, false otherwise
+   */
   public default boolean hasOriginalEdge(){
     return getOriginalEdge() != null;
+  }
+
+  /**
+   * populate the XMLId by either copying its internal id or using the underlying original edge's XMLId. Optionally
+   * post-fix either.
+   *
+   * @param deriveFromOriginalEdge when true use original edg XML id, otherwise use internal id of conjugates
+   * @param postFix to apply
+   */
+  public default void populateXmlId(boolean deriveFromOriginalEdge, String postFix){
+    String createdXmlId = deriveFromOriginalEdge ?  getOriginalEdge().getXmlId(): String.valueOf(getId());
+    setXmlId(createdXmlId + postFix);
   }
 }

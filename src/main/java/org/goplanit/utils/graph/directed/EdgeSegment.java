@@ -21,10 +21,10 @@ public interface EdgeSegment extends Serializable, GraphEntity {
   public static final Class<EdgeSegment> EDGE_SEGMENT_ID_CLASS = EdgeSegment.class;
   
   /** Function collecting upstream vertex for edge segment */
-  public static final Function<EdgeSegment, DirectedVertex> getUpstreamVertex = e -> e.getUpstreamVertex();
+  public static final Function<EdgeSegment, DirectedVertex> getUpstreamVertex = EdgeSegment::getUpstreamVertex;
 
   /** Function collecting downstream vertex for edge segment */
-  public static final Function<EdgeSegment, DirectedVertex> getDownstreamVertex = e -> e.getDownstreamVertex();
+  public static final Function<EdgeSegment, DirectedVertex> getDownstreamVertex = EdgeSegment::getDownstreamVertex;
   
   /** Collect vertex of given edge segment lambda
    * 
@@ -171,9 +171,9 @@ public interface EdgeSegment extends Serializable, GraphEntity {
     return false;
   }
   
-  /** verify if parent (edge) has a name
+  /** get parent (edge) name
    * 
-   * @return true when present, false otherwise
+   * @return name if present, null otherwise
    */
   public default String getParentName() {
     if(getParent()!=null) {
@@ -203,7 +203,8 @@ public interface EdgeSegment extends Serializable, GraphEntity {
    * Assuming geometry is present, if not false is returned, we verify if the geometry is provided in the direction of the
    * segment or not
    *
-   * @param allowSingleVertexWithoutGeometry when true, we assume that geometry of edge is ok to be not matching vertex on one end
+   * @param allowSingleVertexWithoutGeometry when true, we assume that geometry of edge is ok to be not matching
+   *                                         vertex on one end
    * @return true when geometry direction coincides with segment direction, false otherwise
    */
   public default boolean isParentGeometryInSegmentDirection(boolean allowSingleVertexWithoutGeometry ){
@@ -214,8 +215,9 @@ public interface EdgeSegment extends Serializable, GraphEntity {
     return getParent().isGeometryInAbDirection(allowSingleVertexWithoutGeometry) == isDirectionAb();
   }
 
-  /** Verify if provided edge segment is adjacent to this edge segment taking direction into account, i.e., either an upstream
-   * segment is directly adjacent to this segment, or this segment connects to a directly adjcent downstream segment
+  /** Verify if provided edge segment is adjacent to this edge segment taking direction into account, i.e., either an
+   * upstream segment is directly adjacent to this segment, or this segment connects to a directly adjacent
+   * downstream segment
    *
    * @param other edge segment to verify adjacency
    * @param allowUTurn when true the opposite direction segment is considered adjacent, otherwise not

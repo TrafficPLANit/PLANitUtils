@@ -18,10 +18,13 @@ public interface ConjugateDirectedEdgeFactory extends GraphEntityFactory<Conjuga
    * @param originalEdge1 first of adjacent edges representing this conjugate
    * @param originalEdge2 second of adjacent edges representing this conjugate
    * @return the created edge
-   * @throws PlanItException thrown if there is an error
    */
-  public default ConjugateDirectedEdge registerNew(final ConjugateDirectedVertex vertexA, final ConjugateDirectedVertex vertexB, final DirectedEdge originalEdge1, final DirectedEdge originalEdge2) throws PlanItException{
-    return registerNew(vertexA, vertexB, originalEdge1, originalEdge2, false);
+  public default ConjugateDirectedEdge registerNew(
+          final ConjugateDirectedVertex vertexA,
+          final ConjugateDirectedVertex vertexB,
+          final DirectedEdge originalEdge1,
+          final DirectedEdge originalEdge2){
+    return registerNew(vertexA, vertexB, false, originalEdge1, originalEdge2);
   }
   
   /**
@@ -33,9 +36,34 @@ public interface ConjugateDirectedEdgeFactory extends GraphEntityFactory<Conjuga
    * @param originalEdge2     second of adjacent edges representing this conjugate
    * @param registerOnVertices choice to register new edge on the vertices or not
    * @return the created edge
-   * @throws PlanItException thrown if there is an error
    */
-  public abstract ConjugateDirectedEdge registerNew(final ConjugateDirectedVertex vertexA, final ConjugateDirectedVertex vertexB, final DirectedEdge originalEdge1, final DirectedEdge originalEdge2, boolean registerOnVertices) throws PlanItException; 
+  public abstract ConjugateDirectedEdge registerNew(
+          final ConjugateDirectedVertex vertexA,
+          final ConjugateDirectedVertex vertexB,
+          boolean registerOnVertices,
+          final DirectedEdge originalEdge1,
+          final DirectedEdge originalEdge2);
+
+  /**
+   * Create new edge to network identified via its id, allow to be registered on vertices if indicated)
+   *
+   * @param vertexA           the first vertex in this edge
+   * @param vertexB           the second vertex in this edge
+   * @param registerOnVertices choice to register new edge on the vertices or not
+   * @param originalEdge1     first of adjacent edges representing this conjugate
+   * @param originalEdge2     second of adjacent edges representing this conjugate
+   * @param deriveXmlIdFromOriginalEdges when true use original edge XML ids, otherwise use internal id of conjugates
+   * @param xmlIdPostFix to apply
+   * @return the created edge
+   */
+  public abstract ConjugateDirectedEdge registerNew(
+          final ConjugateDirectedVertex vertexA,
+          final ConjugateDirectedVertex vertexB,
+          boolean registerOnVertices,
+          final DirectedEdge originalEdge1,
+          final DirectedEdge originalEdge2,
+          boolean deriveXmlIdFromOriginalEdges,
+          String xmlIdPostFix);
 
   
 }

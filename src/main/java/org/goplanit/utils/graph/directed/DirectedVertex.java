@@ -123,7 +123,8 @@ public interface DirectedVertex extends Vertex {
   /**
    * Collect the number of entry edge segments of this vertex
    * <p>
-   * slow method because it requires iterating over the underlying iterable since it is not a collection we are obtain the count from
+   * slow method because it requires iterating over the underlying iterable since it is not a collection we are
+   * obtain the count from
    * 
    * @return number of entry edge segments
    */
@@ -134,7 +135,8 @@ public interface DirectedVertex extends Vertex {
   /**
    * Collect the number of exit edge segments of this vertex
    * <p>
-   * slow method because it requires iterating over the underlying iterable since it is not a collection we are obtain the count from
+   * slow method because it requires iterating over the underlying iterable since it is not a collection we are
+   * obtain the count from
    * 
    * @return number of exit edge segments
    */
