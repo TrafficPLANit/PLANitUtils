@@ -26,6 +26,7 @@ public interface ConjugateNodeFactory extends GraphEntityFactory<ConjugateNode> 
    * @param xmlIdPostFix to apply
    * @return new node created
    */
-  public abstract ConjugateNode registerNew(final Link originalLink, boolean deriveFromOriginalEdge, String xmlIdPostFix);
+  public abstract ConjugateNode registerNew(
+          final Link originalLink, boolean deriveFromOriginalEdge, String xmlIdPostFix);
   
 }

@@ -12,6 +12,13 @@ public interface ConjugateVirtualNetworkLayer extends
         UntypedVirtualLayer<ConjugateConnectoidNode, ConjugateConnectoidLink, ConjugateConnectoidSegment> {
 
   /**
+   * Update the layer by syncing it to the current non-conjugate reference layer
+   *
+   * @param resetManagedIds when true reset the id token such that generated managed ids will start from zero again
+   */
+  public abstract void recreateFromReferenceLayer(boolean resetManagedIds);
+
+  /**
    * {@inheritDoc}
    */
   @Override

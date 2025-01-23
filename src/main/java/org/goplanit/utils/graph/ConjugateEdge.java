@@ -60,7 +60,7 @@ public interface ConjugateEdge extends Edge {
   public default void populateXmlId(boolean deriveFromOriginalEdges, String postFix){
     setXmlId(
             deriveFromOriginalEdges ?
-                    ExternalIdAbleUtils.combinePairBasedXmlId(getOriginalAdjacentEdges(), postFix) :
+                    ExternalIdAbleUtils.combinePairBasedXmlId(getOriginalAdjacentEdges(), "|", postFix) :
                     getId() + postFix);
   }
 }

@@ -2,6 +2,7 @@ package org.goplanit.utils.misc;
 
 import java.util.Objects;
 import java.util.function.Consumer;
+import java.util.function.Function;
 import java.util.function.Predicate;
 
 /**
@@ -188,6 +189,25 @@ public class Pair<A, B> {
     if(second != null) {
       pairEntryConsumer.accept((T) second);
     }
+  }
+
+  /**
+   * Create a new pair based on this pair and transforming it applying the provided function
+   * @param pairEntryFunction to apply
+   * @return created pair
+   * @param <T> type of this pair
+   * @param <V> type of new pair
+   */
+  public <T, V> Pair<V,V> copyAndApply(Function<T,V> pairEntryFunction) {
+    V firstNew = null;
+    V secondNew= null;
+    if(first != null){
+      firstNew = pairEntryFunction.apply( (T) first);
+    }
+    if(second != null) {
+      secondNew = pairEntryFunction.apply( (T) second);
+    }
+    return Pair.of(firstNew, secondNew);
   }
 
   /** Apply predicate to find any match. Throws ClassCastException when pair contains entries not

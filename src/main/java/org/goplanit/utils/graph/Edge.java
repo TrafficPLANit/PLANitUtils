@@ -38,7 +38,7 @@ public interface Edge extends Serializable, GraphEntity {
   }
 
   /**
-   * Collect the geometry of this line
+   * Collect the geometry of this edge, if not available null is returned
    * @return lineString
    */
   public abstract LineString getGeometry();

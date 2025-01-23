@@ -154,8 +154,9 @@ public class Precision {
    */
   public static boolean negative(double d1) {
     return smaller(d1,0,EPSILON_6);
-  }    
-  
+  }
+
+
   /** Verify if non-zero with Precision.EPSILON_6
    * 
    * @param d1 double 1

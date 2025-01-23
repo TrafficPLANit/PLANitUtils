@@ -34,9 +34,14 @@ public interface ConjugateVertex extends Vertex {
     if(!hasOriginalEdge() || !getOriginalEdge().hasVertexA() || !getOriginalEdge().hasVertexB()){
       return null;
     }
+    var originalVertexA = getOriginalEdge().getVertexA();
+    var originalVertexB = getOriginalEdge().getVertexB();
+    if(!originalVertexA.hasPosition() || !originalVertexB.hasPosition()){
+      return null;
+    }
     return PlanitJtsUtils.createPoint(LineSegment.midPoint(
-            getOriginalEdge().getVertexA().getPosition().getCoordinate(),
-            getOriginalEdge().getVertexB().getPosition().getCoordinate()));
+            originalVertexA.getPosition().getCoordinate(),
+            originalVertexB.getPosition().getCoordinate()));
   }
 
   /**

@@ -1,7 +1,6 @@
 package org.goplanit.utils.graph.directed;
 
 import org.goplanit.utils.exceptions.PlanItRunTimeException;
-import org.goplanit.utils.graph.ConjugateEdge;
 import org.goplanit.utils.id.ExternalIdAbleUtils;
 import org.goplanit.utils.misc.Pair;
 
@@ -128,17 +127,20 @@ public interface ConjugateEdgeSegment extends EdgeSegment{
   }
 
   /**
-   * populate the XMLId by either copying its internal id or using the underlying original edge segment XMLIds.
-   * Optionally post-fix as well.
+   * populate the XMLId by either copying its internal id or using the underlying original edge XMLIds.
+   * Optionally post-fix as well. We use edge ids since the direction is already inferred from the ordering to
+   * make result more legible, e.g., if underlying edge ids were 5 and 8, we get 5>8
    *
    * @param deriveFromOriginalEdgeSegments when true use original edge segment XML ids, otherwise use internal
    *                                       id of conjugates
    * @param postFix to apply
    */
   public default void populateXmlId(boolean deriveFromOriginalEdgeSegments, String postFix){
+    var adjacentParentEdges =
+            getOriginalAdjacentEdgeSegments().copyAndApply(EdgeSegment::getParent);
     setXmlId(
             deriveFromOriginalEdgeSegments ?
-                    ExternalIdAbleUtils.combinePairBasedXmlId(getOriginalAdjacentEdgeSegments(), postFix) :
+                    ExternalIdAbleUtils.combinePairBasedXmlId(adjacentParentEdges, ">", postFix) :
                     getId() + postFix);
   }
 
