@@ -22,8 +22,11 @@ public interface ConjugateConnectoidNodeFactory extends GraphEntityFactory<Conju
    * either the incoming or outgoing original link does not exist, i.e., around centroids for example
    *
    *@param originalConnectoidEdge this node is the conjugate of
+   * @param deriveFromOriginalEdge when true use original edg XML id, otherwise use internal id of conjugates
+   * @param xmlIdPostFix to apply
    *@return new node created
    */
-  public abstract ConjugateConnectoidNode registerNew(final ConnectoidDirectedEdge originalConnectoidEdge);
+  public abstract ConjugateConnectoidNode registerNew(
+          final ConnectoidDirectedEdge originalConnectoidEdge, boolean deriveFromOriginalEdge, String xmlIdPostFix);
   
 }

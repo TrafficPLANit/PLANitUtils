@@ -11,7 +11,14 @@ import java.util.Collection;
  *
  */
 public interface ConjugateDirectedVertex extends DirectedVertex, ConjugateVertex {
-  
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public default boolean hasPosition(){
+    return ConjugateVertex.super.hasPosition();
+  }
   
   /**
    * {@inheritDoc}

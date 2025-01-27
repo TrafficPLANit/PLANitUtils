@@ -22,6 +22,20 @@ public interface ConjugateVertex extends Vertex {
   /** id class for generating ids */
   public static final Class<ConjugateVertex> CONJUGATE_VERTEX_ID_CLASS = ConjugateVertex.class;
 
+  @Override
+  public default boolean hasPosition() {
+    if (!hasOriginalEdge() || !getOriginalEdge().hasVertexA() || !getOriginalEdge().hasVertexB()) {
+      return false;
+    }
+    var originalVertexA = getOriginalEdge().getVertexA();
+    var originalVertexB = getOriginalEdge().getVertexB();
+    if(!originalVertexA.hasPosition() || !originalVertexB.hasPosition()){
+      return false;
+    }
+
+    return true;
+  }
+
   /**
    * Conjugate vertex's position is derived on-the-fly from its parent edge. Currently, we simply
    * take the mid-point of the original edge its two vertices ignoring any projection information
@@ -31,14 +45,11 @@ public interface ConjugateVertex extends Vertex {
    */
   @Override
   public default Point getPosition() {
-    if(!hasOriginalEdge() || !getOriginalEdge().hasVertexA() || !getOriginalEdge().hasVertexB()){
+    if(!hasPosition()){
       return null;
     }
     var originalVertexA = getOriginalEdge().getVertexA();
     var originalVertexB = getOriginalEdge().getVertexB();
-    if(!originalVertexA.hasPosition() || !originalVertexB.hasPosition()){
-      return null;
-    }
     return PlanitJtsUtils.createPoint(LineSegment.midPoint(
             originalVertexA.getPosition().getCoordinate(),
             originalVertexB.getPosition().getCoordinate()));
@@ -98,14 +109,16 @@ public interface ConjugateVertex extends Vertex {
   }
 
   /**
-   * populate the XMLId by either copying its internal id or using the underlying original edge's XMLId. Optionally
-   * post-fix either.
+   * populate the XMLId by using the underlying original edge's XMLId. Optionally post-fix the result when provided.
+   * If not original is not available, indicate via 'N/A' instead.
    *
    * @param deriveFromOriginalEdge when true use original edg XML id, otherwise use internal id of conjugates
    * @param postFix to apply
    */
   public default void populateXmlId(boolean deriveFromOriginalEdge, String postFix){
-    String createdXmlId = deriveFromOriginalEdge ?  getOriginalEdge().getXmlId(): String.valueOf(getId());
+    boolean xmlIdAvailable = hasOriginalEdge() && getOriginalEdge().hasXmlId();
+    String createdXmlId =
+            deriveFromOriginalEdge && xmlIdAvailable ? getOriginalEdge().getXmlId(): "N/A";
     setXmlId(createdXmlId + postFix);
   }
 }

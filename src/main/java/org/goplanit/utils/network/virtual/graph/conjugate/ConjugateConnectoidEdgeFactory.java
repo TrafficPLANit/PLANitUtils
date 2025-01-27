@@ -17,8 +17,17 @@ public interface ConjugateConnectoidEdgeFactory extends GraphEntityFactory<Conju
    * @param vertexA to use
    * @param vertexB to use
    * @param registerOnNodes when true register edge on node
-   * @param originalConnectoidEdge of the original network this conjugate represents (only partly becaus eothe roriginal edge is dummy and therefore null)
+   * @param originalConnectoidEdge of the original network this conjugate represents (only partly because other
+   *                               original edge is dummy and therefore null)
+   * @param deriveXmlIdFromOriginalEdges when true use original edge XML ids, otherwise use internal id of conjugates
+   * @param xmlIdPostFix to apply
    * @return created conjugate edge
    */
-  public abstract ConjugateConnectoidDirectedEdge registerNew(ConjugateConnectoidNode vertexA, ConjugateConnectoidNode vertexB, boolean registerOnNodes, ConnectoidDirectedEdge originalConnectoidEdge);
+  public abstract ConjugateConnectoidDirectedEdge registerNew(
+          ConjugateConnectoidNode vertexA,
+          ConjugateConnectoidNode vertexB,
+          boolean registerOnNodes,
+          ConnectoidDirectedEdge originalConnectoidEdge,
+          boolean deriveXmlIdFromOriginalEdges,
+          String xmlIdPostFix);
 }

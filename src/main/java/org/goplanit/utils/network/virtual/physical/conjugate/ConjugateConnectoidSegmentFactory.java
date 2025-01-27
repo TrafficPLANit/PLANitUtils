@@ -24,10 +24,16 @@ public interface ConjugateConnectoidSegmentFactory extends GraphEntityFactory<Co
    * @param parent      the conjugate connectoid edge that contains this conjugate connectoid segment
    * @param directionAb direction of travel
    * @param registerOnNodeAndLink when true register segment on node and link, otherwise not
+   * @param deriveXmlIdFromOriginalEdges when true use original edge XML ids, otherwise use internal id of conjugates
+   * @param xmlIdPostFix to apply
    * @return created connectoid segment
    */
   public abstract ConjugateConnectoidSegment registerNew(
-      ConjugateConnectoidLink parent, boolean directionAb, boolean registerOnNodeAndLink);
+      ConjugateConnectoidLink parent,
+      boolean directionAb,
+      boolean registerOnNodeAndLink,
+      boolean deriveXmlIdFromOriginalEdges,
+      String xmlIdPostFix);
 
 
 }
