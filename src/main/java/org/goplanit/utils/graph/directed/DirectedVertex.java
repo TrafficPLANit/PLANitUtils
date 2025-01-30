@@ -16,10 +16,10 @@ import org.goplanit.utils.misc.IterableUtils;
 public interface DirectedVertex extends Vertex {
   
   /** Function collecting entry edge segments for vertex */
-  public static final Function<DirectedVertex, Iterable<? extends EdgeSegment>> getEntryEdgeSegments = DirectedVertex::getEntryEdgeSegments;
+  public static final Function<DirectedVertex, Iterable<? extends EdgeSegment>> GET_ENTRY_EDGE_SEGMENTS = DirectedVertex::getEntryEdgeSegments;
 
   /** Function collecting exit edge segments for vertex */
-  public static final Function<DirectedVertex, Iterable<? extends EdgeSegment>> getExitEdgeSegments = DirectedVertex::getExitEdgeSegments;
+  public static final Function<DirectedVertex, Iterable<? extends EdgeSegment>> GET_EXIT_EDGE_SEGMENTS = DirectedVertex::getExitEdgeSegments;
   
   /** Collect lambda function that collects either up or downstream edge segments
    * 
@@ -28,7 +28,7 @@ public interface DirectedVertex extends Vertex {
    */
   public static Function<DirectedVertex, Iterable<? extends EdgeSegment>> getEdgeSegmentsForVertexLambda(
       boolean getEntrySegments) {
-    return getEntrySegments ? getEntryEdgeSegments : getExitEdgeSegments;
+    return getEntrySegments ? GET_ENTRY_EDGE_SEGMENTS : GET_EXIT_EDGE_SEGMENTS;
   }
 
   /**
@@ -38,9 +38,7 @@ public interface DirectedVertex extends Vertex {
    */
   @Override
   public abstract Collection<? extends DirectedEdge> getEdges();
-  
 
-  
   /**
    * Collect the entry edge segments of this vertex (unmodifiable)
    * 

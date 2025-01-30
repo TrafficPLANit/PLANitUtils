@@ -125,6 +125,18 @@ public class ReflectionUtils {
     return createdInstance;    
   }
 
+  /** delegates to {@link #createInstance(String, Object...)} only casts result to type provided
+   *
+   * @param <T> type of the created instance
+   * @param clazz the clazz containing the type of the to be created array
+   * @param arrayLength length of the array to create
+   * @return created array via reflection of a given length of type T
+   */
+  @SuppressWarnings("unchecked")
+  public static <T> T[] createTypedArrayInstance(Class<T> clazz, int arrayLength){
+    return (T[]) java.lang.reflect.Array.newInstance(clazz, arrayLength);
+  }
+
   /** Collect all declared fields of instance in Map in name, value format
    *
    * @param clazz to identify fields from
@@ -132,7 +144,8 @@ public class ReflectionUtils {
    * @param modifierFilter applied to the fields of the class, when false we exclude the field, when true we keep it
    * @return map with entries, or empty if none could be found or something went wrong
    */
-  public static Map<String,Object> declaredFieldsNameValueMap(Class<?> clazz, Object compatibleClazzInstance, Function<Integer,Boolean> modifierFilter) {
+  public static Map<String,Object> declaredFieldsNameValueMap(
+          Class<?> clazz, Object compatibleClazzInstance, Function<Integer,Boolean> modifierFilter) {
     /* value is the field value regardless of accessibility */
     BiFunction<Field, Object, Object> biFunction = (field, object) -> {
       Object value = null;
@@ -157,7 +170,8 @@ public class ReflectionUtils {
    * @param modifierFilter applied to the fields of the class, when false we exclude the field, when true we keep it
    * @return map with entries, or empty if none could be found or something went wrong
    */
-  public static Map<String,Object> declaredFieldsNameValueMap(Object settingsClazzInstance, Function<Integer,Boolean> modifierFilter) {
+  public static Map<String,Object> declaredFieldsNameValueMap(
+          Object settingsClazzInstance, Function<Integer,Boolean> modifierFilter) {
     return declaredFieldsNameValueMap(settingsClazzInstance.getClass(), settingsClazzInstance, modifierFilter);
   }
 
@@ -192,7 +206,8 @@ public class ReflectionUtils {
    * @param modifierFilter applied to the fields of the class, when false we exclude the field, when true we keep it
    * @return map with entries, or empty if none could be found or something went wrong
    */
-  public static <K,V> Map<K,V> declaredFieldsToMap(Object settingsClazzInstance, Function<Field,K> keyFunction,  BiFunction<Field,Object,V> valueFunction, Function<Integer,Boolean> modifierFilter) {
+  public static <K,V> Map<K,V> declaredFieldsToMap(
+          Object settingsClazzInstance, Function<Field,K> keyFunction,  BiFunction<Field,Object,V> valueFunction, Function<Integer,Boolean> modifierFilter) {
     var fields = settingsClazzInstance.getClass().getDeclaredFields();
     return convertFieldsOnInstanceToKeyValueMap(fields, settingsClazzInstance, keyFunction, valueFunction, modifierFilter);
   }
@@ -207,7 +222,8 @@ public class ReflectionUtils {
    * @param <V> data type
    * @param <W> explicit collection type U with data type V
    */
-  public static <U extends Collection<?>, V, W extends Collection<V>> Class<W> injectClassIntoContainerGenerics(Class<U> collectionClass, Class<V> dataTypeClass){
+  public static <U extends Collection<?>, V, W extends Collection<V>> Class<W> injectClassIntoContainerGenerics(
+          Class<U> collectionClass, Class<V> dataTypeClass){
     return (Class<W>) collectionClass;
   }
 }
