@@ -11,22 +11,22 @@ public interface ConjugateNodeFactory extends GraphEntityFactory<ConjugateNode> 
 
   /** Create a new conjugate node (without registering)
    *
-   *@param originalLink this node is the conjugate of
+   *@param originalLinkSegment this node is the conjugate of
    * @return created conjugate node
    */
-  public abstract ConjugateNode createNew(final Link originalLink);
+  public abstract ConjugateNode createNew(final LinkSegment originalLinkSegment);
   
   /**
    * Create and register new conjugate node, populate the XMLId by either copying its internal id or using the
    * underlying original edge's XMLId. Optionally post-fix either.
    *
    *
-   * @param originalLink this node is the conjugate of
-   * @param deriveFromOriginalEdge when true use original edg XML id, otherwise use internal id of conjugates
+   * @param originalLinkSegment this node is the conjugate of
+   * @param deriveFromOriginal when true use original XML id, otherwise use internal id of conjugates
    * @param xmlIdPostFix to apply
    * @return new node created
    */
   public abstract ConjugateNode registerNew(
-          final Link originalLink, boolean deriveFromOriginalEdge, String xmlIdPostFix);
+          final LinkSegment originalLinkSegment, boolean deriveFromOriginal, String xmlIdPostFix);
   
 }

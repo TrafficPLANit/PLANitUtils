@@ -1,5 +1,6 @@
 package org.goplanit.utils.graph;
 
+import org.goplanit.utils.graph.directed.EdgeSegment;
 import org.goplanit.utils.id.ExternalIdAbleUtils;
 import org.goplanit.utils.misc.Pair;
 
@@ -48,7 +49,7 @@ public interface ConjugateEdge extends Edge {
    * Edges in original graph representing this conjugate
    * @return edges pair 
    */
-  public abstract Pair<? extends Edge,? extends Edge> getOriginalAdjacentEdges();
+  public abstract Pair<? extends EdgeSegment,? extends EdgeSegment> getOriginalAdjacentSegments();
 
   /**
    * populate the XMLId by either copying its internal id or using the underlying original edges XMLIds. Optionally
@@ -60,7 +61,7 @@ public interface ConjugateEdge extends Edge {
   public default void populateXmlId(boolean deriveFromOriginalEdges, String postFix){
     setXmlId(
             deriveFromOriginalEdges ?
-                    ExternalIdAbleUtils.combinePairBasedXmlId(getOriginalAdjacentEdges(), "|", postFix) :
+                    ExternalIdAbleUtils.combinePairBasedXmlId(getOriginalAdjacentSegments(), "|", postFix) :
                     getId() + postFix);
   }
 }

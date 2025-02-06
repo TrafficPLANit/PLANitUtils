@@ -1,6 +1,7 @@
 package org.goplanit.utils.network.virtual.graph.conjugate;
 
 import org.goplanit.utils.graph.GraphEntityFactory;
+import org.goplanit.utils.network.virtual.physical.ConnectoidSegment;
 import org.goplanit.utils.network.virtual.physical.conjugate.ConjugateConnectoidNode;
 import org.goplanit.utils.network.virtual.graph.ConnectoidDirectedEdge;
 
@@ -17,9 +18,9 @@ public interface ConjugateConnectoidEdgeFactory extends GraphEntityFactory<Conju
    * @param vertexA to use
    * @param vertexB to use
    * @param registerOnNodes when true register edge on node
-   * @param originalConnectoidEdge of the original network this conjugate represents (only partly because other
-   *                               original edge is dummy and therefore null)
-   * @param deriveXmlIdFromOriginalEdges when true use original edge XML ids, otherwise use internal id of conjugates
+   * @param original of the original network this conjugate represents (only partly because other
+   *                               original is dummy and therefore null)
+   * @param deriveXmlIdFromOriginal when true use original XML ids, otherwise use internal id of conjugates
    * @param xmlIdPostFix to apply
    * @return created conjugate edge
    */
@@ -27,7 +28,7 @@ public interface ConjugateConnectoidEdgeFactory extends GraphEntityFactory<Conju
           ConjugateConnectoidNode vertexA,
           ConjugateConnectoidNode vertexB,
           boolean registerOnNodes,
-          ConnectoidDirectedEdge originalConnectoidEdge,
-          boolean deriveXmlIdFromOriginalEdges,
+          ConnectoidSegment original,
+          boolean deriveXmlIdFromOriginal,
           String xmlIdPostFix);
 }

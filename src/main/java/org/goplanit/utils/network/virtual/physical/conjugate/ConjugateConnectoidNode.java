@@ -8,7 +8,8 @@ import org.goplanit.utils.network.virtual.graph.conjugate.ConjugateConnectoidDir
 import org.goplanit.utils.network.virtual.physical.ConnectoidSegment;
 
 /**
- * Conjugate Node is the conjugate of a normal link. It is expected that its id is synced with the original link it represents
+ * Conjugate Node is the conjugate of a normal link. It is expected that its id is synced with the original link it
+ * represents.
  * 
  * @author markr
  *
@@ -27,11 +28,11 @@ public interface ConjugateConnectoidNode extends ConjugateConnectoidDirectedVert
   @Override
   public abstract ConjugateConnectoidNode deepClone();
 
-  /** Original edge in original directed graph this conjugate represents
-   * @return original edge
+  /** Original in original directed graph this conjugate represents
+   * @return original connectoid segment
    */
   @Override
-  public abstract ConnectoidDirectedEdge getOriginalEdge();
+  public abstract ConnectoidSegment getOriginalEdgeSegment();
 
   /**
    * Access to original centroid vertex of the zone if available
@@ -41,12 +42,12 @@ public interface ConjugateConnectoidNode extends ConjugateConnectoidDirectedVert
   public default CentroidVertex getCentroidVertex(){
     // the dummy node with only an outgoing original connectoid edge segment is where we provide the
     // access to the original centroid vertex
-    if(hasOriginalEdge()){
+    if(hasOriginalEdgeSegment()){
       return null;
     }
     for(var es : getExitEdgeSegments()){
-      // any exit conjugate segment's downstream conjugate vertex, then obtain its original endges centroid vertex
-      return ((ConnectoidDirectedEdge)es.getDownstreamVertex().getOriginalEdge()).getCentroidVertex();
+      // any exit conjugate segment's downstream conjugate vertex, then obtain its original centroid vertex
+      return ((ConnectoidSegment)es.getDownstreamVertex().getOriginalEdgeSegment()).getParent().getCentroidVertex();
     }
     return null;
   }

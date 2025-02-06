@@ -1,6 +1,7 @@
 package org.goplanit.utils.graph;
 
 import org.goplanit.utils.geo.PlanitJtsUtils;
+import org.goplanit.utils.graph.directed.EdgeSegment;
 import org.locationtech.jts.geom.LineSegment;
 import org.locationtech.jts.geom.Point;
 
@@ -24,12 +25,12 @@ public interface ConjugateVertex extends Vertex {
 
   @Override
   public default boolean hasPosition() {
-    if (!hasOriginalEdge() || !getOriginalEdge().hasVertexA() || !getOriginalEdge().hasVertexB()) {
+    if (!hasOriginalEdgeSegment()) {
       return false;
     }
-    var originalVertexA = getOriginalEdge().getVertexA();
-    var originalVertexB = getOriginalEdge().getVertexB();
-    if(!originalVertexA.hasPosition() || !originalVertexB.hasPosition()){
+    var originalVertexUp = getOriginalEdgeSegment().getUpstreamVertex();
+    var originalVertexDown = getOriginalEdgeSegment().getDownstreamVertex();
+    if(!originalVertexUp.hasPosition() || !originalVertexDown.hasPosition()){
       return false;
     }
 
@@ -48,11 +49,11 @@ public interface ConjugateVertex extends Vertex {
     if(!hasPosition()){
       return null;
     }
-    var originalVertexA = getOriginalEdge().getVertexA();
-    var originalVertexB = getOriginalEdge().getVertexB();
+    var originalVertexUp = getOriginalEdgeSegment().getUpstreamVertex();
+    var originalVertexDown = getOriginalEdgeSegment().getDownstreamVertex();
     return PlanitJtsUtils.createPoint(LineSegment.midPoint(
-            originalVertexA.getPosition().getCoordinate(),
-            originalVertexB.getPosition().getCoordinate()));
+            originalVertexUp.getPosition().getCoordinate(),
+            originalVertexDown.getPosition().getCoordinate()));
   }
 
   /**
@@ -97,15 +98,15 @@ public interface ConjugateVertex extends Vertex {
    * Collect the original edge this conjugate vertex represents in the conjugate graph
    * @return original edge
    */
-  public abstract Edge getOriginalEdge();
+  public abstract EdgeSegment getOriginalEdgeSegment();
 
   /**
    * Verify if original edge is present or not
    *
    * @return true when present, false otherwise
    */
-  public default boolean hasOriginalEdge(){
-    return getOriginalEdge() != null;
+  public default boolean hasOriginalEdgeSegment(){
+    return getOriginalEdgeSegment() != null;
   }
 
   /**
@@ -116,9 +117,9 @@ public interface ConjugateVertex extends Vertex {
    * @param postFix to apply
    */
   public default void populateXmlId(boolean deriveFromOriginalEdge, String postFix){
-    boolean xmlIdAvailable = hasOriginalEdge() && getOriginalEdge().hasXmlId();
+    boolean xmlIdAvailable = hasOriginalEdgeSegment() && getOriginalEdgeSegment().hasXmlId();
     String createdXmlId =
-            deriveFromOriginalEdge && xmlIdAvailable ? getOriginalEdge().getXmlId(): "N/A";
+            deriveFromOriginalEdge && xmlIdAvailable ? getOriginalEdgeSegment().getXmlId(): "N/A";
     setXmlId(createdXmlId + postFix);
   }
 }

@@ -50,9 +50,9 @@ public interface ConjugateDirectedVertex extends DirectedVertex, ConjugateVertex
 
 
   /** Original edge in original directed graph this conjugate represents
-   * @return original edge 
+   * @return original edge segment
    */
-  public abstract DirectedEdge getOriginalEdge();
+  public abstract EdgeSegment getOriginalEdgeSegment();
 
 
 }

@@ -15,16 +15,16 @@ public interface ConjugateDirectedEdgeFactory extends GraphEntityFactory<Conjuga
    *
    * @param vertexA the first vertex of this edge
    * @param vertexB the second vertex of this edge
-   * @param originalEdge1 first of adjacent edges representing this conjugate
-   * @param originalEdge2 second of adjacent edges representing this conjugate
+   * @param original1 first of adjacent originals representing this conjugate
+   * @param original2 second of adjacent originals representing this conjugate
    * @return the created edge
    */
   public default ConjugateDirectedEdge registerNew(
           final ConjugateDirectedVertex vertexA,
           final ConjugateDirectedVertex vertexB,
-          final DirectedEdge originalEdge1,
-          final DirectedEdge originalEdge2){
-    return registerNew(vertexA, vertexB, false, originalEdge1, originalEdge2);
+          final EdgeSegment original1,
+          final EdgeSegment original2){
+    return registerNew(vertexA, vertexB, false, original1, original2);
   }
   
   /**
@@ -32,8 +32,8 @@ public interface ConjugateDirectedEdgeFactory extends GraphEntityFactory<Conjuga
    *
    * @param vertexA           the first vertex in this edge
    * @param vertexB           the second vertex in this edge
-   * @param originalEdge1     first of adjacent edges representing this conjugate
-   * @param originalEdge2     second of adjacent edges representing this conjugate
+   * @param original1 first of adjacent originals representing this conjugate
+   * @param original2 second of adjacent originals representing this conjugate
    * @param registerOnVertices choice to register new edge on the vertices or not
    * @return the created edge
    */
@@ -41,8 +41,8 @@ public interface ConjugateDirectedEdgeFactory extends GraphEntityFactory<Conjuga
           final ConjugateDirectedVertex vertexA,
           final ConjugateDirectedVertex vertexB,
           boolean registerOnVertices,
-          final DirectedEdge originalEdge1,
-          final DirectedEdge originalEdge2);
+          final EdgeSegment original1,
+          final EdgeSegment original2);
 
   /**
    * Create new edge to network identified via its id, allow to be registered on vertices if indicated)
@@ -50,8 +50,8 @@ public interface ConjugateDirectedEdgeFactory extends GraphEntityFactory<Conjuga
    * @param vertexA           the first vertex in this edge
    * @param vertexB           the second vertex in this edge
    * @param registerOnVertices choice to register new edge on the vertices or not
-   * @param originalEdge1     first of adjacent edges representing this conjugate
-   * @param originalEdge2     second of adjacent edges representing this conjugate
+   * @param original1 first of adjacent originals representing this conjugate
+   * @param original2 second of adjacent originals representing this conjugate
    * @param deriveXmlIdFromOriginalEdges when true use original edge XML ids, otherwise use internal id of conjugates
    * @param xmlIdPostFix to apply
    * @return the created edge
@@ -60,8 +60,8 @@ public interface ConjugateDirectedEdgeFactory extends GraphEntityFactory<Conjuga
           final ConjugateDirectedVertex vertexA,
           final ConjugateDirectedVertex vertexB,
           boolean registerOnVertices,
-          final DirectedEdge originalEdge1,
-          final DirectedEdge originalEdge2,
+          final EdgeSegment original1,
+          final EdgeSegment original2,
           boolean deriveXmlIdFromOriginalEdges,
           String xmlIdPostFix);
 

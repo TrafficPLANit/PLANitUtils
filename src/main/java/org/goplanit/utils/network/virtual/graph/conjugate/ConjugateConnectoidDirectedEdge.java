@@ -97,10 +97,10 @@ public interface ConjugateConnectoidDirectedEdge extends ConjugateDirectedEdge, 
    */
   @Override
   public default CentroidVertex getCentroidVertex(){
-    if(getVertexA() != null && getVertexA().getOriginalEdge() != null){
-      return getVertexA().getOriginalEdge().getCentroidVertex();
-    }else if(getVertexB() != null && getVertexB().getOriginalEdge() != null){
-      return getVertexB().getOriginalEdge().getCentroidVertex();
+    if(getVertexA() != null && getVertexA().getOriginalEdgeSegment() != null){
+      return getVertexA().getOriginalEdgeSegment().getParent().getCentroidVertex();
+    }else if(getVertexB() != null && getVertexB().getOriginalEdgeSegment() != null){
+      return getVertexB().getOriginalEdgeSegment().getParent().getCentroidVertex();
     }
     return null;
   }

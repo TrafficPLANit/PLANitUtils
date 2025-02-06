@@ -90,46 +90,18 @@ public interface ConjugateDirectedEdge extends DirectedEdge, ConjugateEdge {
   }
   
   /* NEW methods */
-  
-  /** Conjugate edge represents two adjacent edges in original form (potential turn movement).
-   *  
-   * @return directed original adjacent edge pair
-   */
-  public abstract Pair<? extends DirectedEdge,? extends DirectedEdge> getOriginalAdjacentEdges();
-  
+
   /** Collect original pair of edge segments that this conjugate in given direction makes up for
    * @param directionAb conjugate direction to use
    * @return pair of original edge segments (can be partially empty/null if combination does not exist)
    */
   public default Pair<? extends EdgeSegment, ? extends EdgeSegment> getOriginalAdjacentEdgeSegments(boolean directionAb){    
-    DirectedEdge originalStartEdge = directionAb ? getVertexA().getOriginalEdge() : getVertexB().getOriginalEdge();
-    DirectedEdge originalEndEdge = directionAb ? getVertexB().getOriginalEdge() : getVertexA().getOriginalEdge();
-
-    EdgeSegment startEdgeSegment = null;
-    EdgeSegment endEdgeSegment = null;
-    if(originalStartEdge == null){
-      // not possible to collect shared vertex. This suggests underlying source node is present
-      // if endEdge A node is the source, then we get
-      // pairing ( __ -> end edge - segment A->B), otherwise ( __ -> end edge - segment B->A)
-      endEdgeSegment = originalEndEdge.getVertexA().getNumberOfEdges() == 1 ?
-              originalEndEdge.getEdgeSegmentAb() : originalEndEdge.getEdgeSegmentBa();
-    }else if(originalEndEdge==null){
-      // not possible to collect shared vertex. This suggests underlying sink node is present
-      // if Edge B node is the sink, then we get
-      // pairing ( start edge - segment A->B --> __), otherwise ( start edge - segment B->A --> __)
-      startEdgeSegment = originalStartEdge.getVertexB().getNumberOfEdges() == 1 ?
-              originalStartEdge.getEdgeSegmentAb() : originalStartEdge.getEdgeSegmentBa();
-    }else{
-        // regular approach, use shared vertex to determine direction
-        var originalSharedVertex = EdgeUtils.getSharedVertex(originalStartEdge, originalEndEdge);
-        startEdgeSegment = originalStartEdge.isVertexA(originalSharedVertex) ?
-                originalStartEdge.getEdgeSegmentBa() : originalStartEdge.getEdgeSegmentAb();
-        endEdgeSegment = originalEndEdge.isVertexA(originalSharedVertex) ?
-                  originalEndEdge.getEdgeSegmentAb() : originalEndEdge.getEdgeSegmentBa();
-      }
-
-
-    return Pair.of(startEdgeSegment, endEdgeSegment);
+    // since conjugate nodes are currently directly tied to orignal edge segments, collecting direction is trivial
+    var originalStart =
+            directionAb ? getVertexA().getOriginalEdgeSegment() : getVertexB().getOriginalEdgeSegment();
+    var originalEnd =
+            directionAb ? getVertexB().getOriginalEdgeSegment() : getVertexA().getOriginalEdgeSegment();
+    return Pair.of(originalStart, originalEnd);
   }
 
 }

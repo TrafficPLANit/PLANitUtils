@@ -2,6 +2,7 @@ package org.goplanit.utils.network.virtual.physical.conjugate;
 
 import org.goplanit.utils.graph.GraphEntityFactory;
 import org.goplanit.utils.network.virtual.physical.ConnectoidLink;
+import org.goplanit.utils.network.virtual.physical.ConnectoidSegment;
 
 /** Factory interface for connectoid conjugate links
  * 
@@ -16,10 +17,13 @@ public interface ConjugateConnectoidLinkFactory extends GraphEntityFactory<Conju
    * @param vertexA to use
    * @param vertexB to use
    * @param registerOnNodes when true register edge on node
-   * @param originalConnectoidLink of the original network this conjugate represents (only partly because otheroriginal
-   *                               edge is dummy and therefore null)
+   * @param original of the original network this conjugate represents (only partly because other original
+   *                               is dummy and therefore null)
    * @return created conjugate edge
    */
   public abstract ConjugateConnectoidLink registerNew(
-      ConjugateConnectoidNode vertexA, ConjugateConnectoidNode vertexB, boolean registerOnNodes, ConnectoidLink originalConnectoidLink);
+      ConjugateConnectoidNode vertexA,
+      ConjugateConnectoidNode vertexB,
+      boolean registerOnNodes,
+      ConnectoidSegment original);
 }

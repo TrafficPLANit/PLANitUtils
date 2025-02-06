@@ -4,6 +4,7 @@ import org.goplanit.utils.graph.Edge;
 import org.goplanit.utils.graph.GraphEntityFactory;
 import org.goplanit.utils.graph.directed.ConjugateDirectedVertex;
 import org.goplanit.utils.graph.directed.DirectedEdge;
+import org.goplanit.utils.graph.directed.EdgeSegment;
 
 /** Factory interface for creating undirected turns, i.e., conjugate links
  * 
@@ -18,27 +19,27 @@ public interface ConjugateLinkFactory extends GraphEntityFactory<ConjugateLink>{
    * @param a               the first conjugate node on this undirected turn  (conjugate directed edge)
    * @param b               the second conjugate node on this undirected turn (conjugate directed edge)
    * @param registerOnNodes choice to register new edge on the conjugate nodes or not
-   * @param originalEdge1   first of two edges this conjugate link represents (edge because it may attach to virtual network)
-   * @param originalEdge2   second of two edges this conjugate link represents (edge because it may attach to virtual network)
+   * @param original1   first of two originals this conjugate link represents
+   * @param original2   second of two originals this conjugate link represents
    * @return the created undirected turn, i.e. conjugated directed edge
    */
   public abstract ConjugateLink registerNew(
           final ConjugateDirectedVertex a,
           final ConjugateDirectedVertex b,
           boolean registerOnNodes,
-          final DirectedEdge originalEdge1,
-          final DirectedEdge originalEdge2);
+          final EdgeSegment original1,
+          final EdgeSegment original2);
 
   /**
-   * Same as {@link #registerNew(ConjugateDirectedVertex, ConjugateDirectedVertex, boolean, DirectedEdge, DirectedEdge)}
+   * Same as {@link #registerNew(ConjugateDirectedVertex, ConjugateDirectedVertex, boolean, EdgeSegment, EdgeSegment)}
    * only now we also populate its XMLId directly based on configuration
    *
    * @param a               the first conjugate node on this undirected turn  (conjugate directed edge)
    * @param b               the second conjugate node on this undirected turn (conjugate directed edge)
    * @param registerOnNodes choice to register new edge on the conjugate nodes or not
-   * @param originalEdge1   first of two edges this conjugate link represents (edge because it may attach to virtual network)
-   * @param originalEdge2   second of two edges this conjugate link represents (edge because it may attach to virtual network)
-   * @param deriveXmlIdFromOriginalEdges when true use original edge XML ids, otherwise use internal id of conjugates
+   * @param original1   first of two originals this conjugate link represents
+   * @param original2   second of two originals this conjugate link represents
+   * @param deriveXmlIdFromOriginals when true use original XML ids, otherwise use internal id of conjugates
    * @param xmlIdPostFix to apply
    * @return the created undirected turn, i.e. conjugated directed edge
    */
@@ -46,8 +47,8 @@ public interface ConjugateLinkFactory extends GraphEntityFactory<ConjugateLink>{
           final ConjugateDirectedVertex a,
           final ConjugateDirectedVertex b,
           boolean registerOnNodes,
-          final DirectedEdge originalEdge1,
-          final DirectedEdge originalEdge2,
-          boolean deriveXmlIdFromOriginalEdges,
+          final EdgeSegment original1,
+          final EdgeSegment original2,
+          boolean deriveXmlIdFromOriginals,
           String xmlIdPostFix);
 }

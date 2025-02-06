@@ -1,15 +1,7 @@
 package org.goplanit.utils.zoning;
 
-import org.goplanit.utils.graph.directed.DirectedEdge;
-import org.goplanit.utils.graph.directed.EdgeSegment;
-import org.goplanit.utils.network.layer.MacroscopicNetworkLayer;
-import org.goplanit.utils.network.layer.NetworkLayer;
 import org.goplanit.utils.network.layer.macroscopic.MacroscopicLink;
-import org.goplanit.utils.network.layer.macroscopic.MacroscopicLinkSegment;
 import org.goplanit.utils.network.layer.physical.Link;
-import org.goplanit.utils.network.layer.physical.Node;
-import org.goplanit.utils.network.layers.MacroscopicNetworkLayers;
-import org.goplanit.utils.network.layers.NetworkLayers;
 import org.locationtech.jts.geom.Point;
 
 import java.util.*;
