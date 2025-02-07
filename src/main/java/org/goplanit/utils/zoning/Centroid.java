@@ -6,7 +6,8 @@ import org.locationtech.jts.geom.Point;
 import java.io.Serializable;
 
 /**
- * A centroid is a singular spatial location in a zone that is deemed most representative if the zone's geometry were to be condensed into a single point
+ * A centroid is a singular spatial location in a zone that is deemed most representative if the zone's geometry
+ * were to be condensed into a single point
  *
  * @author markr
  *
