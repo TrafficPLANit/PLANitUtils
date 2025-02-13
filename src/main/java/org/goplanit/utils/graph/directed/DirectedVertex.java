@@ -58,7 +58,38 @@ public interface DirectedVertex extends Vertex {
    * @return stream of edge segments
    */
   public default Stream<? extends EdgeSegment> streamEdgeSegments(){
-    return Stream.concat(IterableUtils.asStream(getEntryEdgeSegments()),IterableUtils.asStream(getExitEdgeSegments()));
+    return Stream.concat(streamEntrySegments(),streamExitSegments());
+  }
+
+  /**
+   * Provide a stream of entry edge segments adjacent to this vertex
+   * @return stream of entry edge segments
+   */
+  public default Stream<? extends EdgeSegment> streamEntrySegments(){
+    return IterableUtils.asStream(getEntryEdgeSegments());
+  }
+
+  /**
+   * Provide a stream of entry edge segments adjacent to this vertex
+   * @return stream of entry edge segments
+   */
+  public default Stream<? extends EdgeSegment> streamExitSegments(){
+    return IterableUtils.asStream(getExitEdgeSegments());
+  }
+
+  /**
+   * Obtain an edge segment, no guarantee on which one, any attached one may be returned
+   *
+   * @return any edge segment, null if none attached
+   */
+  public default EdgeSegment getFirstEdgeSegment(){
+    if(hasEntryEdgeSegments()){
+      return getEntryEdgeSegments().iterator().next();
+    }
+    if(hasExitEdgeSegments()){
+      return getExitEdgeSegments().iterator().next();
+    }
+    return null;
   }
   
   /** collect the first edge segment corresponding to the provided other vertex

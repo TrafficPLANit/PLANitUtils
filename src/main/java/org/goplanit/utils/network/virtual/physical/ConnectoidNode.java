@@ -2,6 +2,9 @@ package org.goplanit.utils.network.virtual.physical;
 
 import org.goplanit.utils.network.layer.physical.Node;
 import org.goplanit.utils.network.virtual.graph.ConnectoidDirectedVertex;
+import org.goplanit.utils.network.virtual.physical.conjugate.ConjugateConnectoidLink;
+
+import java.util.Collection;
 
 /**
  * Connectoid Node is a node but not all nodes are connectoid nodes.

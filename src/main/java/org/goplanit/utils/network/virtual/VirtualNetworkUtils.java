@@ -1,5 +1,6 @@
 package org.goplanit.utils.network.virtual;
 
+import org.goplanit.utils.exceptions.PlanItRunTimeException;
 import org.goplanit.utils.network.virtual.graph.CentroidVertex;
 import org.goplanit.utils.network.virtual.physical.conjugate.ConjugateConnectoidNode;
 import org.goplanit.utils.zoning.OdZone;
@@ -31,6 +32,9 @@ public class VirtualNetworkUtils {
     // use the dummy conjugate node without original, as those are the roots providing access to the centroids
     conjugateVirtualLayer.getVertices().stream().filter(cn -> !cn.hasOriginalEdgeSegment()).forEach(
         cn -> mapping.put(cn.getCentroidVertex(), cn));
+    if(mapping.containsKey(null)){
+      throw new PlanItRunTimeException("Mapping contains null key, this is not allowed");
+    }
     return mapping;
   }
 
