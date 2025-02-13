@@ -16,13 +16,13 @@ public class ExternalIdAbleUtils {
    * @param postFixToApply apply to each XmlId
    * @return combined XmlId string in the form of "pair_first+postfix | pair_second+postfix"
    */
-  public static String combinePairBasedXmlId(
+  public static String joinXmlIdPair(
           Pair<? extends ExternalIdAble,? extends ExternalIdAble> xmlIdPair,
           String separator,
           String postFixToApply){
 
     String noXmlId = "N/A"; // apply in case no Xml id is set
-    final StringBuilder sb = new StringBuilder();
+    StringBuilder sb = new StringBuilder();
     sb.append(
             (xmlIdPair.firstNotNull() && xmlIdPair.first().hasXmlId()) ? xmlIdPair.first().getXmlId() : noXmlId).append(
                     postFixToApply);

@@ -75,6 +75,19 @@ public interface ConjugateEdgeSegment extends EdgeSegment{
   }
 
   /**
+   * Verify if the two original underlying segments are each other's opposite direction (U-turn)
+   *
+   * @return true when original u-turn, false otherwise
+   */
+  public default boolean isOriginalEdgeSegmentsUTurn(){
+    var segments = getOriginalAdjacentEdgeSegments();
+    if(segments == null || getOriginalAdjacentEdgeSegments().anyIsNull()){
+      return false;
+    }
+    return segments.first().getOppositeDirectionSegment() == segments.second();
+  }
+
+  /**
    * Adjacent edge segments (entry/exit) in original graph for this conjugate
    *
    * @return edge segment pair
@@ -137,10 +150,10 @@ public interface ConjugateEdgeSegment extends EdgeSegment{
    */
   public default void populateXmlId(boolean deriveFromOriginalEdgeSegments, String postFix){
     var adjacentParentEdges =
-            getOriginalAdjacentEdgeSegments().copyAndApply(EdgeSegment::getParent);
+            getOriginalAdjacentEdgeSegments().shallowCopyAndApply(EdgeSegment::getParent);
     setXmlId(
             deriveFromOriginalEdgeSegments ?
-                    ExternalIdAbleUtils.combinePairBasedXmlId(adjacentParentEdges, ">", postFix) :
+                    ExternalIdAbleUtils.joinXmlIdPair(adjacentParentEdges, ">", postFix) :
                     getId() + postFix);
   }
 

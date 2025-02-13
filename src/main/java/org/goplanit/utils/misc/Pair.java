@@ -198,7 +198,7 @@ public class Pair<A, B> {
    * @param <T> type of this pair
    * @param <V> type of new pair
    */
-  public <T, V> Pair<V,V> copyAndApply(Function<T,V> pairEntryFunction) {
+  public <T, V> Pair<V,V> shallowCopyAndApply(Function<T,V> pairEntryFunction) {
     V firstNew = null;
     V secondNew= null;
     if(first != null){
