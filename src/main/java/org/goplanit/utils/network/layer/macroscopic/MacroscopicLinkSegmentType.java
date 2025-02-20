@@ -128,15 +128,17 @@ public interface MacroscopicLinkSegmentType extends ExternalIdAble, ManagedId {
   public abstract void setAccessGroupProperties(final Collection<AccessGroupProperties> AccessProperties);
   
   /**
-   * Set access properties for this link segment type, any modes with existing access properties are overwritten by the given 
-   * properties.
+   * Set access properties for this link segment type, any modes with existing access properties are overwritten by
+   * the given properties.
    * 
    * @param accessProperties to set
    */
   public abstract void setAccessGroupProperties(final AccessGroupProperties accessProperties);
 
-  /** Add access group properties for the modes allowed by it. By adding instead of setting them, it is verified these properties do not yet exist, if they already exist
-   * they are not registered and a warning is issued. To make sure only new group access properties are registered use {@link #findEqualAccessPropertiesForAnyMode(AccessGroupProperties)}
+  /** Add access group properties for the modes allowed by it. By adding instead of setting them, it is verified
+   * these properties do not yet exist, if they already exist they are not registered and a warning is issued.
+   * To make sure only new group access properties are registered
+   * use {@link #findEqualAccessPropertiesForAnyMode(AccessGroupProperties)}
    * 
    * @param accessProperties to register
    */  
@@ -195,7 +197,7 @@ public interface MacroscopicLinkSegmentType extends ExternalIdAble, ManagedId {
    * @return collection which is a subset of the passed in modes containing only the ones that are available
    */
   public default Set<Mode> getAllowedModesFrom(final Collection<Mode> modes){
-    return modes.stream().filter(mode -> isModeAllowed(mode)).collect(Collectors.toSet());
+    return modes.stream().filter(this::isModeAllowed).collect(Collectors.toSet());
   }
 
   /** Method which identifies which of the passed in modes is available on the link segment but not in the passed in collection of modes
@@ -222,9 +224,9 @@ public interface MacroscopicLinkSegmentType extends ExternalIdAble, ManagedId {
    */
   public abstract AccessGroupProperties findEqualAccessPropertiesForAnyMode(AccessGroupProperties accessProperties);
   
-  /** Collect the maximum speed based on the combination of the mode and any restrictions imposed by the type on this mode.
-   * If the mode is not available on this type a limit of 0.0 is returned, otherwise it is the minimum speed of the mode maximum speed
-   * and the restricted speed of the type for this mode
+  /** Collect the maximum speed based on the combination of the mode and any restrictions imposed by the type on this
+   * mode. If the mode is not available on this type a limit of 0.0 is returned, otherwise it is the minimum speed of
+   * the mode maximum speed and the restricted speed of the type for this mode
    * 
    * @param mode to use
    * @return the maximum speed in km/h
