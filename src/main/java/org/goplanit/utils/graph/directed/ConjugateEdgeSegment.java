@@ -142,7 +142,7 @@ public interface ConjugateEdgeSegment extends EdgeSegment{
   /**
    * populate the XMLId by either copying its internal id or using the underlying original edge XMLIds.
    * Optionally post-fix as well. We use edge ids since the direction is already inferred from the ordering to
-   * make result more legible, e.g., if underlying edge ids were 5 and 8, we get 5>8
+   * make result more legible, e.g., if underlying edge ids were 5 and 8, we get 5 greater than 8
    *
    * @param deriveFromOriginalEdgeSegments when true use original edge segment XML ids, otherwise use internal
    *                                       id of conjugates

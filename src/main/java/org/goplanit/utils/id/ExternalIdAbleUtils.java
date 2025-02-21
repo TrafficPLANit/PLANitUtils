@@ -13,6 +13,7 @@ public class ExternalIdAbleUtils {
    * Based on a pair of XMLids construct a combined XML id. In case entry of pair is null, inject "N/A"
    *
    * @param xmlIdPair pair of instances that are ExternalIdAbles
+   * @param separator to use
    * @param postFixToApply apply to each XmlId
    * @return combined XmlId string in the form of "pair_first+postfix | pair_second+postfix"
    */
