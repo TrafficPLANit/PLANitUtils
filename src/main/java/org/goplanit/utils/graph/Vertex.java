@@ -156,6 +156,9 @@ public interface Vertex extends Serializable, GraphEntity {
   public default Set<? extends Edge> getEdges(Vertex otherVertex) {
     Set<Edge> edges = new HashSet<>();
     for (Edge edge : getEdges()) {
+      if(!edge.hasVertexA() || !edge.hasVertexB()){
+        continue;
+      }
       if (edge.getVertexA().getId() == this.getId() && edge.getVertexB().getId() == otherVertex.getId()) {
         edges.add(edge);
       } else if (edge.getVertexB().getId() == this.getId() && edge.getVertexA().getId() == otherVertex.getId()) {

@@ -2,6 +2,7 @@ package org.goplanit.utils.network.layer.macroscopic;
 
 import java.util.Collection;
 import java.util.Set;
+import java.util.TreeMap;
 import java.util.stream.Collectors;
 
 import org.goplanit.utils.id.ExternalIdAble;
@@ -20,7 +21,8 @@ import org.goplanit.utils.mode.PredefinedModeType;
 public interface MacroscopicLinkSegmentType extends ExternalIdAble, ManagedId {
   
   /** id class for generating ids */
-  public static final Class<MacroscopicLinkSegmentType> MACROSCOPIC_LINK_SEGMENT_TYPE_ID_CLASS = MacroscopicLinkSegmentType.class;   
+  public static final Class<MacroscopicLinkSegmentType> MACROSCOPIC_LINK_SEGMENT_TYPE_ID_CLASS =
+          MacroscopicLinkSegmentType.class;
   
   /**
    * If no macroscopic link segment type is defined the default takes on "default" 
@@ -96,8 +98,8 @@ public interface MacroscopicLinkSegmentType extends ExternalIdAble, ManagedId {
 
   /**
    * Return the maximum density per lane for this macroscopic link segment type. This signifies a jam density
-   * that is to be preferred over any inferred density. If this is set any fundamental diagrams used by assignment are to be made 
-   * compatible with this explicitly set density
+   * that is to be preferred over any inferred density. If this is set any fundamental diagrams used by assignment are
+   * to be made compatible with this explicitly set density
    * 
    * @return the maximum density per lane in pcu/km/lane, null if not set
    */
@@ -109,7 +111,8 @@ public interface MacroscopicLinkSegmentType extends ExternalIdAble, ManagedId {
    * @return the maximum density per lane in pcu/km/lane
    */
   public default double getExplicitMaximumDensityPerLaneOrDefault() {
-    return isExplicitMaximumDensityPerLaneSet() ? getExplicitMaximumDensityPerLane() : MacroscopicConstants.DEFAULT_MAX_DENSITY_PCU_KM_LANE;
+    return isExplicitMaximumDensityPerLaneSet() ?
+            getExplicitMaximumDensityPerLane() : MacroscopicConstants.DEFAULT_MAX_DENSITY_PCU_KM_LANE;
   }
   
   /** Verify if maximum density per lane is set explicitly or relies on default
@@ -141,8 +144,9 @@ public interface MacroscopicLinkSegmentType extends ExternalIdAble, ManagedId {
    * use {@link #findEqualAccessPropertiesForAnyMode(AccessGroupProperties)}
    * 
    * @param accessProperties to register
+   * @param logWarning when true warn as indicated, no warning logged otherwise
    */  
-  public abstract void addAccessGroupProperties(AccessGroupProperties accessProperties);
+  public abstract void addAccessGroupProperties(AccessGroupProperties accessProperties, boolean logWarning);
 
   /** Remove the mode properties for the passed in mode (if present)
    * 
@@ -158,6 +162,17 @@ public interface MacroscopicLinkSegmentType extends ExternalIdAble, ManagedId {
    * @return the mode properties for this link and mode
    */
   public abstract AccessGroupProperties getAccessProperties(final Mode mode);
+
+  /**
+   * Returns the access properties container for this link segment type by mode
+   * <p>
+   *   Note that values are shared if identical, so do not make changes unless you are cetain
+   *   they apply to all modes that share the properties
+   * </p>
+   *
+   * @return the properties for this link for all modes
+   */
+  public abstract TreeMap<Mode, AccessGroupProperties> getAccessProperties();
   
   /**
    * Verify if mode is available on type
@@ -168,8 +183,8 @@ public interface MacroscopicLinkSegmentType extends ExternalIdAble, ManagedId {
   public abstract boolean isModeAllowed(final Mode mode);
 
   /**
-   * Verify if predefined mode type is available on type. Note that for custom modes all custom modes are type with CUSTOM
-   * so a match based on mode type has little meaning in this context
+   * Verify if predefined mode type is available on type. Note that for custom modes all custom modes are type with
+   * CUSTOM so a match based on mode type has little meaning in this context
    *
    * @param modeType to verify
    * @return available modes
@@ -200,7 +215,8 @@ public interface MacroscopicLinkSegmentType extends ExternalIdAble, ManagedId {
     return modes.stream().filter(this::isModeAllowed).collect(Collectors.toSet());
   }
 
-  /** Method which identifies which of the passed in modes is available on the link segment but not in the passed in collection of modes
+  /** Method which identifies which of the passed in modes is available on the link segment but not in the passed
+   * in collection of modes
    * @param modes to exclude from the available modes
    * @return collection which is a subset of the available modes, namely excludes the the passed in modes
    */
@@ -217,7 +233,8 @@ public interface MacroscopicLinkSegmentType extends ExternalIdAble, ManagedId {
   }
 
   /** find group access properties that are equal to the ones that are passed in except for the allowed modes, i.e.,
-   * find existing access properties for any mode that match the ones provided. IF found they are returned, otherwise null is returned
+   * find existing access properties for any mode that match the ones provided. IF found they are returned,
+   * otherwise null is returned
    * 
    * @param accessProperties to match against
    * @return access properties found matching, null if no match is found
@@ -238,11 +255,11 @@ public interface MacroscopicLinkSegmentType extends ExternalIdAble, ManagedId {
     return getAccessProperties(mode).getMaximumSpeedOrDefaultKmH(mode.getMaximumSpeedKmH());
   }
   
-  /** Collect the critical speed based on the combination of the mode, any restrictions imposed by the type on this mode, and
-   * the default critical speed.
-   * If the mode is not available on this type null is returned, otherwise it is the minimum speed of the mode maximum speed
-   * the restricted critical speed of the type for this mode. If no critical speed is set, it is the minimum of the mode's
-   * ,maximum speed and the default critical speed instead.
+  /** Collect the critical speed based on the combination of the mode, any restrictions imposed by the type on this
+   * mode, and the default critical speed.
+   * If the mode is not available on this type null is returned, otherwise it is the minimum speed of the mode
+   * maximum speed the restricted critical speed of the type for this mode. If no critical speed is set, it is the
+   * minimum of the mode's ,maximum speed and the default critical speed instead.
    * 
    * @param mode to use
    * @return the critical speed in km/h
