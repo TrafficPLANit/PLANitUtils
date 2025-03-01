@@ -2,9 +2,7 @@ package org.goplanit.utils.zoning;
 
 import java.util.Collection;
 import java.util.Optional;
-import java.util.Set;
 
-import org.goplanit.utils.exceptions.PlanItException;
 import org.goplanit.utils.graph.directed.DirectedVertex;
 import org.goplanit.utils.id.ExternalIdAble;
 import org.goplanit.utils.id.ManagedId;
@@ -69,9 +67,9 @@ public interface Connectoid extends ExternalIdAble, ManagedId, Iterable<Zone> {
   /** Add an access zone and provide length to this connectoid
    * 
    * @param zone to set length for
-   * @param length to traverse between connectoid and zone
+   * @param lengthKm to traverse between connectoid and zone
    */
-  public abstract void setLength(Zone zone, double length);
+  public abstract void setLengthKm(Zone zone, double lengthKm);
   
   /** Add an allowed mode. We assume the zone is already registered as an access zone for this connectoid
    * 
