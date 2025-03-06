@@ -17,4 +17,7 @@ public class CharacterUtils {
   /** a decimal point '.' */
   public static final Character DECIMAL_POINT = '.';
 
+  /** tab '\t' */
+  public static final Character TAB = '\t';
+
 }

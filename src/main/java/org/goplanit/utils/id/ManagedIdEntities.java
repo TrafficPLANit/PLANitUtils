@@ -125,4 +125,16 @@ public interface ManagedIdEntities<E extends ManagedId> extends LongMapWrapper<E
   public default <T extends Comparable, F extends E> Stream<F> streamSortedBy(Function<? super E, T> sortFunction){
     return this.stream().sorted(Comparator.comparing(e -> sortFunction.apply((F) e)));
   }
+
+  /**
+   * Lay an index on the entities based on provided mapping function which is used to construct the index.
+   * It is assumed the index is unique.
+   *
+   * @param mappingFunction to construct keys in resulting index map
+   * @return map with key being the index and value containing the original entity
+   * @param <T> type of the index
+   */
+  public default <T> Map<T,E> createIndex(Function<E,T> mappingFunction){
+    return this.stream().collect(Collectors.toMap(mappingFunction, Function.identity()));
+  }
 }

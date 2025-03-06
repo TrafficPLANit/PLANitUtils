@@ -9,9 +9,6 @@ import java.util.Comparator;
  */
 public class Precision {
 
-  /** no tolerance, i.e., 0.0 */
-  public static final double EPSILON_0 = 0.0;
-  
   public static final double EPSILON_18 = 0.000000000000000001;
   
   public static final double EPSILON_15 = 0.000000000000001;
@@ -24,6 +21,13 @@ public class Precision {
   public static final double EPSILON_6 = 0.000001;
   
   public static final double EPSILON_3 = 0.001;
+
+  public static final double EPSILON_2 = 0.01;
+
+  public static final double EPSILON_1 = 0.1;
+
+  /** no tolerance, i.e., 0.0 */
+  public static final double EPSILON_0 = 0.0;
   
   /** default decimal format used applies a maximum of 8 decimals and a minimum of 2 */
   public static final DecimalFormat DEFAULT_DECIMAL_FORMAT;

@@ -56,8 +56,8 @@ public class CustomIndexTracker {
   }
 
   /**
-   * register a new source id tracker (empty) where a function is used to extract the source id from the entity and the class is used unique identifier for the underlying tracking
-   * container
+   * register a new source id tracker (empty) where a function is used to extract the source id from the entity and
+   * the class is used unique identifier for the underlying tracking container
    *
    * @param <K>        key type used
    * @param <V>        value type used
@@ -81,7 +81,8 @@ public class CustomIndexTracker {
    * @param valueToKey       function mapping value to key
    * @param addToSourceIdMap add all entities in iterable to the newly created source id map upon creation
    */
-  public <K, V> void initialiseEntityContainer(Class<V> clazz, final Function<V, K> valueToKey, Iterable<V> addToSourceIdMap) {
+  public <K, V> void initialiseEntityContainer(
+          Class<V> clazz, final Function<V, K> valueToKey, Iterable<? extends V> addToSourceIdMap) {
     initialiseEntityContainer(clazz, valueToKey);
     getEntityContainer(clazz).addAll(addToSourceIdMap);
   }

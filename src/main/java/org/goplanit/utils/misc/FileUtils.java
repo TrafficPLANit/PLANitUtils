@@ -4,14 +4,13 @@ import java.io.*;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.file.Files;
-import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Objects;
 import java.util.Scanner;
 import java.util.function.Consumer;
+import java.util.function.Function;
 import java.util.logging.Logger;
 
-import org.goplanit.utils.exceptions.PlanItException;
 import org.goplanit.utils.exceptions.PlanItRunTimeException;
 import org.xml.sax.InputSource;
 
@@ -124,6 +123,22 @@ public class FileUtils {
     
     return null;
   }
+
+  /**
+   * Take file string from input and construct File from it
+   *
+   * @return file created
+   */
+  public static File convertFileStringToFile(String inputFile) {
+    File theFile = null;
+    try {
+      theFile = new File(inputFile).getCanonicalFile();
+    } catch (final Exception e) {
+      LOGGER.severe(e.getMessage());
+      throw new PlanItRunTimeException("Error in constructing file from string",e);
+    }
+    return theFile;
+  }
   
   /** Delete a directory by providing a file that represents a directory. In which case
    * we recursively delete all files in the directory and then the directory itself.
@@ -209,8 +224,7 @@ public class FileUtils {
    * @param fileToParse the file to parse using the scanner
    * @param scannerConsumer functionality applied to the created scanner
    */
-  public static void wrapFileScanner(
-          File fileToParse, Consumer<Scanner> scannerConsumer){
+  public static void wrapFileScanner(File fileToParse, Consumer<Scanner> scannerConsumer){
 
     // wrap
     try (Scanner scanner = new Scanner(fileToParse)) {
@@ -218,6 +232,26 @@ public class FileUtils {
       // delegate
       scannerConsumer.accept(scanner);
 
+    }catch (final Exception e) {
+      LOGGER.severe(e.getMessage());
+      e.printStackTrace();
+      throw new PlanItRunTimeException(String.format("Error when parsing file %s", fileToParse.toString()),e);
+    }
+  }
+
+  /**
+   * Parse a file by means of a lambda function that is passed in. The wrapper method creates the
+   * Scanner resource and closes it after completion and takes care of any exceptions thrown during parsing.
+   *
+   * @param fileToParse the file to parse using the scanner
+   * @param scannerWithResult functionality applied to the created scanner, return the result
+   */
+  public static <T> T wrapFileScannerWithResult(File fileToParse, Function<Scanner, T> scannerWithResult){
+
+    // wrap
+    try (Scanner scanner = new Scanner(fileToParse)) {
+      // delegate
+      return scannerWithResult.apply(scanner);
     }catch (final Exception e) {
       LOGGER.severe(e.getMessage());
       e.printStackTrace();
