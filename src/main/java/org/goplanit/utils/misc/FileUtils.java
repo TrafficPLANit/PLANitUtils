@@ -127,6 +127,7 @@ public class FileUtils {
   /**
    * Take file string from input and construct File from it
    *
+   * @param inputFile to use
    * @return file created
    */
   public static File convertFileStringToFile(String inputFile) {
@@ -243,8 +244,10 @@ public class FileUtils {
    * Parse a file by means of a lambda function that is passed in. The wrapper method creates the
    * Scanner resource and closes it after completion and takes care of any exceptions thrown during parsing.
    *
+   * @param <T> type of result
    * @param fileToParse the file to parse using the scanner
    * @param scannerWithResult functionality applied to the created scanner, return the result
+   * @return result
    */
   public static <T> T wrapFileScannerWithResult(File fileToParse, Function<Scanner, T> scannerWithResult){
 

@@ -79,6 +79,7 @@ public class SimpleCsvParser{
   /**
    * Parse contents in raw memory form.
    *
+   * @param scanner to use
    * @return triple containing [header column entries, header row entries, value content: values as string array per row]
    */
   protected Triple<List<String>, String[], List<String[]>> parseToMemory(Scanner scanner) {
@@ -135,9 +136,12 @@ public class SimpleCsvParser{
    *
    * @param filePath to use
    * @param separator to use
+   * @param hasHeaderRow flag to indicate if it has a header row
+   * @param hasHeaderColumn flag to indicate if it has a header col
    * @return created parser
    */
-  public static SimpleCsvParser create(String filePath, String separator, boolean hasHeaderRow, boolean hasHeaderColumn){
+  public static SimpleCsvParser create(
+          String filePath, String separator, boolean hasHeaderRow, boolean hasHeaderColumn){
     return new SimpleCsvParser(filePath, separator, hasHeaderRow, hasHeaderColumn);
   }
 
@@ -145,7 +149,8 @@ public class SimpleCsvParser{
    * Parse the CSV. If no headers exist then the corresponding entry in the result will be null, e.g., first and or
    * second component of triple returned.
    *
-   * @return triple containing [header column entries, header row entries, value content: values as string array per row]
+   * @return triple containing
+   * [header column entries, header row entries, value content: values as string array per row]
    */
   public Triple<List<String>, String[], List<String[]>> parse(){
     return FileUtils.wrapFileScannerWithResult(
