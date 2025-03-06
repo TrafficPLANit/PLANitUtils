@@ -17,7 +17,7 @@ public class SimpleCsvParserCallbacksImpl implements SimpleCsvParserCallBacks{
 
   @Override
   public void numColumnsCallback(int numColumns) {
-    // do nothing
+
   }
 
   @Override
@@ -27,10 +27,12 @@ public class SimpleCsvParserCallbacksImpl implements SimpleCsvParserCallBacks{
 
   @Override
   public void headerColEntryCallback(String headerColEntry) {
-    if(headerColumn == null){
-      headerColumn = new ArrayList<>(100);
+    if(headerColEntry!=null) {
+      if (headerColumn == null) {
+        headerColumn = new ArrayList<>(100);
+      }
+      headerColumn.add(headerColEntry);
     }
-    headerColumn.add(headerColEntry);
   }
 
   @Override
