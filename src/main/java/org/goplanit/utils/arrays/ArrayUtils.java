@@ -1,6 +1,7 @@
 package org.goplanit.utils.arrays;
 
 import java.util.Arrays;
+import java.util.Optional;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.logging.Logger;
@@ -15,6 +16,26 @@ public class ArrayUtils {
   
   /** logger to use */
   private static final Logger LOGGER = Logger.getLogger(ArrayUtils.class.getCanonicalName());
+
+  /**
+   * Find index of an object in the array if its is present using a simple sequential search
+   *
+   * @param array to check
+   * @param entry to find
+   * @return index found, empty optional if nto found
+   * @param <T> type of array entries
+   */
+  public static <T> Optional<Integer> findIndex(T[] array, T entry){
+    if(array == null){
+      return Optional.empty();
+    }
+    for(int index=0 ; index<array.length ; ++index){
+      if(array[index].equals(entry)){
+        return Optional.of(index);
+      }
+    }
+    return Optional.empty();
+  }
 
   /**
    * Add the values of a second array element-wise to the first array

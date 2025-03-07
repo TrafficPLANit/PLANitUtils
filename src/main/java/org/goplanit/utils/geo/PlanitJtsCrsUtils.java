@@ -71,7 +71,10 @@ public class PlanitJtsCrsUtils {
   /**
    * In absence of a geographic crs we can also use cartesian: GENERIC_2D
    */
-  public static final CoordinateReferenceSystem CARTESIANCRS = CartesianAuthorityFactory.GENERIC_2D;  
+  public static final CoordinateReferenceSystem CARTESIANCRS = CartesianAuthorityFactory.GENERIC_2D;
+
+  /** EPSG:404000 String identifier for Caretesian CRS */
+  public static final String CARTESIANCRS_EPSG_CODE = CARTESIANCRS.getIdentifiers().toArray()[0].toString();
     
   /**
    * Constructor
