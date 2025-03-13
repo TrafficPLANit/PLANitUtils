@@ -18,7 +18,7 @@ public class ArrayUtils {
   private static final Logger LOGGER = Logger.getLogger(ArrayUtils.class.getCanonicalName());
 
   /**
-   * Find index of an object in the array if its is present using a simple sequential search
+   * Find first index of an object in the array if its is present using a simple sequential search
    *
    * @param array to check
    * @param entry to find
