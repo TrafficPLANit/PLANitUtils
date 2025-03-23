@@ -14,7 +14,8 @@ import org.goplanit.utils.graph.directed.ConjugateEdgeSegment;
  * @author markr
  *
  */
-public interface ConjugateACyclicSubGraph extends UntypedACyclicSubGraph<ConjugateDirectedVertex, ConjugateEdgeSegment> {
+public interface ConjugateACyclicSubGraph extends
+    UntypedACyclicSubGraph<ConjugateDirectedVertex, ConjugateEdgeSegment> {
 
   /**
    * {@inheritDoc}
