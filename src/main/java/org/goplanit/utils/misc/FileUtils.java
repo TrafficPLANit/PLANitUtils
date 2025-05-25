@@ -101,8 +101,8 @@ public class FileUtils {
       LOGGER.warning(String.format("No callback provided for any file in %s",pathToDir));
     }
     File[] filesInDir = Objects.requireNonNull(new File(pathToDir).listFiles());
-    for(int index=0;index<filesInDir.length;++index) {
-      callBack.accept(filesInDir[index]);
+    for (File file : filesInDir) {
+      callBack.accept(file);
     } 
   }
 
