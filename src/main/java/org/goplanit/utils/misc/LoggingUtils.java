@@ -186,7 +186,8 @@ public class LoggingUtils {
    * @return iteration prefix
    */  
   public static String iterationPrefix(int iterationIndex) {
-    return surroundWithBrackets(String.format("iteration: %d", iterationIndex));
+    return surroundWithBrackets(String.format("" +
+        "iteration: %d", iterationIndex));
   }  
   
   /** create a string that states if item is activated or deactivated based and provide the simple class name
