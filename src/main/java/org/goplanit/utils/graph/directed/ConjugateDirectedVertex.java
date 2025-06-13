@@ -54,5 +54,13 @@ public interface ConjugateDirectedVertex extends DirectedVertex, ConjugateVertex
    */
   public abstract EdgeSegment getOriginalEdgeSegment();
 
+  /**
+   * Verify if original edge segment exists
+   * @return true when present false otherwise
+   */
+  public default boolean hasOriginalEdgeSegment(){
+    return getOriginalEdgeSegment()!=null;
+  }
+
 
 }
