@@ -13,7 +13,6 @@ import org.goplanit.utils.exceptions.PlanItException;
 import org.goplanit.utils.exceptions.PlanItRunTimeException;
 import org.goplanit.utils.math.Precision;
 import org.goplanit.utils.misc.Pair;
-import org.goplanit.utils.network.layer.physical.Link;
 import org.locationtech.jts.algorithm.Angle;
 import org.locationtech.jts.algorithm.RobustDeterminant;
 import org.locationtech.jts.geom.*;
@@ -749,6 +748,33 @@ public class PlanitJtsUtils {
    */
   public static double minDiffAngleInDegrees(double angleDegrees1, double angleDegrees2) {
     return Angle.toDegrees(Angle.diff(Angle.normalize(Angle.toRadians(angleDegrees1)),Angle.normalize(Angle.toRadians(angleDegrees2))));
+  }
+
+  /**
+   * Convert to doubles
+   *
+   * @param coordinates to convert
+   * @param reverseXAndY revert x and y
+   * @return double array
+   */
+  public static double[] convertToOrdinates(Coordinate[] coordinates, boolean reverseXAndY) {
+
+    double[] resultOrdinates = new double[coordinates.length*2];
+    int ordinateIndex = 0;
+    try {
+      for (int index = 0; index < coordinates.length; ++index, ++ordinateIndex) {
+        var currCoord = coordinates[index];
+        if (!reverseXAndY) {
+          resultOrdinates[ordinateIndex] = currCoord.x;
+          resultOrdinates[++ordinateIndex] = currCoord.y;
+        } else {
+          resultOrdinates[ordinateIndex] = currCoord.y;
+          resultOrdinates[++ordinateIndex] = currCoord.x;
+        }
+      }
+    }catch (Exception e) {
+    }
+    return resultOrdinates;
   }
 
   /**
