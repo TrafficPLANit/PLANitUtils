@@ -155,4 +155,14 @@ public class StringUtils {
     output.append("]");
     return output.toString();
   }
+
+  /**
+   * Remove all non-alpha numeric characters
+   *
+   * @param theString
+   * @return adjusted string
+   */
+  public static String removeAllNonAlphaNumeric(String theString) {
+    return theString.replaceAll("[^a-zA-Z0-9]", "");
+  }
 }

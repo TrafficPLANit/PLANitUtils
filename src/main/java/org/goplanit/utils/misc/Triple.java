@@ -246,4 +246,16 @@ public class Triple<A, B, C> {
   public boolean allNull() {
     return !firstNotNull() && !secondNotNull() && !thirdNotNull();
   }
+
+  public Pair<A,B> asPairFirstSecond() {
+    return Pair.of(first, second);
+  }
+
+  public Pair<B,C> asPairSecondThird() {
+    return Pair.of(second, third);
+  }
+
+  public Pair<A,C> asPairFirstThird() {
+    return Pair.of(first, third);
+  }
 }

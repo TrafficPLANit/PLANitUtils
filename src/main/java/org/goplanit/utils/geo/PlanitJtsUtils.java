@@ -747,6 +747,33 @@ public class PlanitJtsUtils {
   }
 
   /**
+   * Convert to doubles
+   *
+   * @param coordinates to convert
+   * @param reverseXAndY revert x and y
+   * @return double array
+   */
+  public static double[] convertToOrdinates(Coordinate[] coordinates, boolean reverseXAndY) {
+
+    double[] resultOrdinates = new double[coordinates.length*2];
+    int ordinateIndex = 0;
+    try {
+      for (int index = 0; index < coordinates.length; ++index, ++ordinateIndex) {
+        var currCoord = coordinates[index];
+        if (!reverseXAndY) {
+          resultOrdinates[ordinateIndex] = currCoord.x;
+          resultOrdinates[++ordinateIndex] = currCoord.y;
+        } else {
+          resultOrdinates[ordinateIndex] = currCoord.y;
+          resultOrdinates[++ordinateIndex] = currCoord.x;
+        }
+      }
+    }catch (Exception e) {
+    }
+    return resultOrdinates;
+  }
+
+  /**
    * Add coord array contiguously in correct order to either the front or back of current contiguous coords by checking
    * shared start/end nodes and if needed reverse adding to front or back depending on match found. the shared coordinate
    * is not added to avoid duplicates in result
