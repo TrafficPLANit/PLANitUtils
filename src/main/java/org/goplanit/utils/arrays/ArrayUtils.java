@@ -104,7 +104,7 @@ public class ArrayUtils {
     return destination;
   }
 
-  /** divide each entry in array by given diviser. When divisor is zero, all entries are set to divideByZeroResult
+  /** Divide each entry in array by given diviser. When divisor is zero, all entries are set to divideByZeroResult
    * 
    * @param destination array to apply to
    * @param diviser to divide by
