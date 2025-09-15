@@ -1,21 +1,19 @@
 package org.goplanit.utils.graph;
 
-import java.io.Serializable;
-
+import org.geotools.api.geometry.MismatchedDimensionException;
+import org.geotools.api.referencing.operation.MathTransform;
+import org.geotools.api.referencing.operation.TransformException;
 import org.geotools.geometry.jts.JTS;
 import org.goplanit.utils.exceptions.PlanItRunTimeException;
 import org.goplanit.utils.geo.PlanitJtsUtils;
-import org.goplanit.utils.graph.directed.DirectedEdge;
 import org.goplanit.utils.math.Precision;
 import org.goplanit.utils.misc.Pair;
-import org.goplanit.utils.network.layer.macroscopic.MacroscopicLink;
 import org.locationtech.jts.geom.Envelope;
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.LineString;
 import org.locationtech.jts.linearref.LinearLocation;
-import org.opengis.geometry.MismatchedDimensionException;
-import org.opengis.referencing.operation.MathTransform;
-import org.opengis.referencing.operation.TransformException;
+
+import java.io.Serializable;
 
 /**
  * Edge interface connecting two vertices in a non-directional fashion.

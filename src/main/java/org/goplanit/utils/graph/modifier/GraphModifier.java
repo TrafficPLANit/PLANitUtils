@@ -4,13 +4,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.geotools.api.referencing.crs.CoordinateReferenceSystem;
 import org.goplanit.utils.exceptions.PlanItException;
 import org.goplanit.utils.geo.PlanitJtsCrsUtils;
 import org.goplanit.utils.graph.Edge;
 import org.goplanit.utils.graph.Vertex;
 import org.goplanit.utils.graph.modifier.event.GraphModifierEventProducer;
 import org.goplanit.utils.misc.Pair;
-import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 /**
  * Modify graph elements
@@ -18,7 +18,8 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
  * @author markr
  *
  */
-public interface GraphModifier<V extends Vertex, E extends Edge> extends GraphModifierEventProducer, TopologicalModifier{
+public interface GraphModifier<V extends Vertex, E extends Edge>
+        extends GraphModifierEventProducer, TopologicalModifier{
 
   /**
    * Remove a vertex by removing it from the graph and the edges it is connected to. Any registered events fro vertex removal
@@ -70,7 +71,8 @@ public interface GraphModifier<V extends Vertex, E extends Edge> extends GraphMo
    * @param crs required to update edge lengths
    * @return affectedEdges the list of all result edges of the breaking of links by their original link id
    */
-  public abstract <Ex extends E> Map<Long, Pair<Ex, Ex>> breakEdgesAt(final List<Ex> edgesToBreak, final V vertexToBreakAt, final CoordinateReferenceSystem crs);
+  public abstract <Ex extends E> Map<Long, Pair<Ex, Ex>> breakEdgesAt(
+          final List<Ex> edgesToBreak, final V vertexToBreakAt, final CoordinateReferenceSystem crs);
   
   /**
    * Break the passed in edge by inserting the passed in vertex in between. After completion the original edge remains as (VertexA,VertexToBreakAt), and new edges are inserted for
@@ -82,7 +84,8 @@ public interface GraphModifier<V extends Vertex, E extends Edge> extends GraphMo
    * @param geoUtils required to update edge lengths
    * @return newlyCreatedEdge 
    */
-  public abstract <Ex extends E> Ex breakEdgeAt(final V vertexToBreakAt, final Ex edgeToBreak, final PlanitJtsCrsUtils geoUtils);  
+  public abstract <Ex extends E> Ex breakEdgeAt(
+          final V vertexToBreakAt, final Ex edgeToBreak, final PlanitJtsCrsUtils geoUtils);
 
   /**
    * This method will recreate all ids of the graph's components, e.g., vertices, edges, etc. but only when the containers used for them are the primary ManagedIdEntities containers, i.e., when the graph

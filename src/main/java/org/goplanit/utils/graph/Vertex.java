@@ -1,19 +1,17 @@
 package org.goplanit.utils.graph;
 
+import org.geotools.api.geometry.MismatchedDimensionException;
+import org.geotools.api.referencing.operation.MathTransform;
+import org.geotools.api.referencing.operation.TransformException;
+import org.geotools.geometry.jts.JTS;
+import org.locationtech.jts.geom.Coordinate;
+import org.locationtech.jts.geom.Point;
+
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.logging.Logger;
-
-import org.geotools.geometry.jts.JTS;
-import org.goplanit.utils.network.layer.physical.Node;
-import org.locationtech.jts.geom.Coordinate;
-import org.locationtech.jts.geom.Point;
-import org.opengis.geometry.MismatchedDimensionException;
-import org.opengis.referencing.operation.MathTransform;
-import org.opengis.referencing.operation.TransformException;
 
 /**
  * Vertex representation connected to one or more edges and/or edge segments

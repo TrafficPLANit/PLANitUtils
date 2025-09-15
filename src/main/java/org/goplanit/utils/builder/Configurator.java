@@ -68,8 +68,10 @@ public class Configurator<T> {
    * @throws SecurityException         thrown if error
    */
   protected void callVoidMethod(T instance, String methodName, Object... parameters)
-      throws IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException {
-    PlanItRunTimeException.throwIf(instance == null, "The instance to configure by calling " + methodName + " is not available");
+      throws IllegalAccessException, IllegalArgumentException, InvocationTargetException,
+          NoSuchMethodException, SecurityException {
+    PlanItRunTimeException.throwIf(instance == null, "The instance to configure by calling " +
+            methodName + " is not available");
     
     // check if each parameter is assignable for the method at hand. first match we choose
     boolean matches = false;
@@ -228,10 +230,12 @@ public class Configurator<T> {
         for(Object[] parametersOfCall : methodCall.getValue()) {
           callVoidMethod(toConfigureInstance, methodCall.getKey(), parametersOfCall);
         }
-      } catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException | NoSuchMethodException | SecurityException e) {
+      } catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException | NoSuchMethodException
+               | SecurityException e) {
         LOGGER.severe(e.getMessage());
         throw new PlanItRunTimeException(
-                "Could not call configurator delayed method call to %s on class %s",methodCall.getKey(), toConfigureInstance.getClass().getCanonicalName());
+                "Could not call configurator delayed method call to %s on class %s",
+                methodCall.getKey(), toConfigureInstance.getClass().getCanonicalName());
       }
     }
   }

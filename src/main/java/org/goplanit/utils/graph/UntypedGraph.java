@@ -1,13 +1,9 @@
 package org.goplanit.utils.graph;
 
-import org.goplanit.utils.graph.Edge;
-import org.goplanit.utils.graph.Vertex;
+import org.geotools.api.geometry.MismatchedDimensionException;
+import org.geotools.api.referencing.operation.MathTransform;
+import org.geotools.api.referencing.operation.TransformException;
 import org.goplanit.utils.id.ManagedId;
-import org.opengis.geometry.MismatchedDimensionException;
-import org.opengis.referencing.operation.MathTransform;
-import org.opengis.referencing.operation.TransformException;
-
-import java.util.function.BiConsumer;
 
 /**
  * 

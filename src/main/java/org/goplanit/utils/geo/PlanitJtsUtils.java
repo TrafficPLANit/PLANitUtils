@@ -6,6 +6,9 @@ import java.util.function.Consumer;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
+import org.geotools.api.geometry.Position;
+import org.geotools.api.referencing.crs.CoordinateReferenceSystem;
+import org.geotools.api.referencing.operation.MathTransform;
 import org.geotools.geometry.jts.JTS;
 import org.geotools.geometry.jts.JTSFactoryFinder;
 import org.geotools.referencing.CRS;
@@ -13,17 +16,15 @@ import org.goplanit.utils.exceptions.PlanItException;
 import org.goplanit.utils.exceptions.PlanItRunTimeException;
 import org.goplanit.utils.math.Precision;
 import org.goplanit.utils.misc.Pair;
-import org.goplanit.utils.network.layer.physical.Link;
 import org.locationtech.jts.algorithm.Angle;
 import org.locationtech.jts.algorithm.RobustDeterminant;
 import org.locationtech.jts.geom.*;
 import org.locationtech.jts.linearref.LinearLocation;
 import org.locationtech.jts.linearref.LocationIndexedLine;
 import org.locationtech.jts.operation.linemerge.LineMerger;
-import org.opengis.geometry.DirectPosition;
-import org.opengis.geometry.coordinate.PointArray;
-import org.opengis.referencing.crs.CoordinateReferenceSystem;
-import org.opengis.referencing.operation.MathTransform;
+//import org.opengis.geometry.DirectPosition;
+//import org.opengis.geometry.coordinate.PointArray;
+//import org.geotools.api.referencing.crs.CoordinateReferenceSystem;
 
 /**
  * General geographic related utils utilising the JTS API. 
@@ -47,9 +48,12 @@ public class PlanitJtsUtils {
    * @param destinationCRS the destination
    * @return transformer
    */
-  public static MathTransform findMathTransform(CoordinateReferenceSystem sourceCRS, CoordinateReferenceSystem destinationCRS){
-    PlanItRunTimeException.throwIfNull(sourceCRS, "source coordinate reference system null when creating math transform");
-    PlanItRunTimeException.throwIfNull(destinationCRS, "destination coordinate reference system null when creating math transform");
+  public static MathTransform findMathTransform(
+          CoordinateReferenceSystem sourceCRS, CoordinateReferenceSystem destinationCRS){
+    PlanItRunTimeException.throwIfNull(sourceCRS,
+            "source coordinate reference system null when creating math transform");
+    PlanItRunTimeException.throwIfNull(destinationCRS,
+            "destination coordinate reference system null when creating math transform");
     PlanitCrsUtils.silenceHsqlLogging();
 
     try {
@@ -57,7 +61,9 @@ public class PlanitJtsUtils {
       boolean lenient = true;
       return CRS.findMathTransform(sourceCRS, destinationCRS, lenient);
     } catch (Exception e) {
-      throw new PlanItRunTimeException(String.format("error during creation of transformer from CRS %s to CRS %s", sourceCRS.toString(), destinationCRS.toString()), e);
+      throw new PlanItRunTimeException(
+              String.format("error during creation of transformer from CRS %s to CRS %s",
+                      sourceCRS.toString(), destinationCRS.toString()), e);
     }
 
   }
@@ -124,7 +130,7 @@ public class PlanitJtsUtils {
    * @param position in opengis format
    * @return JTS coordinate created
    */
-  public static Coordinate createCoordinate(DirectPosition position) {
+  public static Coordinate createCoordinate(Position position) {
     return new Coordinate(position.getOrdinate(0), position.getOrdinate(1));
   }
   
@@ -201,7 +207,9 @@ public class PlanitJtsUtils {
     for(String xyCoordinateString : tupleString) {
       String[] coordinateString = xyCoordinateString.split("[" + cs + "]");
       if (coordinateString.length != 2) {
-        throw new PlanItRunTimeException(String.format("invalid coordinate encountered, expected two coordinates in tuple, but found %d", coordinateString.length));
+        throw new PlanItRunTimeException(
+                String.format("invalid coordinate encountered, expected two coordinates in tuple, but found %d",
+                        coordinateString.length));
       }
       coordinateDoubleList.add(Double.parseDouble(coordinateString[0]));
       coordinateDoubleList.add(Double.parseDouble(coordinateString[1]));
@@ -320,7 +328,7 @@ public class PlanitJtsUtils {
    * @param positions List of GeoTools Position objects
    * @return coordinates array of JTS Coordinate objects
    */
-  public static Coordinate[] directPositionsToCoordinates(List<DirectPosition> positions) {
+  public static Coordinate[] directPositionsToCoordinates(List<Position> positions) {
     Coordinate[] coordinates = new Coordinate[positions.size()];
     for (int index = 0; index < coordinates.length; ++index) {
       coordinates[index] = createCoordinate(positions.get(index));
@@ -630,19 +638,6 @@ public class PlanitJtsUtils {
   public static LineString concatenate(LineString... geometries) {
     MultiLineString theMultiLineString = jtsGeometryFactory.createMultiLineString(geometries);
     return jtsGeometryFactory.createLineString(theMultiLineString.getCoordinates());
-  }
-
-  /**
-   * Convert an open gis line string object to a JTS Gis LineString instance by copying the internal coordinates
-   * 
-   * @param openGisLineString to convert
-   * @return jtsLineString created
-   * @throws PlanItException thrown if there is an error
-   */
-  public static LineString convertToJtsLineString(org.opengis.geometry.coordinate.LineString openGisLineString) throws PlanItException {
-    PointArray samplePoints = openGisLineString.getSamplePoints();
-    List<Coordinate> coordinates = samplePoints.stream().map(point -> createCoordinate(point.getDirectPosition())).collect(Collectors.toList());
-    return jtsGeometryFactory.createLineString(coordinates.toArray(Coordinate[]::new));
   }
 
   /**

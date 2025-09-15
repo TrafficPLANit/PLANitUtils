@@ -50,7 +50,8 @@ public class ArrayUtils {
    */
   public static double[] addTo(double[] destination, double[] addToDestination, int numberOfElements) {
     if(addToDestination.length < Math.min(numberOfElements,destination.length)) {
-      LOGGER.warning("addToDestination array has less elements than number of elements/destination array to add to, addTo failed");
+      LOGGER.warning("addToDestination array has less elements than number of elements/destination array to add " +
+              "to, addTo failed");
       return destination;
     }
     

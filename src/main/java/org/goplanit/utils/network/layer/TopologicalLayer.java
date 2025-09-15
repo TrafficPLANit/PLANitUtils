@@ -1,9 +1,9 @@
 package org.goplanit.utils.network.layer;
 
+import org.geotools.api.referencing.crs.CoordinateReferenceSystem;
 import org.goplanit.utils.exceptions.PlanItException;
 import org.goplanit.utils.graph.modifier.TopologicalModifier;
 import org.locationtech.jts.geom.Envelope;
-import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 /**
  * A topological layer represents a layer suited for a number of modes that is topologically meaningful without enforcing the actual implemantation of
@@ -34,7 +34,9 @@ public interface TopologicalLayer extends NetworkLayer {
    * @param toCoordinateReferenceSystem   to tranform to crs
    * @throws PlanItException thrown if error
    */
-  public abstract void transform(CoordinateReferenceSystem fromCoordinateReferenceSystem, CoordinateReferenceSystem toCoordinateReferenceSystem) throws PlanItException;
+  public abstract void transform(
+          CoordinateReferenceSystem fromCoordinateReferenceSystem,
+          CoordinateReferenceSystem toCoordinateReferenceSystem) throws PlanItException;
 
 
   /** Provide access to the modifier options for this layer

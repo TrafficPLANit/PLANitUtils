@@ -1,7 +1,5 @@
 package org.goplanit.utils.containers;
 
-import org.goplanit.utils.mode.Mode;
-
 import java.util.*;
 import java.util.function.Function;
 
@@ -19,7 +17,8 @@ public class ContainerUtils {
    *
    * @param <T> type of collection
    */
-  public static <T extends Collection<?>> T wrapInUnmodifiableCollectionUnlessNull(T collection, Function<T,T> wrapInUnmodifiable) {
+  public static <T extends Collection<?>> T wrapInUnmodifiableCollectionUnlessNull(
+          T collection, Function<T,T> wrapInUnmodifiable) {
     if(collection == null){
       return null;
     }

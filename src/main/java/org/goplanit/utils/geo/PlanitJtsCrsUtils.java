@@ -3,6 +3,9 @@ package org.goplanit.utils.geo;
 import java.awt.geom.Point2D;
 import java.util.Arrays;
 import java.util.logging.Logger;
+
+import org.geotools.api.geometry.Position;
+import org.geotools.api.referencing.crs.CoordinateReferenceSystem;
 import org.geotools.geometry.jts.JTS;
 import org.geotools.geometry.jts.JTSFactoryFinder;
 import org.geotools.referencing.GeodeticCalculator;
@@ -25,11 +28,11 @@ import org.locationtech.jts.geom.Point;
 import org.locationtech.jts.geom.Polygon;
 import org.locationtech.jts.linearref.LinearLocation;
 import org.locationtech.jts.linearref.LocationIndexedLine;
-import org.opengis.geometry.DirectPosition;
-import org.opengis.geometry.coordinate.Position;
-import org.opengis.referencing.crs.CoordinateReferenceSystem;
-import org.opengis.referencing.operation.MathTransform;
-import org.opengis.referencing.operation.TransformException;
+//import org.opengis.geometry.DirectPosition;
+//import org.opengis.geometry.coordinate.Position;
+//import org.geotools.api.referencing.crs.CoordinateReferenceSystem;
+//import org.geotools.api.referencing.operation.MathTransform;
+//import org.opengis.referencing.operation.TransformException;
 
 /**
  * General geographic JTS utilities that rely on a known Coordinate Reference system (CRS). 
@@ -586,16 +589,19 @@ public class PlanitJtsCrsUtils {
    * @param extendEnd when true extend further from end coordinate onwards
    * @return extended line segment based on the passed in parameters
    */
-  public LineSegment createExtendedLineSegment(final LineSegment source, double extensionInMeters, boolean extendStart, boolean extendEnd){
+  public LineSegment createExtendedLineSegment(
+          final LineSegment source, double extensionInMeters, boolean extendStart, boolean extendEnd){
     /* obtain heading first */        
-    DirectPosition newStartPosition = null;
+    Position newStartPosition = null;
     if(extendStart) {
-      newStartPosition = createPositionInDirection(source.p0, getAzimuthInDegrees(source.p1, source.p0, false),extensionInMeters);
+      newStartPosition = createPositionInDirection(
+              source.p0, getAzimuthInDegrees(source.p1, source.p0, false),extensionInMeters);
     }
     
-    DirectPosition newEndPosition = null;    
+    Position newEndPosition = null;
     if(extendEnd) {
-      newEndPosition = createPositionInDirection(source.p1, getAzimuthInDegrees(source.p0, source.p1, false),extensionInMeters);
+      newEndPosition = createPositionInDirection(
+              source.p1, getAzimuthInDegrees(source.p0, source.p1, false),extensionInMeters);
     }    
    
     Coordinate startCoordinate = newStartPosition!=null ? PlanitJtsUtils.createCoordinate(newStartPosition) : source.p0;
@@ -612,7 +618,7 @@ public class PlanitJtsCrsUtils {
    * @param distanceInMeters distance
    * @return new position in desired location
    */
-  private DirectPosition createPositionInDirection(Coordinate start, double azimuthInDegrees, double distanceInMeters){
+  private Position createPositionInDirection(Coordinate start, double azimuthInDegrees, double distanceInMeters){
     try {
       geoCalculator.setStartingGeographicPoint(start.x, start.y);
       geoCalculator.setDirection(azimuthInDegrees, distanceInMeters);    
@@ -670,7 +676,7 @@ public class PlanitJtsCrsUtils {
    * @param coordinate to extract from
    * @return coordinate + CRS as direct position
    */
-  public DirectPosition toDirectPosition(Coordinate coordinate){
+  public Position toDirectPosition(Coordinate coordinate){
     try {
       return JTS.toDirectPosition(coordinate, getCoordinateReferenceSystem());
     } catch (Exception e){
@@ -683,7 +689,7 @@ public class PlanitJtsCrsUtils {
    * @param point to extract from
    * @return coordinate + CRS as direct position
    */
-  public DirectPosition toDirectPosition(Point point){
+  public Position toDirectPosition(Point point){
     return toDirectPosition(point.getCoordinate());
   }
 

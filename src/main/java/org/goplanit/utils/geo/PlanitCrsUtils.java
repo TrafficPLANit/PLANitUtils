@@ -3,8 +3,8 @@ package org.goplanit.utils.geo;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import org.geotools.api.referencing.crs.CoordinateReferenceSystem;
 import org.geotools.referencing.CRS;
-import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 /** Utilities for coordinate Reference systems
  * 

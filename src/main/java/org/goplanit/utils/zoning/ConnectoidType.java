@@ -7,10 +7,13 @@ package org.goplanit.utils.zoning;
  *
  */
 public enum ConnectoidType {
-
+  /** none */
   NONE("none"),
+  /** traveller access */
   TRAVELLER_ACCESS("traveller_access"),
+  /** pt vehicle stop */
   PT_VEHICLE_STOP("pt_veh_stop"),
+  /** unknown */
   UNKNOWN("unknown");
   
   
