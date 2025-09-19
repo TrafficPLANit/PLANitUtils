@@ -159,7 +159,7 @@ public class StringUtils {
   /**
    * Remove all non-alpha numeric characters
    *
-   * @param theString
+   * @param theString to apply to
    * @return adjusted string
    */
   public static String removeAllNonAlphaNumeric(String theString) {
