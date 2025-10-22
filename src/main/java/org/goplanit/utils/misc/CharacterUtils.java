@@ -10,6 +10,8 @@ public class CharacterUtils {
   
   /** a comma ',' */
   public static final Character COMMA = ',';
+
+  public static final Character COLON = ':';
   
   /** a space ' ' */
   public static final Character SPACE = ' ';

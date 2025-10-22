@@ -25,7 +25,28 @@ public interface Vertex extends Serializable, GraphEntity {
   public static final Logger LOGGER = Logger.getLogger(Vertex.class.getCanonicalName());
   
   /** id class for generating ids */
-  public static final Class<Vertex> VERTEX_ID_CLASS = Vertex.class;  
+  public static final Class<Vertex> VERTEX_ID_CLASS = Vertex.class;
+
+  /**
+   * Check if any input property has been registered
+   * @return true when present, false otherwise
+   */
+  public abstract boolean hasInputProperty();
+
+  /**
+   * Check if a given input property has been registered
+   * @return true when present, false otherwise
+   */
+  public default boolean hasInputProperty(final String key){
+    return getInputProperty(key) != null;
+  }
+
+  /**
+   * Available input property keys, if any
+   *
+   * @return set of input properties, null when not present
+   */
+  public abstract Set<String> getInputPropertyKeys();
     
   /**
    * Add a property from the original input that is not part of the readily available members
