@@ -153,6 +153,8 @@ public interface Edge extends Serializable, GraphEntity {
 
   /**
    * Check if a given input property has been registered
+   *
+   * @param key key to check for
    * @return true when present, false otherwise
    */
   public default boolean hasInputProperty(final String key){
