@@ -10,7 +10,7 @@ package org.goplanit.utils.functionalinterface;
   * @param <V> third object to be processed
   */
 @FunctionalInterface
-interface TriPredicate<T, U, V> {
+public interface TriPredicate<T, U, V> {
 
   /**
    * Performs this operation on the given arguments
