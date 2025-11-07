@@ -3,11 +3,11 @@ package org.goplanit.utils.functionalinterface;
  /** Predicate Interface which can process three input objects and produce an output
   * There is no equivalent functional interface in the java.util.function library yet
   *
-  * @author gman6028
+  * @author markr
   *
   * @param <T> first object to be processed
   * @param <U> second object to be processed
-  * @param <U> third object to be processed
+  * @param <V> third object to be processed
   */
 @FunctionalInterface
 interface TriPredicate<T, U, V> {
