@@ -63,6 +63,7 @@ public class PlanitCrsUtils {
         try {
           crs = CRS.decode(code, true);
         } catch (Exception e2) {
+          e2.printStackTrace();
           LOGGER.warning(String.format("unable to find coordinate reference system for %s", code));
         }
       }
