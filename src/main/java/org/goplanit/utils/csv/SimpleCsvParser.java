@@ -6,7 +6,7 @@ import org.goplanit.utils.misc.Triple;
 import java.util.List;
 import java.util.Scanner;
 
-import static org.goplanit.utils.misc.FileUtils.convertFileStringToFile;
+import static org.goplanit.utils.misc.FileUtils.resolveFileFromAbsoluteOrRelativeString;
 
 /**
  * Simple CSV parser class that takes care of parsing the file and can be use din three ways:
@@ -154,7 +154,7 @@ public class SimpleCsvParser{
    */
   public Triple<List<String>, String[], List<String[]>> parse(){
     return FileUtils.wrapFileScannerWithResult(
-            convertFileStringToFile(filePath), this::parseToMemory);
+            resolveFileFromAbsoluteOrRelativeString(filePath), this::parseToMemory);
   }
 
   /**
@@ -166,7 +166,7 @@ public class SimpleCsvParser{
    */
   public void parseWithCallbacks(SimpleCsvParserCallBacks callbacks){
     FileUtils.wrapFileScanner(
-            convertFileStringToFile(filePath),
+            resolveFileFromAbsoluteOrRelativeString(filePath),
             scanner -> parseWithCallbacks(scanner, callbacks));
   }
 

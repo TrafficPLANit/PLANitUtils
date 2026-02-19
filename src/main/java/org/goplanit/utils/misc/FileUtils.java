@@ -12,6 +12,7 @@ import java.util.function.Function;
 import java.util.logging.Logger;
 
 import org.goplanit.utils.exceptions.PlanItRunTimeException;
+import org.goplanit.utils.resource.ResourceUtils;
 import org.xml.sax.InputSource;
 
 /**
@@ -130,15 +131,37 @@ public class FileUtils {
    * @param inputFile to use
    * @return file created
    */
-  public static File convertFileStringToFile(String inputFile) {
+  public static File resolveFileFromAbsoluteOrRelativeString(String inputFile) {
     File theFile = null;
+
     try {
-      theFile = new File(inputFile).getCanonicalFile();
-    } catch (final Exception e) {
-      LOGGER.severe(e.getMessage());
-      throw new PlanItRunTimeException("Error in constructing file from string",e);
+      theFile = new File(inputFile);
+      if (theFile.exists()) {
+        return theFile.getCanonicalFile();
+      }
+    }catch (Exception e){
+      // fall through
     }
-    return theFile;
+
+    // try to load it as a classpath resource
+    URL resourceUrl = ResourceUtils.getResourceUrl(inputFile);
+    if (resourceUrl != null) {
+      try {
+        return new File(resourceUrl.toURI());
+      } catch (URISyntaxException e) {
+        // fallback below
+      }
+
+      try {
+        return new File(resourceUrl.getFile()).getCanonicalFile();
+      }catch(Exception e){
+        //File not found anywhere
+        throw new PlanItRunTimeException("File not found: " + inputFile);
+      }
+    }else{
+      throw new PlanItRunTimeException("No resource URL could be created from: " + inputFile +
+          "unable to retrieve file");
+    }
   }
   
   /** Delete a directory by providing a file that represents a directory. In which case
