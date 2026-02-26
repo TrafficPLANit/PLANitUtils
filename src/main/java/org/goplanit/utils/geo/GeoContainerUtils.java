@@ -34,7 +34,8 @@ public class GeoContainerUtils {
     var spatialZones = new Quadtree();
     for(var zone : zones){
       if(zone.getEnvelope() == null) {
-        LOGGER.warning(String.format("Unable to spatially index %s %s, unknown spatial features, ignored", zone.getClass().getName(), zone.getXmlId()));
+        LOGGER.warning(String.format("Unable to spatially index %s %s, unknown spatial features, ignored",
+            zone.getClass().getName(), zone.getXmlId()));
         continue;
       }
       spatialZones.insert(zone.getEnvelope(), zone);
@@ -43,7 +44,8 @@ public class GeoContainerUtils {
   }
 
   /**
-   * Created quadtree based on edge envelopes as spatial index. Requires PlanitJtsIntersectEdgeVisitor to filter out true spatial matches when querying.
+   * Created quadtree based on edge envelopes as spatial index. Requires PlanitJtsIntersectEdgeVisitor to
+   * filter out true spatial matches when querying.
    *
    *  @param <T> type of edge
    *  @param edgesCollection collections to add
@@ -58,7 +60,8 @@ public class GeoContainerUtils {
   }
 
   /**
-   * Created quadtree based on edge envelopes as spatial index. Requires PlanitJtsIntersectEdgeVisitor to filter out true spatial matches when querying.
+   * Created quadtree based on edge envelopes as spatial index. Requires PlanitJtsIntersectEdgeVisitor to filter
+   * out true spatial matches when querying.
    *
    *  @param <T> type of edge
    *  @param edges collections to add
@@ -104,8 +107,10 @@ public class GeoContainerUtils {
    * @param spatiallyIndexedEdgeTree to consider
    * @return links found intersecting or within bounding box provided
    */
-  public static <T extends Edge> Collection<T> queryEdgeQuadtree(Quadtree spatiallyIndexedEdgeTree, Envelope searchBoundingBox) {
-    PlanitJtsIntersectEdgeVisitor<T> edgevisitor = new PlanitJtsIntersectEdgeVisitor<>(PlanitJtsUtils.create2DPolygon(searchBoundingBox), new HashSet<>());
+  public static <T extends Edge> Collection<T> queryEdgeQuadtree(
+      Quadtree spatiallyIndexedEdgeTree, Envelope searchBoundingBox) {
+    PlanitJtsIntersectEdgeVisitor<T> edgevisitor = new PlanitJtsIntersectEdgeVisitor<>(
+        PlanitJtsUtils.create2DPolygon(searchBoundingBox), new HashSet<>());
     spatiallyIndexedEdgeTree.query(searchBoundingBox, edgevisitor);
     return edgevisitor.getResult();
   }

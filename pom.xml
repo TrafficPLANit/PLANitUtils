@@ -51,6 +51,17 @@
 	        <artifactId>gt-epsg-hsql</artifactId>
 	    </dependency>
 
+		<!-- required for shape file datastore to be available for shape file parser -->
+		<dependency>
+			<groupId>org.geotools</groupId>
+			<artifactId>gt-shapefile</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>org.geotools</groupId>
+			<artifactId>gt-geopkg</artifactId>
+		</dependency>
+
 		<dependency>
 			<groupId>org.ojalgo</groupId>
 			<artifactId>ojalgo</artifactId>

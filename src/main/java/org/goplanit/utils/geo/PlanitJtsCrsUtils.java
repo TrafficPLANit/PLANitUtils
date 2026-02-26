@@ -1,9 +1,5 @@
 package org.goplanit.utils.geo;
 
-import java.awt.geom.Point2D;
-import java.util.Arrays;
-import java.util.logging.Logger;
-
 import org.geotools.api.geometry.Position;
 import org.geotools.api.referencing.crs.CoordinateReferenceSystem;
 import org.geotools.geometry.jts.JTS;
@@ -11,33 +7,22 @@ import org.geotools.geometry.jts.JTSFactoryFinder;
 import org.geotools.referencing.GeodeticCalculator;
 import org.geotools.referencing.crs.DefaultGeographicCRS;
 import org.geotools.referencing.factory.epsg.CartesianAuthorityFactory;
-import org.goplanit.utils.exceptions.PlanItException;
 import org.goplanit.utils.exceptions.PlanItRunTimeException;
 import org.goplanit.utils.graph.Vertex;
 import org.goplanit.utils.math.Precision;
-import org.goplanit.utils.network.layer.physical.LinkSegment;
-import org.locationtech.jts.geom.Coordinate;
-import org.locationtech.jts.geom.Envelope;
-import org.locationtech.jts.geom.Geometry;
-import org.locationtech.jts.geom.GeometryFactory;
-import org.locationtech.jts.geom.LineSegment;
-import org.locationtech.jts.geom.LineString;
-import org.locationtech.jts.geom.LinearRing;
-import org.locationtech.jts.geom.MultiLineString;
-import org.locationtech.jts.geom.Point;
-import org.locationtech.jts.geom.Polygon;
+import org.locationtech.jts.geom.*;
 import org.locationtech.jts.linearref.LinearLocation;
 import org.locationtech.jts.linearref.LocationIndexedLine;
-//import org.opengis.geometry.DirectPosition;
-//import org.opengis.geometry.coordinate.Position;
-//import org.geotools.api.referencing.crs.CoordinateReferenceSystem;
-//import org.geotools.api.referencing.operation.MathTransform;
-//import org.opengis.referencing.operation.TransformException;
+
+import java.awt.geom.Point2D;
+import java.util.Arrays;
+import java.util.logging.Logger;
 
 /**
  * General geographic JTS utilities that rely on a known Coordinate Reference system (CRS). 
- * Uses geodetic distance when possible. In case the CRS is not based on an ellipsoid (2d plane) it will simply compute the distance between
- * coordinates using Pythagoras with the unit distance in meters, consistent with the {@code CartesianAuthorityFactory.GENERIC_2D}
+ * Uses geodetic distance when possible. In case the CRS is not based on an ellipsoid (2d plane) it will simply
+ * compute the distance between coordinates using Pythagoras with the unit distance in meters,
+ * consistent with the {@code CartesianAuthorityFactory.GENERIC_2D}
  * 
  * It is assumed that x coordinate refers to latitude and y coordinate refers to longitude
  * 

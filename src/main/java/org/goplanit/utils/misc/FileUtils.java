@@ -38,11 +38,14 @@ public class FileUtils {
    * @return the extension, if it does not exist return empty string
    */
   public static String getExtension(File file) {
-    String fileName = file.getName();
+    return getExtension(file.getName());
+  }
+
+  public static String getExtension(String fileName) {
     if(fileName.lastIndexOf(DOT) != -1 && fileName.lastIndexOf(DOT) != 0) {
       return fileName.substring(fileName.lastIndexOf(DOT)+1);
     }else {
-      return "";      
+      return "";
     }
   }
   
@@ -144,7 +147,7 @@ public class FileUtils {
     }
 
     // try to load it as a classpath resource
-    URL resourceUrl = ResourceUtils.getResourceUrl(inputFile);
+    URL resourceUrl = UrlUtils.createFromLocalPathOrResource(inputFile);
     if (resourceUrl != null) {
       try {
         return new File(resourceUrl.toURI());
@@ -155,12 +158,12 @@ public class FileUtils {
       try {
         return new File(resourceUrl.getFile()).getCanonicalFile();
       }catch(Exception e){
-        //File not found anywhere
-        throw new PlanItRunTimeException("File not found: " + inputFile);
+        //File not constructed
+        throw new PlanItRunTimeException("File could not be created from: " + resourceUrl.getFile());
       }
     }else{
-      throw new PlanItRunTimeException("No resource URL could be created from: " + inputFile +
-          "unable to retrieve file");
+      // file does not exist, but we can still create file instance
+      return theFile;
     }
   }
   
