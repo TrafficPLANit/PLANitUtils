@@ -6,7 +6,8 @@ import org.geotools.api.feature.simple.SimpleFeature;
 import org.geotools.api.feature.simple.SimpleFeatureType;
 import org.geotools.data.simple.SimpleFeatureIterator;
 import org.goplanit.utils.exceptions.PlanItRunTimeException;
-import org.locationtech.jts.geom.Geometry;
+import org.goplanit.utils.misc.Pair;
+import org.geotools.api.filter.Filter;
 
 import java.io.IOException;
 import java.util.*;
@@ -19,14 +20,16 @@ public class SimpleShapeFileParser {
   private static final Logger LOGGER = Logger.getLogger(SimpleShapeFileParser.class.getCanonicalName());
 
   /**
-   * Parse a shape file and convert into a memory model of JTS geometries by layer
+   * Parse a shape file and convert into a memory model of JTS features by layer applying the provided geotools filter
    *
    * @param location to parse from can be a local file or url
    * @param logStats when true log number of geometries per layer
-   * @return map of geometry by layer in a list with layer name as key
+   * @return map of feature type and the features by layer with layer name as key
    */
-  public static Map<String, List<Geometry>> parseShapeFileAsJtsGeometries(String location, boolean logStats) {
-    var geometriesByLayer = new TreeMap<String, List<Geometry>>();
+  public static Map<String, Pair<SimpleFeatureType, List<SimpleFeature>>> parseShapeFileAsJtsGeometries(
+      String location, Filter filter, boolean logStats) {
+
+    var featuresByLayer = new TreeMap<String,  Pair<SimpleFeatureType, List<SimpleFeature>>>();
     try {
 
       // Initialize the data store with connection parameters
@@ -38,21 +41,21 @@ public class SimpleShapeFileParser {
 
       var layers = dataStore.getTypeNames();
       for (String layerName : layers) {
-        var layerGeometries = new ArrayList<Geometry>(100);
-        geometriesByLayer.put(layerName, layerGeometries);
 
         // Get the feature source
         SimpleFeatureSource featureSource = dataStore.getFeatureSource(layerName);
         // Get the schema (metadata about the data structure)
         SimpleFeatureType schema = featureSource.getSchema();
 
+        var layerGeometries = new ArrayList<SimpleFeature>(100);
+        featuresByLayer.put(layerName, Pair.of(schema, layerGeometries));
+
         // Iterate through the features
-        try (SimpleFeatureIterator iterator = featureSource.getFeatures().features()) {
+        var features = filter !=null ? featureSource.getFeatures(filter) :featureSource.getFeatures();
+        try (SimpleFeatureIterator iterator = features.features()) {
           while (iterator.hasNext()) {
             SimpleFeature feature = iterator.next();
-            // Access the default geometry, which is a JTS Geometry object
-            Geometry geometry = (Geometry) feature.getDefaultGeometry();
-            layerGeometries.add(geometry);
+            layerGeometries.add(feature);
           }
           if (logStats) {
             LOGGER.info(String.format("Parsed Shape file layer: %s - containing %d geometries",
@@ -68,6 +71,18 @@ public class SimpleShapeFileParser {
     }catch (IOException e) {
       throw new PlanItRunTimeException("Unable to complete parsing shape file from " + location,e);
     }
-    return geometriesByLayer;
+    return featuresByLayer;
+  }
+
+  /**
+   * Parse a shape file and convert into a memory model of JTS features by layer
+   *
+   * @param location to parse from can be a local file or url
+   * @param logStats when true log number of geometries per layer
+   * @return map of feature type and the features by layer with layer name as key
+   */
+  public static Map<String, Pair<SimpleFeatureType, List<SimpleFeature>>> parseShapeFileAsJtsGeometries(
+      String location, boolean logStats) {
+    return parseShapeFileAsJtsGeometries(location, null, logStats);
   }
 }

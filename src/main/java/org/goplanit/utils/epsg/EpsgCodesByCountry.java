@@ -63,4 +63,8 @@ public class EpsgCodesByCountry {
     return countryToEpsgCodes.get(countryName);
   }
 
+  public static final boolean hasEpsgDefined(String countryName) {
+    return countryToEpsgCodes.containsKey(countryName);
+  }
+
 }

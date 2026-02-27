@@ -3,6 +3,7 @@ package org.goplanit.utils;
 import org.geotools.api.data.DataStore;
 import org.geotools.api.data.SimpleFeatureStore;
 import org.geotools.api.data.Transaction;
+import org.geotools.api.feature.simple.SimpleFeature;
 import org.geotools.api.feature.simple.SimpleFeatureType;
 import org.geotools.data.DefaultTransaction;
 import org.geotools.feature.DefaultFeatureCollection;
@@ -10,6 +11,7 @@ import org.geotools.feature.simple.SimpleFeatureBuilder;
 import org.geotools.feature.simple.SimpleFeatureTypeBuilder;
 import org.geotools.referencing.CRS;
 import org.goplanit.utils.geo.SimpleShapeFileParser;
+import org.goplanit.utils.misc.Pair;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 import org.locationtech.jts.geom.Coordinate;
@@ -126,13 +128,22 @@ public class SimpleShapeFileParserTest {
         // now parse each file
         var rectangleResult = SimpleShapeFileParser.parseShapeFileAsJtsGeometries(rectangleFile.toString(), true);
         assertEquals(1, rectangleResult.size());
-        assertEquals(5, rectangleResult.values().stream().findFirst().orElseGet(ArrayList::new).size());
+        assertEquals(Long.valueOf(5), rectangleResult.values().stream().findFirst().orElseGet(
+            () -> Pair.of(null,new ArrayList<>())).second().size());
+        assertEquals("rectangles", rectangleResult.values().stream().findFirst().orElseGet(
+            () -> Pair.of(null,new ArrayList<>())).first().getTypeName());
         var triangleResult = SimpleShapeFileParser.parseShapeFileAsJtsGeometries(triangleFile.toString(), true);
         assertEquals(1, triangleResult.size());
-        assertEquals(5, triangleResult.values().stream().findFirst().orElseGet(ArrayList::new).size());
+        assertEquals(5, triangleResult.values().stream().findFirst().orElseGet(
+            () -> Pair.of(null,new ArrayList<>())).second().size());
+        assertEquals("triangles", triangleResult.values().stream().findFirst().orElseGet(
+            () -> Pair.of(null,new ArrayList<>())).first().getTypeName());
         var trapeziumResult = SimpleShapeFileParser.parseShapeFileAsJtsGeometries(trapeziumFile.toString(), true);
         assertEquals(1, trapeziumResult.size());
-        assertEquals(5, triangleResult.values().stream().findFirst().orElseGet(ArrayList::new).size());
+        assertEquals("trapeziums", trapeziumResult.values().stream().findFirst().orElseGet(
+                () -> Pair.of(null,new ArrayList<>())).first().getTypeName());
+        assertEquals(5, trapeziumResult.values().stream().findFirst().orElseGet(
+            () -> Pair.of(null,new ArrayList<>())).second().size());
 
         try {
             Files.delete(rectangleFile.toAbsolutePath());
