@@ -9,6 +9,7 @@ import org.goplanit.utils.misc.UrlUtils;
 import org.goplanit.utils.resource.ResourceUtils;
 
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Arrays;
@@ -116,6 +117,7 @@ public class PlanitGeoDataStoreUtils {
           var params = new HashMap<String, Object>();
           var url = FileUtils.resolveFileFromAbsoluteOrRelativeString(geoResourceLocation).toURI().toURL();
           params.put("url", url);
+          params.put("charset", StandardCharsets.UTF_8); // needed to make robust
           dataStore = factory.createNewDataStore(params);
         }
     }catch (Exception e){
