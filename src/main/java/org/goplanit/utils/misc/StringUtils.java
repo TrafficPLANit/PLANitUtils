@@ -24,8 +24,9 @@ public class StringUtils {
   }
 
   /**
-   * A String might have some byte order mark preceding the string (for example InputStreamReader might include this). These are not visible in the string
-   * but do change the underlying bytes compared to a string without this BOM and comparing them will fail despite looking identical.
+   * A String might have some byte order mark preceding the string (for example InputStreamReader might include this).
+   * These are not visible in the string but do change the underlying bytes compared to a string without this BOM and
+   * comparing them will fail despite looking identical.
    * This method will remove the BOM from a copy of this string which is returned.
    *
    * @param value to remove BOM from
@@ -164,5 +165,24 @@ public class StringUtils {
    */
   public static String removeAllNonAlphaNumeric(String theString) {
     return theString.replaceAll("[^a-zA-Z0-9]", "");
+  }
+
+  /**
+   * Truncate a string if it exceeds the maximum specified length. If it does truncate and append "...(truncated)"
+   * as message
+   *
+   * @param theString the string to check
+   * @param maxLength final max length if exceeding the length (including message)
+   * @return truncated string
+   */
+  public static String truncateToWithMessage(String theString, int maxLength){
+    String suffix = "... (truncated)";
+
+    if (theString == null || theString.length() <= maxLength) {
+      return theString;
+    }
+
+    int end = Math.max(0, maxLength - suffix.length());
+    return theString.substring(0, end) + suffix;
   }
 }

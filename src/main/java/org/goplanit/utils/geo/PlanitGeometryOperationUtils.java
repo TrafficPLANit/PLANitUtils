@@ -3,6 +3,8 @@ package org.goplanit.utils.geo;
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.MultiPolygon;
 import org.locationtech.jts.geom.Polygon;
+import org.locationtech.jts.geom.prep.PreparedGeometryFactory;
+import org.locationtech.jts.geom.prep.PreparedPolygon;
 import org.locationtech.jts.operation.union.CascadedPolygonUnion;
 
 import java.util.List;
@@ -11,6 +13,15 @@ import java.util.List;
  * Utilities for operations performed on geometry objects
  */
 public class PlanitGeometryOperationUtils {
+
+  /**
+   * Create a copy that is indexed for fast spatial comparisons of type PreparedPolygon
+   * @param polygon to prep
+   * @return prepped polygon
+   */
+  public static PreparedPolygon extractPreparedPolygonForQuickSpatialComparisons(Polygon polygon){
+    return (PreparedPolygon) PreparedGeometryFactory.prepare(polygon);
+  }
 
   /**
    * Combine all polygons provided to take the outer area and make that a single new polygon.
