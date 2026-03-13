@@ -294,8 +294,12 @@ public interface Edge extends Serializable, GraphEntity {
 
     // Given difficulty of ensuring consistency in rounding between various geometries
     // we check both, ideally we make sure we have a precision model throughout, but this is not implemented yet
-    boolean isVertexAStartPoint = vertexAHasGeometry && getGeometry().getStartPoint().getCoordinate().equals2D(getVertexA().getPosition().getCoordinate(), Precision.EPSILON_6);
-    boolean isVertexBEndPoint = vertexBHasGeometry && getGeometry().getEndPoint().getCoordinate().equals2D(getVertexB().getPosition().getCoordinate(), Precision.EPSILON_6);
+    boolean isVertexAStartPoint = vertexAHasGeometry &&
+        getGeometry().getStartPoint().getCoordinate().equals2D(
+            getVertexA().getPosition().getCoordinate(), Precision.EPSILON_6);
+    boolean isVertexBEndPoint = vertexBHasGeometry &&
+        getGeometry().getEndPoint().getCoordinate().equals2D(
+            getVertexB().getPosition().getCoordinate(), Precision.EPSILON_6);
     if(isVertexAStartPoint && isVertexBEndPoint){
       return true;
     }else if(isVertexAStartPoint && !vertexBHasGeometry){
