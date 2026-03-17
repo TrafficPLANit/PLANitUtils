@@ -31,12 +31,11 @@ public interface TopologicalLayer extends NetworkLayer {
    * transform all underlying geometries in the layer from the given crs to the new crs
    * 
    * @param fromCoordinateReferenceSystem presumed current crs
-   * @param toCoordinateReferenceSystem   to tranform to crs
-   * @throws PlanItException thrown if error
+   * @param toCoordinateReferenceSystem   to transform to crs
    */
   public abstract void transform(
           CoordinateReferenceSystem fromCoordinateReferenceSystem,
-          CoordinateReferenceSystem toCoordinateReferenceSystem) throws PlanItException;
+          CoordinateReferenceSystem toCoordinateReferenceSystem);
 
 
   /** Provide access to the modifier options for this layer

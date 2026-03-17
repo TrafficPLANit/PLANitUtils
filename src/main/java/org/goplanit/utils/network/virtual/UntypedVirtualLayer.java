@@ -1,8 +1,12 @@
 package org.goplanit.utils.network.virtual;
 
+import org.geotools.api.referencing.crs.CoordinateReferenceSystem;
+import org.goplanit.utils.exceptions.PlanItRunTimeException;
+import org.goplanit.utils.geo.PlanitJtsUtils;
 import org.goplanit.utils.graph.GraphEntityDeepCopyMapper;
 import org.goplanit.utils.graph.directed.DirectedVertex;
 import org.goplanit.utils.id.ManagedIdEntities;
+import org.goplanit.utils.network.layer.NetworkLayer;
 import org.goplanit.utils.network.layer.UntypedDirectedGraphLayer;
 import org.goplanit.utils.network.virtual.graph.ConnectoidDirectedEdge;
 import org.goplanit.utils.network.virtual.physical.ConnectoidSegment;
@@ -91,4 +95,5 @@ public interface UntypedVirtualLayer<V extends DirectedVertex, E extends Connect
   public default boolean hasConnectoidSegments(){
     return getConnectoidSegments()!=null && !getConnectoidSegments().isEmpty();
   }
+
 }

@@ -1,5 +1,6 @@
 package org.goplanit.utils.network.virtual;
 
+import org.geotools.api.referencing.crs.CoordinateReferenceSystem;
 import org.goplanit.utils.graph.GraphEntityDeepCopyMapper;
 import org.goplanit.utils.graph.directed.DirectedVertex;
 import org.goplanit.utils.misc.LoggingUtils;
@@ -45,6 +46,16 @@ public interface UntypedVirtualNetwork<L extends
   public default boolean isEmpty(){
     return getLayer().isEmpty();
   }
+
+  /**
+   * transform all underlying geometries in the virtual network from the given crs to the new crs
+   *
+   * @param fromCoordinateReferenceSystem presumed current crs
+   * @param toCoordinateReferenceSystem   to transform to crs
+   */
+  public void transform(
+          CoordinateReferenceSystem fromCoordinateReferenceSystem,
+          CoordinateReferenceSystem toCoordinateReferenceSystem);
 
   /**
    * Recreate the ids for all registered entities with or without resetting, this includes child managed ids, i.e.,
