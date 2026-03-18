@@ -54,7 +54,7 @@ public interface MapWrapper<K, V> extends Iterable<V> {
    * @param toBeRemoved the to be removed entries
    */
   public default void removeAll(Collection<V> toBeRemoved){
-    toBeRemoved.forEach(e -> remove(e));
+    toBeRemoved.forEach(this::remove);
   }
 
   /**

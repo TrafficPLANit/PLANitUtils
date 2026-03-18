@@ -6,6 +6,10 @@ import java.util.NoSuchElementException;
 /**
  * A binary heap open set implementation which is more efficient than PriorityQueue for large path finding exercises
  * such as A*
+ * <p>
+ *   It is assumed the number of vertices passed in at construction is the absolute maximum and the ids of the vertices
+ *   are contiguous and increasing from 0-max
+ * </p>
  */
 public final class BinaryMinHeapOpenSet {
 
@@ -19,32 +23,32 @@ public final class BinaryMinHeapOpenSet {
    * Do so by comparing to its parent and if it is cheaper swap position which guarantees the tree is valid if repeated
    * until a parent is found that is no longer cheaper
    *
-   * @param idx to use
+   * @param heapIndex to use
    */
-  private void siftUp(int idx) {
-    int v = heap[idx];                      // 1. Store the vertex we are moving.
-    double vKey = vertexScores[v];          // 2. Cache its score (f-score) for comparisons.
+  private void siftUp(int heapIndex) {
+    int vertexIndex = heap[heapIndex];                      // 1. Store the vertex we are moving.
+    double vertexScore = vertexScores[vertexIndex];          // 2. Cache its score (f-score) for comparisons.
 
-    while (idx > 0) {                       // 3. Stop if we reach the root (index 0).
-      int parent = (idx - 1) >>> 1;         // 4. Calculate parent index: (idx-1)/2 using unsigned right hand shift
+    while (heapIndex > 0) {                       // 3. Stop if we reach the root (index 0).
+      int parent = (heapIndex - 1) >>> 1;         // 4. Calculate parent index: (idx-1)/2 using unsigned right hand shift
       int parentVertex = heap[parent];      // 5. Get the vertex ID of the parent.
 
       // 6. If the parent is already smaller/equal, the heap is valid. Stop.
-      if (vertexScores[parentVertex] <= vKey) {
+      if (vertexScores[parentVertex] <= vertexScore) {
         break;
       }
 
       // 7. Otherwise, pull the parent down into our current slot.
-      heap[idx] = parentVertex;
-      vertexHeapPosition[parentVertex] = idx; // Update parent's position tracker.
+      heap[heapIndex] = parentVertex;
+      vertexHeapPosition[parentVertex] = heapIndex; // Update parent's position tracker.
 
       // 8. Move our target "index" up to where the parent used to be.
-      idx = parent;
+      heapIndex = parent;
     }
 
     // 9. Final placement: Put our original vertex into its final correct slot.
-    heap[idx] = v;
-    vertexHeapPosition[v] = idx;
+    heap[heapIndex] = vertexIndex;
+    vertexHeapPosition[vertexIndex] = heapIndex;
   }
 
   /**
@@ -52,17 +56,17 @@ public final class BinaryMinHeapOpenSet {
    * Do so by comparing to its children and if it is more expensive swap position which guarantees the tree is valid
    * if repeated until children are found that are no longer more expensive
    *
-   * @param idx to use
+   * @param heapIndex to use
    */
-  private void siftDown(int idx) {
-    int v = heap[idx];               // 1. Store the vertex we are moving.
-    double vKey = vertexScores[v];   // 2. Cache its key.
-    int half = size >>> 1;           // 3. 'half' is the index of the last node with children (Unsigned Right Shift to do a /2)
+  private void siftDown(int heapIndex) {
+    int vertexIndex = heap[heapIndex];               // 1. Store the vertex we are moving.
+    double vertexScore = vertexScores[vertexIndex];  // 2. Cache its score.
+    int half = size >>> 1;                            // 3. 'half' is the index of the last node with children (Unsigned Right Shift to do a /2)
 
-    while (idx < half) {         // 4. While the node has at least one child...
-      int left = (idx << 1) + 1;        // 5. Left child index: (2*idx)+1.
-      int right = left + 1;             // 6. Right child index.
-      int smallest = left;              // 7. Assume left child is the smallest for now.
+    while (heapIndex < half) {                        // 4. While the node has at least one child...
+      int left = (heapIndex << 1) + 1;                // 5. Left child index: (2*idx)+1.
+      int right = left + 1;                           // 6. Right child index.
+      int smallest = left;                            // 7. Assume left child is the smallest for now.
       int smallestVertex = heap[left];
 
       // 8. If right child exists AND is smaller than the left child...
@@ -72,26 +76,27 @@ public final class BinaryMinHeapOpenSet {
       }
 
       // 10. If our moving node is already smaller than the smallest child, stop.
-      if (vKey <= vertexScores[smallestVertex]) {
+      if (vertexScore <= vertexScores[smallestVertex]) {
         break;
       }
 
       // 11. Otherwise, pull the smallest child up into our current slot.
-      heap[idx] = smallestVertex;
-      vertexHeapPosition[smallestVertex] = idx;
+      heap[heapIndex] = smallestVertex;
+      vertexHeapPosition[smallestVertex] = heapIndex;
 
       // 12. Move our target "index" down to the child's old slot.
-      idx = smallest;
+      heapIndex = smallest;
     }
 
     // 13. Final placement: Put our original vertex into its final correct slot.
-    heap[idx] = v;
-    vertexHeapPosition[v] = idx;
+    heap[heapIndex] = vertexIndex;
+    vertexHeapPosition[vertexIndex] = heapIndex;
   }
 
   /**
    * Constructor
-   * @param numberOfVertices to use
+   *
+   * @param numberOfVertices on heap at maximum
    */
   public BinaryMinHeapOpenSet(int numberOfVertices) {
     this.heap = new int[numberOfVertices];
@@ -101,12 +106,20 @@ public final class BinaryMinHeapOpenSet {
     Arrays.fill(vertexScores, Double.POSITIVE_INFINITY);
   }
 
+  /**
+   * Check if heap is empty
+   *
+   * @return true when empty, false otherwise
+   */
   public boolean isEmpty() {
     return size == 0;
   }
 
   /**
    * Insert the vertex with given score, or decrease its score if the newScore is better.
+   *
+   * @param vertexId the vertex id to add or reduce score for
+   * @param newScore to use
    */
   public void insertOrDecrease(int vertexId, double newScore) {
     int pos = vertexHeapPosition[vertexId];
@@ -125,6 +138,8 @@ public final class BinaryMinHeapOpenSet {
 
   /**
    * Poll the vertexId with the smallest score, i.e., highest priority.
+   *
+   * @return provide highest priority vertex id from the prioritised heap
    */
   public int poll() {
     if (size == 0) {
@@ -152,6 +167,11 @@ public final class BinaryMinHeapOpenSet {
     return minVertexId;
   }
 
+  /**
+   * Get score for vertex
+   * @param vertexId the vertex
+   * @return score
+   */
   public double getScore(int vertexId) {
     return vertexScores[vertexId];
   }

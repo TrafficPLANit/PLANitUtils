@@ -8,6 +8,8 @@ package org.goplanit.utils.args;
  */
 public enum ArgumentStyle {
 
-	DEFAULT,					//"<key>=/-/:<value>"
-	DOUBLEHYPHEN;				//"--<key> <value>"
+	/** "/<key/>=/-/:/<value/>" */
+	DEFAULT,
+	/** "--/<key/> /<value/>" */
+	DOUBLEHYPHEN;
 }

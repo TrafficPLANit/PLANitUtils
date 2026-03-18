@@ -76,7 +76,7 @@ public class SimpleShapeFileParser {
    *
    * @param dbfFileLocation to read in alternative form
    * @return the reader
-   * @throws Exception if error occurs
+   * @throws FileNotFoundException if error occurs
    */
   public static DbfReader createDbfReader(String dbfFileLocation) throws FileNotFoundException {
     return new DbfReader(new FileInputStream(dbfFileLocation));
@@ -84,12 +84,12 @@ public class SimpleShapeFileParser {
 
   /**
    * Experimental to read DBF outside of geotools but with different library to support newer DBF formats.
-   * PRoduce feature type the dbf corresponds to
+   * Produce feature type the dbf corresponds to
    * todo: not tested
    *
    * @param dbfFileLocation to read in alternative form
    * @return feature type found in DBF
-   * @throws Exception if error occurs
+   * @throws FileNotFoundException if error occurs
    */
   public static Pair<DbfReader,SimpleFeatureType> parseDbfExplicitlyAsSimpleFeatureType(
       String dbfFileLocation) throws FileNotFoundException {

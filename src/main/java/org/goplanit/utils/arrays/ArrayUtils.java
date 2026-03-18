@@ -1,5 +1,7 @@
 package org.goplanit.utils.arrays;
 
+import org.goplanit.utils.id.ManagedId;
+
 import java.util.Arrays;
 import java.util.Optional;
 import java.util.function.BiConsumer;
@@ -358,5 +360,18 @@ public class ArrayUtils {
       result[index] = array1[index] * array2[index];
     }
     return result;
+  }
+
+  /**
+   * Create a typed array based on generics using reflection to force correct runtime type
+   *
+   * @param clazz to extract generic type from
+   * @param size size of array
+   * @return created array of given size
+   * @param <T> type of array
+   */
+  @SuppressWarnings("unchecked")
+  public static <T> T[] createGenericTypedArray(Class<? extends T> clazz, int size) {
+    return (T[]) java.lang.reflect.Array.newInstance(clazz, size);
   }
 }

@@ -16,7 +16,8 @@ import org.goplanit.utils.wrapper.LongMapWrapperImpl;
  *
  * @param <E> type of managed id entity
  */
-public abstract class ManagedIdEntitiesImpl<E extends ManagedId> extends LongMapWrapperImpl<E> implements ManagedIdEntities<E> {
+public abstract class ManagedIdEntitiesImpl<E extends ManagedId> extends
+        LongMapWrapperImpl<E> implements ManagedIdEntities<E> {
   
   /** the class signature used for generating the managed id within the group defined by the token */
   protected final Class<? extends ManagedId> managedIdClass;
@@ -91,7 +92,7 @@ public abstract class ManagedIdEntitiesImpl<E extends ManagedId> extends LongMap
    */
   @Override
   public void recreateIds(boolean resetManagedIdClass) {
-    if(resetManagedIdClass == true && managedIdClass!=null) {
+    if(resetManagedIdClass && managedIdClass!=null) {
       IdGenerator.reset(getFactory().getIdGroupingToken(), getManagedIdClass() /* e.g. managed id class */);
     }
     
