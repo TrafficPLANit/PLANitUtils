@@ -1,6 +1,7 @@
 package org.goplanit.utils.graph.directed;
 
 import java.util.Collection;
+import java.util.concurrent.atomic.LongAdder;
 import java.util.function.Function;
 import java.util.stream.Stream;
 
@@ -16,10 +17,12 @@ import org.goplanit.utils.misc.IterableUtils;
 public interface DirectedVertex extends Vertex {
   
   /** Function collecting entry edge segments for vertex */
-  public static final Function<DirectedVertex, Iterable<? extends EdgeSegment>> GET_ENTRY_EDGE_SEGMENTS = DirectedVertex::getEntryEdgeSegments;
+  public static final Function<DirectedVertex, Iterable<? extends EdgeSegment>> GET_ENTRY_EDGE_SEGMENTS =
+          DirectedVertex::getEntryEdgeSegments;
 
   /** Function collecting exit edge segments for vertex */
-  public static final Function<DirectedVertex, Iterable<? extends EdgeSegment>> GET_EXIT_EDGE_SEGMENTS = DirectedVertex::getExitEdgeSegments;
+  public static final Function<DirectedVertex, Iterable<? extends EdgeSegment>> GET_EXIT_EDGE_SEGMENTS =
+          DirectedVertex::getExitEdgeSegments;
   
   /** Collect lambda function that collects either up or downstream edge segments
    * 
@@ -172,5 +175,24 @@ public interface DirectedVertex extends Vertex {
   public default int getNumberOfExitEdgeSegments() {
     return (int) IterableUtils.sizeOfUsingLoop(getExitEdgeSegments());
   }
-  
+
+  public default EdgeSegment[] createEdgeSegmentsAsArray(boolean getEntrySegments){
+    var result = new EdgeSegment[getNumberOfExitEdgeSegments()];
+    LongAdder index = new LongAdder();
+    (getEntrySegments ? getEntryEdgeSegments() : getExitEdgeSegments()).forEach(
+            e -> {
+              result[index.intValue()] = e;
+              index.increment();
+            });
+    return result;
+  }
+
+  public default EdgeSegment[] createExitEdgeSegmentsArray(){
+    return createEdgeSegmentsAsArray(false);
+  }
+
+  public default EdgeSegment[] createEntryEdgeSegmentsArray(){
+    return createEdgeSegmentsAsArray(true);
+  }
+
 }

@@ -1,8 +1,7 @@
 package org.goplanit.utils;
 
-import org.goplanit.utils.containers.BinaryMinHeapOpenSet;
+import org.goplanit.utils.containers.FourAryMinHeapOpenSet;
 import org.goplanit.utils.misc.Pair;
-import org.goplanit.utils.time.ExtendedLocalTime;
 import org.junit.jupiter.api.Test;
 
 import java.util.Comparator;
@@ -13,12 +12,12 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class CollectionsTest {
   @Test
-  public void BinaryMinHeapTest(){
+  public void FourAryMinHeapTest(){
     int numVertices = 10;
 
     PriorityQueue<Pair<Integer,Double>> referenceContainer =
             new PriorityQueue<>(Comparator.comparingDouble(Pair::second));
-    BinaryMinHeapOpenSet binaryHeap = new BinaryMinHeapOpenSet(numVertices);
+    FourAryMinHeapOpenSet binaryHeap = new FourAryMinHeapOpenSet(numVertices);
 
     List<Pair<Integer,Double>> values = List.of(
       Pair.of(0,10.0),
