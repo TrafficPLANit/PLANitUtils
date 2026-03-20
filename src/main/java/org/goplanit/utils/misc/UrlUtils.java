@@ -47,7 +47,9 @@ public class UrlUtils {
    * @return true when local, false otherwise
    */
   public static boolean isLocalFile(URL url) {
-    return isLocal(url) && new File(url.getFile()).isFile();
+    return isLocal(url) &&
+        new File(
+            StringUtils.removeInitialStringWhenPresent(url.getFile(), "/")).isFile();
   }
   
   /** Test if URL is a local file

@@ -113,7 +113,7 @@ public class UriUtils {
   /** create URI without its initial scheme (if any), if no scheme, return original uri. When URI is a file
    * remove any leading slashes except initial one (required for an URI to be valid).
    * <p>
-   *   Use the {@link #removeInitialSchemeAsString(URI)} if you want a string version where we no longer need to conform
+   *   Use the {@link #asStringRemoveInitialScheme(URI)} if you want a string version where we no longer need to conform
    *   to URI validity and will remove leading slash as well (on Windows)
    * </p>
    * 
@@ -139,7 +139,7 @@ public class UriUtils {
    * @param uri to check
    * @return true when path is present false otherwise
    */
-  public static String removeInitialSchemeAsString(URI uri) {
+  public static String asStringRemoveInitialScheme(URI uri) {
     if(hasScheme(uri)) {
       if(UriUtils.isRegularFile(uri)){
         // for regular files treat differently because getSchemeSpecificPart() exists for generic URI processing, not
@@ -280,6 +280,29 @@ public class UriUtils {
     
     /* unable to relativise, so just return original uri */
     return uri;
-  }    
+  }
+
+  /**
+   * Create an URI while conscious it may be a Windows path which is not strictly a URI so needs different
+   * way of processing to avoid URISyntaxException
+   *
+   * @param validUriOrWindowsPath to construct URI from
+   * @return constructed URI
+   */
+  public static URI fromValidUriOrWindowsPath(String validUriOrWindowsPath){
+    try {
+      // Try as valid URI first
+      URI uri = new URI(validUriOrWindowsPath);
+      // If it has a scheme (http, file, etc.), treat as URI
+      if (uri.getScheme() != null) {
+        return uri;
+      }
+    } catch (Exception ignored) {
+    }
+
+    // Fallback: treat as file path (handles Windows backslashes)
+    Path path = Paths.get(validUriOrWindowsPath);
+    return path.toUri();
+  }
 
 }
