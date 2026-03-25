@@ -2,6 +2,7 @@ package org.goplanit.utils.geo;
 
 import org.goplanit.utils.graph.Edge;
 import org.goplanit.utils.graph.GraphEntities;
+import org.goplanit.utils.network.layer.macroscopic.MacroscopicLink;
 import org.goplanit.utils.zoning.TransferZone;
 import org.goplanit.utils.zoning.TransferZones;
 import org.goplanit.utils.zoning.Zone;
@@ -9,6 +10,7 @@ import org.goplanit.utils.zoning.Zones;
 import org.locationtech.jts.geom.Envelope;
 import org.locationtech.jts.index.quadtree.Quadtree;
 
+import javax.annotation.Nonnull;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Map;
@@ -60,6 +62,23 @@ public class GeoContainerUtils {
   }
 
   /**
+   * Created quadtree based on edge envelopes as spatial index. Requires PlanitJtsIntersectEdgeVisitor to
+   * filter out true spatial matches when querying.
+   *
+   *  @param <T> type of edge
+   *  @param edges collections to add
+   *  @return created quadtree instance
+   */
+  @SafeVarargs
+  public static <T extends Edge> Quadtree toGeoIndexed(T... edges) {
+    Quadtree spatiallyIndexedEdges = new Quadtree();
+    for(T edge : edges) {
+      spatiallyIndexedEdges.insert(edge.getGeometry().getEnvelope().getEnvelopeInternal(),edge);
+    }
+    return spatiallyIndexedEdges;
+  }
+
+  /**
    * Created quadtree based on edge envelopes as spatial index. Requires PlanitJtsIntersectEdgeVisitor to filter
    * out true spatial matches when querying.
    *
@@ -75,6 +94,22 @@ public class GeoContainerUtils {
       }
     });
     return spatiallyIndexedEdges;
+  }
+
+  /**
+   * Add an edge to an existing spatially indexed quad tree
+   *
+   * @param spatiallyIndexedEdges container to add to
+   * @param edge to add
+   * @return true when added because geometry present, false otherwise
+   * @param <T> type of edge
+   */
+  public static <T extends Edge> boolean addToGeoIndexed(@Nonnull Quadtree spatiallyIndexedEdges, @Nonnull T edge) {
+     if(edge.hasGeometry()){
+       spatiallyIndexedEdges.insert(edge.getGeometry().getEnvelope().getEnvelopeInternal(),edge);
+       return true;
+     }
+     return false;
   }
 
   /**
