@@ -92,7 +92,7 @@ public interface Connectoid extends ExternalIdAble, ManagedId, Iterable<Zone> {
    * @param accessZonesToAdd to add
    */
   public default void addAllAccessZones(Collection<Zone> accessZonesToAdd){
-    accessZonesToAdd.forEach( z -> addAccessZone(z));
+    accessZonesToAdd.forEach(this::addAccessZone);
   }
   
   /** Check if zone is registered as access zone
@@ -136,7 +136,7 @@ public interface Connectoid extends ExternalIdAble, ManagedId, Iterable<Zone> {
    * @param accessZone to check
    * @return the modes explicitly allowed for this zone, null if none
    */
-  public abstract Collection<Mode> getExplicitlyAllowedModes(Zone accessZone);   
+  public abstract Collection<Mode> getExplicitlyAllowedModes(Zone accessZone);
 
   /** collect the access vertex for this connectoid
    * @return access vertex
@@ -180,24 +180,24 @@ public interface Connectoid extends ExternalIdAble, ManagedId, Iterable<Zone> {
   }
 
   /** Verify if any modes are allowed for this zone
-   * 
+   *
    * @param accessZone to check
    * @return true when at least one mode is allowed, false otherwise
    */
   public default boolean hasExplicitlyAllowedModes(Zone accessZone) {
     Collection<Mode> allowedModes = getExplicitlyAllowedModes(accessZone);
-    return allowedModes!=null && !allowedModes.isEmpty(); 
+    return allowedModes!=null && !allowedModes.isEmpty();
   }
-  
+
   /** Verify if all modes are allowed for this zone
-   * 
+   *
    * @param accessZone to check
    * @return true when we know for certain all modes are allowed, false otherwise
    */
   public default boolean isAllModesAllowed(Zone accessZone) {
     /* no explicit allowed modes set, so all mdoes allowed */
-    return !hasExplicitlyAllowedModes(accessZone); 
-  }  
+    return !hasExplicitlyAllowedModes(accessZone);
+  }
 
   /** Verify if a length has been specified for the access zone to connectoid combination
    * 

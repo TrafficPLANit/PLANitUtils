@@ -85,8 +85,8 @@ public interface Link extends DirectedEdge {
     return hasEdgeSegmentAb();
   }   
   
-  /** collect edgeSegment Ba as something extending LinkSegment which is to be expected for any link. Convenience method
-   * for readability
+  /** collect edgeSegment Ba as something extending LinkSegment which is to be expected for any link.
+   * Convenience method for readability
    *
    * @return link segment in given direction
    */
@@ -117,29 +117,52 @@ public interface Link extends DirectedEdge {
     return (Collection<LinkSegment>) getEdgeSegments();
   }
 
+  /**
+   * Verify if any given mode is allowed on any of the two segments, where at least one segment must be registered to
+   * allow for a positive result
+   *
+   * @param modes to check
+   * @return true when a segment allows the mode, false otherwise
+   */
+  public default boolean isAnyModeAllowedOnAnySegment(Collection<Mode> modes){
+    return modes.stream().anyMatch(this::isModeAllowedOnAnySegment);
+  }
 
   /**
-   * Verify if given mode is allowed on any of the two segments, where at least one segment must be registered to allow for a positive
-   * result
+   * Verify if given mode is allowed on any of the two segments, where at least one segment must be registered to
+   * allow for a positive result
    *
    * @param mode to check
    * @return true when a segment allows the mode, false otherwise
    */
   public default boolean isModeAllowedOnAnySegment(Mode mode){
     return (hasLinkSegmentBa() || hasLinkSegmentBa()) &&
-            ((hasLinkSegmentBa() && getLinkSegmentBa().isModeAllowed(mode)) || (hasLinkSegmentAb() && getLinkSegmentAb().isModeAllowed(mode)));
+            ((hasLinkSegmentBa() && getLinkSegmentBa().isModeAllowed(mode)) ||
+                (hasLinkSegmentAb() && getLinkSegmentAb().isModeAllowed(mode)));
   }
 
   /**
-   * Verify if given mode is allowed on both segments, where at least one segment must be registered to allow for a positive
-   * result
+   * Verify if given mode is allowed on both segments, where at least one segment must be registered to allow for
+   * a positive result
    *
    * @param mode to check
    * @return true both segments allow the mode, false otherwise
    */
   public default boolean isModeAllowedOnAllSegments(Mode mode){
     return (hasLinkSegmentBa() || hasLinkSegmentBa()) &&
-            ((!hasLinkSegmentBa() || getLinkSegmentBa().isModeAllowed(mode)) && (!hasLinkSegmentAb() || getLinkSegmentAb().isModeAllowed(mode)));
+            ((!hasLinkSegmentBa() || getLinkSegmentBa().isModeAllowed(mode)) &&
+                (!hasLinkSegmentAb() || getLinkSegmentAb().isModeAllowed(mode)));
+  }
+
+  /**
+   * Verify if all modes are allowed on both segments, where at least one segment must be registered to
+   * allow for a positive result
+   *
+   * @param modes to check
+   * @return true when a segment allows the mode, false otherwise
+   */
+  public default boolean isAllModesAllowedOnAllSegments(Collection<Mode> modes){
+    return modes.stream().allMatch(this::isModeAllowedOnAllSegments);
   }
 
   /** Collect the one way link segment for the mode if the link is in fact one way.
