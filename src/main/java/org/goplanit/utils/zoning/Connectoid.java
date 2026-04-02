@@ -128,6 +128,16 @@ public interface Connectoid extends ExternalIdAble, ManagedId, Iterable<Zone> {
    * @return true when allowed, false otherwise
    */
   public abstract boolean isModeAllowed(Zone accessZone, Mode mode);
+
+  /** Verify if any of the modes is allowed access to the zone via this connectoid
+   *
+   * @param accessZone to verify
+   * @param modes to verify if any is allowed
+   * @return true when allowed, false otherwise
+   */
+  public default boolean isAnyModeAllowed(Zone accessZone, Collection<Mode> modes){
+    return modes.stream().anyMatch(m -> isModeAllowed(accessZone, m));
+  }
   
   /** collect modes that are explicitly allowed for this zone (unmodifiable). Note that if no explicit allowed
    * modes are present, all modes are implicitly allowed. When there exist explicitly allowed modes, any modes

@@ -15,7 +15,8 @@ public interface DirectedConnectoidFactory extends ManagedIdEntityFactory<Direct
 
   /** Create a new directed connectoid, without zone attached and using default length
    *
-   * @param downstreamAccessNode when true access node is chosen as the downstream node of the segment, when false, upstream node is chosen
+   * @param downstreamAccessNode when true access node is chosen as the downstream node of the segment,
+   *                             when false, upstream node is chosen
    * @param accessLinkSegment to use
    * @return created directed connectoid
    */
@@ -23,21 +24,25 @@ public interface DirectedConnectoidFactory extends ManagedIdEntityFactory<Direct
 
   /** Create a new directed connectoid
    *
-   * @param downstreamAccessNode when true access node is chosen as the downstream node of the segment, when false, upstream node is chosen
+   * @param downstreamAccessNode when true access node is chosen as the downstream node of the segment,
+   *                             when false, upstream node is chosen
    * @param accessLinkSegment to use
    * @param parentZone to use
    * @param length to use for distance between zone and connectoid
    * @return created directed connectoid
    */
-  public abstract DirectedConnectoid registerNew(final boolean downstreamAccessNode, LinkSegment accessLinkSegment, Zone parentZone, double length);
+  public abstract DirectedConnectoid registerNew(
+      final boolean downstreamAccessNode, LinkSegment accessLinkSegment, Zone parentZone, double length);
 
   /** Create a new directed connectoid, with default length 0
-   * @param downstreamAccessNode when true access node is chosen as the downstream node of the segment, when false, upstream node is chosen
+   * @param downstreamAccessNode when true access node is chosen as the downstream node of the segment,
+   *                             when false, upstream node is chosen
    * @param accessLinkSegment to use
    * @param parentZone to use
    * @return created directed connectoid
    */  
-  public default DirectedConnectoid registerNew(final boolean downstreamAccessNode, LinkSegment accessLinkSegment, Zone parentZone){
+  public default DirectedConnectoid registerNew(
+      final boolean downstreamAccessNode, LinkSegment accessLinkSegment, Zone parentZone){
     return registerNew(downstreamAccessNode, accessLinkSegment, parentZone, Connectoid.DEFAULT_LENGTH_KM);
   }
 
@@ -49,7 +54,8 @@ public interface DirectedConnectoidFactory extends ManagedIdEntityFactory<Direct
    * @param allowedModes to apply
    * @return created directed connectoid
    */
-  public default DirectedConnectoid registerNew(LinkSegment accessLinkSegment, Zone parentZone, boolean syncXmlIdToId, Collection<Mode> allowedModes){
+  public default DirectedConnectoid registerNew(
+      LinkSegment accessLinkSegment, Zone parentZone, boolean syncXmlIdToId, Collection<Mode> allowedModes){
     return registerNew(true, accessLinkSegment, parentZone, syncXmlIdToId, allowedModes);
   }
 
@@ -63,7 +69,11 @@ public interface DirectedConnectoidFactory extends ManagedIdEntityFactory<Direct
    * @return created directed connectoid
    */
   public default DirectedConnectoid registerNew(
-      final boolean downstreamAccessNode, LinkSegment accessLinkSegment, Zone parentZone, boolean syncXmlIdToId, Collection<Mode> allowedModes){
+      final boolean downstreamAccessNode,
+      LinkSegment accessLinkSegment,
+      Zone parentZone,
+      boolean syncXmlIdToId,
+      Collection<Mode> allowedModes){
     DirectedConnectoid newEntity = registerNew(downstreamAccessNode, accessLinkSegment, parentZone);
     if(syncXmlIdToId == true) {
       newEntity.setXmlId(newEntity.getId());
