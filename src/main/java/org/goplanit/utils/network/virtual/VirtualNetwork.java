@@ -7,7 +7,8 @@ import org.goplanit.utils.network.virtual.graph.ConnectoidDirectedEdge;
 import org.goplanit.utils.network.virtual.physical.ConnectoidSegment;
 
 /**
- * Model free virtual network interface which is part of the zoning and holds all the virtual infrastructure connecting the zones to the physical road network.
+ * Model free virtual network interface which is part of the zoning and holds all the virtual infrastructure connecting
+ * the zones to the physical road network.
  * 
  * @author markr
  */

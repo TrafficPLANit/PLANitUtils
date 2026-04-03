@@ -17,8 +17,8 @@ public class PlanitCrsUtils {
   private static final Logger LOGGER = Logger.getLogger(PlanitCrsUtils.class.getCanonicalName());
   
   /**
-   * make sure we silence the Hsql logging that is used by CRS to collect crs for different countries. Make sure this is called
-   * BEFORE it is loaded, otherwise it is too late
+   * make sure we silence the Hsql logging that is used by CRS to collect crs for different countries.
+   * Make sure this is called BEFORE it is loaded, otherwise it is too late
    */
   protected static void silenceHsqlLogging() {
     Logger.getLogger("org.hsqldb").setLevel(Level.SEVERE);
@@ -35,12 +35,15 @@ public class PlanitCrsUtils {
 
 
   /**
-   * create a coordinate reference system instance based on String representation, e.g. "EPSG:4326" for WGS84", using the underlying geotools hsql authority factory. see also
-   * {@code https://docs.geotools.org/latest/userguide/library/referencing/crs.html} on some context on why we include the hsql dependency in the planit build to ensure that the
-   * provided crs codes here can actually be transformed into a viable CRS and why it makes sense to provide this simple wrapper method in this utility class
+   * create a coordinate reference system instance based on String representation, e.g. "EPSG:4326" for WGS84",
+   * using the underlying geotools hsql authority factory. see also
+   * {@code https://docs.geotools.org/latest/userguide/library/referencing/crs.html} on some context on why we include
+   * the hsql dependency in the planit build to ensure that the provided crs codes here can actually be transformed
+   * into a viable CRS and why it makes sense to provide this simple wrapper method in this utility class
    * <p>
-   * always make sure you lookup the CRS via this method as it ensures the logging of PLANit is not messed up by the geotools-HSQL dependency since we programmatically disallow it
-   * to overwrite our logging configuration in the static initialiser of this class.
+   * always make sure you lookup the CRS via this method as it ensures the logging of PLANit is not messed up by the
+   * geotools-HSQL dependency since we programmatically disallow it to overwrite our logging configuration in the
+   * static initialiser of this class.
    * </p>
    * 
    * @param code for the CRS
