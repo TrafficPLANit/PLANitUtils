@@ -50,12 +50,14 @@ public class PlanitEntityGeoUtils {
     if(edge.hasGeometry()) {
       return geoUtils.getClosestDistanceInMeters(coord,edge.getGeometry());
     }else {
-      LOGGER.warning(String.format("Edge has no geographic information to determine closeness to reference location %s",coord));
+      LOGGER.warning(String.format("Edge has no geographic information to determine closeness to reference " +
+          "location %s",coord));
     }
     return Double.POSITIVE_INFINITY;
   }
 
-  /** identical to {@link #findPlanitEntityClosest(Coordinate, Collection, double, boolean, PlanitJtsCrsUtils)} but without a distance criteria
+  /** identical to {@link #findPlanitEntityClosest(Coordinate, Collection, double, boolean, PlanitJtsCrsUtils)}
+   * but without a distance criteria
    *
    * @param <T> type of the PLANit entity
    * @param coord reference location
@@ -69,10 +71,11 @@ public class PlanitEntityGeoUtils {
     return findPlanitEntityClosest(coord, planitEntities, Double.POSITIVE_INFINITY, suppressLogging, geoUtils);
   }
 
-  /** find the closest distance to the coordinate for some PLANit entity with a supported geometry from the provided collection.
-   * This method computes the actual distance between any location on any line segment of the (outer) boundary
-   * of the planit entities geometry (or its point location if no polygon/linestring is available) and the reference node and it is therefore very precise.
-   * A cap is placed on how far a zone is allowed to be to still be regarded as closest via maxDistanceMeters.
+  /** find the closest distance to the coordinate for some PLANit entity with a supported geometry from the provided
+   * collection. This method computes the actual distance between any location on any line segment of the (outer)
+   * boundary of the planit entities geometry (or its point location if no polygon/linestring is available) and the
+   * reference node and it is therefore very precise. A cap is placed on how far a zone is allowed to be to still
+   * be regarded as closest via maxDistanceMeters.
    *
    * @param <T> type of the PLANit entity
    * @param coord reference location
@@ -83,7 +86,12 @@ public class PlanitEntityGeoUtils {
    * @return planitEntity closest and distance in meters, null if none matches criteria
    */
   public static <T> Pair<T, Double> findPlanitEntityClosest(
-      Coordinate coord, Collection<? extends T> planitEntities, double maxDistanceMeters, boolean suppressLogging, PlanitJtsCrsUtils geoUtils)  {
+      Coordinate coord,
+      Collection<? extends T> planitEntities,
+      double maxDistanceMeters,
+      boolean suppressLogging,
+      PlanitJtsCrsUtils geoUtils)  {
+
     double minDistanceMeters = Double.POSITIVE_INFINITY;
     double distanceMeters = minDistanceMeters;
     T closestEntity = null;

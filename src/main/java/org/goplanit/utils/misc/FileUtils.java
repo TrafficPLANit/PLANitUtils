@@ -12,6 +12,7 @@ import java.util.function.Function;
 import java.util.logging.Logger;
 
 import org.goplanit.utils.exceptions.PlanItRunTimeException;
+import org.goplanit.utils.resource.ResourceUtils;
 import org.xml.sax.InputSource;
 
 /**
@@ -37,11 +38,14 @@ public class FileUtils {
    * @return the extension, if it does not exist return empty string
    */
   public static String getExtension(File file) {
-    String fileName = file.getName();
+    return getExtension(file.getName());
+  }
+
+  public static String getExtension(String fileName) {
     if(fileName.lastIndexOf(DOT) != -1 && fileName.lastIndexOf(DOT) != 0) {
       return fileName.substring(fileName.lastIndexOf(DOT)+1);
     }else {
-      return "";      
+      return "";
     }
   }
   
@@ -130,15 +134,37 @@ public class FileUtils {
    * @param inputFile to use
    * @return file created
    */
-  public static File convertFileStringToFile(String inputFile) {
+  public static File resolveFileFromAbsoluteOrRelativeString(String inputFile) {
     File theFile = null;
+
     try {
-      theFile = new File(inputFile).getCanonicalFile();
-    } catch (final Exception e) {
-      LOGGER.severe(e.getMessage());
-      throw new PlanItRunTimeException("Error in constructing file from string",e);
+      theFile = new File(inputFile);
+      if (theFile.exists()) {
+        return theFile.getCanonicalFile();
+      }
+    }catch (Exception e){
+      // fall through
     }
-    return theFile;
+
+    // try to load it as a classpath resource
+    URL resourceUrl = UrlUtils.createFromLocalPathOrResource(inputFile);
+    if (resourceUrl != null) {
+      try {
+        return new File(resourceUrl.toURI());
+      } catch (URISyntaxException e) {
+        // fallback below
+      }
+
+      try {
+        return new File(resourceUrl.getFile()).getCanonicalFile();
+      }catch(Exception e){
+        //File not constructed
+        throw new PlanItRunTimeException("File could not be created from: " + resourceUrl.getFile());
+      }
+    }else{
+      // file does not exist, but we can still create file instance
+      return theFile;
+    }
   }
   
   /** Delete a directory by providing a file that represents a directory. In which case

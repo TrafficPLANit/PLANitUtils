@@ -1,10 +1,12 @@
 package org.goplanit.utils.id;
 
+import org.goplanit.utils.arrays.ArrayUtils;
 import org.goplanit.utils.network.layer.macroscopic.MacroscopicLinkSegmentType;
 import org.goplanit.utils.network.layer.macroscopic.MacroscopicLinkSegmentTypes;
 import org.goplanit.utils.service.routed.RoutedTripSchedule;
 import org.goplanit.utils.wrapper.LongMapWrapper;
 
+import java.lang.reflect.Array;
 import java.util.*;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
@@ -30,7 +32,7 @@ public interface ManagedIdEntities<E extends ManagedId> extends LongMapWrapper<E
    * 
    * @return managedIdClass for instances this factory creates
    */
-  public abstract Class<? extends ManagedId> getManagedIdClass();  
+  public abstract Class<? extends ManagedId> getManagedIdClass();
       
   /**
    * Recreate the ids for all registered entities with or without resetting, this includes child managed ids, i.e., nested managedIdentities containers if so indicated
@@ -136,5 +138,30 @@ public interface ManagedIdEntities<E extends ManagedId> extends LongMapWrapper<E
    */
   public default <T> Map<T,E> createIndex(Function<E,T> mappingFunction){
     return this.stream().collect(Collectors.toMap(mappingFunction, Function.identity()));
+  }
+
+  /**
+   * Create a raw array where each entity is indexed by its id. Explicitly construct of type E which is likely
+   * more specific than the managedIdClass identifier
+   *
+   * @param theClazz the specific class type
+   * @return id indexed raw array
+   */
+  public default E[] toIdIndexedArray(Class<E> theClazz){
+    E[] indexedArray = ArrayUtils.createGenericTypedArray(theClazz,size());
+    this.stream().forEach( e -> indexedArray[ (int) e.getId()] = e);
+    return indexedArray;
+  }
+
+  /**
+   * Create a raw array where each entity is indexed by its id. type is based on managedIdClass which is not know
+   * at runtime so defaults to a raw array of ManagedIds which may be cast by called if needed
+   *
+   * @return id indexed raw array
+   */
+  public default ManagedId[] toIdIndexedArray(){
+    ManagedId[] indexedArray = ArrayUtils.createGenericTypedArray(getManagedIdClass(),size());
+    this.stream().forEach( e -> indexedArray[ (int) e.getId()] = e);
+    return indexedArray;
   }
 }

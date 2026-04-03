@@ -28,7 +28,8 @@ public interface ExternalIdAble extends IdAble {
    * @return function that generates node id's for MATSIM node output
    *
    */
-  public static <T extends ExternalIdAble> Function<T, String> createIdMappingFunction(Class<T> clazz, final IdMapperType idMapper) {
+  public static <T extends ExternalIdAble> Function<T, String> createIdMappingFunction(
+      Class<T> clazz, final IdMapperType idMapper) {
     switch (idMapper) {
       case ID:
         return (instance) -> instance!=null ? Long.toString(instance.getId()) : null;
@@ -37,7 +38,8 @@ public interface ExternalIdAble extends IdAble {
       case XML:
         return (instance) -> instance!=null ? instance.getXmlId() : null;
       default:
-        throw new PlanItRunTimeException(String.format("unknown id mapping type found for %s %s", clazz.getName(), idMapper));
+        throw new PlanItRunTimeException(String.format("unknown id mapping type found for %s %s",
+            clazz.getName(), idMapper));
     }
   }
 
@@ -55,7 +57,7 @@ public interface ExternalIdAble extends IdAble {
       case XML:
         return getXmlId();
       default:
-        throw new PlanItRunTimeException(String.format("Unknown id mapping type %s found", idMappingType.toString()));
+        throw new PlanItRunTimeException(String.format("Unknown id mapping type %s found", idMappingType));
     }
   }
     
@@ -162,7 +164,8 @@ public interface ExternalIdAble extends IdAble {
    * @return string representation
    */
   public default String getIdsAsString(){
-    return String.format("id: %d, xmlId: %s, extId: %s", getId(), hasXmlId() ? getXmlId() : "-", hasExternalId() ? getExternalId() : "-");
+    return String.format("id: %d, xmlId: %s, extId: %s",
+        getId(), hasXmlId() ? getXmlId() : "-", hasExternalId() ? getExternalId() : "-");
   }
 
 }

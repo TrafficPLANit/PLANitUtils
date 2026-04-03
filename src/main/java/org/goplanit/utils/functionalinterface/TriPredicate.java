@@ -18,7 +18,7 @@ public interface TriPredicate<T, U, V> {
    * @param t first object to be processed
    * @param u second object to be processed
    * @param v third object to be processed
-   * @return result
+   * @return result of test
    */
   public abstract boolean test(T t, U u, V v);
 }

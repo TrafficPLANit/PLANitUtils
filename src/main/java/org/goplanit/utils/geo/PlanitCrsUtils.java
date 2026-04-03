@@ -4,7 +4,13 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.geotools.api.referencing.crs.CoordinateReferenceSystem;
+import org.geotools.api.referencing.cs.CoordinateSystem;
+import org.geotools.api.referencing.cs.CoordinateSystemAxis;
 import org.geotools.referencing.CRS;
+import org.goplanit.utils.epsg.ProjectedEpsgCodesByCountry;
+import tech.units.indriya.unit.Units;
+
+import javax.measure.Unit;
 
 /** Utilities for coordinate Reference systems
  * 
@@ -33,6 +39,19 @@ public class PlanitCrsUtils {
   /** shorthand for WGS 84 EPSG code */
   public static String EPSG_CODE_FOR_WGS84 = EPSG_4326;
 
+  /**
+   * PLANit provides some defaults for EPSG codes to consider for its most used countries. This list is not exhaustive
+   * so it may fail.
+   *
+   * @param countryName to lookup
+   * @param useFallbackIfAbsent when true use fallback web mercator instead
+   * @return epsg code if present, null otherwise
+   */
+  public static String findProjectedCrsEpsgCodeByCountryName(String countryName, boolean useFallbackIfAbsent){
+    return ProjectedEpsgCodesByCountry.hasEpsgDefined(countryName) ?
+            ProjectedEpsgCodesByCountry.getEpsg(countryName):
+            ProjectedEpsgCodesByCountry.WORLD_PROJECTED_WGS84;
+  }
 
   /**
    * create a coordinate reference system instance based on String representation, e.g. "EPSG:4326" for WGS84",
@@ -66,10 +85,61 @@ public class PlanitCrsUtils {
         try {
           crs = CRS.decode(code, true);
         } catch (Exception e2) {
+          e2.printStackTrace();
           LOGGER.warning(String.format("unable to find coordinate reference system for %s", code));
         }
       }
     }
     return crs;
   }
+
+  /**
+   * Verify if CRS is linear and compatible with a length unit, e.g., km, m, etc. IF so distances can be computed
+   * cheaply and do not need a geodetic calclulator
+   *
+   * @param crs to check
+   * @return true when linear, false otherwise
+   */
+  public static boolean isLinearCRSWithLengthCompatibleUnit(CoordinateReferenceSystem crs) {
+    CoordinateSystem cs = crs.getCoordinateSystem();
+    for (int i = 0; i < cs.getDimension(); i++) {
+      CoordinateSystemAxis axis = cs.getAxis(i);
+      var unit = axis.getUnit();
+
+      if (unit == null) continue;
+
+      // isCompatible(Units.METRE) means:
+      // - the unit is a length unit compatible with metres
+      //   (metres, kilometres, etc.), not degrees.
+      if (unit.getSystemUnit().isCompatible(Units.METRE)) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  /**
+   * Verify if CRS is linear and compatible with exact length unit, e.g., km, m, etc. If so distances can be computed
+   * cheaply and do not need a geodetic calclulator.
+   *
+   * @param crs to check
+   * @param desiredUnit to confirm exact compatibility with
+   * @return true when linear, false otherwise
+   */
+  public static boolean isLinearCRSWithExactUnit(CoordinateReferenceSystem crs, Unit<?> desiredUnit) {
+    CoordinateSystem cs = crs.getCoordinateSystem();
+    for (int i = 0; i < cs.getDimension(); i++) {
+      CoordinateSystemAxis axis = cs.getAxis(i);
+      var unit = axis.getUnit();
+
+      if (unit == null) continue;
+
+      // strictly check on unit
+      if (unit.equals(desiredUnit)) {
+        return true;
+      }
+    }
+    return false;
+  }
+
 }

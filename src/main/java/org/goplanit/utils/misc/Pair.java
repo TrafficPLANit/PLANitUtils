@@ -157,14 +157,15 @@ public class Pair<A, B> {
     return !bothNotNull();
   }
 
-  /**
+  /** check for exactly one non-null entry
+   *
    * @return true when exactly one of the two is not null
    */
   public boolean isExactlyOneNonNull() {
     return anyIsNotNull() && !bothNotNull();
   }
   
-  /**
+  /** Find earliest non null entry
    * @return earliest entry (first before second) that is nonNull, when both are null, null is returned
    */
   public Object getEarliestNonNull() {

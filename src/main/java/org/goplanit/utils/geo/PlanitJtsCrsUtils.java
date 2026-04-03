@@ -1,43 +1,34 @@
 package org.goplanit.utils.geo;
 
-import java.awt.geom.Point2D;
-import java.util.Arrays;
-import java.util.logging.Logger;
-
 import org.geotools.api.geometry.Position;
+import org.geotools.api.referencing.FactoryException;
 import org.geotools.api.referencing.crs.CoordinateReferenceSystem;
 import org.geotools.geometry.jts.JTS;
 import org.geotools.geometry.jts.JTSFactoryFinder;
+import org.geotools.referencing.CRS;
 import org.geotools.referencing.GeodeticCalculator;
 import org.geotools.referencing.crs.DefaultGeographicCRS;
 import org.geotools.referencing.factory.epsg.CartesianAuthorityFactory;
-import org.goplanit.utils.exceptions.PlanItException;
 import org.goplanit.utils.exceptions.PlanItRunTimeException;
 import org.goplanit.utils.graph.Vertex;
 import org.goplanit.utils.math.Precision;
-import org.goplanit.utils.network.layer.physical.LinkSegment;
-import org.locationtech.jts.geom.Coordinate;
-import org.locationtech.jts.geom.Envelope;
-import org.locationtech.jts.geom.Geometry;
-import org.locationtech.jts.geom.GeometryFactory;
-import org.locationtech.jts.geom.LineSegment;
-import org.locationtech.jts.geom.LineString;
-import org.locationtech.jts.geom.LinearRing;
-import org.locationtech.jts.geom.MultiLineString;
-import org.locationtech.jts.geom.Point;
-import org.locationtech.jts.geom.Polygon;
+import org.locationtech.jts.geom.*;
 import org.locationtech.jts.linearref.LinearLocation;
 import org.locationtech.jts.linearref.LocationIndexedLine;
-//import org.opengis.geometry.DirectPosition;
-//import org.opengis.geometry.coordinate.Position;
-//import org.geotools.api.referencing.crs.CoordinateReferenceSystem;
-//import org.geotools.api.referencing.operation.MathTransform;
-//import org.opengis.referencing.operation.TransformException;
+import tech.units.indriya.unit.Units;
+
+import java.awt.geom.Point2D;
+import java.util.Arrays;
+import java.util.function.Predicate;
+import java.util.logging.Logger;
+
+import static org.goplanit.utils.epsg.ProjectedEpsgCodesByCountry.WORLD_PROJECTED_WGS84;
 
 /**
  * General geographic JTS utilities that rely on a known Coordinate Reference system (CRS). 
- * Uses geodetic distance when possible. In case the CRS is not based on an ellipsoid (2d plane) it will simply compute the distance between
- * coordinates using Pythagoras with the unit distance in meters, consistent with the {@code CartesianAuthorityFactory.GENERIC_2D}
+ * Uses geodetic distance when possible. In case the CRS is not based on an ellipsoid (2d plane) it will simply
+ * compute the distance between coordinates using Pythagoras with the unit distance in meters,
+ * consistent with the {@code CartesianAuthorityFactory.GENERIC_2D}
  * 
  * It is assumed that x coordinate refers to latitude and y coordinate refers to longitude
  * 
@@ -65,11 +56,26 @@ public class PlanitJtsCrsUtils {
 
   /** jts geometry factory, jts geometry differs from opengis implementation by not carrying the crs and being more lightweight */
   protected static final GeometryFactory jtsGeometryFactory = JTSFactoryFinder.getGeometryFactory();
-    
+
+  /**
+   * Predicate to use in distance calculation to check if CRS is linear in length in metres
+   */
+  protected static final Predicate<CoordinateReferenceSystem> checkCrsLinearInMetres =
+          crs -> PlanitCrsUtils.isLinearCRSWithExactUnit(crs, Units.METRE);
+
+  /**
+   * Predicate to use in distance calculation to check if CRS is linear in length in any unit
+   */
+  protected static final Predicate<CoordinateReferenceSystem> checkCrsLinearInLength =
+          PlanitCrsUtils::isLinearCRSWithLengthCompatibleUnit;
   /**
    * Default Coordinate Reference System: WGS84
    */
   public static final DefaultGeographicCRS DEFAULT_GEOGRAPHIC_CRS = DefaultGeographicCRS.WGS84;
+
+  /** WGS 84 / Pseudo‑Mercator in metres, projected version of WGS84 (EPSG:3857) */
+  public static final CoordinateReferenceSystem DEFAULT_PROJECTED_CRS_EPSG_3857 =
+          PlanitCrsUtils.createCoordinateReferenceSystem(WORLD_PROJECTED_WGS84);
 
   /**
    * In absence of a geographic crs we can also use cartesian: GENERIC_2D
@@ -89,6 +95,48 @@ public class PlanitJtsCrsUtils {
   }
 
   /**
+   * Compute the distance between two (JTS) coordinates assuming the positions are provided in the same crs as
+   * registered on this class instance. Check for linearity and possibly exact unit of the CRS to increase performance
+   * based on provided predicate
+   *
+   * @param startCoordinate location of the start point
+   * @param endCoordinate   location of the end point
+   * @param checkCrsLinearityConstraint the check to determine if we can use cheaper linear calculation instead of
+   *         expensive orthodromicDistance
+   * @param ifLinearSkipSquareRootCalc when linear this flag indicates whether to skip square root
+   * @return distance in metres between the points
+   */
+  private double getOptimisedDistance(
+          final Coordinate startCoordinate,
+          final Coordinate endCoordinate,
+          final Predicate<CoordinateReferenceSystem> checkCrsLinearityConstraint,
+          boolean ifLinearSkipSquareRootCalc){
+    if(startCoordinate == null){
+      throw new PlanItRunTimeException("Start coordinate is null when computing distance in meters between " +
+              "two locations in JtsCrsUtils");
+    }
+    if(endCoordinate == null){
+      throw new PlanItRunTimeException("End coordinate is null when computing distance in meters between two " +
+              "locations in JtsCrsUtils");
+    }
+    try {
+      if (checkCrsLinearityConstraint.test(crs)) {
+        // compute direct length
+        double deltaCoordinate0 = startCoordinate.x - endCoordinate.x;
+        double deltaCoordinate1 = startCoordinate.y - endCoordinate.y;
+        return ifLinearSkipSquareRootCalc ?
+                deltaCoordinate0 * deltaCoordinate0 + deltaCoordinate1*deltaCoordinate1
+                : Math.sqrt(deltaCoordinate0 * deltaCoordinate0 + deltaCoordinate1*deltaCoordinate1);
+      } else {
+        return JTS.orthodromicDistance(startCoordinate, endCoordinate, crs);
+      }
+    } catch (Exception e) {
+      LOGGER.severe(e.getMessage());
+      throw new PlanItRunTimeException("Error when computing distance in meters between two Positions in JtsUtils", e);
+    }
+  }
+
+  /**
    * Constructor
    * 
    * @param coordinateReferenceSystem OpenGIS CoordinateReferenceSystem object containing geometry
@@ -96,7 +144,8 @@ public class PlanitJtsCrsUtils {
   public PlanitJtsCrsUtils(CoordinateReferenceSystem coordinateReferenceSystem) {
     this.crs = coordinateReferenceSystem;
     /* viable only if non-cartesian based */
-    geoCalculator = (!(coordinateReferenceSystem.equals(CARTESIANCRS))) ? new GeodeticCalculator(getCoordinateReferenceSystem()) : null;
+    geoCalculator = (!(coordinateReferenceSystem.equals(CARTESIANCRS))) ?
+            new GeodeticCalculator(getCoordinateReferenceSystem()) : null;
   }
 
   /** find the distance between the closest coordinate on the geometry's coordinates. Note that this is likely NOT
@@ -145,8 +194,10 @@ public class PlanitJtsCrsUtils {
    * @param lineString to verify closest coordinate
    * @return closest existing coordinate on line string to find coordinate on
    */
-  public <T extends LineString> Coordinate getClosestExistingLineStringCoordinateToGeometry(Geometry referenceGeometry, T lineString){
-    return getClosestExistingLineStringCoordinateToGeometry(referenceGeometry, lineString, 0, lineString.getNumPoints()-1);
+  public <T extends LineString> Coordinate getClosestExistingLineStringCoordinateToGeometry(
+          Geometry referenceGeometry, T lineString){
+    return getClosestExistingLineStringCoordinateToGeometry(
+            referenceGeometry, lineString, 0, lineString.getNumPoints()-1);
   }
 
   /** Find the coordinate on the line string with the closest distance to the reference referenceGeometry. Note that this is likely NOT
@@ -165,7 +216,8 @@ public class PlanitJtsCrsUtils {
     Coordinate closestCoordinate = null;
     for(int index = startIndex; index <= endIndex ; ++index) {
       Coordinate coordinate = lineString.getCoordinateN(index);
-      Coordinate closestProjectedReferenceCoordinate = getClosestProjectedCoordinateOnGeometry(coordinate, referenceGeometry);
+      Coordinate closestProjectedReferenceCoordinate =
+              getClosestProjectedCoordinateOnGeometry(coordinate, referenceGeometry);
       double distanceMeters = getDistanceInMetres(closestProjectedReferenceCoordinate, coordinate);
       if(minDistanceMetersToCoordinate > distanceMeters) {
         minDistanceMetersToCoordinate = distanceMeters;
@@ -202,7 +254,8 @@ public class PlanitJtsCrsUtils {
     }else if(geometry instanceof Polygon) {
       return getClosestProjectedLinearLocationOnPolygon(reference, (Polygon)geometry);
     }else {
-      throw new PlanItRunTimeException("Method getClosestLinearLocationOnGeometry not supported for provided geometry type %s",geometry.getClass().getName());
+      throw new PlanItRunTimeException("Method getClosestLinearLocationOnGeometry not supported for " +
+              "provided geometry type %s",geometry.getClass().getName());
     }      
   }   
   
@@ -213,7 +266,8 @@ public class PlanitJtsCrsUtils {
    * @param lineString to find closest distance to point to (must be a linear geometry)
    * @return linearLocation found
      */  
-  public LinearLocation getClosestProjectedLinearLocationOnLineString(Coordinate referenceCoordinate, LineString lineString){
+  public LinearLocation getClosestProjectedLinearLocationOnLineString(
+          Coordinate referenceCoordinate, LineString lineString){
     LocationIndexedLine locIndexedLine = new LocationIndexedLine(lineString);
     return locIndexedLine.project(referenceCoordinate);
   } 
@@ -256,7 +310,9 @@ public class PlanitJtsCrsUtils {
    * @param linearGeometry to find closest distance to point to (must be a linear geometry)
    * @return linearLocation found
    */  
-  public LinearLocation getClosestGeometryExistingCoordinateToProjectedLinearLocationOnLineString(Geometry referenceGeometry, LineString linearGeometry) {
+  public LinearLocation getClosestGeometryExistingCoordinateToProjectedLinearLocationOnLineString(
+          Geometry referenceGeometry, LineString linearGeometry) {
+
     double minDistanceMetersToCoordinate = Double.POSITIVE_INFINITY;
     LinearLocation closestLocation = null;
     Coordinate[] referenceGeometryCoordinates = referenceGeometry.getCoordinates();
@@ -290,7 +346,8 @@ public class PlanitJtsCrsUtils {
     }else if(geometry instanceof Polygon) {
       return getClosestPojectedCoordinateOnPolygon(reference, (Polygon)geometry);
     }else {
-      throw new PlanItRunTimeException("Method getClosestProjectedCoordinateTo not supported for provided geometry type %s",geometry.getClass().getName());
+      throw new PlanItRunTimeException("Method getClosestProjectedCoordinateTo not supported for provided " +
+              "geometry type %s",geometry.getClass().getName());
     }     
   }  
   
@@ -319,7 +376,8 @@ public class PlanitJtsCrsUtils {
     int lineSegmentIndex = linearLocation.getSegmentIndex();
     
     return linearLocation.getCoordinate(
-        PlanitJtsUtils.createLineString(new Coordinate[] {polygon.getCoordinates()[lineSegmentIndex],polygon.getCoordinates()[lineSegmentIndex+1]}));
+        PlanitJtsUtils.createLineString(
+                polygon.getCoordinates()[lineSegmentIndex],polygon.getCoordinates()[lineSegmentIndex+1]));
   }  
     
   /** find the closest distance in meters from the point to the geometry.Here we project onto the geometry, so we find the actual closest distance instead of merely finding the closest
@@ -345,7 +403,9 @@ public class PlanitJtsCrsUtils {
     double minDistanceInMetersForLineSegment = Double.POSITIVE_INFINITY;
     for(int index=0;index<geometry.getNumGeometries();++index) {       
       LineString currLineString = (LineString)geometry.getGeometryN(index);
-      minDistanceInMetersForLineSegment = Math.min(minDistanceInMetersForLineSegment,getClosestProjectedDistanceInMetersToLineString(reference, currLineString));
+      minDistanceInMetersForLineSegment =
+              Math.min(minDistanceInMetersForLineSegment,
+                      getClosestProjectedDistanceInMetersToLineString(reference, currLineString));
     }      
     return minDistanceInMetersForLineSegment;
   }    
@@ -365,8 +425,10 @@ public class PlanitJtsCrsUtils {
       Coordinate prevCoord = coords[0];
       for(int index=1;index<coords.length;++index) {
         Coordinate currCoord = coords[index];
-        LineString lineSegment = PlanitJtsUtils.createLineString(new Coordinate[] {prevCoord,currCoord});
-        minDistanceInMetersForLineSegment = Math.min(minDistanceInMetersForLineSegment,getClosestDistanceInMeters(reference, lineSegment));
+        LineString lineSegment = PlanitJtsUtils.createLineString(prevCoord,currCoord);
+        minDistanceInMetersForLineSegment =
+                Math.min(minDistanceInMetersForLineSegment,
+                        getClosestDistanceInMeters(reference, lineSegment));
         prevCoord = currCoord;
       }
     }
@@ -413,25 +475,20 @@ public class PlanitJtsCrsUtils {
    * @return distance in metres between the points
    */
   public double getDistanceInMetres(Coordinate startCoordinate, Coordinate endCoordinate){
-    if(startCoordinate == null){
-      throw new PlanItRunTimeException("Start coordinate is null when computing distance in meters between two Positions in JtsUtils");
-    }
-    if(endCoordinate == null){
-      throw new PlanItRunTimeException("End coordinate is null when computing distance in meters between two Positions in JtsUtils");
-    }
-    try {
-      if (crs.equals(CARTESIANCRS)) {
-        // cartesian in meters
-        double deltaCoordinate0 = startCoordinate.x - endCoordinate.x;
-        double deltaCoordinate1 = startCoordinate.y - endCoordinate.y;
-        return Math.sqrt(Math.pow(deltaCoordinate0, 2) + Math.pow(deltaCoordinate1, 2));
-      } else {
-        return JTS.orthodromicDistance(startCoordinate, endCoordinate, crs);
-      }
-    } catch (Exception e) {
-      LOGGER.severe(e.getMessage());
-      throw new PlanItRunTimeException("Error when computing distance in meters between two Positions in JtsUtils", e);
-    }
+    return getOptimisedDistance(startCoordinate, endCoordinate, checkCrsLinearInMetres, false /* force metres */);
+  }
+
+  /**
+   * Compute the linear distance between two (JTS) coordinates assuming the positions are provided in the same crs
+   * as registered on this class instance. The unit is not guaranteed to be in metres but it is guaranteed to be
+   * linear even if the CRS is not
+   *
+   * @param startCoordinate location of the start point
+   * @param endCoordinate   location of the end point
+   * @return distance in metres between the points
+   */
+  public double getLinearDistance(Coordinate startCoordinate, Coordinate endCoordinate){
+    return getOptimisedDistance(startCoordinate, endCoordinate, checkCrsLinearInLength, true /* do not force unit */);
   }
 
   /**
@@ -526,7 +583,8 @@ public class PlanitJtsCrsUtils {
    * @return envelope with appropriate square bounding box
    */
   public Envelope createBoundingBox(Envelope boundingBox, double lengthMeters) {
-    return createBoundingBox(boundingBox.getMinX(),boundingBox.getMinY(), boundingBox.getMaxX(), boundingBox.getMaxY(), lengthMeters);   
+    return createBoundingBox(
+            boundingBox.getMinX(),boundingBox.getMinY(), boundingBox.getMaxX(), boundingBox.getMaxY(), lengthMeters);
   }  
 
   /** create a square bounding box envelope instance based on the passed in bounding box coordinates and buffer length in meters 
@@ -549,8 +607,8 @@ public class PlanitJtsCrsUtils {
     
     /* expand 1 to include 2 */
     localExtremeBoundingBox1.expandToInclude(localExtremeBoundingBox2.getMaxX(), localExtremeBoundingBox2.getMaxY());
-    /* adding minimum should not alter anything since it is less extreme than the max values. However, if the user accidentically swapper the min and max inputs
-     * to this method,it avoids a wrong result */
+    /* adding minimum should not alter anything since it is less extreme than the max values. However, if the user
+    accidentally swapper the min and max inputs to this method,it avoids a wrong result */
     localExtremeBoundingBox1.expandToInclude(localExtremeBoundingBox2.getMinX(), localExtremeBoundingBox2.getMinY());
     return localExtremeBoundingBox1;    
   }
@@ -703,7 +761,8 @@ public class PlanitJtsCrsUtils {
    */
   public boolean isGeometryLeftOf(Geometry geometry, Coordinate coordA, Coordinate coordB) {
     if(geometry == null) {
-      throw new PlanItRunTimeException("geometry null, unable to determine on which side of line AB (%s, %s) is resides", coordA.toString(), coordB.toString());
+      throw new PlanItRunTimeException("geometry null, unable to determine on which side of line AB (%s, %s) " +
+              "is resides", coordA.toString(), coordB.toString());
     }
 
     Coordinate referenceCoordinate = null;
@@ -727,12 +786,15 @@ public class PlanitJtsCrsUtils {
     Polygon boundingBoxGeometry = PlanitJtsUtils.create2DPolygon(boundingBox);
     double distanceMeters  = Double.POSITIVE_INFINITY;
     if(geometry instanceof Point) {
-      distanceMeters = getClosestDistanceInMetersToPolygon(Point.class.cast(geometry).getCoordinate(), boundingBoxGeometry);
+      distanceMeters =
+              getClosestDistanceInMetersToPolygon(geometry.getCoordinate(), boundingBoxGeometry);
     }else if(geometry instanceof LineString) {      
-      Coordinate closestCoordinate = getClosestExistingLineStringCoordinateToGeometry(boundingBoxGeometry, LineString.class.cast(geometry));
+      Coordinate closestCoordinate =
+              getClosestExistingLineStringCoordinateToGeometry(boundingBoxGeometry, (LineString) geometry);
       distanceMeters = getClosestDistanceInMetersToPolygon(closestCoordinate, boundingBoxGeometry);
     }else if( geometry instanceof Polygon) {
-      Coordinate closestCoordinate = getClosestExistingPolygonCoordinateToGeometry(boundingBoxGeometry, Polygon.class.cast(geometry));
+      Coordinate closestCoordinate =
+              getClosestExistingPolygonCoordinateToGeometry(boundingBoxGeometry, (Polygon) geometry);
       distanceMeters = getClosestDistanceInMeters(closestCoordinate, boundingBoxGeometry);
     }else {
       throw new PlanItRunTimeException("Unsupported geometry type provided when checking if it is near bounding box");

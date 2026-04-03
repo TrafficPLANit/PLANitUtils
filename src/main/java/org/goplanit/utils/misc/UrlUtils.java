@@ -47,7 +47,9 @@ public class UrlUtils {
    * @return true when local, false otherwise
    */
   public static boolean isLocalFile(URL url) {
-    return isLocal(url) && new File(url.getFile()).isFile();
+    return isLocal(url) &&
+        new File(
+            StringUtils.removeInitialStringWhenPresent(url.getFile(), "/")).isFile();
   }
   
   /** Test if URL is a local file
@@ -98,21 +100,22 @@ public class UrlUtils {
     }
   }
   
-  /** Construct a URL based on a given local file location
+  /** Construct a URL based on a given local (possibly relative) file location and include full path in the URL if
+   * found
    * 
    * @param path to convert
    * @return URL representation
    */
-  public static URL createFromLocalPath(String path) {
-    return createFromLocalPath(Paths.get(path));
+  public static URL createFromLocalAbsoluteOrRelativePath(String path) {
+    return createFromLocalAbsoluteOrRelativePath(Paths.get(path));
   }
   
-  /** Construct a URL based on a given (local) path
-   * 
+  /** Construct a URL based on a given local (possibly relative) file location and include full path in the URL if
+   * found
    * @param path to convert
    * @return URL representation
    */
-  public static URL createFromLocalPath(Path path) {
+  public static URL createFromLocalAbsoluteOrRelativePath(Path path) {
     try {
       return path.toUri().toURL();
     } catch (MalformedURLException e) {
@@ -121,14 +124,15 @@ public class UrlUtils {
     return null;
   }
 
-  /** Construct a URL based on a given (local) path
+  /** Construct a URL based on a given (local) path for a resource that should exist. If it does not exist
+   * this will fail
    *
    * @param path to convert
    * @return URL representation
    */
   public static URL createFromLocalPathOrResource(String path) {
     /* attempt to create as if it is a local file */
-    var asLocalFile = UrlUtils.createFromLocalPath(path);
+    var asLocalFile = UrlUtils.createFromLocalAbsoluteOrRelativePath(path);
     if(asLocalFile!= null && UrlUtils.isLocalFile(asLocalFile)){
       return asLocalFile;
     }

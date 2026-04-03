@@ -13,11 +13,11 @@ import org.goplanit.utils.locale.CountryNames;
  * @author markr
  *
  */
-public class EpsgCodesByCountry {
+public class ProjectedEpsgCodesByCountry {
   
   /** logger to use */
   @SuppressWarnings("unused")
-  private static final Logger LOGGER = Logger.getLogger(EpsgCodesByCountry.class.getCanonicalName());
+  private static final Logger LOGGER = Logger.getLogger(ProjectedEpsgCodesByCountry.class.getCanonicalName());
   
   /** Area of use: Australia, EPSG:3112 */
   public static final String AUSTRALIA_LAMBERT = "EPSG:3112";
@@ -30,6 +30,9 @@ public class EpsgCodesByCountry {
   
   /** Area of use: world, EPSG:4326, accessible via countryname: "global" as CountryNames.GLOBAL */
   public static final String WORLD_WG84 = "EPSG:4326";
+
+  /** web mercator, projected version of WGS84 */
+  public static final String WORLD_PROJECTED_WGS84 = "EPSG:3857";
   
   /** mapping of country names to expected most commonly used EPSG code */
   protected static final HashMap<String, String> countryToEpsgCodes = new HashMap<String, String>();
@@ -61,6 +64,10 @@ public class EpsgCodesByCountry {
    */
   public static final String getEpsg(String countryName) {
     return countryToEpsgCodes.get(countryName);
+  }
+
+  public static final boolean hasEpsgDefined(String countryName) {
+    return countryToEpsgCodes.containsKey(countryName);
   }
 
 }
