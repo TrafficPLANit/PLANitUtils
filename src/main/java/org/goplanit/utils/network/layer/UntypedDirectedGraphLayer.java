@@ -12,9 +12,12 @@ import org.goplanit.utils.network.layer.modifier.UntypedDirectedGraphLayerModifi
 import java.util.function.Consumer;
 
 /**
- * Untyped direted graph layer comprising containers with custom entity types. Use this as a base template for implementations and derived interfaced that
- * are typed. No access to containers is dictated to allow for maximum flexibility for derived interface to define suitable method names to access
- * underlying containers and/or entities. Since all entities are id managed we do require access to the id token used by this layer
+ * Untyped direted graph layer comprising containers with custom entity types. Use this as a base template for
+ * implementations and derived interfaced that
+ * are typed. No access to containers is dictated to allow for maximum flexibility for derived interface to define
+ * suitable method names to access
+ * underlying containers and/or entities. Since all entities are id managed we do require access to the id token
+ * used by this layer
  *
  * @author markr
  */
@@ -34,7 +37,8 @@ public interface UntypedDirectedGraphLayer<V extends DirectedVertex, E extends D
   public abstract UntypedDirectedGraphLayer<V,E,S> deepClone();
 
   /**
-   * Collect the id grouping token used for all entities registered on the layer, i.e., this layer's specific identifier for generating ids unique and contiguous within this
+   * Collect the id grouping token used for all entities registered on the layer, i.e., this layer's specific
+   * identifier for generating ids unique and contiguous within this
    * layer 
    * 
    * @return the layer id grouping token

@@ -174,6 +174,7 @@ public interface DirectedEdge extends Edge {
    * @param edgeSegmentConsumer to apply
    * @param <T> type of edge segment
    */
+  @SuppressWarnings("unchecked")
   default <T extends EdgeSegment> void forEachSegment(Consumer<T> edgeSegmentConsumer){
     if(hasEdgeSegmentAb()){
       edgeSegmentConsumer.accept( (T) getEdgeSegmentAb());

@@ -8,8 +8,9 @@ import org.goplanit.utils.mode.Mode;
 import org.goplanit.utils.mode.PredefinedModeType;
 
 /**
- * A network layer represents the infrastructure suited for a number of modes. This can be in the form of a physical network or by some other (more aggregate)
- * representation. The combination of infrastructure layers can be used to construct an intermodal network. Each layer supports one or more modes
+ * A network layer represents the infrastructure suited for a number of modes. This can be in the form of a
+ * physical network or by some other (more aggregate) representation. The combination of infrastructure layers can
+ * be used to construct an intermodal network. Each layer supports one or more modes
  * 
  * @author markr
  *
@@ -34,13 +35,15 @@ public interface NetworkLayer extends ExternalIdAble, ManagedId {
   public abstract NetworkLayer shallowClone();
 
   /**
-   * A network layer deep clone is expected to update interdependencies between "owned" deep cloned entities where possible
+   * A network layer deep clone is expected to update interdependencies between "owned" deep cloned entities
+   * where possible
    */
   @Override
   public abstract NetworkLayer deepClone();
   
   /**
-   * create a string that can be used to prefix log statements for this layer to - in a unified way - identify this statement came from a particular layer
+   * create a string that can be used to prefix log statements for this layer to - in a unified way -
+   * identify this statement came from a particular layer
    * 
    * @param layer to use
    * @return String "[layer: xmlID ]"
@@ -117,7 +120,8 @@ public interface NetworkLayer extends ExternalIdAble, ManagedId {
    * @return true when supporting, false otherwise
    */
   public default boolean supports(PredefinedModeType modeType) {
-    return getSupportedModes().stream().anyMatch( m -> m.isPredefinedModeType() && m.getPredefinedModeType().equals(modeType));
+    return getSupportedModes().stream().anyMatch( m -> m.isPredefinedModeType() &&
+        m.getPredefinedModeType().equals(modeType));
   }
   
   /**

@@ -82,11 +82,13 @@ public interface MacroscopicNetworkLayer extends UntypedPhysicalLayer<Node, Macr
   /**
    * Create and register a conjugate version of this layer, also known as the edge-to-vertex-dual representation,
    * where all edges become vertices and all two adjacent edges (turns) become the edges on the conjugate version.
-   * When the provided id token is the same as an existing layer, vertex,edge,edge segmentids will continue numbering which might not be ideal. It is reocmmended to have a separate idToken for all conjugate layers such
+   * When the provided id token is the same as an existing layer, vertex,edge,edge segmentids will continue
+   * numbering which might not be ideal. It is reocmmended to have a separate idToken for all conjugate layers such
    * that all conjugate vertices, edges, edge segments are numbered uniquely within the context.
    *
    * @param factory                      Factory to create instance of conjugate layer and register it on its container
-   * @param conjugateVirtualNetworkLayer to use for encountered connections to zones, when null connectoid edges/edge segments are ignored
+   * @param conjugateVirtualNetworkLayer to use for encountered connections to zones, when null connectoid
+   *                                     edges/edge segments are ignored
    * @return conjugate version of this layer
    */
   public abstract ConjugateMacroscopicNetworkLayer createAndRegisterConjugate(
