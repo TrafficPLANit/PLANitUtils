@@ -106,5 +106,14 @@ public enum PredefinedModeType {
   public static EnumSet<PredefinedModeType> getPredefinedModeTypes() {
     EnumSet<PredefinedModeType> allPredefinedModeTypes = EnumSet.allOf(PredefinedModeType.class);
     return allPredefinedModeTypes;
-  }  
+  }
+
+  /**
+   * pedestrian and bicycle are considered active modes
+   *
+   * @return true when active
+   */
+  public boolean isActiveModeType() {
+    return this.equals( PredefinedModeType.BICYCLE) || this.equals( PredefinedModeType.PEDESTRIAN);
+  }
 }
