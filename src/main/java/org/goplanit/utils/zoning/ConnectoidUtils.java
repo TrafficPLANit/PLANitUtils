@@ -15,6 +15,9 @@ import java.util.logging.Logger;
  */
 public class ConnectoidUtils {
 
+  /** Dummy not to be instantiated */
+  private ConnectoidUtils(){}
+
   /** Logger to use */
   private static final Logger LOGGER = Logger.getLogger(ConnectoidUtils.class.getCanonicalName());
 

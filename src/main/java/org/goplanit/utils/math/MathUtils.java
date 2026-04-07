@@ -2,7 +2,13 @@ package org.goplanit.utils.math;
 
 import java.util.logging.Logger;
 
+/**
+ * Utils for Math functions
+ */
 public class MathUtils {
+
+  /** Dummy not to be instantiated */
+  private MathUtils(){}
 
   private static final Logger LOGGER = Logger.getLogger(MathUtils.class.getCanonicalName());
 

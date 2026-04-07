@@ -8,6 +8,9 @@ import java.util.function.Function;
  */
 public class ContainerUtils {
 
+  /** Dummy not to be instantiated */
+  private ContainerUtils(){}
+
   /**
    * Given the colletion and mapping to unmodifiable version of the collection check if not null and then apply the wrapping
    *

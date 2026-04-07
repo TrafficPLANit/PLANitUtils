@@ -15,6 +15,11 @@ import java.util.stream.Stream;
  */
 public class DeepCopyMapper<T> implements BiConsumer<T, T> {
 
+  /**
+   * Default constructor
+   */
+  public DeepCopyMapper(){}
+
   private final HashMap<T,T> original2DeepCopyMapping = new HashMap<>();
 
   /**

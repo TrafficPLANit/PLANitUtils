@@ -24,34 +24,68 @@ public interface ConjugateLink extends ConjugateDirectedEdge, Link {
   public default Class<? extends ConjugateLink> getConjugateLinkIdClass(){
     return CONJUGATE_LINK_ID_CLASS;
   }
-  
+
+  /**
+   *  obtain conjugate node
+   * @return node
+   * @param <N> type
+   */
   @SuppressWarnings("unchecked")
   public default <N extends ConjugateNode> N getConjugateNodeA() {
     return (N) getVertexA();
   }
-  
+
+  /**
+   *  obtain conjugate node
+   * @return node
+   * @param <N> type
+   */
   @SuppressWarnings("unchecked")
   public default <N extends ConjugateNode> N getConjugateNodeB() {
     return (N) getVertexB();
-  }  
-  
+  }
+
+  /**
+   *  obtain conjugate link segment in direction
+   * @param directionAb the direction
+   * @return segment
+   * @param <LS> type
+   */
   @SuppressWarnings("unchecked")
   public default <LS extends ConjugateLinkSegment> LS getConjugateLinkSegment(boolean directionAb) {
     return (LS) getEdgeSegment(directionAb);
-  }   
-  
+  }
+
+  /**
+   *  obtain conjugate link segment in direction AB
+   * @return segment
+   * @param <LS> type
+   */
   public default <LS extends ConjugateLinkSegment> LS getConjugateLinkSegmentAb() {
     return getConjugateLinkSegment(true);
-  }   
-  
+  }
+
+  /**
+   *  check if conjugate link segment in direction AB exists
+   * @return exists
+   */
   public default boolean hasConjugateLinkSegmentAb() {
     return hasEdgeSegmentAb();
-  }   
+  }
 
+  /**
+   *  obtain conjugate link segment in direction BA
+   * @return segment
+   * @param <LS> type
+   */
   public default <LS extends ConjugateLinkSegment> LS getConjugateLinkSegmentBa() {
     return getConjugateLinkSegment(false);
-  } 
-  
+  }
+
+  /**
+   *  check if conjugate link segment in direction BA exists
+   * @return exists
+   */
   public default boolean hasConjugateLinkSegmentBa() {
     return hasEdgeSegmentBa();
   }
