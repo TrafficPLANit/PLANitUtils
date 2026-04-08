@@ -1,7 +1,7 @@
 package org.goplanit.utils.zoning;
 
 import java.util.Collection;
-import java.util.Optional;
+import java.util.stream.Stream;
 
 import org.goplanit.utils.graph.directed.DirectedVertex;
 import org.goplanit.utils.id.ExternalIdAble;
@@ -24,15 +24,7 @@ public interface Connectoid extends ExternalIdAble, ManagedId, Iterable<Zone> {
 
   /** the class ot use for id generation */
   public static final Class<Connectoid> CONNECTOID_ID_CLASS = Connectoid.class;
-  
-  /**
-   * Default connectoid length in km
-   */
-  public static double DEFAULT_LENGTH_KM = 0.0;
-  
-  /** default type is set to none */
-  public static ConnectoidType DEFAULT_CONNECTOID_TYPE = ConnectoidType.NONE;  
-  
+
   /** Set the name of the connectoid
    * 
    * @param name its name
@@ -44,109 +36,65 @@ public interface Connectoid extends ExternalIdAble, ManagedId, Iterable<Zone> {
    * @return its name
    */
   public abstract String getName();
-  
-  /** Set the type of the connectoid
-   * 
-   * @param type its type
-   */
-  public abstract void setType(ConnectoidType type);  
-  
-  /** The type of the connectoid
-   * 
-   * @return its type
-   */
-  public abstract ConnectoidType getType();  
-      
+
   /**
    * The zones that can be accessed by this connectoid
    * 
    * @return accessible zones
    */
-  public abstract Collection<Zone> getAccessZones();
-  
-  /** Add an access zone and provide length to this connectoid
-   * 
-   * @param zone to set length for
-   * @param lengthKm to traverse between connectoid and zone
+  public abstract Collection<? extends ConnectoidAccessZoneEntry> getAccessZoneEntries();
+
+  /**
+   * Access to access zone listed as a stream
+   *
+   * @return access zone stream
    */
-  public abstract void setLengthKm(Zone zone, double lengthKm);
-  
-  /** Add an allowed mode. We assume the zone is already registered as an access zone for this connectoid
-   * 
-   * @param zone to add allowed mode to
-   * @param allowedMode to add
-   */
-  public abstract void addAllowedMode(Zone zone, Mode allowedMode);  
-    
- 
-  /** Add an access zone with default properties
+  public default Stream<? extends Zone> getAccessZonesStream(){
+    return getAccessZoneEntries().stream().map(ConnectoidAccessZoneEntry::getAccessZone);
+  }
+
+  /** Add a new access zone entry with default properties
    * 
    * @param zone to register as accessible
    * @return overwritten zone if any
    */
-  public abstract Zone addAccessZone(Zone zone);
+  public abstract ConnectoidAccessZoneEntry createAccessZoneEntry(Zone zone);
 
   /**
-   * Add all provided access zones
+   * create entries for all provided access zones
    *
    * @param accessZonesToAdd to add
    */
-  public default void addAllAccessZones(Collection<Zone> accessZonesToAdd){
-    accessZonesToAdd.forEach(this::addAccessZone);
+  public default void createAccessZoneEntries(Collection<? extends Zone> accessZonesToAdd){
+    accessZonesToAdd.forEach(this::createAccessZoneEntry);
+    getAccessZoneEntries();
   }
+
+  /** get access zone entry
+   *
+   * @param accessZone to verify
+   * @return entry
+   */
+  public abstract ConnectoidAccessZoneEntry getAccessZoneEntry(Zone accessZone);
   
   /** Check if zone is registered as access zone
    * 
    * @param accessZone to verify
    * @return true when registered, false otherwise
    */
-  public abstract boolean hasAccessZone(Zone accessZone);
+  public abstract boolean hasAccessZoneEntry(Zone accessZone);
   
-  /** first available zone that is accessible based on the first entry the iterator returns
+  /** first available access zone entry that is accessible based on the first entry the iterator returns
    * 
    * @return first available zone
    */
-  public abstract Zone getFirstAccessZone();
+  public abstract ConnectoidAccessZoneEntry getFirstAccessZoneEntry();
   
   /** the number of accessible zones registered
    * 
    * @return number of accessible zones
    */
-  public abstract int getNumberOfAccessZones();
-  
-  /** length can be used to virtually assign a length to the connectoid/zone combination
-   * 
-   * @param accessZone to collect length for
-   * @return length in km(null if zone is not registered)
-   */
-  public abstract Optional<Double> getLengthKm(Zone accessZone);
-  
-  /** Verify if a mode is allowed access to the zone via this connectoid
-   * 
-   * @param accessZone to verify
-   * @param mode to verify if allowed
-   * @return true when allowed, false otherwise
-   */
-  public abstract boolean isModeAllowed(Zone accessZone, Mode mode);
-
-  /** Verify if any of the modes is allowed access to the zone via this connectoid
-   *
-   * @param accessZone to verify
-   * @param modes to verify if any is allowed
-   * @return true when allowed, false otherwise
-   */
-  public default boolean isAnyModeAllowed(Zone accessZone, Collection<Mode> modes){
-    return modes.stream().anyMatch(m -> isModeAllowed(accessZone, m));
-  }
-  
-  /** collect modes that are explicitly allowed for this zone (unmodifiable). Note that if no explicit allowed
-   * modes are present, all modes are implicitly allowed. When there exist explicitly allowed modes, any modes
-   * in the network not included in the explicitly allowed modes are regarded to not be allowed.
-   * 
-   * @param accessZone to check
-   * @return the modes explicitly allowed for this zone, null if none
-   */
-  public abstract Collection<Mode> getExplicitlyAllowedModes(Zone accessZone);
+  public abstract int getNumberOfAccessZoneEntries();
 
   /** collect the access vertex for this connectoid
    * @return access vertex
@@ -168,65 +116,12 @@ public interface Connectoid extends ExternalIdAble, ManagedId, Iterable<Zone> {
   public default boolean hasName() {
     return getName()!=null && !getName().isBlank();
   }
-  
-  /** Add allowed modes. We assume the zone is already registered as an access zone for this connectoid
-   * 
-   * @param zone to add allowed mode(s) to
-   * @param allowedModes to add
-   */
-  public default void addAllowedModes(Zone zone, Mode... allowedModes) {
-    for(int index = 0 ; index < allowedModes.length; ++index) {
-      addAllowedMode(zone, allowedModes[index]);
-    }
-  }
-  
-  /** Add allowed modes. We assume the zone is already registered as an access zone for this connectoid
-   * 
-   * @param transferZone to add allowed mode(s) to
-   * @param allowedModes to add
-   */  
-  public default void addAllowedModes(Zone transferZone, Collection<Mode> allowedModes) {
-    allowedModes.forEach( mode -> addAllowedMode(transferZone, mode));
-  }
 
-  /** Verify if any modes are allowed for this zone
-   *
-   * @param accessZone to check
-   * @return true when at least one mode is allowed, false otherwise
-   */
-  public default boolean hasExplicitlyAllowedModes(Zone accessZone) {
-    Collection<Mode> allowedModes = getExplicitlyAllowedModes(accessZone);
-    return allowedModes!=null && !allowedModes.isEmpty();
-  }
-
-  /** Verify if all modes are allowed for this zone
-   *
-   * @param accessZone to check
-   * @return true when we know for certain all modes are allowed, false otherwise
-   */
-  public default boolean isAllModesAllowed(Zone accessZone) {
-    /* no explicit allowed modes set, so all mdoes allowed */
-    return !hasExplicitlyAllowedModes(accessZone);
-  }
-
-  /** Verify if a length has been specified for the access zone to connectoid combination
-   * 
-   * @param accessZone to verify
-   * @return true if present, false otherwise
-   */
-  public default boolean hasLength(Zone accessZone) {    
-    try {
-      return getLengthKm(accessZone).isEmpty();
-    } catch (Exception e) {
-      return false;
-    }
-  }
-  
   /** Verify if access zones are registered
    * @return true when present, false otherwise
    */
-  public default boolean hasAccessZones() {
-    return getNumberOfAccessZones()>0;
+  public default boolean hasAccessZoneEntries() {
+    return getNumberOfAccessZoneEntries()>0;
   }
 
   /**

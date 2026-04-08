@@ -27,7 +27,9 @@ public class ConnectoidUtils {
    * @param connectoidsByLocation connectoids to filter on
    * @return all identified directed connectoids
    */
-  public static Collection<DirectedConnectoid> findDirectedConnectoidsReferencingLink(Link link, Map<Point, List<DirectedConnectoid>> connectoidsByLocation) {
+  public static Collection<DirectedConnectoid> findDirectedConnectoidsReferencingLink(
+          Link link, Map<Point, List<DirectedConnectoid>> connectoidsByLocation) {
+
     Collection<DirectedConnectoid> referencingConnectoids = new HashSet<>();
     /* find eligible locations for connectoids based on downstream locations of link segments on link */
     Set<Point> eligibleLocations = new HashSet<>();
@@ -38,12 +40,15 @@ public class ConnectoidUtils {
       eligibleLocations.add(link.getEdgeSegmentBa().getDownstreamVertex().getPosition());
     }
 
-    /* find all directed connectoids with link segments that have downstream locations matching the eligible locations identified*/
+    /* find all directed connectoids with link segments that have downstream locations matching the eligible
+    locations identified*/
     for(Point location : eligibleLocations) {
       Collection<DirectedConnectoid> knownConnectoidsForLink = connectoidsByLocation.get(location);
       if(knownConnectoidsForLink != null && !knownConnectoidsForLink.isEmpty()) {
         for(DirectedConnectoid connectoid : knownConnectoidsForLink) {
-          if(connectoid.getAccessLinkSegment().idEquals(link.getEdgeSegmentAb()) || connectoid.getAccessLinkSegment().idEquals(link.getEdgeSegmentBa()) ) {
+          if(connectoid.getAccessLinkSegmentsStream().anyMatch(
+                  ls -> ls.equals(link.getEdgeSegmentAb()) || ls.equals(link.getEdgeSegmentBa())) ) {
+
             /* match */
             referencingConnectoids.add(connectoid);
           }
@@ -62,12 +67,15 @@ public class ConnectoidUtils {
    * @param connectoidsByLocation all connectoids indexed by their location
    * @return found connectoids and their accessNode position
    */
-  public static Map<Point,DirectedConnectoid> findDirectedConnectoidsReferencingLinks(Collection<MacroscopicLink> links, Map<Point, List<DirectedConnectoid>> connectoidsByLocation) {
+  public static Map<Point,DirectedConnectoid> findDirectedConnectoidsReferencingLinks(
+          Collection<MacroscopicLink> links, Map<Point, List<DirectedConnectoid>> connectoidsByLocation) {
     Map<Point, DirectedConnectoid> connectoidEligibleAccessNodesLocations = new HashMap<>();
     for(Link link : links) {
-      Collection<DirectedConnectoid> connectoids = ConnectoidUtils.findDirectedConnectoidsReferencingLink(link,connectoidsByLocation);
+      Collection<DirectedConnectoid> connectoids =
+              ConnectoidUtils.findDirectedConnectoidsReferencingLink(link,connectoidsByLocation);
       if(connectoids !=null && !connectoids.isEmpty()) {
-        connectoids.forEach( connectoid -> connectoidEligibleAccessNodesLocations.put(connectoid.getAccessNode().getPosition(),connectoid));
+        connectoids.forEach( connectoid -> connectoidEligibleAccessNodesLocations.put(
+                connectoid.getAccessVertex().getPosition(),connectoid));
       }
     }
     return connectoidEligibleAccessNodesLocations;
@@ -82,22 +90,23 @@ public class ConnectoidUtils {
    * @param zoneToZoneMapping to use should contain original edge as currently used on vertex and then the value is the new edge to replace it
    * @param removeMissingMappings when true if there is no mapping, the parent edge is nullified, otherwise it is left in-tact
    */
-  public static <C extends Connectoid, Z extends Zone> void updateAccessZoneMapping(Iterable<C> connectoids, Function<Z, Z> zoneToZoneMapping, boolean removeMissingMappings) {
+  public static <C extends Connectoid, Z extends Zone> void updateAccessZoneMapping(
+          Iterable<C> connectoids, Function<Z, Z> zoneToZoneMapping, boolean removeMissingMappings) {
     for(var connectoid :  connectoids){
-      if(!connectoid.hasAccessZones()){
+      if(!connectoid.hasAccessZoneEntries()){
         continue;
       }
 
-      Collection<Zone> accessZonesToAdd = new ArrayList<>(connectoid.getNumberOfAccessZones());
-      for(var accessZoneIter = connectoid.getAccessZones().iterator();accessZoneIter.hasNext();) {
-        var currAccessZone = accessZoneIter.next();
+      for(var accessZoneIter = connectoid.getAccessZoneEntries().iterator();accessZoneIter.hasNext();) {
+        var currAccessZoneEntry = accessZoneIter.next();
+        var currAccessZone = currAccessZoneEntry.getAccessZone();
         var newAccessZone = zoneToZoneMapping.apply((Z) currAccessZone);
-        if (newAccessZone != null || removeMissingMappings) {
+        if(newAccessZone == null && removeMissingMappings){
           accessZoneIter.remove();
-          if (newAccessZone != null) accessZonesToAdd.add(newAccessZone);
+        }else if(newAccessZone != null){
+          currAccessZoneEntry.setAccessZone(newAccessZone);
         }
       }
-      connectoid.addAllAccessZones(accessZonesToAdd);
     }
   }
 }

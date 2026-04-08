@@ -1,13 +1,17 @@
 package org.goplanit.utils.zoning;
 
 import org.goplanit.utils.graph.directed.EdgeSegment;
+import org.goplanit.utils.mode.Mode;
 import org.goplanit.utils.network.layer.physical.LinkSegment;
 import org.goplanit.utils.network.layer.physical.Node;
 
+import java.util.Collection;
+import java.util.stream.Stream;
+
 /**
- * A directed connectoid is referring to an access edge segment in a network (layer) which is directed for access
- * hence, the connectoid also being directed. It is used in situations where not all segments connected to the
- * access node may be available to access the connectoid
+ * A directed connectoid is referring to one or more access edge segments in a network (layer) which is directed
+ * for access hence, the connectoid is also being directed. It is used in situations where not all segments
+ * connected to the access node may be available to access the connectoid and may be also allowed only for certain modes
  *
  * @author markr
  *
@@ -16,15 +20,70 @@ public interface DirectedConnectoid extends Connectoid{
   
   /** the class to use for the additional directed connectoid id generation */
   public static final Class<DirectedConnectoid> DIRECTED_CONNECTOID_ID_CLASS = DirectedConnectoid.class;
-  
-  /** default node access is set to the downstream end of a link segment */
-  public static boolean DEFAULT_NODE_ACCESS_DOWNSTREAM = true; 
-  
+
   /** Collect the directed connectoid id
    * 
    * @return directed connectoid id
    */
   public abstract long getDirectedConnectoidId();
+
+  /**
+   * The zones that can be accessed by this connectoid
+   *
+   * @return accessible zones
+   */
+  @Override
+  public abstract Collection<? extends DirectedConnectoidAccessZoneEntry> getAccessZoneEntries();
+
+  /** Add a new access zone entry with default properties
+   *
+   * @param zone to register as accessible
+   * @return overwritten zone if any
+   */
+  @Override
+  public abstract DirectedConnectoidAccessZoneEntry createAccessZoneEntry(Zone zone);
+
+  /** get access zone entry
+   *
+   * @param accessZone to verify
+   * @return entry
+   */
+  @Override
+  public abstract DirectedConnectoidAccessZoneEntry getAccessZoneEntry(Zone accessZone);
+
+  /** Add allowed modes. We assume the zone is already registered as an access zone for this connectoid
+   *
+   * @param zone to add allowed mode(s) to
+   * @param allowedModes to add
+   */
+  public default void addAllowedModes(Zone zone, Mode... allowedModes) {
+    if(!hasAccessZoneEntry(zone)){
+      createAccessZoneEntry(zone);
+    }
+    getAccessZoneEntry(zone).addAllowedModes(allowedModes);
+  }
+
+  /** Add allowed modes. We assume the zone is already registered as an access zone for this connectoid
+   *
+   * @param zone to add allowed mode(s) to
+   * @param allowedModes to add
+   */
+  public default void addAllowedModes(Zone zone, Collection<Mode> allowedModes) {
+    if(!hasAccessZoneEntry(zone)){
+      createAccessZoneEntry(zone);
+    }
+    getAccessZoneEntry(zone).addAllowedModes(allowedModes);
+  }
+
+  /**
+   * Will collate and produce a stream of all access link segments across all its access
+   * zone entries
+   *
+   * @return access link segments
+   */
+  public default Stream<LinkSegment> getAccessLinkSegmentsStream(){
+    return getAccessZoneEntries().stream().flatMap(e -> e.getAccessLinkSegments().stream());
+  }
 
   /**
    * {@inheritDoc}
@@ -38,19 +97,6 @@ public interface DirectedConnectoid extends Connectoid{
   @Override
   public abstract DirectedConnectoid deepClone();
 
-  /** The edge segment that provides access
-   * 
-   * @return access edge segment
-   */
-  public abstract LinkSegment getAccessLinkSegment();
-  
-  /**
-   * Replace the access link segment for this connectoid
-   * 
-   * @param accessEdgeSegment to use
-   */
-  public abstract void replaceAccessLinkSegment(LinkSegment accessEdgeSegment);
-  
   /** set if the node access is downstream or not
    * 
    * @param nodeAccessDownstream true to set it downstream, false otherwise
@@ -72,26 +118,4 @@ public interface DirectedConnectoid extends Connectoid{
     return DIRECTED_CONNECTOID_ID_CLASS;
   }
 
-  /** Based on the edge segment and the location (upstream/downstream) of the access point, collect
-   * the access node
-   * 
-   * @return accessNode to use
-   */
-  public default Node getAccessNode() {
-    if(isNodeAccessDownstream()) {
-      return getAccessLinkSegment().getDownstreamNode();
-    }else {
-      return getAccessLinkSegment().getUpstreamNode();
-    }
-  }
-
-
-  /** Verify if an access link segment is present
-   * @return true when present, false otherwise
-   */
-  public default boolean hasAccessLinkSegment() {
-    return getAccessLinkSegment()!=null;
-  }
-  
-  
 }
