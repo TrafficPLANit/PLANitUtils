@@ -14,19 +14,19 @@ public interface UndirectedConnectoidFactory extends ManagedIdEntityFactory<Undi
   /** factory method for undirected connectoid
    * 
    * @param accessNode to use
-   * @param parentZone to use
+   * @param accessZone to use
    * @param length to use between connectoid access node and zone
    * @return created undirected connectoid
    */
-  public UndirectedConnectoid registerNew(Node accessNode, Zone parentZone, double length);
+  public UndirectedConnectoid registerNew(Zone accessZone, Node accessNode, double length);
 
   /** factory method for undirected connectoid, with default length of 0 to use between zone and access node 
    * 
    * @param accessNode to use
-   * @param parentZone to use
+   * @param accessZone to use
    * @return created undirected connectoid
    */
-  public UndirectedConnectoid registerNew(Node accessNode, Zone parentZone);
+  public UndirectedConnectoid registerNew(Zone accessZone, Node accessNode);
 
   /** factory method for undirected connectoid, with default length of 0 to use between (yet unknown parent) zone and access node 
    * 

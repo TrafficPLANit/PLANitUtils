@@ -13,72 +13,67 @@ import java.util.Collection;
  */
 public interface DirectedConnectoidFactory extends ManagedIdEntityFactory<DirectedConnectoid>{
 
-  /** Create a new directed connectoid, without zone attached and using default length
-   *
-   * @param downstreamAccessNode when true access node is chosen as the downstream node of the segment,
-   *                             when false, upstream node is chosen
-   * @param accessLinkSegment to use
-   * @return created directed connectoid
-   */
-  public abstract DirectedConnectoid registerNew(final boolean downstreamAccessNode, LinkSegment accessLinkSegment);
-
   /** Create a new directed connectoid
    *
+   * @param accessZone to use
    * @param downstreamAccessNode when true access node is chosen as the downstream node of the segment,
    *                             when false, upstream node is chosen
    * @param accessLinkSegment to use
-   * @param parentZone to use
    * @param length to use for distance between zone and connectoid
    * @return created directed connectoid
    */
   public abstract DirectedConnectoid registerNew(
-      final boolean downstreamAccessNode, LinkSegment accessLinkSegment, Zone parentZone, double length);
+      Zone accessZone, final boolean downstreamAccessNode, LinkSegment accessLinkSegment, double length);
 
-  /** Create a new directed connectoid, with default length 0
+  /** Create a new directed connectoid, without zone attached and using default length
+   *
+   * @param accessZone to use
    * @param downstreamAccessNode when true access node is chosen as the downstream node of the segment,
    *                             when false, upstream node is chosen
    * @param accessLinkSegment to use
-   * @param parentZone to use
    * @return created directed connectoid
-   */  
+   */
   public default DirectedConnectoid registerNew(
-      final boolean downstreamAccessNode, LinkSegment accessLinkSegment, Zone parentZone){
-    return registerNew(downstreamAccessNode, accessLinkSegment, parentZone, Connectoid.DEFAULT_LENGTH_KM);
+      Zone accessZone, boolean downstreamAccessNode, LinkSegment accessLinkSegment){
+    return registerNew(
+        accessZone, downstreamAccessNode, accessLinkSegment, ConnectoidAccessZoneEntry.DEFAULT_LENGTH_KM.get());
   }
 
-  /** Create a new directed connectoid, with default length 0, and choose downstream access node based on the link segment provided
+  /** Create a new directed connectoid, with default length 0, and choose downstream access node based on the link
+   * segment provided
    *
    * @param accessLinkSegment to use
-   * @param parentZone to use
+   * @param accessZone to use
    * @param syncXmlIdToId flag indicating if we should sync the XML ids to internal ids
    * @param allowedModes to apply
    * @return created directed connectoid
    */
-  public default DirectedConnectoid registerNew(
-      LinkSegment accessLinkSegment, Zone parentZone, boolean syncXmlIdToId, Collection<Mode> allowedModes){
-    return registerNew(true, accessLinkSegment, parentZone, syncXmlIdToId, allowedModes);
+  public default DirectedConnectoid registerNewDownstreamAccess(
+      Zone accessZone, LinkSegment accessLinkSegment, boolean syncXmlIdToId, Collection<Mode> allowedModes){
+    return registerNew(accessZone, true, accessLinkSegment, syncXmlIdToId, allowedModes);
   }
 
   /** Create a new directed connectoid, with default length 0
    *
-   * @param downstreamAccessNode when true access node is chosen as the downstream node of the segment, when false, upstream node is chosen
+   * @param downstreamAccessNode when true access node is chosen as the downstream node of the segment, when false,
+   *                             upstream node is chosen
    * @param accessLinkSegment to use
-   * @param parentZone to use
+   * @param accessZone to use
    * @param syncXmlIdToId flag indicating if we should sync the XML ids to internal ids
    * @param allowedModes to apply
    * @return created directed connectoid
    */
   public default DirectedConnectoid registerNew(
+      Zone accessZone,
       final boolean downstreamAccessNode,
       LinkSegment accessLinkSegment,
-      Zone parentZone,
       boolean syncXmlIdToId,
       Collection<Mode> allowedModes){
-    DirectedConnectoid newEntity = registerNew(downstreamAccessNode, accessLinkSegment, parentZone);
+    DirectedConnectoid newEntity = registerNew(accessZone, downstreamAccessNode, accessLinkSegment);
     if(syncXmlIdToId == true) {
       newEntity.setXmlId(newEntity.getId());
     }
-    newEntity.addAllowedModes(parentZone, allowedModes);
+    newEntity.addAllowedModes(accessZone, allowedModes);
     return newEntity;
   }
 

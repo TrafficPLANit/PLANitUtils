@@ -6,7 +6,7 @@ package org.goplanit.utils.zoning;
  * @author markr
  *
  */
-public enum ConnectoidType {
+public enum ZoneConnectoidType {
   /** none */
   NONE("none"),
   /** traveller access */
@@ -29,7 +29,7 @@ public enum ConnectoidType {
   /** Constructor
    * @param value representation of enum
    */
-  ConnectoidType(String value){
+  ZoneConnectoidType(String value){
     this.value = value;
   }
 }

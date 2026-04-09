@@ -21,7 +21,8 @@ public class ConnectoidUtils {
   /** Logger to use */
   private static final Logger LOGGER = Logger.getLogger(ConnectoidUtils.class.getCanonicalName());
 
-  /** find all directed connectoids from the provided container indexed by location that share an access node with the passed in link's link segments
+  /** find all directed connectoids from the provided container indexed by location that share an access node with
+   * the passed in link's link segments
    *
    * @param link to find referencing directed connectoids for
    * @param connectoidsByLocation connectoids to filter on
@@ -46,9 +47,8 @@ public class ConnectoidUtils {
       Collection<DirectedConnectoid> knownConnectoidsForLink = connectoidsByLocation.get(location);
       if(knownConnectoidsForLink != null && !knownConnectoidsForLink.isEmpty()) {
         for(DirectedConnectoid connectoid : knownConnectoidsForLink) {
-          if(connectoid.getAccessLinkSegmentsStream().anyMatch(
-                  ls -> ls.equals(link.getEdgeSegmentAb()) || ls.equals(link.getEdgeSegmentBa())) ) {
-
+          if(connectoid.getAccessVertex().equals(link.getVertexA()) ||
+              connectoid.getAccessVertex().equals(link.getVertexB())){
             /* match */
             referencingConnectoids.add(connectoid);
           }
@@ -60,46 +60,54 @@ public class ConnectoidUtils {
   }
 
   /**
-   * Collect all connectoids and their access node's positions if their access link segments reside on the provided links. Can be useful to ensure
-   * these positions remain correct after modifying the network.
+   * Collect all connectoids and their access node's positions if their access link segments reside on the
+   * provided links. Can be useful to ensure these positions remain correct after modifying the network.
    *
-   * @param links to collect connectoid information for, i.e., only connectoids referencing link segments with a parent link in this collection
+   * @param links to collect connectoid information for, i.e., only connectoids referencing link segments
+   *              with a parent link in this collection
    * @param connectoidsByLocation all connectoids indexed by their location
-   * @return found connectoids and their accessNode position
+   * @return found connectoids and their accessNode position, connectoids are directional there may be two per
+   * access node
    */
-  public static Map<Point,DirectedConnectoid> findDirectedConnectoidsReferencingLinks(
+  public static Map<Point,Set<DirectedConnectoid>> findDirectedConnectoidsReferencingLinks(
           Collection<MacroscopicLink> links, Map<Point, List<DirectedConnectoid>> connectoidsByLocation) {
-    Map<Point, DirectedConnectoid> connectoidEligibleAccessNodesLocations = new HashMap<>();
+    Map<Point, Set<DirectedConnectoid>> connectoidEligibleAccessNodesLocations = new TreeMap<>();
     for(Link link : links) {
       Collection<DirectedConnectoid> connectoids =
               ConnectoidUtils.findDirectedConnectoidsReferencingLink(link,connectoidsByLocation);
       if(connectoids !=null && !connectoids.isEmpty()) {
-        connectoids.forEach( connectoid -> connectoidEligibleAccessNodesLocations.put(
-                connectoid.getAccessVertex().getPosition(),connectoid));
+        connectoids.forEach( connectoid -> {
+          connectoidEligibleAccessNodesLocations.putIfAbsent(
+              connectoid.getAccessVertex().getPosition(), new TreeSet<>());
+          connectoidEligibleAccessNodesLocations.get(connectoid.getAccessVertex().getPosition()).add(
+              connectoid);
+        });
       }
     }
     return connectoidEligibleAccessNodesLocations;
   }
 
   /**
-   * Update the parent edge of all edge segments based on the mapping provided (if any)
+   * Update the access zones of connectoids based on the mapping provided (if any)
    *
    * @param <C> type od connectoid
    * @param <Z> type of zone
    * @param connectoids to update
-   * @param zoneToZoneMapping to use should contain original edge as currently used on vertex and then the value is the new edge to replace it
-   * @param removeMissingMappings when true if there is no mapping, the parent edge is nullified, otherwise it is left in-tact
+   * @param zoneToZoneMapping to use, should contain original zone as currently used and then the value is
+   *                          the new zone to replace it
+   * @param removeMissingMappings when true if there is no mapping then the existing zone is nullified, otherwise it is
+   *                              left in-tact
    */
-  public static <C extends Connectoid, Z extends Zone> void updateAccessZoneMapping(
+  public static <C extends Connectoid<?>, Z extends Zone> void updateAccessZoneMapping(
           Iterable<C> connectoids, Function<Z, Z> zoneToZoneMapping, boolean removeMissingMappings) {
     for(var connectoid :  connectoids){
       if(!connectoid.hasAccessZoneEntries()){
         continue;
       }
 
-      for(var accessZoneIter = connectoid.getAccessZoneEntries().iterator();accessZoneIter.hasNext();) {
-        var currAccessZoneEntry = accessZoneIter.next();
-        var currAccessZone = currAccessZoneEntry.getAccessZone();
+      for(var accessZoneIter = connectoid.iterator();accessZoneIter.hasNext();) {
+        var currAccessZone = accessZoneIter.next();
+        var currAccessZoneEntry = connectoid.getAccessZoneEntry(currAccessZone);
         var newAccessZone = zoneToZoneMapping.apply((Z) currAccessZone);
         if(newAccessZone == null && removeMissingMappings){
           accessZoneIter.remove();

@@ -55,13 +55,13 @@ public interface DirectedConnectoids extends Connectoids<DirectedConnectoid> {
    * @param mapToKey the mapping to key from connectoid
    * @return directed connectoids indexed by key per layer
    */
-  public default <L extends UntypedPhysicalLayer<?,?,?>, K extends Comparable> Map<L, Map<K, List<DirectedConnectoid>>>
+  public default <L extends UntypedPhysicalLayer<?,?,?>, K extends Comparable<?>> Map<L, Map<K, List<DirectedConnectoid>>>
   groupByPhysicalLayerAndCustomKey(
       Iterable<L> networkLayers, Function<DirectedConnectoid,K> mapToKey){
     Map<L,Map<K, List<DirectedConnectoid>>> directedConnectoidsByLocation = new HashMap<>();
 
     for(var dirConnectoid : this){
-      var accessLinkSegments = dirConnectoid.getAccessZoneEntries().stream().flatMap(
+      var accessLinkSegments = dirConnectoid.getAccessZoneEntries().values().stream().flatMap(
               e -> e.getAccessLinkSegments().stream()).collect(Collectors.toList());
       var layerOptions = accessLinkSegments.stream().map(ls ->
               IterableUtils.asStream(networkLayers).filter(l -> l.getLinkSegments().containsKey(ls.getId())).

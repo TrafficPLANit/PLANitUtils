@@ -2,10 +2,9 @@ package org.goplanit.utils.zoning;
 
 import org.goplanit.utils.graph.directed.EdgeSegment;
 import org.goplanit.utils.mode.Mode;
-import org.goplanit.utils.network.layer.physical.LinkSegment;
-import org.goplanit.utils.network.layer.physical.Node;
 
 import java.util.Collection;
+import java.util.Optional;
 import java.util.stream.Stream;
 
 /**
@@ -16,7 +15,7 @@ import java.util.stream.Stream;
  * @author markr
  *
  */
-public interface DirectedConnectoid extends Connectoid{
+public interface DirectedConnectoid extends Connectoid<DirectedConnectoidAccessZoneEntry>{
   
   /** the class to use for the additional directed connectoid id generation */
   public static final Class<DirectedConnectoid> DIRECTED_CONNECTOID_ID_CLASS = DirectedConnectoid.class;
@@ -26,30 +25,6 @@ public interface DirectedConnectoid extends Connectoid{
    * @return directed connectoid id
    */
   public abstract long getDirectedConnectoidId();
-
-  /**
-   * The zones that can be accessed by this connectoid
-   *
-   * @return accessible zones
-   */
-  @Override
-  public abstract Collection<? extends DirectedConnectoidAccessZoneEntry> getAccessZoneEntries();
-
-  /** Add a new access zone entry with default properties
-   *
-   * @param zone to register as accessible
-   * @return overwritten zone if any
-   */
-  @Override
-  public abstract DirectedConnectoidAccessZoneEntry createAccessZoneEntry(Zone zone);
-
-  /** get access zone entry
-   *
-   * @param accessZone to verify
-   * @return entry
-   */
-  @Override
-  public abstract DirectedConnectoidAccessZoneEntry getAccessZoneEntry(Zone accessZone);
 
   /** Add allowed modes. We assume the zone is already registered as an access zone for this connectoid
    *
@@ -76,13 +51,63 @@ public interface DirectedConnectoid extends Connectoid{
   }
 
   /**
+   * Check if mode is allowed for access zone
+   *
+   * @param accessZone to check
+   * @param mode to check
+   * @return true when allowed, false otherwise
+   */
+  public abstract boolean isModeAllowed(Zone accessZone, Mode mode);
+
+  /**
+   * Verify if any of the provided modes is allowed on the access zone connectoid combination
+   *
+   * @param accessZone to check
+   * @param modes to check
+   * @return true if success, false otherwise
+   */
+  public default boolean isAnyModeAllowed(Zone accessZone, Collection<Mode> modes){
+    return modes.stream().anyMatch(m -> isModeAllowed(accessZone, m));
+  }
+
+  /**
+   * Verify which of provided modes is allowed on the access zone connectoid combination
+   *
+   * @param accessZone to check
+   * @param modes to check
+   * @return allowed modes subset (if any)
+   */
+  public default Collection<Mode> getAllowedModesFrom(Zone accessZone, Collection<Mode> modes){
+    return getAccessZoneEntry(accessZone).getAllowedModesFrom(modes);
+  }
+
+  /**
    * Will collate and produce a stream of all access link segments across all its access
    * zone entries
    *
    * @return access link segments
    */
-  public default Stream<LinkSegment> getAccessLinkSegmentsStream(){
-    return getAccessZoneEntries().stream().flatMap(e -> e.getAccessLinkSegments().stream());
+  public default Stream<? extends EdgeSegment> getAccessLinkSegmentsStream(){
+    return getAccessZoneEntries().values().stream().flatMap(e -> e.getAccessLinkSegments().stream());
+  }
+
+  /**
+   * Check if any access edge segments are registered for any access zone
+   *
+   * @return true when present, false otherwise
+   */
+  public default boolean hasAccessLinkSegments(){
+    return hasAccessZoneEntries() && getAccessZoneEntries().values().stream().anyMatch(
+        DirectedConnectoidAccessZoneEntry::hasAccessLinkSegments);
+  }
+
+  /**
+   * Find first available access link segment across all access zones (if any)
+   *
+   * @return first found as optional
+   */
+  private Optional<? extends EdgeSegment> getFirstAccessLinkSegment() {
+    return getAccessLinkSegmentsStream().findFirst();
   }
 
   /**
@@ -103,11 +128,19 @@ public interface DirectedConnectoid extends Connectoid{
    */
   public abstract void setNodeAccessDownstream(boolean nodeAccessDownstream);  
   
-  /** determine if the node access is downstream or not
+  /** determine if the node access is downstream or not from perspective of access segments
    * 
    * @return true when downstream, false otherwise, i.e., upstream
    */
-  public abstract boolean isNodeAccessDownstream();
+  public abstract boolean isAccessNodeAlwaysDownstream();
+
+  /** determine if the node access is upstream or not from perspective of access segments
+   *
+   * @return true when downstream, false otherwise, i.e., upstream
+   */
+  public default boolean isAccessNodeAlwaysUpstream(){
+    return !isAccessNodeAlwaysDownstream();
+  }
     
   
   /** the class for directed connectoid id generation
@@ -117,5 +150,6 @@ public interface DirectedConnectoid extends Connectoid{
   public default Class<DirectedConnectoid> getDirectedConnectoidIdClass(){
     return DIRECTED_CONNECTOID_ID_CLASS;
   }
+
 
 }

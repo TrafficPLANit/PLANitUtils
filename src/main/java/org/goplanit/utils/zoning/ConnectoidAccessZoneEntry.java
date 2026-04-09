@@ -1,11 +1,5 @@
 package org.goplanit.utils.zoning;
 
-import org.goplanit.utils.graph.directed.DirectedVertex;
-import org.goplanit.utils.id.ExternalIdAble;
-import org.goplanit.utils.id.ManagedId;
-import org.goplanit.utils.mode.Mode;
-
-import java.util.Collection;
 import java.util.Optional;
 
 /**
@@ -15,27 +9,27 @@ import java.util.Optional;
  * @author markr
  *
  */
-public interface ConnectoidAccessZoneEntry extends ExternalIdAble, ManagedId, Iterable<Zone> {
+public interface ConnectoidAccessZoneEntry {
 
   /**
    * Default connectoid length in km
    */
-  public static double DEFAULT_LENGTH_KM = 0.0;
+  public static Optional<Double> DEFAULT_LENGTH_KM = Optional.of(0.0);
   
   /** default type is set to none */
-  public static ConnectoidType DEFAULT_CONNECTOID_TYPE = ConnectoidType.NONE;
+  public static ZoneConnectoidType DEFAULT_CONNECTOID_TYPE = ZoneConnectoidType.NONE;
 
   /** Set the type of the connectoid
    * 
    * @param type its type
    */
-  public abstract void setType(ConnectoidType type);  
+  public abstract void setType(ZoneConnectoidType type);
   
   /** The type of the connectoid
    * 
    * @return its type
    */
-  public abstract ConnectoidType getType();  
+  public abstract ZoneConnectoidType getType();
       
   /**
    * The zone accessed by this entry
@@ -78,13 +72,11 @@ public interface ConnectoidAccessZoneEntry extends ExternalIdAble, ManagedId, It
   /**
    * {@inheritDoc}
    */
-  @Override
   public abstract ConnectoidAccessZoneEntry shallowClone();
 
   /**
    * {@inheritDoc}
    */
-  @Override
   public abstract ConnectoidAccessZoneEntry deepClone();
 
 
