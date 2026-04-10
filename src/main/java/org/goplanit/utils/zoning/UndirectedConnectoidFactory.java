@@ -28,7 +28,8 @@ public interface UndirectedConnectoidFactory extends ManagedIdEntityFactory<Undi
    */
   public UndirectedConnectoid registerNew(Zone accessZone, Node accessNode);
 
-  /** factory method for undirected connectoid, with default length of 0 to use between (yet unknown parent) zone and access node 
+  /** factory method for undirected connectoid, with default length of 0 to use between
+   * (yet unknown parent) zone and access node
    * 
    * @param accessNode to use
    * @return created undirected connectoid

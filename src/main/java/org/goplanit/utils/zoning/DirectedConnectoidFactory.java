@@ -3,6 +3,7 @@ package org.goplanit.utils.zoning;
 import org.goplanit.utils.id.ManagedIdEntityFactory;
 import org.goplanit.utils.mode.Mode;
 import org.goplanit.utils.network.layer.physical.LinkSegment;
+import org.goplanit.utils.network.layer.physical.Node;
 
 import java.util.Collection;
 
@@ -52,6 +53,13 @@ public interface DirectedConnectoidFactory extends ManagedIdEntityFactory<Direct
       Zone accessZone, LinkSegment accessLinkSegment, boolean syncXmlIdToId, Collection<Mode> allowedModes){
     return registerNew(accessZone, true, accessLinkSegment, syncXmlIdToId, allowedModes);
   }
+
+  /** factory method for directed connectoid, with yet unknown access zones but with access node
+   *
+   * @param accessNode to use
+   * @return created undirected connectoid
+   */
+  public DirectedConnectoid registerNew(Node accessNode);
 
   /** Create a new directed connectoid, with default length 0
    *
