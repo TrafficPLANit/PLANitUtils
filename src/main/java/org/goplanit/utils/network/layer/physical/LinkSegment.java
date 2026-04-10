@@ -158,7 +158,17 @@ public interface LinkSegment extends EdgeSegment {
    * @return true if equal, false otherwise
    */
   public default boolean isDownstreamNode(Node node){
-    return getDownstreamNode().equals(node);
+    return isDownstreamVertex(node);
+  }
+
+  /**
+   * Verify if upstream node matches given node
+   *
+   * @param node to check
+   * @return true if equal, false otherwise
+   */
+  public default boolean isUpstreamNode(Node node){
+    return isUpstreamVertex(node);
   }
 
   /**
@@ -169,16 +179,6 @@ public interface LinkSegment extends EdgeSegment {
    */
   public default boolean hasNode(Node node){
     return isDownstreamNode(node) || isUpstreamNode(node);
-  }
-
-  /**
-   * Verify if upstream node matches given node
-   *
-   * @param node to check
-   * @return true if equal, false otherwise
-   */
-  public default boolean isUpstreamNode(Node node){
-    return getUpstreamNode().equals(node);
   }
 
   /**

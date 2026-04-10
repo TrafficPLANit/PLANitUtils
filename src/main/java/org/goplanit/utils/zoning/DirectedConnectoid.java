@@ -26,61 +26,6 @@ public interface DirectedConnectoid extends Connectoid<DirectedConnectoidAccessZ
    */
   public abstract long getDirectedConnectoidId();
 
-  /** Add allowed modes. We assume the zone is already registered as an access zone for this connectoid
-   *
-   * @param zone to add allowed mode(s) to
-   * @param allowedModes to add
-   */
-  public default void addAllowedModes(Zone zone, Mode... allowedModes) {
-    if(!hasAccessZoneEntry(zone)){
-      createAccessZoneEntry(zone);
-    }
-    getAccessZoneEntry(zone).addAllowedModes(allowedModes);
-  }
-
-  /** Add allowed modes. We assume the zone is already registered as an access zone for this connectoid
-   *
-   * @param zone to add allowed mode(s) to
-   * @param allowedModes to add
-   */
-  public default void addAllowedModes(Zone zone, Collection<Mode> allowedModes) {
-    if(!hasAccessZoneEntry(zone)){
-      createAccessZoneEntry(zone);
-    }
-    getAccessZoneEntry(zone).addAllowedModes(allowedModes);
-  }
-
-  /**
-   * Check if mode is allowed for access zone
-   *
-   * @param accessZone to check
-   * @param mode to check
-   * @return true when allowed, false otherwise
-   */
-  public abstract boolean isModeAllowed(Zone accessZone, Mode mode);
-
-  /**
-   * Verify if any of the provided modes is allowed on the access zone connectoid combination
-   *
-   * @param accessZone to check
-   * @param modes to check
-   * @return true if success, false otherwise
-   */
-  public default boolean isAnyModeAllowed(Zone accessZone, Collection<Mode> modes){
-    return modes.stream().anyMatch(m -> isModeAllowed(accessZone, m));
-  }
-
-  /**
-   * Verify which of provided modes is allowed on the access zone connectoid combination
-   *
-   * @param accessZone to check
-   * @param modes to check
-   * @return allowed modes subset (if any)
-   */
-  public default Collection<Mode> getAllowedModesFrom(Zone accessZone, Collection<Mode> modes){
-    return getAccessZoneEntry(accessZone).getAllowedModesFrom(modes);
-  }
-
   /**
    * Will collate and produce a stream of all access link segments across all its access
    * zone entries

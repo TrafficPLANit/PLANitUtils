@@ -12,6 +12,16 @@ import org.goplanit.utils.network.layer.physical.Node;
 public interface UndirectedConnectoidFactory extends ManagedIdEntityFactory<UndirectedConnectoid>{
 
   /** factory method for undirected connectoid
+   *
+   * @param accessNode to use
+   * @param accessZone to use
+   * @param type type of connectoid zone combination for the given access zone
+   * @param length to use between connectoid access node and zone
+   * @return created undirected connectoid
+   */
+  public UndirectedConnectoid registerNew(Zone accessZone, Node accessNode, ZoneConnectoidType type, double length);
+
+  /** factory method for undirected connectoid
    * 
    * @param accessNode to use
    * @param accessZone to use

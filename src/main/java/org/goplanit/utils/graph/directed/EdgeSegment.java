@@ -5,6 +5,7 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 
 import org.goplanit.utils.graph.GraphEntity;
+import org.goplanit.utils.network.layer.physical.Node;
 
 /**
  * EdgeSegment represents an edge in a particular (single) direction. Each edge
@@ -72,6 +73,26 @@ public interface EdgeSegment extends Serializable, GraphEntity {
    */
   public default DirectedVertex getDownstreamVertex() {
     return isDirectionAb() ? getParent().getVertexB() : getParent().getVertexA();
+  }
+
+  /**
+   * Verify if downstream vertex matches given vertex
+   *
+   * @param vertex to check
+   * @return true if equal, false otherwise
+   */
+  public default boolean isDownstreamVertex(DirectedVertex vertex){
+    return getDownstreamVertex().equals(vertex);
+  }
+
+  /**
+   * Verify if downstream vertex matches given vertex
+   *
+   * @param vertex to check
+   * @return true if equal, false otherwise
+   */
+  public default boolean isUpstreamVertex(DirectedVertex vertex){
+    return getUpstreamVertex().equals(vertex);
   }
 
   /**
