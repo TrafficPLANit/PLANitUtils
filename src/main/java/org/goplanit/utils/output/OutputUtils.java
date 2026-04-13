@@ -11,6 +11,11 @@ import org.locationtech.jts.geom.Geometry;
 public class OutputUtils {
 
   /**
+   * Dummy constructor
+   */
+  private OutputUtils(){}
+
+  /**
    * Formats an object (if a double, outputs value to 7 decimal places
    * 
    * @param value the value to be output

@@ -18,7 +18,8 @@ public interface OdZone extends Zone {
    */
   public abstract long getOdZoneId();
   
-  /**
+  /** get id generator class
+   *
    * @return od zone id class for id generation
    */
   public default Class<OdZone> getOdZoneIdClass() {

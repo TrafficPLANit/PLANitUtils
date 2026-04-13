@@ -118,6 +118,9 @@
 							<goal>jar</goal>
 						</goals>
 						<configuration>
+							<!-- avoid warnings on missing javadoc as static classes generate
+							hundreds of these due to auto-inject of default constructors without comment -->
+							<doclint>all,-missing</doclint>
 							<!--  place generated javadocs in /docs directory of root-->
 							<destDir>docs</destDir>
 							<includeDependencySources>false</includeDependencySources>
