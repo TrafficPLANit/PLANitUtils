@@ -2,6 +2,7 @@ package org.goplanit.utils.zoning;
 
 import java.util.Collection;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Stream;
 
 import org.goplanit.utils.graph.directed.DirectedVertex;
@@ -150,6 +151,20 @@ public interface Connectoid<T extends ConnectoidAccessZoneEntry> extends Externa
    */
   public default Collection<Mode> getAllowedModesFrom(Zone accessZone, Collection<Mode> modes){
     return getAccessZoneEntry(accessZone).getAllowedModesFrom(modes);
+  }
+
+  /**
+   * Get connectoid length for a given access zone
+   *
+   * @param accessZone to use
+   * @return length,if no length or entry exists empty optional is provided
+   */
+  public default Optional<Double> getLengthKm(Zone accessZone){
+    if(!hasAccessZoneEntry(accessZone)){
+      return Optional.empty();
+    }else{
+      return getAccessZoneEntry(accessZone).getLengthKm();
+    }
   }
 
   /**
