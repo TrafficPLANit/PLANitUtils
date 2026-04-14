@@ -5,6 +5,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Stream;
 
+import org.goplanit.utils.exceptions.PlanItRunTimeException;
 import org.goplanit.utils.graph.directed.DirectedVertex;
 import org.goplanit.utils.id.ExternalIdAble;
 import org.goplanit.utils.id.ManagedId;
@@ -151,6 +152,23 @@ public interface Connectoid<T extends ConnectoidAccessZoneEntry> extends Externa
    */
   public default Collection<Mode> getAllowedModesFrom(Zone accessZone, Collection<Mode> modes){
     return getAccessZoneEntry(accessZone).getAllowedModesFrom(modes);
+  }
+
+  /**
+   * Check if explicitly allowed modes are provided
+   *
+   * @param accessZone to use
+   * @param allowInvalidAccessZone when false and access zone invalid throw PlanitRunTimeException
+   * @return flag
+   */
+  public default boolean hasExplicitlyAllowedModes(Zone accessZone, boolean allowInvalidAccessZone){
+    if(!hasAccessZoneEntry(accessZone)){
+      if(allowInvalidAccessZone){
+        return false;
+      }
+      throw new PlanItRunTimeException(String.format("Access zone invalid for connectoid (%s)", getIdsAsString()));
+    }
+    return getAccessZoneEntry(accessZone).hasExplicitlyAllowedModes();
   }
 
   /**
