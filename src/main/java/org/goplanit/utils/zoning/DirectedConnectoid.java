@@ -1,9 +1,7 @@
 package org.goplanit.utils.zoning;
 
 import org.goplanit.utils.graph.directed.EdgeSegment;
-import org.goplanit.utils.mode.Mode;
 
-import java.util.Collection;
 import java.util.Optional;
 import java.util.stream.Stream;
 
@@ -67,24 +65,19 @@ public interface DirectedConnectoid extends Connectoid<DirectedConnectoidAccessZ
   @Override
   public abstract DirectedConnectoid deepClone();
 
-  /** set if the node access is downstream or not
-   * 
-   * @param nodeAccessDownstream true to set it downstream, false otherwise
-   */
-  public abstract void setNodeAccessDownstream(boolean nodeAccessDownstream);  
-  
+
   /** determine if the node access is downstream or not from perspective of access segments
    * 
    * @return true when downstream, false otherwise, i.e., upstream
    */
-  public abstract boolean isAccessNodeAlwaysDownstream();
+  public abstract boolean isAccessNodeDownstreamOfSegments();
 
   /** determine if the node access is upstream or not from perspective of access segments
    *
    * @return true when downstream, false otherwise, i.e., upstream
    */
-  public default boolean isAccessNodeAlwaysUpstream(){
-    return !isAccessNodeAlwaysDownstream();
+  public default boolean isAccessNodeUpstreamOfSegments(){
+    return !isAccessNodeDownstreamOfSegments();
   }
     
   

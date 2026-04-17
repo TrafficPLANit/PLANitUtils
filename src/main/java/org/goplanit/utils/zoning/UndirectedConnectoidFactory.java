@@ -21,7 +21,7 @@ public interface UndirectedConnectoidFactory extends ManagedIdEntityFactory<Undi
    */
   public UndirectedConnectoid registerNew(Zone accessZone, Node accessNode, ZoneConnectoidType type, double length);
 
-  /** factory method for undirected connectoid
+  /** factory method for undirected connectoid with default type of #ZoneConnectoidType.TRAVELLER_ACCESS
    * 
    * @param accessNode to use
    * @param accessZone to use
