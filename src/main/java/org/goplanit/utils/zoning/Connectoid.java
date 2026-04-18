@@ -64,7 +64,7 @@ public interface Connectoid<T extends ConnectoidAccessZoneEntry> extends Externa
    * @return accessible zone entries
    */
   public default Map<ZoneConnectoidType, T> getAccessZoneEntriesByType(Zone accessZone){
-    return getAccessZoneEntriesByType().get(accessZone);
+    return getAccessZoneEntriesByType().get(accessZone.getId());
   }
 
   /**
@@ -129,7 +129,7 @@ public interface Connectoid<T extends ConnectoidAccessZoneEntry> extends Externa
    * @return true when registered, false otherwise
    */
   public default boolean hasAccessZoneEntry(Zone accessZone){
-    if(getAccessZoneEntriesByType().containsKey(accessZone.getId())){
+    if(!getAccessZoneEntriesByType().containsKey(accessZone.getId())){
       return false;
     }
     return !getAccessZoneEntriesByType(accessZone).isEmpty();
