@@ -98,7 +98,7 @@ public interface DirectedConnectoidFactory extends ManagedIdEntityFactory<Direct
     if(syncXmlIdToId == true) {
       newEntity.setXmlId(newEntity.getId());
     }
-    newEntity.addAllowedModes(accessZone, allowedModes);
+    newEntity.addAllowedModes(accessZone, type, allowedModes);
     return newEntity;
   }
 

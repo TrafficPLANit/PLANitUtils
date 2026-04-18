@@ -7,6 +7,7 @@ import org.locationtech.jts.geom.Point;
 import java.util.*;
 import java.util.function.Function;
 import java.util.logging.Logger;
+import java.util.stream.Stream;
 
 /**
  * Utility functions around connectoids
@@ -25,36 +26,22 @@ public class ConnectoidUtils {
    * the passed in link's link segments
    *
    * @param link to find referencing directed connectoids for
-   * @param connectoidsByLocation connectoids to filter on
+   * @param directedConnectoidStream connectoids to filter on
    * @return all identified directed connectoids
    */
   public static Collection<DirectedConnectoid> findDirectedConnectoidsReferencingLink(
-          Link link, Map<Point, List<DirectedConnectoid>> connectoidsByLocation) {
+          Link link, Stream<DirectedConnectoid> directedConnectoidStream) {
 
     Collection<DirectedConnectoid> referencingConnectoids = new HashSet<>();
-    /* find eligible locations for connectoids based on downstream locations of link segments on link */
-    Set<Point> eligibleLocations = new HashSet<>();
-    if(link.hasEdgeSegmentAb()) {
-      eligibleLocations.add(link.getEdgeSegmentAb().getDownstreamVertex().getPosition());
-    }
-    if(link.hasEdgeSegmentBa()) {
-      eligibleLocations.add(link.getEdgeSegmentBa().getDownstreamVertex().getPosition());
-    }
 
     /* find all directed connectoids with link segments that have downstream locations matching the eligible
     locations identified*/
-    for(Point location : eligibleLocations) {
-      Collection<DirectedConnectoid> knownConnectoidsForLink = connectoidsByLocation.get(location);
-      if(knownConnectoidsForLink != null && !knownConnectoidsForLink.isEmpty()) {
-        for(DirectedConnectoid connectoid : knownConnectoidsForLink) {
-          if(connectoid.getAccessVertex().equals(link.getVertexA()) ||
-              connectoid.getAccessVertex().equals(link.getVertexB())){
-            /* match */
-            referencingConnectoids.add(connectoid);
-          }
-        }
+    directedConnectoidStream.forEach(dc -> {
+      if(dc.getAccessVertex().equals(link.getVertexA()) || dc.getAccessVertex().equals(link.getVertexB())){
+        /* match */
+        referencingConnectoids.add(dc);
       }
-    }
+    });
 
     return referencingConnectoids;
   }
@@ -65,16 +52,16 @@ public class ConnectoidUtils {
    *
    * @param links to collect connectoid information for, i.e., only connectoids referencing link segments
    *              with a parent link in this collection
-   * @param connectoidsByLocation all connectoids indexed by their location
+   * @param directedConnectoidStream all connectoids
    * @return found connectoids and their accessNode position, connectoids are directional there may be two per
    * access node
    */
   public static Map<Point,Set<DirectedConnectoid>> findDirectedConnectoidsReferencingLinks(
-          Collection<MacroscopicLink> links, Map<Point, List<DirectedConnectoid>> connectoidsByLocation) {
+          Collection<MacroscopicLink> links, Stream<DirectedConnectoid> directedConnectoidStream) {
     Map<Point, Set<DirectedConnectoid>> connectoidEligibleAccessNodesLocations = new TreeMap<>();
     for(Link link : links) {
       Collection<DirectedConnectoid> connectoids =
-              ConnectoidUtils.findDirectedConnectoidsReferencingLink(link,connectoidsByLocation);
+              ConnectoidUtils.findDirectedConnectoidsReferencingLink(link,directedConnectoidStream);
       if(connectoids !=null && !connectoids.isEmpty()) {
         connectoids.forEach( connectoid -> {
           connectoidEligibleAccessNodesLocations.putIfAbsent(
@@ -88,9 +75,9 @@ public class ConnectoidUtils {
   }
 
   /**
-   * Update the access zones of connectoids based on the mapping provided (if any)
+   * Update the access zone entries' access zone for the connectoids based on the mapping provided (if any)
    *
-   * @param <C> type od connectoid
+   * @param <C> type connectoid
    * @param <Z> type of zone
    * @param connectoids to update
    * @param zoneToZoneMapping to use, should contain original zone as currently used and then the value is
@@ -105,16 +92,17 @@ public class ConnectoidUtils {
         continue;
       }
 
-      for(var accessZoneIter = connectoid.iterator();accessZoneIter.hasNext();) {
-        var currAccessZone = accessZoneIter.next();
-        var currAccessZoneEntry = connectoid.getAccessZoneEntry(currAccessZone);
-        var newAccessZone = zoneToZoneMapping.apply((Z) currAccessZone);
+      for(var accessZoneEntryIter = connectoid.iterator();accessZoneEntryIter.hasNext();) {
+        var currAccessZoneEntry = accessZoneEntryIter.next();
+        var newAccessZone = zoneToZoneMapping.apply((Z) currAccessZoneEntry.getAccessZone());
         if(newAccessZone == null && removeMissingMappings){
-          accessZoneIter.remove();
+          accessZoneEntryIter.remove();
         }else if(newAccessZone != null){
           currAccessZoneEntry.setAccessZone(newAccessZone);
         }
       }
+      // in case the new mapped zone has a different id we need to redo id mapping as well
+      connectoid.recreateAccessZoneIdMapping();
     }
   }
 }

@@ -3,6 +3,7 @@ package org.goplanit.utils.zoning;
 import org.goplanit.utils.graph.directed.EdgeSegment;
 
 import java.util.Optional;
+import java.util.function.Predicate;
 import java.util.stream.Stream;
 
 /**
@@ -25,13 +26,44 @@ public interface DirectedConnectoid extends Connectoid<DirectedConnectoidAccessZ
   public abstract long getDirectedConnectoidId();
 
   /**
-   * Will collate and produce a stream of all access link segments across all its access
-   * zone entries
+   * Will collate and produce a stream of all unique access link segments across all its access
+   * zone entries and types
    *
    * @return access link segments
    */
   public default Stream<? extends EdgeSegment> getAccessLinkSegmentsStream(){
-    return getAccessZoneEntries().values().stream().flatMap(e -> e.getAccessLinkSegments().stream());
+    return getAccessZoneEntriesByType().values().stream().flatMap(
+        e -> e.values().stream()).flatMap(
+            e -> e.getAccessLinkSegments().stream()).distinct();
+  }
+
+  /**
+   * Will collate and produce a stream of all unique access link segments across all its access
+   * zone entries and types
+   *
+   * @param entriesFilter to apply to the zoneConnectoidEntries
+   * @return access link segments
+   */
+  public default Stream<? extends EdgeSegment> getAccessLinkSegmentsStream(
+      Predicate<DirectedConnectoidAccessZoneEntry> entriesFilter){
+    return getAccessZoneEntriesByType().values().stream().flatMap(
+        initMapEntry -> initMapEntry.values().stream().filter(
+            entriesFilter::test).flatMap(
+                e -> e.getAccessLinkSegments().stream()).distinct());
+  }
+
+  /**
+   * Will collate and produce a stream of all access link segments across all its access
+   * zone entries
+   *
+   * @param type type specifier
+   * @return access link segments
+   */
+  public default Stream<? extends EdgeSegment> getAccessLinkSegmentsStream(ZoneConnectoidType type){
+    return getAccessZoneEntriesByType().values().stream().flatMap(
+        e -> e.values().stream()).filter(
+            e -> e.getType().equals(type)).flatMap(
+        e -> e.getAccessLinkSegments().stream()).distinct();
   }
 
   /**
@@ -40,8 +72,17 @@ public interface DirectedConnectoid extends Connectoid<DirectedConnectoidAccessZ
    * @return true when present, false otherwise
    */
   public default boolean hasAccessLinkSegments(){
-    return hasAccessZoneEntries() && getAccessZoneEntries().values().stream().anyMatch(
-        DirectedConnectoidAccessZoneEntry::hasAccessLinkSegments);
+    return getFirstAccessLinkSegment().isPresent();
+  }
+
+  /**
+   * Check if any access edge segments are registered for any access zone
+   *
+   * @param type type specifier
+   * @return true when present, false otherwise
+   */
+  public default boolean hasAccessLinkSegments(ZoneConnectoidType type){
+    return getFirstAccessLinkSegment(type).isPresent();
   }
 
   /**
@@ -51,6 +92,16 @@ public interface DirectedConnectoid extends Connectoid<DirectedConnectoidAccessZ
    */
   private Optional<? extends EdgeSegment> getFirstAccessLinkSegment() {
     return getAccessLinkSegmentsStream().findFirst();
+  }
+
+  /**
+   * Find first available access link segment across all access zones (if any)
+   *
+   * @param type type specifier
+   * @return first found as optional
+   */
+  private Optional<? extends EdgeSegment> getFirstAccessLinkSegment(ZoneConnectoidType type) {
+    return getAccessLinkSegmentsStream(type).findFirst();
   }
 
   /**

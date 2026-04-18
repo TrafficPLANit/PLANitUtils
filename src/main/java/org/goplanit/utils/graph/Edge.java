@@ -324,6 +324,9 @@ public interface Edge extends Serializable, GraphEntity {
    * @throws TransformException thrown if error
    */
   public default void transformGeometry(MathTransform transformer) throws MismatchedDimensionException, TransformException {
+    if(!hasGeometry()){
+      return;
+    }
     setGeometry((LineString) JTS.transform(getGeometry(),transformer));
   }
 

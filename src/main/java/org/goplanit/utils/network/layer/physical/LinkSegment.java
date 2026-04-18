@@ -96,6 +96,16 @@ public interface LinkSegment extends EdgeSegment {
   }
 
   /**
+   * Check if all of the provided modes is allowed
+   *
+   * @param modes to check
+   * @return true when present false otherwise
+   */
+  public default boolean isAllModesAllowedFrom(Collection<Mode> modes){
+    return modes.stream().allMatch(this::isModeAllowed);
+  }
+
+  /**
    * Return id of this instance. This id is expected to be generated using the
    * org.planit.utils.misc.IdGenerator
    * 
@@ -206,6 +216,6 @@ public interface LinkSegment extends EdgeSegment {
    */
   public default Node getDownstreamNode() {
     return (Node) getDownstreamVertex();
-  }  
+  }
 
 }

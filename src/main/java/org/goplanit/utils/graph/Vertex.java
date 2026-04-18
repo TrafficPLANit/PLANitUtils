@@ -245,8 +245,11 @@ public interface Vertex extends Serializable, GraphEntity {
    * @throws MismatchedDimensionException thrown if error
    * @throws TransformException thrown if error
    */
-  public default void transformPosition(MathTransform transformer) throws MismatchedDimensionException, TransformException {
-    setPosition((Point) JTS.transform(getPosition(),transformer));
+  public default void transformPosition(MathTransform transformer)
+      throws MismatchedDimensionException, TransformException {
+    if(hasPosition()) {
+      setPosition((Point) JTS.transform(getPosition(), transformer));
+    }
   }
 
   /** Verify if the vertex position is exactly equal (in 2D) to the passed in coordinate

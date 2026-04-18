@@ -22,12 +22,6 @@ public interface ConnectoidAccessZoneEntry {
   /** default type is set to none */
   public static ZoneConnectoidType DEFAULT_CONNECTOID_TYPE = ZoneConnectoidType.NONE;
 
-  /** Set the type of the connectoid
-   * 
-   * @param type its type
-   */
-  public abstract void setType(ZoneConnectoidType type);
-  
   /** The type of the connectoid
    * 
    * @return its type
@@ -154,6 +148,16 @@ public interface ConnectoidAccessZoneEntry {
   }
 
   /**
+   * Verify if all modes that are provided are allowed on this entry
+   *
+   * @param allowedModes to check
+   * @return true when allowed, false otherwise
+   */
+  public default boolean isAllModesAllowedFrom(Collection<Mode> allowedModes){
+    return allowedModes.stream().allMatch(this::isModeAllowed);
+  }
+
+  /**
    * {@inheritDoc}
    */
   public abstract ConnectoidAccessZoneEntry shallowClone();
@@ -162,6 +166,7 @@ public interface ConnectoidAccessZoneEntry {
    * {@inheritDoc}
    */
   public abstract ConnectoidAccessZoneEntry deepClone();
+
 
 
 }

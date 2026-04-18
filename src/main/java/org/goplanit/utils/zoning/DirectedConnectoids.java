@@ -61,9 +61,7 @@ public interface DirectedConnectoids extends Connectoids<DirectedConnectoid> {
     Map<L,Map<K, List<DirectedConnectoid>>> directedConnectoidsByLocation = new HashMap<>();
 
     for(var dirConnectoid : this){
-      var accessLinkSegments = dirConnectoid.getAccessZoneEntries().values().stream().flatMap(
-              e -> e.getAccessLinkSegments().stream()).collect(Collectors.toList());
-      var layerOptions = accessLinkSegments.stream().map(ls ->
+      var layerOptions = dirConnectoid.getAccessLinkSegmentsStream().map(ls ->
               IterableUtils.asStream(networkLayers).filter(l -> l.getLinkSegments().containsKey(ls.getId())).
                       findFirst()).filter(Optional::isPresent).map(Optional::get).collect(Collectors.toList());
       if(layerOptions.isEmpty()){

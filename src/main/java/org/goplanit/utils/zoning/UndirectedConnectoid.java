@@ -4,7 +4,7 @@ import org.goplanit.utils.graph.directed.DirectedVertex;
 
 /**
  * An undirected connectoid is accessed through a referenced node where all incoming/outgoing
- * edges/edge segments potentially have access. Hence it is undirected
+ * edges/edge segments potentially have access. Hence, it is undirected
  * 
  * @author markr
  *
