@@ -54,7 +54,8 @@ public interface Connectoid<T extends ConnectoidAccessZoneEntry> extends Externa
    */
   public default Stream<T> getAccessZoneEntriesStream(ZoneConnectoidType type){
     return getAccessZoneEntriesByType().values().stream().flatMap(
-        e -> e.values().stream()).filter(e -> e.getType().equals(type));
+        e1 -> e1.values().stream()).filter(
+            e2 -> e2.getType().equals(type));
   }
 
   /**

@@ -7,6 +7,7 @@ import org.locationtech.jts.geom.Point;
 import java.util.*;
 import java.util.function.Function;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 /**
@@ -23,55 +24,45 @@ public class ConnectoidUtils {
   private static final Logger LOGGER = Logger.getLogger(ConnectoidUtils.class.getCanonicalName());
 
   /** find all directed connectoids from the provided container indexed by location that share an access node with
-   * the passed in link's link segments
+   * the passed in links' link segments
    *
-   * @param link to find referencing directed connectoids for
+   * @param links to find referencing directed connectoids for
    * @param directedConnectoidStream connectoids to filter on
    * @return all identified directed connectoids
    */
-  public static Collection<DirectedConnectoid> findDirectedConnectoidsReferencingLink(
-          Link link, Stream<DirectedConnectoid> directedConnectoidStream) {
-
-    Collection<DirectedConnectoid> referencingConnectoids = new HashSet<>();
-
-    /* find all directed connectoids with link segments that have downstream locations matching the eligible
-    locations identified*/
-    directedConnectoidStream.forEach(dc -> {
-      if(dc.getAccessVertex().equals(link.getVertexA()) || dc.getAccessVertex().equals(link.getVertexB())){
-        /* match */
-        referencingConnectoids.add(dc);
+  public static Stream<DirectedConnectoid> filterDirectedConnectoidsReferencingLinks(
+      final Collection<? extends Link> links, Stream<DirectedConnectoid> directedConnectoidStream) {
+  /* find all directed connectoids with link segments that have matching downstream locations if sink or
+       or upstream locations if source connectoids*/
+    return directedConnectoidStream.filter(dc ->
+        links.stream().anyMatch(l -> {
+      if(l.hasLinkSegmentAb() && dc.getAccessVertex().equals(l.getVertexB()) &&
+          dc.isAccessNodeDownstreamOfSegments()){
+        /* sink match */
+        return true;
       }
-    });
-
-    return referencingConnectoids;
+      if(l.hasLinkSegmentBa() && dc.getAccessVertex().equals(l.getVertexA()) &&
+          dc.isAccessNodeUpstreamOfSegments()){
+        /* source match */
+        return true;
+      }
+      return false;
+    }));
   }
 
   /**
-   * Collect all connectoids and their access node's positions if their access link segments reside on the
-   * provided links. Can be useful to ensure these positions remain correct after modifying the network.
+   * Collect all connectoids when their access link segments reside on the provided links.
    *
    * @param links to collect connectoid information for, i.e., only connectoids referencing link segments
    *              with a parent link in this collection
-   * @param directedConnectoidStream all connectoids
-   * @return found connectoids and their accessNode position, connectoids are directional there may be two per
-   * access node
+   * @param directedConnectoidStream all connectoids to consider
+   * @return found connectoids, connectoids
    */
-  public static Map<Point,Set<DirectedConnectoid>> findDirectedConnectoidsReferencingLinks(
+  public static Set<DirectedConnectoid> findDirectedConnectoidsReferencingLinks(
           Collection<MacroscopicLink> links, Stream<DirectedConnectoid> directedConnectoidStream) {
-    Map<Point, Set<DirectedConnectoid>> connectoidEligibleAccessNodesLocations = new TreeMap<>();
-    for(Link link : links) {
-      Collection<DirectedConnectoid> connectoids =
-              ConnectoidUtils.findDirectedConnectoidsReferencingLink(link,directedConnectoidStream);
-      if(connectoids !=null && !connectoids.isEmpty()) {
-        connectoids.forEach( connectoid -> {
-          connectoidEligibleAccessNodesLocations.putIfAbsent(
-              connectoid.getAccessVertex().getPosition(), new TreeSet<>());
-          connectoidEligibleAccessNodesLocations.get(connectoid.getAccessVertex().getPosition()).add(
-              connectoid);
-        });
-      }
-    }
-    return connectoidEligibleAccessNodesLocations;
+    var filteredDirectedConnectoidStream =
+          ConnectoidUtils.filterDirectedConnectoidsReferencingLinks(links,directedConnectoidStream);
+    return filteredDirectedConnectoidStream.collect(Collectors.toSet());
   }
 
   /**

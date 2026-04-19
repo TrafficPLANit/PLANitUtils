@@ -72,9 +72,10 @@ public interface DirectedConnectoidFactory extends ManagedIdEntityFactory<Direct
   /** factory method for directed connectoid, with yet unknown access zones but with access node
    *
    * @param accessNode to use
+   * @param accessNodeDownstreamOfSegments directionality of the connectoid
    * @return created undirected connectoid
    */
-  public DirectedConnectoid registerNew(Node accessNode);
+  public DirectedConnectoid registerNew(Node accessNode, boolean accessNodeDownstreamOfSegments);
 
   /** Create a new directed connectoid, with default length 0
    *

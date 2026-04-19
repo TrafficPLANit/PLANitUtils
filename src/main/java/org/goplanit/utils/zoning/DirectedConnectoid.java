@@ -1,6 +1,7 @@
 package org.goplanit.utils.zoning;
 
 import org.goplanit.utils.graph.directed.EdgeSegment;
+import org.goplanit.utils.network.layer.physical.LinkSegment;
 
 import java.util.Optional;
 import java.util.function.Predicate;
@@ -64,6 +65,15 @@ public interface DirectedConnectoid extends Connectoid<DirectedConnectoidAccessZ
         e -> e.values().stream()).filter(
             e -> e.getType().equals(type)).flatMap(
         e -> e.getAccessLinkSegments().stream()).distinct();
+  }
+
+  /**
+   * Verify if given link segment is present on this connectoid for any type, mode, or access zone combination
+   * @param linkSegment to check
+   * @return true when found, false otherwise
+   */
+  public default boolean hasAccessLinkSegment(LinkSegment linkSegment){
+    return getAccessLinkSegmentsStream().anyMatch(ls -> ls.equals(linkSegment));
   }
 
   /**
