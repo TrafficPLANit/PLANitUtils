@@ -3,6 +3,7 @@ package org.goplanit.utils.graph.directed;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.function.Consumer;
+import java.util.stream.Stream;
 
 import org.goplanit.utils.graph.Edge;
 
@@ -157,7 +158,7 @@ public interface DirectedEdge extends Edge {
   public default Collection<? extends EdgeSegment> getEdgeSegments(){
     ArrayList<EdgeSegment> edgeSegments = null;
     if(hasEdgeSegmentAb() || hasEdgeSegmentBa()) {
-      edgeSegments = new ArrayList<EdgeSegment>(2);
+      edgeSegments = new ArrayList<>(2);
       if(hasEdgeSegmentAb()) {
         edgeSegments.add(getEdgeSegmentAb());
       }
@@ -166,6 +167,24 @@ public interface DirectedEdge extends Edge {
       }
     }
     return edgeSegments;
+  }
+
+  /**
+   * Stream segments
+   *
+   * @return stream
+   */
+  public default Stream<? extends EdgeSegment> streamEdgeSegments(){
+    if(hasEdgeSegmentAb() && hasEdgeSegmentBa()) {
+      return Stream.of(getEdgeSegmentAb(), getEdgeSegmentBa());
+    }
+    else if(hasEdgeSegmentAb()){
+      return Stream.of(getEdgeSegmentAb());
+    }else if(hasEdgeSegmentBa()){
+      return Stream.of(getEdgeSegmentBa());
+    }else{
+      return Stream.empty();
+    }
   }
 
   /**

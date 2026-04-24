@@ -1,9 +1,9 @@
 package org.goplanit.utils.zoning;
 
+import org.goplanit.utils.graph.directed.DirectedVertex;
 import org.goplanit.utils.id.ManagedIdEntityFactory;
 import org.goplanit.utils.mode.Mode;
 import org.goplanit.utils.network.layer.physical.LinkSegment;
-import org.goplanit.utils.network.layer.physical.Node;
 
 import java.util.Collection;
 
@@ -12,7 +12,7 @@ import java.util.Collection;
  * @author markr
  *
  */
-public interface DirectedConnectoidFactory extends ManagedIdEntityFactory<DirectedConnectoid>{
+public interface TransferConnectoidFactory extends ManagedIdEntityFactory<TransferConnectoid>{
 
   /** Create a new directed connectoid
    *
@@ -24,7 +24,7 @@ public interface DirectedConnectoidFactory extends ManagedIdEntityFactory<Direct
    * @param type the type of the zone connectoid combination reflecting how it is envisaged to be used
    * @return created directed connectoid
    */
-  public abstract DirectedConnectoid registerNew(
+  public abstract TransferConnectoid registerNewWithDirectedEntry(
       Zone accessZone,
       final boolean downstreamAccessNode,
       LinkSegment accessLinkSegment,
@@ -40,9 +40,9 @@ public interface DirectedConnectoidFactory extends ManagedIdEntityFactory<Direct
    * @param type the type of the zone connectoid combination reflecting how it is envisaged to be used
    * @return created directed connectoid
    */
-  public default DirectedConnectoid registerNew(
+  public default TransferConnectoid registerNewWithDirectedEntry(
       Zone accessZone, boolean downstreamAccessNode, LinkSegment accessLinkSegment, ZoneConnectoidType type){
-    return registerNew(
+    return registerNewWithDirectedEntry(
         accessZone,
         downstreamAccessNode,
         accessLinkSegment,
@@ -60,22 +60,22 @@ public interface DirectedConnectoidFactory extends ManagedIdEntityFactory<Direct
    * @param type the type of the zone connectoid combination reflecting how it is envisaged to be used
    * @return created directed connectoid
    */
-  public default DirectedConnectoid registerNewDownstreamAccess(
+  public default TransferConnectoid registerNewDownstreamAccess(
       Zone accessZone,
       LinkSegment accessLinkSegment,
       boolean syncXmlIdToId,
       Collection<Mode> allowedModes,
       ZoneConnectoidType type){
-    return registerNew(accessZone, true, accessLinkSegment, syncXmlIdToId, allowedModes,type);
+    return registerNewWithDirectedEntry(
+        accessZone, true, accessLinkSegment, syncXmlIdToId, allowedModes,type);
   }
 
   /** factory method for directed connectoid, with yet unknown access zones but with access node
    *
    * @param accessNode to use
-   * @param accessNodeDownstreamOfSegments directionality of the connectoid
    * @return created undirected connectoid
    */
-  public DirectedConnectoid registerNew(Node accessNode, boolean accessNodeDownstreamOfSegments);
+  public TransferConnectoid registerNew(DirectedVertex accessNode);
 
   /** Create a new directed connectoid, with default length 0
    *
@@ -88,18 +88,19 @@ public interface DirectedConnectoidFactory extends ManagedIdEntityFactory<Direct
    * @param type the type of the zone connectoid combination reflecting how it is envisaged to be used
    * @return created directed connectoid
    */
-  public default DirectedConnectoid registerNew(
+  public default TransferConnectoid registerNewWithDirectedEntry(
       Zone accessZone,
       final boolean downstreamAccessNode,
       LinkSegment accessLinkSegment,
       boolean syncXmlIdToId,
       Collection<Mode> allowedModes,
       ZoneConnectoidType type){
-    DirectedConnectoid newEntity = registerNew(accessZone, downstreamAccessNode, accessLinkSegment, type);
-    if(syncXmlIdToId == true) {
+    TransferConnectoid newEntity =
+        registerNewWithDirectedEntry(accessZone, downstreamAccessNode, accessLinkSegment, type);
+    if(syncXmlIdToId) {
       newEntity.setXmlId(newEntity.getId());
     }
-    newEntity.addAllowedModes(accessZone, type, allowedModes);
+    newEntity.getAccessZoneEntry(accessZone, type).addAllowedModes(allowedModes);
     return newEntity;
   }
 

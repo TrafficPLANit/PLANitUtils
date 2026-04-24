@@ -2,7 +2,6 @@ package org.goplanit.utils.zoning;
 
 import org.goplanit.utils.network.layer.macroscopic.MacroscopicLink;
 import org.goplanit.utils.network.layer.physical.Link;
-import org.locationtech.jts.geom.Point;
 
 import java.util.*;
 import java.util.function.Function;
@@ -30,23 +29,18 @@ public class ConnectoidUtils {
    * @param directedConnectoidStream connectoids to filter on
    * @return all identified directed connectoids
    */
-  public static Stream<DirectedConnectoid> filterDirectedConnectoidsReferencingLinks(
-      final Collection<? extends Link> links, Stream<DirectedConnectoid> directedConnectoidStream) {
-  /* find all directed connectoids with link segments that have matching downstream locations if sink or
-       or upstream locations if source connectoids*/
+  public static Stream<TransferConnectoid> filterDirectedConnectoidsReferencingLinks(
+      final Collection<? extends Link> links, Stream<TransferConnectoid> directedConnectoidStream) {
+
+    /* find all directed connectoids with link segments that  overlap with any of the link its link segments */
     return directedConnectoidStream.filter(dc ->
         links.stream().anyMatch(l -> {
-      if(l.hasLinkSegmentAb() && dc.getAccessVertex().equals(l.getVertexB()) &&
-          dc.isAccessNodeDownstreamOfSegments()){
-        /* sink match */
-        return true;
-      }
-      if(l.hasLinkSegmentBa() && dc.getAccessVertex().equals(l.getVertexA()) &&
-          dc.isAccessNodeUpstreamOfSegments()){
-        /* source match */
-        return true;
-      }
-      return false;
+          if(!l.getVertexB().equals(dc.getReferenceVertex()) && !l.getVertexA().equals(dc.getReferenceVertex())){
+            return false;
+          }
+
+          return dc.getExplicitAccessLinkSegmentsStream().anyMatch(ls ->
+              ls.equals(l.getLinkSegmentAb()) || ls.equals(l.getLinkSegmentBa()));
     }));
   }
 
@@ -58,8 +52,8 @@ public class ConnectoidUtils {
    * @param directedConnectoidStream all connectoids to consider
    * @return found connectoids, connectoids
    */
-  public static Set<DirectedConnectoid> findDirectedConnectoidsReferencingLinks(
-          Collection<MacroscopicLink> links, Stream<DirectedConnectoid> directedConnectoidStream) {
+  public static Set<TransferConnectoid> findDirectedConnectoidsReferencingLinks(
+          Collection<MacroscopicLink> links, Stream<TransferConnectoid> directedConnectoidStream) {
     var filteredDirectedConnectoidStream =
           ConnectoidUtils.filterDirectedConnectoidsReferencingLinks(links,directedConnectoidStream);
     return filteredDirectedConnectoidStream.collect(Collectors.toSet());
@@ -76,7 +70,7 @@ public class ConnectoidUtils {
    * @param removeMissingMappings when true if there is no mapping then the existing zone is nullified, otherwise it is
    *                              left in-tact
    */
-  public static <C extends Connectoid<?>, Z extends Zone> void updateAccessZoneMapping(
+  public static <C extends Connectoid, Z extends Zone> void updateAccessZoneMapping(
           Iterable<C> connectoids, Function<Z, Z> zoneToZoneMapping, boolean removeMissingMappings) {
     for(var connectoid :  connectoids){
       if(!connectoid.hasAccessZoneEntries()){

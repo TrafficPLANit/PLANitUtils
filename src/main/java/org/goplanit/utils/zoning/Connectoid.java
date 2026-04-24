@@ -1,8 +1,6 @@
 package org.goplanit.utils.zoning;
 
-import java.util.Collection;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Stream;
 
 import org.goplanit.utils.exceptions.PlanItRunTimeException;
@@ -17,13 +15,13 @@ import org.goplanit.utils.mode.Mode;
  * and the physical network.
  * <p>
  * Each combination of (zone,connectoid) can have additional properties such as length or allowed modes.
- * Not specifying thos will cause the use of defaults (DEFAULT_LENGTH_KM, all modes allowed) 
+ * Not specifying those will cause the use of defaults (DEFAULT_LENGTH_KM, all modes allowed)
  * </p>
  * 
  * @author markr
  *
  */
-public interface Connectoid<T extends ConnectoidAccessZoneEntry> extends ExternalIdAble, ManagedId, Iterable<T> {
+public interface Connectoid extends ExternalIdAble, ManagedId, Iterable<ConnectoidAccessZoneEntry> {
 
   /** the class ot use for id generation */
   public static final Class<Connectoid> CONNECTOID_ID_CLASS = Connectoid.class;
@@ -45,17 +43,27 @@ public interface Connectoid<T extends ConnectoidAccessZoneEntry> extends Externa
    * 
    * @return accessible entries by zone and type
    */
-  public abstract Map<Long, Map<ZoneConnectoidType, T>> getAccessZoneEntriesByType();
+  public abstract Map<Long, Map<ZoneConnectoidType, ConnectoidAccessZoneEntry>> getAccessZoneEntriesByType();
 
   /**
    * The entries that can be accessed by this connectoid for a given ZoneConnectoidType
    *
    * @return accessible entries filtered by type
    */
-  public default Stream<T> getAccessZoneEntriesStream(ZoneConnectoidType type){
+  public default Stream<? extends ConnectoidAccessZoneEntry> getAccessZoneEntriesStream(ZoneConnectoidType type){
     return getAccessZoneEntriesByType().values().stream().flatMap(
         e1 -> e1.values().stream()).filter(
             e2 -> e2.getType().equals(type));
+  }
+
+  /**
+   * The entries that can be accessed by this connectoid for given ZoneConnectoidTypes
+   *
+   * @return accessible entries filtered by types
+   */
+  public default Stream<? extends ConnectoidAccessZoneEntry> getAccessZoneEntriesStream(Set<ZoneConnectoidType> types){
+    return getAccessZoneEntriesByType().values().stream().flatMap(
+        e1 -> e1.values().stream()).filter(e2 -> types.contains(e2.getType()));
   }
 
   /**
@@ -64,7 +72,7 @@ public interface Connectoid<T extends ConnectoidAccessZoneEntry> extends Externa
    * @param accessZone to use
    * @return accessible zone entries
    */
-  public default Map<ZoneConnectoidType, T> getAccessZoneEntriesByType(Zone accessZone){
+  public default Map<ZoneConnectoidType, ? extends ConnectoidAccessZoneEntry> getAccessZoneEntriesByType(Zone accessZone){
     return getAccessZoneEntriesByType().get(accessZone.getId());
   }
 
@@ -89,12 +97,24 @@ public interface Connectoid<T extends ConnectoidAccessZoneEntry> extends Externa
         e -> e.get(type).getAccessZone());
   }
 
+
+  /**
+   * Access to access zone listed as a stream when they have at least one entry for given types
+   *
+   * @param types types specifier
+   * @return access zone stream
+   */
+  public default Stream<? extends Zone> getAccessZoneStream(Set<ZoneConnectoidType> types){
+    return getAccessZoneEntriesByType().values().stream().flatMap(e ->e.values().stream()).filter(
+        e -> types.contains(e.getType())).map(ConnectoidAccessZoneEntry::getAccessZone);
+  }
+
   /** Add a new access zone entry with default properties for a given usage type
    * 
    * @param zone to register as accessible
    * @return overwritten zone if any
    */
-  public abstract T createAccessZoneEntry(Zone zone, ZoneConnectoidType type);
+  public abstract ConnectoidAccessZoneEntry createUndirectedAccessZoneEntry(Zone zone, ZoneConnectoidType type);
 
   /** Remove an existing  access zone entry with default properties for a given usage type
    *
@@ -102,15 +122,16 @@ public interface Connectoid<T extends ConnectoidAccessZoneEntry> extends Externa
    * @param type to use
    * @return removed entry, null if nothing could be removed
    */
-  public abstract T removeAccessZoneEntry(Zone zone, ZoneConnectoidType type);
+  public abstract ConnectoidAccessZoneEntry removeAccessZoneEntry(Zone zone, ZoneConnectoidType type);
 
   /**
-   * create entries for all provided access zones
+   * create undirected entries for all provided access zones
    *
    * @param accessZonesToAdd to add
    */
-  public default void createAccessZoneEntries(Collection<? extends Zone> accessZonesToAdd, ZoneConnectoidType type){
-    accessZonesToAdd.forEach(z -> createAccessZoneEntry(z, type));
+  public default void createUndirectedAccessZoneEntries(
+      Collection<? extends Zone> accessZonesToAdd, ZoneConnectoidType type){
+    accessZonesToAdd.forEach(z -> createUndirectedAccessZoneEntry(z, type));
     getAccessZoneEntriesByType();
   }
 
@@ -120,7 +141,7 @@ public interface Connectoid<T extends ConnectoidAccessZoneEntry> extends Externa
    * @param type type specifier
    * @return entry
    */
-  public default T getAccessZoneEntry(Zone accessZone, ZoneConnectoidType type){
+  public default ConnectoidAccessZoneEntry getAccessZoneEntry(Zone accessZone, ZoneConnectoidType type){
     return getAccessZoneEntriesByType().get(accessZone.getId()).get(type);
   }
 
@@ -153,7 +174,7 @@ public interface Connectoid<T extends ConnectoidAccessZoneEntry> extends Externa
    * 
    * @return first available zone
    */
-  public default T getFirstAccessZoneEntry(){
+  public default ConnectoidAccessZoneEntry getFirstAccessZoneEntry(){
     return getAccessZoneEntriesByType().values().iterator().next().values().iterator().next();
   }
 
@@ -163,7 +184,7 @@ public interface Connectoid<T extends ConnectoidAccessZoneEntry> extends Externa
    * @param type type specifier
    * @return first available zone
    */
-  public default Optional<T> getFirstAccessZoneEntry(ZoneConnectoidType type){
+  public default Optional<? extends ConnectoidAccessZoneEntry> getFirstAccessZoneEntry(ZoneConnectoidType type){
     return getAccessZoneEntriesByType().values().stream().flatMap(e ->
         e.values().stream()).filter( e -> e.getType().equals(type)).findFirst();
   }
@@ -174,32 +195,6 @@ public interface Connectoid<T extends ConnectoidAccessZoneEntry> extends Externa
    */
   public default int getNumberOfAccessZoneEntries(){
     return getAccessZoneEntriesByType().size();
-  }
-
-  /** Add allowed modes. We assume the zone is already registered as an access zone for this connectoid
-   *
-   * @param zone to add allowed mode(s) to
-   * @param type type specifier
-   * @param allowedModes to add
-   */
-  public default void addAllowedModes(Zone zone, ZoneConnectoidType type, Mode... allowedModes) {
-    if(!hasAccessZoneEntry(zone, type)){
-      createAccessZoneEntry(zone, type);
-    }
-    getAccessZoneEntry(zone, type).addAllowedModes(allowedModes);
-  }
-
-  /** Add allowed modes. We assume the zone is already registered as an access zone for this connectoid
-   *
-   * @param zone to add allowed mode(s) to
-   * @param type type specifier
-   * @param allowedModes to add
-   */
-  public default void addAllowedModes(Zone zone, ZoneConnectoidType type, Collection<Mode> allowedModes) {
-    if(!hasAccessZoneEntry(zone, type)){
-      createAccessZoneEntry(zone, type);
-    }
-    getAccessZoneEntry(zone, type).addAllowedModes(allowedModes);
   }
 
   /**
@@ -225,13 +220,26 @@ public interface Connectoid<T extends ConnectoidAccessZoneEntry> extends Externa
   }
 
   /**
+   * Verify if any of the provided modes is allowed on any of the access zone-types combination
+   *
+   * @param accessZone to check
+   * @param types types specifier
+   * @param modes to check
+   * @return true if success, false otherwise
+   */
+  public default boolean isAnyModeAllowed(Zone accessZone, Set<ZoneConnectoidType> types, Collection<Mode> modes){
+    return modes.stream().anyMatch(m -> types.stream().anyMatch(t -> isModeAllowed(accessZone, t, m)));
+  }
+
+  /**
    * Verify which of provided modes is allowed on the access zone connectoid combination
    *
    * @param accessZone to check
    * @param modes to check
    * @return allowed modes subset (if any)
    */
-  public default Collection<Mode> getAllowedModesFrom(Zone accessZone, ZoneConnectoidType type, Collection<Mode> modes){
+  public default Collection<Mode> getAllowedModesFrom(
+      Zone accessZone, ZoneConnectoidType type, Collection<Mode> modes){
     return getAccessZoneEntry(accessZone, type).getAllowedModesFrom(modes);
   }
 
@@ -274,12 +282,12 @@ public interface Connectoid<T extends ConnectoidAccessZoneEntry> extends Externa
    *
    * @param accessVertex to use
    */
-  public abstract void setAccessVertex(final DirectedVertex accessVertex);
+  public abstract void setReferenceVertex(final DirectedVertex accessVertex);
 
   /** collect the access vertex for this connectoid
    * @return access vertex
    */
-  public abstract DirectedVertex getAccessVertex();
+  public abstract DirectedVertex getReferenceVertex();
   
   /**
    * {@inheritDoc}
@@ -306,7 +314,7 @@ public interface Connectoid<T extends ConnectoidAccessZoneEntry> extends Externa
 
   /**
    * recreate the id mapping for the registered access zones in case there is a reason to suspect they
-   * got out of sync (interal use only)
+   * got out of sync (internal use only)
    */
    public abstract void recreateAccessZoneIdMapping();
 
@@ -314,12 +322,12 @@ public interface Connectoid<T extends ConnectoidAccessZoneEntry> extends Externa
    * {@inheritDoc}
    */
   @Override
-  public abstract Connectoid<T> shallowClone();
+  public abstract Connectoid shallowClone();
 
   /**
    * {@inheritDoc}
    */
   @Override
-  public abstract Connectoid<T> deepClone();
+  public abstract Connectoid deepClone();
 
 }

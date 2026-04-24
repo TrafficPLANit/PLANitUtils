@@ -16,33 +16,33 @@ import java.util.stream.Collectors;
  * @author markr
  *
  */
-public interface DirectedConnectoids extends Connectoids<DirectedConnectoid> {
+public interface TransferConnectoids extends Connectoids<TransferConnectoid> {
 
-  public static final Logger LOGGER = Logger.getLogger(DirectedConnectoids.class.getCanonicalName());
+  public static final Logger LOGGER = Logger.getLogger(TransferConnectoids.class.getCanonicalName());
 
   /**
    * {@inheritDoc}
    */  
   @Override
-  public abstract DirectedConnectoidFactory getFactory();
+  public abstract TransferConnectoidFactory getFactory();
 
   /**
    * {@inheritDoc}
    */
   @Override
-  public abstract DirectedConnectoids shallowClone();
+  public abstract TransferConnectoids shallowClone();
 
   /**
    * {@inheritDoc}
    */
   @Override
-  public abstract DirectedConnectoids deepClone();
+  public abstract TransferConnectoids deepClone();
 
   /**
    * {@inheritDoc}
    */
   @Override
-  public abstract DirectedConnectoids deepCloneWithMapping(BiConsumer<DirectedConnectoid, DirectedConnectoid> mapper);
+  public abstract TransferConnectoids deepCloneWithMapping(BiConsumer<TransferConnectoid, TransferConnectoid> mapper);
 
   /**
    * For a given physical network layers container that has a relation with these directed connectoids, index all
@@ -55,13 +55,13 @@ public interface DirectedConnectoids extends Connectoids<DirectedConnectoid> {
    * @param mapToKey the mapping to key from connectoid
    * @return directed connectoids indexed by key per layer
    */
-  public default <L extends UntypedPhysicalLayer<?,?,?>, K extends Comparable<?>> Map<L, Map<K, List<DirectedConnectoid>>>
+  public default <L extends UntypedPhysicalLayer<?,?,?>, K extends Comparable<?>> Map<L, Map<K, List<TransferConnectoid>>>
   groupByPhysicalLayerAndCustomKey(
-      Iterable<L> networkLayers, Function<DirectedConnectoid,K> mapToKey){
-    Map<L,Map<K, List<DirectedConnectoid>>> directedConnectoidsByLocation = new HashMap<>();
+      Iterable<L> networkLayers, Function<TransferConnectoid,K> mapToKey){
+    Map<L,Map<K, List<TransferConnectoid>>> directedConnectoidsByLocation = new HashMap<>();
 
     for(var dirConnectoid : this){
-      var layerOptions = dirConnectoid.getAccessLinkSegmentsStream().map(ls ->
+      var layerOptions = dirConnectoid.getExplicitAccessLinkSegmentsStream().map(ls ->
               IterableUtils.asStream(networkLayers).filter(l -> l.getLinkSegments().containsKey(ls.getId())).
                       findFirst()).filter(Optional::isPresent).map(Optional::get).collect(Collectors.toList());
       if(layerOptions.isEmpty()){

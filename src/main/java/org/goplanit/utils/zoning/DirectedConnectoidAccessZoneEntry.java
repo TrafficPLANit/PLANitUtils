@@ -16,6 +16,14 @@ import java.util.stream.Collectors;
 public interface DirectedConnectoidAccessZoneEntry extends ConnectoidAccessZoneEntry {
 
   /**
+   * Check if orientation of edge segment conforms to connectoid access vertex set and existing
+   * access segments
+   * @param accessEdgeSegment to check
+   * @return true when valid, false otherwise
+   */
+  public boolean isValidOrientation(EdgeSegment accessEdgeSegment);
+
+  /**
    * add another access link segment for this connectoid zone combination (it is assumed compatible
    * with existing ones, i.e. they all end/start at the same access node
    *

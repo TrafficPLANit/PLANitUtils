@@ -1,7 +1,5 @@
 package org.goplanit.utils.zoning;
 
-import org.goplanit.utils.graph.directed.DirectedVertex;
-
 /**
  * An undirected connectoid is accessed through a referenced node where all incoming/outgoing
  * edges/edge segments potentially have access. Hence, it is undirected
@@ -9,33 +7,33 @@ import org.goplanit.utils.graph.directed.DirectedVertex;
  * @author markr
  *
  */
-public interface UndirectedConnectoid extends Connectoid<ConnectoidAccessZoneEntry>{
+public interface OdConnectoid extends Connectoid{
   
   /** the class to use for the additional directed connectoid id generation */
-  public static final Class<UndirectedConnectoid> UNDIRECTED_CONNECTOID_ID_CLASS = UndirectedConnectoid.class;
+  public static final Class<OdConnectoid> OD_CONNECTOID_ID_CLASS = OdConnectoid.class;
 
   /** the class for undirected connectoid id generation
    *
    * @return class to use
    */
-  public default Class<UndirectedConnectoid> getUndirectedConnectoidIdClass(){
-    return UNDIRECTED_CONNECTOID_ID_CLASS;
+  public default Class<OdConnectoid> getUndirectedConnectoidIdClass(){
+    return OD_CONNECTOID_ID_CLASS;
   }
   
   /** collect the undirected connectoid id
    * @return undirected connectoid id
    */
-  public abstract long getUndirectedConnectoidId();
+  public abstract long getOdConnectoidId();
 
   /**
    * {@inheritDoc}
    */
   @Override
-  public abstract UndirectedConnectoid shallowClone();
+  public abstract OdConnectoid shallowClone();
 
   /**
    * {@inheritDoc}
    */
   @Override
-  public abstract UndirectedConnectoid deepClone();
+  public abstract OdConnectoid deepClone();
 }
