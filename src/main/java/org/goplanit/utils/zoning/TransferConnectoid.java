@@ -98,6 +98,13 @@ public interface TransferConnectoid extends Connectoid{
     return getExplicitAccessLinkSegmentsStream(e -> e.getType().equals(type));
   }
 
+  /** Verify if access zones entries exist for given type
+   * @return true when present, false otherwise
+   */
+  public default boolean hasAccessZoneEntries(ZoneConnectoidType type) {
+    return getNumberOfAccessZoneEntries()>0 && getAccessZoneEntriesStream(type).findFirst().isPresent();
+  }
+
   /**
    * Verify if given link segment is present on this connectoid for any type, mode, or access zone combination
    * @param linkSegment to check
