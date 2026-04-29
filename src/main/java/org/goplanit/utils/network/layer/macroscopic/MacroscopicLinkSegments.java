@@ -41,7 +41,8 @@ public interface MacroscopicLinkSegments extends ManagedGraphEntities<Macroscopi
    * {@inheritDoc}
    */
   @Override
-  public abstract MacroscopicLinkSegments deepCloneWithMapping(BiConsumer<MacroscopicLinkSegment, MacroscopicLinkSegment> mapper);
+  public abstract MacroscopicLinkSegments deepCloneWithMapping(
+          BiConsumer<MacroscopicLinkSegment, MacroscopicLinkSegment> mapper);
   
   /** Create a raw array of all free flow travel times of the registered macroscopic link segments where the index in the array corresponds
    * to the link segment id (not id). 

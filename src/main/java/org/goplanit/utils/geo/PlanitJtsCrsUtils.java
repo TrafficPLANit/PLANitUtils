@@ -41,7 +41,8 @@ public class PlanitJtsCrsUtils {
   private static final Logger LOGGER = Logger.getLogger(PlanitJtsCrsUtils.class.getCanonicalName());
     
   /*
-   * the geotools gt-epsg-hsql dependency tries to take over the logging and the formatting of the logging. It is initialised whenever {@code CRS.decode} is invoked from some of
+   * the geotools gt-epsg-hsql dependency tries to take over the logging and the formatting of the logging.
+   * It is initialised whenever {@code CRS.decode} is invoked from some of
    * this class' static methods. Therefore, here we programmatically disable this unwanted behaviour
    */
   static {
@@ -280,9 +281,12 @@ public class PlanitJtsCrsUtils {
    * @return linearLocation found
    */  
   public LinearLocation getClosestProjectedLinearLocationOnPolygon(Coordinate referenceCoordinate, Polygon polygon){
-    PlanItRunTimeException.throwIfNull(referenceCoordinate, "Provided coordinate is null when computing closest location to given coordinate");
-    PlanItRunTimeException.throwIfNull(polygon, "Provided polygon is null when computing closest location to given coordinate");
-    PlanItRunTimeException.throwIfNull(polygon.getNumPoints()<2, "Provided polygon has too few coordinates");
+    PlanItRunTimeException.throwIfNull(referenceCoordinate,
+            "Provided coordinate is null when computing closest location to given coordinate");
+    PlanItRunTimeException.throwIfNull(polygon,
+            "Provided polygon is null when computing closest location to given coordinate");
+    PlanItRunTimeException.throwIfNull(polygon.getNumPoints()<2,
+            "Provided polygon has too few coordinates");
     
     double minDistanceMeters = Double.POSITIVE_INFINITY;
     LinearLocation closestLinearLocation = null;
@@ -549,7 +553,11 @@ public class PlanitJtsCrsUtils {
   public Envelope createBoundingBox(double centrePointX, double centrePointY, double lengthMeters) {
     if(geoCalculator == null) {
       /* cartesian approach (not in meters though )*/
-      return new Envelope(centrePointX-lengthMeters, centrePointX+lengthMeters, centrePointY-lengthMeters, centrePointY+lengthMeters);
+      return new Envelope(
+              centrePointX-lengthMeters,
+              centrePointX+lengthMeters,
+              centrePointY-lengthMeters,
+              centrePointY+lengthMeters);
     }
 
     geoCalculator.setStartingGeographicPoint(centrePointX, centrePointY);

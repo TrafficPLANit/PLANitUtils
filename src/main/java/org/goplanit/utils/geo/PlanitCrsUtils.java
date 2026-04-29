@@ -47,10 +47,13 @@ public class PlanitCrsUtils {
    * @param useFallbackIfAbsent when true use fallback web mercator instead
    * @return epsg code if present, null otherwise
    */
-  public static String findProjectedCrsEpsgCodeByCountryName(String countryName, boolean useFallbackIfAbsent){
-    return ProjectedEpsgCodesByCountry.hasEpsgDefined(countryName) ?
-            ProjectedEpsgCodesByCountry.getEpsg(countryName):
-            ProjectedEpsgCodesByCountry.WORLD_PROJECTED_WGS84;
+  public static String findProjectedCrsEpsgCodeByCountryName(String countryName, boolean useFallbackIfAbsent) {
+    if (ProjectedEpsgCodesByCountry.hasEpsgDefined(countryName)) {
+      return ProjectedEpsgCodesByCountry.getEpsg(countryName);
+    } else if (useFallbackIfAbsent){
+      return ProjectedEpsgCodesByCountry.WORLD_PROJECTED_WGS84;
+    }
+    return null;
   }
 
   /**

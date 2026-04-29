@@ -12,7 +12,8 @@ import java.util.function.Consumer;
  * @param <A> first object in pair
  * @param <B> second object in pair
  */
-public class ComparablePair<A extends Comparable, B extends Comparable> extends Pair<A, B> implements Comparable<Pair<A,B>>{
+public class ComparablePair<A extends Comparable<A>, B extends Comparable<B>> extends Pair<A, B>
+        implements Comparable<Pair<A,B>>{
 
   /** Factory method
    *
@@ -23,7 +24,7 @@ public class ComparablePair<A extends Comparable, B extends Comparable> extends 
    * @param valueB second
    * @return new pair
    */
-  public static <A extends Comparable,B extends Comparable> ComparablePair<A, B> of(A valueA, B valueB) {
+  public static <A extends Comparable<A>,B extends Comparable<B>> ComparablePair<A, B> of(A valueA, B valueB) {
     return new ComparablePair<>(valueA, valueB);
   }
 

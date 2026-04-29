@@ -25,11 +25,11 @@ public class ExternalIdAbleUtils {
     String noXmlId = "N/A"; // apply in case no Xml id is set
     StringBuilder sb = new StringBuilder();
     sb.append(
-            (xmlIdPair.firstNotNull() && xmlIdPair.first().hasXmlId()) ? xmlIdPair.first().getXmlId() : noXmlId).append(
-                    postFixToApply);
+            (xmlIdPair.firstNotNull() && xmlIdPair.first().hasXmlId()) ?
+                    xmlIdPair.first().getXmlId() : noXmlId).append(postFixToApply);
     sb.append(separator); // separator
-    sb.append(xmlIdPair.secondNotNull() && xmlIdPair.second().hasXmlId() ? xmlIdPair.second().getXmlId() : noXmlId).append(
-            postFixToApply);
+    sb.append(xmlIdPair.secondNotNull() && xmlIdPair.second().hasXmlId() ?
+            xmlIdPair.second().getXmlId() : noXmlId).append(postFixToApply);
     return sb.toString();
   }
 }

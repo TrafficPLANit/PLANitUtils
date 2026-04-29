@@ -104,7 +104,8 @@ public class PlanitEntityGeoUtils {
       }else if(entity instanceof Vertex) {
         distanceMeters = geoUtils.getDistanceInMetres(coord, ((Vertex) entity).getPosition().getCoordinate());
       }else {
-        if(!suppressLogging) LOGGER.warning(String.format("Unsupported PLANit entity to compute closest distance to %s",entity.getClass().getCanonicalName()));
+        if(!suppressLogging) LOGGER.warning(String.format("Unsupported PLANit entity to compute closest " +
+                "distance to %s",entity.getClass().getCanonicalName()));
       }
 
       if(distanceMeters < minDistanceMeters) {
@@ -160,10 +161,12 @@ public class PlanitEntityGeoUtils {
     LinearLocation projectedLinearLocationOnLink = null;
     if(referenceGeometry instanceof Point) {
       projectedLinearLocationOnLink =
-          geoUtils.getClosestProjectedLinearLocationOnGeometry(referenceGeometry.getCoordinate(),accessEdge.getGeometry());
+          geoUtils.getClosestProjectedLinearLocationOnGeometry(
+                  referenceGeometry.getCoordinate(),accessEdge.getGeometry());
     }else{
       projectedLinearLocationOnLink =
-          geoUtils.getClosestGeometryExistingCoordinateToProjectedLinearLocationOnLineString(referenceGeometry,accessEdge.getGeometry());
+          geoUtils.getClosestGeometryExistingCoordinateToProjectedLinearLocationOnLineString(
+                  referenceGeometry,accessEdge.getGeometry());
     }
     return projectedLinearLocationOnLink;
   }

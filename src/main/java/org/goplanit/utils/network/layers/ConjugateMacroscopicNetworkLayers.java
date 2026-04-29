@@ -10,7 +10,8 @@ import org.goplanit.utils.network.layer.MacroscopicNetworkLayer;
  * @author markr
  *
  */
-public interface ConjugateMacroscopicNetworkLayers extends UntypedPhysicalNetworkLayers<ConjugateMacroscopicNetworkLayer> {
+public interface ConjugateMacroscopicNetworkLayers
+        extends UntypedPhysicalNetworkLayers<ConjugateMacroscopicNetworkLayer> {
   
   /**
    * {@inheritDoc}

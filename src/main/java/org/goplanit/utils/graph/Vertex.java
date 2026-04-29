@@ -95,7 +95,7 @@ public interface Vertex extends Serializable, GraphEntity {
    * @param toBeAdded the to be added edges
    */
   public default void addEdges(Collection<? extends Edge> toBeAdded){
-    toBeAdded.forEach( edge -> addEdge(edge));
+    toBeAdded.forEach(this::addEdge);
   }
   
   /**
@@ -160,7 +160,7 @@ public interface Vertex extends Serializable, GraphEntity {
    * @param toBeRemoved to remove
    */
   public default void removeEdges(Collection<? extends Edge> toBeRemoved){
-    toBeRemoved.forEach(e -> removeEdge(e));
+    toBeRemoved.forEach(this::removeEdge);
   }
 
   /**
@@ -280,7 +280,8 @@ public interface Vertex extends Serializable, GraphEntity {
       if (!edge.hasVertex(this)) {
         LOGGER.warning(
             String.format(
-                "Edge (id:%d) does not contain vertex (id:%d externalId:%s) even though the vertex is connected to it", edge.getId(), getId(), getExternalId()));
+                "Edge (id:%d) does not contain vertex (id:%d externalId:%s) even though the vertex is" +
+                        " connected to it", edge.getId(), getId(), getExternalId()));
         return false;
       }
     }

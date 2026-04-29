@@ -28,7 +28,7 @@ public final class IdGenerator {
    * @param token the group for which ids will be generated
    * @return created IdGenerator
    */
-  protected static LocalIdGenerator createIdGeneratorForParent(IdGroupingToken token) {
+  private static LocalIdGenerator createIdGeneratorForParent(IdGroupingToken token) {
     LocalIdGenerator idGenerator = new LocalIdGenerator();
     idGroups.put(token, idGenerator);
     LOGGER.fine("created id group for" + token.toString());
@@ -42,7 +42,7 @@ public final class IdGenerator {
    * @param theClass the class for which the id is being generated
    * @return the generated id
    */
-  public static long generateId(IdGroupingToken token, Class<? extends Object> theClass) {
+  public static long generateId(IdGroupingToken token, Class<?> theClass) {
     LocalIdGenerator idGeneratorForGroup = null;
     if (!idGroups.containsKey(token)) {
       idGeneratorForGroup = createIdGeneratorForParent(token);
@@ -76,7 +76,7 @@ public final class IdGenerator {
    * @param groupId to reset
    * @param theClass to reset
    */
-  public static void reset(IdGroupingToken groupId, Class<? extends Object> theClass ) {
+  public static void reset(IdGroupingToken groupId, Class<?> theClass ) {
     if( idGroups.containsKey(groupId)) {
         idGroups.get(groupId).reset(theClass);
     }
@@ -89,7 +89,7 @@ public final class IdGenerator {
    * @param theClass to reset
    * @param offset to use
    */  
-  public static void resetTo(IdGroupingToken groupId, Class<? extends Object> theClass, long offset) {
+  public static void resetTo(IdGroupingToken groupId, Class<?> theClass, long offset) {
     if( idGroups.containsKey(groupId)) {
       idGroups.get(groupId).resetTo(theClass, offset);
   }
@@ -111,7 +111,7 @@ public final class IdGenerator {
    * @return idGroupingToken that has been created
    */
   public static IdGroupingToken createIdGroupingToken(Object groupOwner, long groupOwnerId) {
-    return new IdGroupingToken(groupOwner.getClass().getSimpleName()+"-"+Long.toString(groupOwnerId));
+    return new IdGroupingToken(groupOwner.getClass().getSimpleName()+"-"+ groupOwnerId);
   }  
   
   /** collect the latest generated id for a given class and token
@@ -119,7 +119,7 @@ public final class IdGenerator {
    * @param theClass to use
    * @return latest generated id, -1 if not available
    */
-  public static long getLatestIdForToken(IdGroupingToken token, Class<? extends Object> theClass) {
+  public static long getLatestIdForToken(IdGroupingToken token, Class<?> theClass) {
     if (idGroups.containsKey(token)) {
       LocalIdGenerator idGeneratorForGroup = idGroups.get(token);
       if(idGeneratorForGroup != null) {

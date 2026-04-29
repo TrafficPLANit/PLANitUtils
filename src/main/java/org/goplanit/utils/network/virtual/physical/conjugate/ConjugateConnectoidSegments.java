@@ -35,5 +35,6 @@ public interface ConjugateConnectoidSegments extends ManagedGraphEntities<Conjug
    * {@inheritDoc}
    */
   @Override
-  public abstract ConjugateConnectoidSegments deepCloneWithMapping(BiConsumer<ConjugateConnectoidSegment, ConjugateConnectoidSegment> mapper);
+  public abstract ConjugateConnectoidSegments deepCloneWithMapping(
+          BiConsumer<ConjugateConnectoidSegment, ConjugateConnectoidSegment> mapper);
 }

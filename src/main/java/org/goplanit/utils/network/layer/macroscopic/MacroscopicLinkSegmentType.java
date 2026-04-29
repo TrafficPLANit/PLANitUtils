@@ -85,7 +85,8 @@ public interface MacroscopicLinkSegmentType extends ExternalIdAble, ManagedId {
    * @return capacity per lane in pcu/h/lane or default
    */
   public default double getExplicitCapacityPerLaneOrDefault() {
-    return isExplicitCapacityPerLaneSet() ? getExplicitCapacityPerLane() : MacroscopicConstants.DEFAULT_CAPACITY_PCU_HOUR_LANE;
+    return isExplicitCapacityPerLaneSet() ?
+            getExplicitCapacityPerLane() : MacroscopicConstants.DEFAULT_CAPACITY_PCU_HOUR_LANE;
   }
   
   /** Verify if capacity per lane is set explicitly or relies on default

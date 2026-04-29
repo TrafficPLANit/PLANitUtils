@@ -123,9 +123,6 @@ public class IterableUtils {
       return true;
     }
     var iter = iterable.iterator();
-    if(iter == null){
-      return true;
-    }
-    return !iter.hasNext();
+      return !iter.hasNext();
   }
 }

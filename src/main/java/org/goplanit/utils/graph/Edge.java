@@ -226,7 +226,8 @@ public interface Edge extends Serializable, GraphEntity {
    * @return true when present false otherwise
    */
   public default boolean hasVertex(Vertex vertex) {
-    return getVertexA().equals(vertex) || getVertexB().equals(vertex); 
+    return getVertexA().equals(vertex) ||
+            getVertexB().equals(vertex);
   }
 
   /**
@@ -281,15 +282,18 @@ public interface Edge extends Serializable, GraphEntity {
    */
   public default boolean isGeometryInAbDirection(boolean allowSingleVertexWithoutGeometry) {
     if(!hasGeometry()){
-      throw new PlanItRunTimeException("Unable to identify direction as edge (%s) has no geometry of its own", this.getIdsAsString());
+      throw new PlanItRunTimeException("Unable to identify direction as edge (%s) has no geometry of its own",
+              this.getIdsAsString());
     }
 
     var vertexAHasGeometry = getVertexA().hasPosition();
     var vertexBHasGeometry = getVertexB().hasPosition();
     if(!vertexAHasGeometry && !vertexBHasGeometry){
-      throw new PlanItRunTimeException("Unable to identify direction as both vertices of edge %s have no geometry", this.getIdsAsString());
+      throw new PlanItRunTimeException("Unable to identify direction as both vertices of edge %s have no geometry",
+              this.getIdsAsString());
     }else if(!allowSingleVertexWithoutGeometry && !(vertexAHasGeometry && vertexBHasGeometry)){
-      throw new PlanItRunTimeException("One of the vertices has no geometry for edge %s, this is not allowed", this.getIdsAsString());
+      throw new PlanItRunTimeException("One of the vertices has no geometry for edge %s, this is not allowed",
+              this.getIdsAsString());
     }
 
     // Given difficulty of ensuring consistency in rounding between various geometries
@@ -308,13 +312,18 @@ public interface Edge extends Serializable, GraphEntity {
       return true;
     }
 
-    boolean isVertexAEndPoint = vertexBHasGeometry && getGeometry().getStartPoint().getCoordinate().equals2D(getVertexB().getPosition().getCoordinate(), Precision.EPSILON_6);
-    boolean isVertexBStartPoint = vertexAHasGeometry && getGeometry().getEndPoint().getCoordinate().equals2D(getVertexA().getPosition().getCoordinate(), Precision.EPSILON_6);
+    boolean isVertexAEndPoint = vertexBHasGeometry &&
+            getGeometry().getStartPoint().getCoordinate().equals2D(getVertexB().getPosition().getCoordinate(),
+                    Precision.EPSILON_6);
+    boolean isVertexBStartPoint = vertexAHasGeometry &&
+            getGeometry().getEndPoint().getCoordinate().equals2D(getVertexA().getPosition().getCoordinate(),
+                    Precision.EPSILON_6);
     if(isVertexBStartPoint && isVertexAEndPoint){
       return false;
     }
 
-    throw new PlanItRunTimeException("Unable to identify direction as vertex locations do not match internal geometry of edge within reason it appears");
+    throw new PlanItRunTimeException("Unable to identify direction as vertex locations do not match internal" +
+            " geometry of edge within reason it appears");
   }
   
   /** transform the line string information of this edge using the passed in MathTransform
@@ -323,7 +332,8 @@ public interface Edge extends Serializable, GraphEntity {
    * @throws MismatchedDimensionException thrown if error
    * @throws TransformException thrown if error
    */
-  public default void transformGeometry(MathTransform transformer) throws MismatchedDimensionException, TransformException {
+  public default void transformGeometry(MathTransform transformer)
+          throws MismatchedDimensionException, TransformException {
     if(!hasGeometry()){
       return;
     }
@@ -339,8 +349,10 @@ public interface Edge extends Serializable, GraphEntity {
    */
   public default Geometry updateGeometryInjectCoordinateAtProjectedLocation(LinearLocation projectedLinearLocation){
     var oldGeometry = getGeometry();
-    Pair<LineString, LineString> splitLineString = PlanitJtsUtils.splitLineString(getGeometry(),projectedLinearLocation);
-    LineString linkGeometryWithExplicitProjectedCoordinate = PlanitJtsUtils.mergeLineStrings(splitLineString.first(),splitLineString.second());
+    Pair<LineString, LineString> splitLineString =
+            PlanitJtsUtils.splitLineString(getGeometry(),projectedLinearLocation);
+    LineString linkGeometryWithExplicitProjectedCoordinate =
+            PlanitJtsUtils.mergeLineStrings(splitLineString.first(),splitLineString.second());
     setGeometry(linkGeometryWithExplicitProjectedCoordinate);
     return oldGeometry;
   }

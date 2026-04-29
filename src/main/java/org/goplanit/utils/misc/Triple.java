@@ -107,9 +107,12 @@ public class Triple<A, B, C> {
     if (other instanceof Triple) {
       @SuppressWarnings("rawtypes") Triple otherPair = (Triple) other;
       return (
-              (this.first == otherPair.first || (this.first != null && otherPair.first != null && this.first.equals(otherPair.first))) &&
-                      (this.second == otherPair.second || (this.second != null && otherPair.second != null && this.second.equals(otherPair.second))) &&
-                      (this.third == otherPair.third || (this.third != null && otherPair.third != null && this.third.equals(otherPair.third)))
+              (this.first == otherPair.first ||
+              (this.first != null && otherPair.first != null && this.first.equals(otherPair.first))) &&
+              (this.second == otherPair.second ||
+                      (this.second != null && otherPair.second != null && this.second.equals(otherPair.second))) &&
+              (this.third == otherPair.third ||
+                      (this.third != null && otherPair.third != null && this.third.equals(otherPair.third)))
       );
     }
     return false;

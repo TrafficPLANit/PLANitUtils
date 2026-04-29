@@ -53,7 +53,8 @@ public interface MacroscopicLinkSegmentTypeFactory extends ManagedIdEntityFactor
    * @param capacityPcuPerHour     capacity of the link segment type
    * @return the link segment type
    */
-  public abstract MacroscopicLinkSegmentType registerNewWithCapacity(final String name, final double capacityPcuPerHour);
+  public abstract MacroscopicLinkSegmentType registerNewWithCapacity(
+          final String name, final double capacityPcuPerHour);
   
   /**
    * Create and register new macroscopic link segment type on network without explicitly setting capacity,

@@ -40,7 +40,8 @@ public class IdMappingUtils {
       case XML:
         return (instance) -> instance!=null ? instance.getXmlId() : null;
       default:
-        throw new PlanItRunTimeException(String.format("unknown id mapping type found for %s %s", clazz.getName(), idMapper));
+        throw new PlanItRunTimeException(String.format("unknown id mapping type found for %s %s",
+                clazz.getName(), idMapper));
     }
   }
 

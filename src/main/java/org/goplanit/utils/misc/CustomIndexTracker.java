@@ -45,12 +45,14 @@ public class CustomIndexTracker {
     @SuppressWarnings("unchecked")
     var mapWrapper = (MapWrapper<U, V>) entityByIndexTracker.get(theClazz);
     if(mapWrapper == null) {
-      throw new PlanItRunTimeException("No source id container registered for PLANit entity of type %s, unable to register, perhaps consider registering via its superclass explicitly",
+      throw new PlanItRunTimeException("No source id container registered for PLANit entity of type %s," +
+              " unable to register, perhaps consider registering via its superclass explicitly",
           obj.getClass().getName());
     }
     var old = mapWrapper.register(obj);
     if(old!=null){
-      throw new PlanItRunTimeException("PLANit entity of type %s already registered by its source id %s, unable to register", obj.getClass().getName(),
+      throw new PlanItRunTimeException("PLANit entity of type %s already registered by its source id %s, " +
+              "unable to register", obj.getClass().getName(),
           mapWrapper.getKeyByValue(old).toString());
     }
   }
@@ -66,7 +68,8 @@ public class CustomIndexTracker {
    */
   public <K, V> void initialiseEntityContainer(Class<V> clazz, final Function<V, K> valueToKey) {
     if (entityByIndexTracker.containsKey(clazz)) {
-      LOGGER.warning(String.format("Unable to register PLANit entity tracker for %s, already present", clazz.getName()));
+      LOGGER.warning(String.format("Unable to register PLANit entity tracker for %s, already present",
+              clazz.getName()));
     }
     entityByIndexTracker.put(clazz, new MapWrapperImpl<>(new HashMap<>(), valueToKey));
   }

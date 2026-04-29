@@ -16,8 +16,10 @@ import org.goplanit.utils.network.virtual.physical.ConnectoidSegment;
  *
  * @author markr
  */
-public interface UntypedVirtualLayer<V extends DirectedVertex, E extends ConnectoidDirectedEdge, ES extends ConnectoidSegment>
-        extends UntypedDirectedGraphLayer<V, E, ES> {
+public interface UntypedVirtualLayer<
+        V extends DirectedVertex,
+        E extends ConnectoidDirectedEdge,
+        ES extends ConnectoidSegment> extends UntypedDirectedGraphLayer<V, E, ES> {
 
   /**
    * Access to connectoid segments

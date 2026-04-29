@@ -9,6 +9,7 @@ import org.goplanit.utils.exceptions.PlanItRunTimeException;
 import org.goplanit.utils.graph.Edge;
 import org.goplanit.utils.graph.Vertex;
 import org.goplanit.utils.graph.directed.EdgeSegment;
+import org.goplanit.utils.id.IdAble;
 import org.goplanit.utils.math.Precision;
 import org.goplanit.utils.misc.Pair;
 import org.goplanit.utils.network.layer.physical.Node;
@@ -52,7 +53,9 @@ public class PlanitGraphGeoUtils {
    * @param entitiesToFilter with values , this map is filtered
    * @param maxValue to filter on
    */
-  protected static <T> void removePlanitEntitiesBeyondValue(Map<? extends T, Double> entitiesToFilter, Double maxValue) {
+  protected static <T> void removePlanitEntitiesBeyondValue(
+          Map<? extends T, Double> entitiesToFilter, Double maxValue) {
+
     Iterator<?> iterator = entitiesToFilter.entrySet().iterator();
     while(iterator.hasNext()) {
       @SuppressWarnings("unchecked") 
@@ -77,15 +80,19 @@ public class PlanitGraphGeoUtils {
    */  
   protected static <T> Double findPlanitEntityDistance(
       Coordinate reference, T planitEntity, PlanitJtsCrsUtils geoUtils){
+
     if(planitEntity instanceof Zone) {
-      Coordinate closestCoordinate = geoUtils.getClosestProjectedCoordinateOnGeometry(reference,  ((Zone)planitEntity).getGeometry());
+      Coordinate closestCoordinate =
+              geoUtils.getClosestProjectedCoordinateOnGeometry(reference,  ((Zone)planitEntity).getGeometry());
       return geoUtils.getDistanceInMetres(reference, closestCoordinate);
     }else if(planitEntity instanceof Edge) {
       return geoUtils.getClosestProjectedDistanceInMetersToLineString(reference, ((Edge)planitEntity).getGeometry());
     }else {
-      LOGGER.warning(String.format("Unsupported planit entity to compute closest distance to %s",planitEntity.getClass().getCanonicalName()));
+      LOGGER.warning(String.format("Unsupported planit entity to compute closest distance to %s",
+              planitEntity.getClass().getCanonicalName()));
     }      
     return null;
+
   }  
   
   /** Find the distances to the reference point and the geometry for all given PLANit entities with a supported geometry from the provided collection.
@@ -98,9 +105,9 @@ public class PlanitGraphGeoUtils {
    * @param geoUtils to compute projected distances
    * @return planitEntity closest and distance in meters, null if none matches criteria
    */  
-  protected static <T> Map<T,Double> findPlanitEntitiesDistance(
+  protected static <T extends IdAble> Map<T,Double> findPlanitEntitiesDistance(
       Coordinate reference, Collection<? extends T> planitEntities, PlanitJtsCrsUtils geoUtils){
-    Map<T,Double> distanceMap = new TreeMap<>();
+    var distanceMap = new TreeMap<T,Double>();
     for(T entity : planitEntities) {
       distanceMap.put(entity, findPlanitEntityDistance(reference, entity, geoUtils));
     }
@@ -117,7 +124,7 @@ public class PlanitGraphGeoUtils {
    * @param geoUtils to compute projected distances
    * @return planitEntity closest and distance in meters, null if none matches criteria
    */   
-  protected static <T> Map<T,Double> findPlanitEntitiesDistance(
+  protected static <T extends IdAble> Map<T,Double> findPlanitEntitiesDistance(
       LineString lineString, Collection<? extends T> planitEntities, PlanitJtsCrsUtils geoUtils){
     Map<T,Double> distanceMap = null;     
     int numCoordinates = lineString.getCoordinates().length;
@@ -138,9 +145,12 @@ public class PlanitGraphGeoUtils {
     return distanceMap;
   }   
   
-  /** Find all PLANit entities within striking distance of the line string from the available entities based on the max distance provided. 
-   * This method computes the actual distance between any location on any line segment of the geometry of the entity and any existing coordinate on 
-   * the line string and it is therefore is very precise. A cap is placed on how far an entities geometry is allowed to be away to still be regarded as closest via maxDistanceMeters.
+  /** Find all PLANit entities within striking distance of the line string from the available entities based on the
+   * max distance provided.
+   * This method computes the actual distance between any location on any line segment of the geometry of the
+   * entity and any existing coordinate on
+   * the line string and it is therefore is very precise. A cap is placed on how far an entities geometry is
+   * allowed to be away to still be regarded as closest via maxDistanceMeters.
    * 
    * @param <T> PLANit entity type
    * @param lineString reference line string
@@ -149,8 +159,11 @@ public class PlanitGraphGeoUtils {
    * @param geoUtils to compute projected distances
    * @return closest and its distance, null if none matches criteria
    */  
-  protected static <T> Set<? extends T> findPlanitEntitiesWithinDistance(
-      LineString lineString, Collection<? extends T> planitEntities, Double maxDistanceMeters, PlanitJtsCrsUtils geoUtils) {
+  protected static <T extends IdAble> Set<? extends T> findPlanitEntitiesWithinDistance(
+      LineString lineString, Collection<? extends T> planitEntities,
+          Double maxDistanceMeters,
+          PlanitJtsCrsUtils geoUtils) {
+
     /* collect distances */
     Map<? extends T, Double> result = findPlanitEntitiesDistance(lineString, planitEntities, geoUtils);    
     /* remove entries beyond distance */
@@ -159,9 +172,11 @@ public class PlanitGraphGeoUtils {
     return result.keySet();
   } 
   
-  /** Find all PLANit entities within striking distance of the line string from the available entities based on the max distance provided. 
-   * This method computes the actual distance between any location on any line segment of the geometry of the entity and any existing coordinate on 
-   * the line string and it is therefore is very precise. A cap is placed on how far an entities geometry is allowed to be away to still be regarded as closest via maxDistanceMeters.
+  /** Find all PLANit entities within striking distance of the line string from the available entities based on the
+   * max distance provided. This method computes the actual distance between any location on any line segment of
+   * the geometry of the entity and any existing coordinate on the line string and it is therefore is very precise.
+   * A cap is placed on how far an entities geometry is allowed to be away to still be regarded as closest
+   * via maxDistanceMeters.
    * 
    * @param <T> PLANit entity type
    * @param reference reference location to use
@@ -170,8 +185,9 @@ public class PlanitGraphGeoUtils {
    * @param geoUtils to compute projected distances
    * @return closest and its distance, null if none matches criteria
    */  
-  protected static <T> Set<? extends T> findPlanitEntitiesWithinDistance(
-      Coordinate reference, Collection<? extends T> planitEntities, Double maxDistanceMeters, PlanitJtsCrsUtils geoUtils) {
+  protected static <T extends IdAble> Set<? extends T> findPlanitEntitiesWithinDistance(
+      Coordinate reference, Collection<? extends T> planitEntities,
+          Double maxDistanceMeters, PlanitJtsCrsUtils geoUtils) {
     /* collect distances */
     Map<? extends T, Double> result = findPlanitEntitiesDistance(reference, planitEntities, geoUtils);
     /* remove entries beyond distance */
@@ -193,8 +209,10 @@ public class PlanitGraphGeoUtils {
    * @return planitEntity closest and distance in meters, null if none matches criteria
    * @throws PlanItException thrown if error
    */  
-  protected static <T> Pair<T, Double> findPlanitEntityClosest(
-      Coordinate reference, Collection<? extends T> planitEntities, double maxDistanceMeters, PlanitJtsCrsUtils geoUtils) throws PlanItException {
+  protected static <T extends IdAble> Pair<T, Double> findPlanitEntityClosest(
+      Coordinate reference, Collection<? extends T> planitEntities, double maxDistanceMeters,
+          PlanitJtsCrsUtils geoUtils) throws PlanItException {
+
     /* collect distances */
     Map<? extends T, Double> result = findPlanitEntitiesDistance(reference, planitEntities, geoUtils);
     /* find minimum entry */
@@ -202,9 +220,10 @@ public class PlanitGraphGeoUtils {
   }
   
 
-  /** Find the closest PLANit entity to the line string from the available entities. This method computes the actual distance between any location on any line segment of the 
-   * geometry of the entity and any existing coordinate on the line string and it is therefore is very precise.
-   * A cap is placed on how far an entities geometry is allowed to be away to still be regarded as closest via maxDistanceMeters.
+  /** Find the closest PLANit entity to the line string from the available entities. This method computes the
+   * actual distance between any location on any line segment of the geometry of the entity and any
+   * existing coordinate on the line string and it is therefore is very precise. A cap is placed on how far
+   * an entities geometry is allowed to be away to still be regarded as closest via maxDistanceMeters.
    * 
    * 
    * @param <T> PLANit entity type
@@ -214,8 +233,9 @@ public class PlanitGraphGeoUtils {
    * @param geoUtils to compute projected distances
    * @return closest and its distance, null if none matches criteria
    */
-  protected static <T> Pair<T,Double> findPlanitEntityClosest(
-      LineString lineString, final Collection<? extends T> planitEntities, double maxDistanceMeters, final PlanitJtsCrsUtils geoUtils) {
+  protected static <T extends IdAble> Pair<T,Double> findPlanitEntityClosest(
+      LineString lineString, final Collection<? extends T> planitEntities,
+          double maxDistanceMeters, final PlanitJtsCrsUtils geoUtils) {
     /* collect distances */
     Map<? extends T, Double> result = findPlanitEntitiesDistance(lineString, planitEntities, geoUtils);
     
@@ -288,30 +308,34 @@ public class PlanitGraphGeoUtils {
     return null;
   }
 
-  /** Find the edge closest to the passed in line string using a projection from any existing coordinate on the line string to the geometry of the link.
+  /** Find the edge closest to the passed in line string using a projection from any existing coordinate on the
+   *  line string to the geometry of the link.
    * 
    * @param lineString to find closest link for
    * @param edges to check against
    * @param geoUtils used to compute distances
    * @return closest edge found
-   * @throws PlanItException thrown if error
    */   
-  public static Edge findEdgeClosestToLineString(LineString lineString, Collection<? extends Edge> edges, PlanitJtsCrsUtils geoUtils) throws PlanItException {    
-    Pair<? extends Edge,Set<? extends Edge>> result = findEdgesClosestToLineString(lineString, edges, 0, geoUtils);
-    return result!=null ? result.first() : null;
+  public static Edge findEdgeClosestToLineString(
+          LineString lineString, Collection<? extends Edge> edges, PlanitJtsCrsUtils geoUtils){
+    Pair<? extends Edge,Set<? extends Edge>> result =
+            findEdgesClosestToLineString(lineString, edges, 0, geoUtils);
+    return result.first();
   }
   
-  /** Find the edge closest to the passed in point using a projection from any existing coordinate on the geometry to the geometry of the link.
+  /** Find the edge closest to the passed in point using a projection from any existing coordinate on the geometry
+   * to the geometry of the link.
    * 
    * @param point to find closest link for
    * @param edges to check against
    * @param geoUtils used to compute distances
    * @return closest edge found
-   * @throws PlanItException thrown if error
    */    
-  public static Edge findEdgeClosestToPoint(Point point, Collection<? extends Edge> edges, PlanitJtsCrsUtils geoUtils) throws PlanItException {
-    Pair<? extends Edge,Set<? extends Edge>> result = findEdgesClosestToPoint(point, edges, 0, geoUtils);
-    return result!=null ? result.first() : null;
+  public static Edge findEdgeClosestToPoint(
+          Point point, Collection<? extends Edge> edges, PlanitJtsCrsUtils geoUtils){
+    Pair<? extends Edge,Set<? extends Edge>> result =
+            findEdgesClosestToPoint(point, edges, 0, geoUtils);
+    return result.first();
   }
     
   
@@ -412,11 +436,16 @@ public class PlanitGraphGeoUtils {
     
     LineString linkSegmentGeometry = edgeSegment.getParent().getGeometry();
     if(linkSegmentGeometry == null) {
-      throw new PlanItRunTimeException("Geometry not available on edge segment %d (external id %s), unable to determine closest line segment to reference geometry, this shouldn't happen", edgeSegment.getId(), edgeSegment.getExternalId());
+      throw new PlanItRunTimeException("Geometry not available on edge segment %d (external id %s), " +
+              "unable to determine closest line segment to reference geometry, this shouldn't happen",
+              edgeSegment.getId(), edgeSegment.getExternalId());
     }
     
-    LinearLocation linearLocation = geoUtils.getClosestGeometryExistingCoordinateToProjectedLinearLocationOnLineString(referenceGeometry, linkSegmentGeometry);
-    boolean reverseLinearLocationGeometry = edgeSegment.isDirectionAb()!=edgeSegment.getParent().isGeometryInAbDirection();
+    LinearLocation linearLocation =
+            geoUtils.getClosestGeometryExistingCoordinateToProjectedLinearLocationOnLineString(
+                    referenceGeometry, linkSegmentGeometry);
+    boolean reverseLinearLocationGeometry =
+            edgeSegment.isDirectionAb()!=edgeSegment.getParent().isGeometryInAbDirection();
     
     LineSegment lineSegment = linearLocation.getSegment(edgeSegment.getParent().getGeometry());
     if(reverseLinearLocationGeometry) {

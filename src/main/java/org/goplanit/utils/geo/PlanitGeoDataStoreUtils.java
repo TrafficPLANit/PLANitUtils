@@ -44,7 +44,8 @@ public class PlanitGeoDataStoreUtils {
     try {
       datastore = DataStoreFinder.getDataStore(paramMap);
       if(datastore == null){
-        LOGGER.severe(String.format("Unable to obtain data store for %s in location %s",params, outputFileNameWithPath));
+        LOGGER.severe(String.format("Unable to obtain data store for %s in location %s",
+                params, outputFileNameWithPath));
       }
     }catch (Exception e){
       LOGGER.severe("Cause: "+ (e.getMessage()));
@@ -68,7 +69,8 @@ public class PlanitGeoDataStoreUtils {
     return findFileDataBaseDataStoreWithParams(
         outputFileNameWithPath,
         Stream.concat(
-            Arrays.stream(params), Stream.of(Pair.of("create",true))).collect(Collectors.toList()).toArray(new Pair[0]));
+            Arrays.stream(params), Stream.of(Pair.of("create",true))).collect(
+                    Collectors.toList()).toArray(new Pair[0]));
   }
 
   /**

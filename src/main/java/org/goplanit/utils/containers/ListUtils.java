@@ -75,11 +75,15 @@ public class ListUtils {
    * @param mapEachValue apply map function to each value while transposing
    * @return transpose the transposed list of lists
    */
-  public static <V,R> List<? extends List<R>> transpose(List<? extends List<V>> original, Function<V,R> mapEachValue) {
+  public static <V,R> List<? extends List<R>> transpose(
+          List<? extends List<V>> original, Function<V,R> mapEachValue) {
     return IntStream.range(0,original.get(0).size()).mapToObj(
-            rowIndex -> original.stream().map( // for each col vector
-                    originalCol -> originalCol.get(rowIndex)).map(mapEachValue).collect(Collectors.toList()) // apply mapping to each value
-    ).collect(Collectors.toList()); // add all rows to list
+            // for each col vector
+            rowIndex -> original.stream().map(
+                    // apply mapping to each value
+                    originalCol -> originalCol.get(rowIndex)).map(mapEachValue).collect(Collectors.toList())
+            // add all rows to list
+    ).collect(Collectors.toList());
   }
 
   /**
@@ -90,8 +94,11 @@ public class ListUtils {
    */
   public static List<? extends List<?>> transpose(List<? extends List<?>> original) {
     return IntStream.range(0,original.get(0).size()).mapToObj(
-            rowIndex -> original.stream().map( // for each col vector
-                    originalCol -> originalCol.get(rowIndex)).collect(Collectors.toList()) // format value and collect single row
-    ).collect(Collectors.toList()); // add all rows to list
+            // for each col vector
+            rowIndex -> original.stream().map(
+                    // format value and collect single row
+                    originalCol -> originalCol.get(rowIndex)).collect(Collectors.toList())
+            // add all rows to list
+    ).collect(Collectors.toList());
   }
 }

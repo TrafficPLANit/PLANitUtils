@@ -60,7 +60,8 @@ public interface UntypedGraph<V extends Vertex, E extends Edge> extends ManagedI
    * @throws MismatchedDimensionException thrown if error
    * @throws TransformException thrown if error
    */
-  public default void transformGeometries(MathTransform transformer) throws MismatchedDimensionException, TransformException {
+  public default void transformGeometries(MathTransform transformer)
+          throws MismatchedDimensionException, TransformException {
     for(Edge edge : getEdges()) {
       edge.transformGeometry(transformer);
     }

@@ -25,7 +25,8 @@ public interface DirectedVertices extends GraphEntities<DirectedVertex> {
   public default DirectedVertexFactory getFactory(){
     /** override to change return type signature on interface, implementation must still
      * implement this method to provide access to an actual instance */
-    Logger.getLogger(DirectedVertices.class.getCanonicalName()).warning("getFactory not implemented yet for directed vertices implementation");
+    Logger.getLogger(DirectedVertices.class.getCanonicalName()).warning(
+            "getFactory not implemented yet for directed vertices implementation");
     return null;
   }  
   

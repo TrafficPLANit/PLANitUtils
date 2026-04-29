@@ -75,7 +75,8 @@ public interface ConjugateConnectoidSegment extends ConjugateEdgeSegment, PcuCap
    */
   @SuppressWarnings("unchecked")
   public default Pair<? extends LinkSegment,? extends LinkSegment> getOriginalAdjacentEdgeSegments(){
-    return (Pair<? extends LinkSegment, ? extends LinkSegment>) ConjugateEdgeSegment.super.getOriginalAdjacentEdgeSegments();
+    return (Pair<? extends LinkSegment, ? extends LinkSegment>)
+            ConjugateEdgeSegment.super.getOriginalAdjacentEdgeSegments();
   }
 
   /**

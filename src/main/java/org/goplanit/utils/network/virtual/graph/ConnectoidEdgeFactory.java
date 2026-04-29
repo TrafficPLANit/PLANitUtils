@@ -18,5 +18,6 @@ public interface ConnectoidEdgeFactory extends GraphEntityFactory<ConnectoidDire
    * @param lengthKm length in km to set
    * @return newly created connectoid edge (reference vertices not yet aware of connection these have to be added afterwards)
    */
-  public ConnectoidDirectedEdge registerNew(CentroidVertex centroidVertex, DirectedVertex nonCentroidVertex, double lengthKm);
+  public ConnectoidDirectedEdge registerNew(
+          CentroidVertex centroidVertex, DirectedVertex nonCentroidVertex, double lengthKm);
 }

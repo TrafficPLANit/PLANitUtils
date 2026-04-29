@@ -17,7 +17,8 @@ public interface EdgeFactory extends GraphEntityFactory<Edge> {
    * @return the created edge
    * @throws PlanItException thrown if there is an error
    */
-  public default Edge registerNew(final Vertex vertexA, final Vertex vertexB) throws PlanItException{
+  public default Edge registerNew(final Vertex vertexA, final Vertex vertexB)
+          throws PlanItException{
     return registerNew(vertexA, vertexB, false);
   }
   
@@ -30,6 +31,7 @@ public interface EdgeFactory extends GraphEntityFactory<Edge> {
    * @return the created edge
    * @throws PlanItException thrown if there is an error
    */
-  public abstract Edge registerNew(final Vertex vertexA, final Vertex vertexB, boolean registerOnVertices) throws PlanItException; 
+  public abstract Edge registerNew(final Vertex vertexA, final Vertex vertexB, boolean registerOnVertices)
+          throws PlanItException;
   
 }

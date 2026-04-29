@@ -34,6 +34,7 @@ public class DirectedGraphUtils {
    * @param vertexSegmentTerminationCondition predicate for termination condition for successful search completion
    * @return found vertex (if any) based on termination and the back links for all processed vertices
    */
+  @SuppressWarnings("unchecked")
   public static <V extends DirectedVertex,ES extends EdgeSegment> Pair<V, Map<V, ES>> breadthFirstSearch(
       V startVertex,
       boolean invertDirection,

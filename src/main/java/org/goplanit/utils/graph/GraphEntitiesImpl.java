@@ -13,7 +13,8 @@ import org.goplanit.utils.wrapper.LongMapWrapperImpl;
  *
  * @param <E> type of graph entity
  */
-public abstract class GraphEntitiesImpl<E extends GraphEntity> extends LongMapWrapperImpl<E> implements GraphEntities<E> {
+public abstract class GraphEntitiesImpl<E extends GraphEntity> extends LongMapWrapperImpl<E>
+        implements GraphEntities<E> {
 
   /**
    * Constructor

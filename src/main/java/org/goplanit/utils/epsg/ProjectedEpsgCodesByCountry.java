@@ -62,11 +62,11 @@ public class ProjectedEpsgCodesByCountry {
    * @param countryName to use
    * @return epsg code string
    */
-  public static final String getEpsg(String countryName) {
+  public static String getEpsg(String countryName) {
     return countryToEpsgCodes.get(countryName);
   }
 
-  public static final boolean hasEpsgDefined(String countryName) {
+  public static boolean hasEpsgDefined(String countryName) {
     return countryToEpsgCodes.containsKey(countryName);
   }
 

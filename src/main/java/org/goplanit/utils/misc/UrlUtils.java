@@ -176,9 +176,11 @@ public class UrlUtils {
         String pathWithoutTrailingSlash = StringUtils.removeEndingStringWhenPresent(baseUri.getPath(), "/");
         String combinedRawPath = pathWithoutTrailingSlash + "/" + relPathToAdd;
 
-        return new URI(baseUri.getScheme(),baseUri.getAuthority(),combinedRawPath,baseUri.getQuery(),baseUri.getFragment()).toURL();
+        return new URI(baseUri.getScheme(),baseUri.getAuthority(),combinedRawPath,baseUri.getQuery(),
+                baseUri.getFragment()).toURL();
     } catch (Exception e) {
-      LOGGER.warning(String.format("Unable to append relativePath %s to base URL %s",relativePath != null ? relativePath : "", baseUrl!=null ? baseUrl.toString() : ""));
+      LOGGER.warning(String.format("Unable to append relativePath %s to base URL %s",
+              relativePath != null ? relativePath : "", baseUrl!=null ? baseUrl.toString() : ""));
     }
     return null;
   }

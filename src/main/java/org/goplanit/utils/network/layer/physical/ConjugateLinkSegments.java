@@ -39,5 +39,6 @@ public interface ConjugateLinkSegments extends ManagedGraphEntities<ConjugateLin
    * {@inheritDoc}
    */
   @Override
-  public abstract ConjugateLinkSegments deepCloneWithMapping(BiConsumer<ConjugateLinkSegment, ConjugateLinkSegment> mapper);
+  public abstract ConjugateLinkSegments deepCloneWithMapping(
+          BiConsumer<ConjugateLinkSegment, ConjugateLinkSegment> mapper);
 }

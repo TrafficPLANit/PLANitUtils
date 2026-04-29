@@ -56,12 +56,15 @@ public class FileUtils {
    * @return the list of files that match this extension in the dir
    */
   public static File[] getFilesWithExtensionFromDir(final String pathToDir, final String fileExtension){
-    PlanItRunTimeException.throwIf(StringUtils.isNullOrBlank(pathToDir), "Path directory is null or blank when collecting files");
-    PlanItRunTimeException.throwIf(StringUtils.isNullOrBlank(fileExtension), "File extension to use is null or blank when collecting files from directory");
+    PlanItRunTimeException.throwIf(StringUtils.isNullOrBlank(pathToDir),
+            "Path directory is null or blank when collecting files");
+    PlanItRunTimeException.throwIf(StringUtils.isNullOrBlank(fileExtension),
+            "File extension to use is null or blank when collecting files from directory");
     
     /* the dir */
     File directoryPath = new File(pathToDir);
-    PlanItRunTimeException.throwIf(!directoryPath.isDirectory(),String.format("%s is not a valid directory",directoryPath ));
+    PlanItRunTimeException.throwIf(!directoryPath.isDirectory(),
+            String.format("%s is not a valid directory",directoryPath ));
     
     /* the filter */
     FilenameFilter fileExtensionFilter = new FilenameFilter(){
@@ -121,7 +124,7 @@ public class FileUtils {
       try {
         return new File(url.toURI());
       }catch(URISyntaxException e) {
-        LOGGER.warning(String.format("Unable to convert URL %s to file",url.toString()));
+        LOGGER.warning(String.format("Unable to convert URL %s to file", url));
       }
     }
     

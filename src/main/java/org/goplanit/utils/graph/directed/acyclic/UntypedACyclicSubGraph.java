@@ -24,7 +24,8 @@ import org.goplanit.utils.misc.Pair;
  * @author markr
  *
  */
-public interface UntypedACyclicSubGraph<V extends DirectedVertex, E extends EdgeSegment> extends DirectedSubGraph<V, E>, Iterable<V> {
+public interface UntypedACyclicSubGraph<V extends DirectedVertex, E extends EdgeSegment>
+        extends DirectedSubGraph<V, E>, Iterable<V> {
 
   /**
    * Root vertices of this acyclic graph. Roots can either be a starting point or end point depending on the direction of the dag

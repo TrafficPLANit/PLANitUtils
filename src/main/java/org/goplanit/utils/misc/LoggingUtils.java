@@ -174,7 +174,9 @@ public class LoggingUtils {
    * @return time period prefix
    */
   public static String timePeriodPrefix(TimePeriod timePeriod) {
-    String timePeriodReference = timePeriod.hasExternalId() ? "external id: " + timePeriod.getExternalId() : (timePeriod.hasXmlId() ? "xml id: "+timePeriod.getXmlId() : "");
+    String timePeriodReference = timePeriod.hasExternalId() ?
+            "external id: " + timePeriod.getExternalId() :
+            (timePeriod.hasXmlId() ? "xml id: "+timePeriod.getXmlId() : "");
     return surroundWithBrackets(String.format("time period: %s (id %d)", timePeriodReference, timePeriod.getId()));
   }  
   

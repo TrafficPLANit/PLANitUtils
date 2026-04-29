@@ -18,7 +18,8 @@ import java.util.function.Predicate;
  * 
  * @author markr
  */
-public interface UntypedDirectedGraph<V extends DirectedVertex, E extends DirectedEdge, ES extends EdgeSegment> extends UntypedGraph<V,E> {
+public interface UntypedDirectedGraph<V extends DirectedVertex, E extends DirectedEdge, ES extends EdgeSegment>
+        extends UntypedGraph<V,E> {
 
 
   /** Collect edges segments of graph

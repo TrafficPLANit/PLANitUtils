@@ -26,7 +26,9 @@ public class EdgeSegmentUtils {
    * @param edgeToEdgeMapping to use should contain original edge as currently used on vertex and then the value is the new edge to replace it
    * @param removeMissingMappings when true if there is no mapping, the parent edge is nullified, otherwise it is left in-tact
    */
-  public static <ES extends EdgeSegment, E extends DirectedEdge> void updateEdgeSegmentParentEdges(Iterable<ES> edgeSegments, Function<E, E> edgeToEdgeMapping, boolean removeMissingMappings) {
+  public static <ES extends EdgeSegment, E extends DirectedEdge> void updateEdgeSegmentParentEdges(
+          Iterable<ES> edgeSegments, Function<E, E> edgeToEdgeMapping, boolean removeMissingMappings) {
+
     for(var edgeSegment :  edgeSegments){
       var parent = (E) edgeSegment.getParent();
       if(parent == null){
@@ -59,7 +61,9 @@ public class EdgeSegmentUtils {
         break;
       }
       LineString result =
-          es.getParent().hasGeometry() ? es.getParent().getGeometry() : EdgeUtils.createLineStringFromVertexLocations(es.getParent(), es.isDirectionAb());
+          es.getParent().hasGeometry() ?
+                  es.getParent().getGeometry() :
+                  EdgeUtils.createLineStringFromVertexLocations(es.getParent(), es.isDirectionAb());
       if(result == null){
         missingGeometries = true;
       }
@@ -73,11 +77,13 @@ public class EdgeSegmentUtils {
     }
 
     if(missingGeometries){
-      LOGGER.warning("Found path where one or more links have no geometry or node positions, path geometry incomplete");
+      LOGGER.warning("Found path where one or more links have no geometry or node positions," +
+              " path geometry incomplete");
     }
 
     // deduplicate shared vertices between link (segments) when concatenating
-    return PlanitJtsUtils.createCopyWithoutAdjacentDuplicateCoordinates(PlanitJtsUtils.concatenate(linkGeometries.toArray(LineString[]::new)));
+    return PlanitJtsUtils.createCopyWithoutAdjacentDuplicateCoordinates(
+            PlanitJtsUtils.concatenate(linkGeometries.toArray(LineString[]::new)));
   }
 
   /**

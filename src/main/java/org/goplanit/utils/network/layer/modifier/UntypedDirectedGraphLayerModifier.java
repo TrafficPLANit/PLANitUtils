@@ -22,8 +22,10 @@ import java.util.stream.Collectors;
  *
  * @author markr
  */
-public interface UntypedDirectedGraphLayerModifier<V extends DirectedVertex, E extends DirectedEdge, S extends EdgeSegment>
-        extends TopologicalLayerModifier, GraphModifierEventProducer {
+public interface UntypedDirectedGraphLayerModifier<
+        V extends DirectedVertex,
+        E extends DirectedEdge,
+        S extends EdgeSegment> extends TopologicalLayerModifier, GraphModifierEventProducer {
     
   /**
    * Break the passed in link by inserting the passed in node in between. After completion the original links remain

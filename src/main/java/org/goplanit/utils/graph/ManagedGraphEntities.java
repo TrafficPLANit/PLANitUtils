@@ -11,7 +11,8 @@ import java.util.function.BiConsumer;
  *
  * @param <E> type of graph entity
  */
-public interface ManagedGraphEntities<E extends GraphEntity & ManagedId> extends GraphEntities<E>, ManagedIdEntities<E>{
+public interface ManagedGraphEntities<E extends GraphEntity & ManagedId>
+        extends GraphEntities<E>, ManagedIdEntities<E>{
       
   /**
    * shallow clone implementation

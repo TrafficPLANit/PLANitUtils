@@ -48,14 +48,15 @@ public abstract class EventProducerImpl{
    * @param priority to apply for the combination of listener and event type(s)
    * @param eventTypes to register the listener for
    */
-  protected final synchronized void addListener(final EventListener listener, EventListenerPriority priority, final EventType... eventTypes){
-    for(int index=0;index<eventTypes.length;++index) {
-      EventType type = eventTypes[index];
-      listeners.putIfAbsent(type, new TreeMap<>());
-      Map<EventListenerPriority, List<EventListener>> listenersByEventType = listeners.get(type);
-      listenersByEventType.putIfAbsent(priority, new ArrayList<>());
-      listenersByEventType.get(priority).add(listener);
-    }
+  protected final synchronized void addListener(
+          final EventListener listener, EventListenerPriority priority, final EventType... eventTypes){
+
+      for (EventType type : eventTypes) {
+          listeners.putIfAbsent(type, new TreeMap<>());
+          Map<EventListenerPriority, List<EventListener>> listenersByEventType = listeners.get(type);
+          listenersByEventType.putIfAbsent(priority, new ArrayList<>());
+          listenersByEventType.get(priority).add(listener);
+      }
   }  
     
   /** Add a listener for one or more event types that are presumably triggered by this producer, with the default priority (low) 
@@ -75,7 +76,8 @@ public abstract class EventProducerImpl{
   protected final synchronized void addListener(final EventListener listener){
     if(!listener.hasKnownSupportedEventTypes()) {
       LOGGER.severe("IGNORED: unable to identify listener's supported event types, "
-          + "consider registering with explicit event types, or provide supported types by implementing hasKnownSupportedEventTypes() on listener");
+          + "consider registering with explicit event types, or provide supported types " +
+              "by implementing hasKnownSupportedEventTypes() on listener");
     }
     addListener(listener, listener.getKnownSupportedEventTypes());
   }     

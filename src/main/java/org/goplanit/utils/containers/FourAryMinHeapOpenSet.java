@@ -13,9 +13,14 @@ import java.util.NoSuchElementException;
  */
 public final class FourAryMinHeapOpenSet {
 
-  private final int[] heap;       // store vertex ids
-  private final int[] vertexHeapPosition;   // position[vertexId] = index in heap, or -1 if not in heap
-  private final double[] vertexScores;     // score[vertexId] = fScore (g + h) for that vertex
+  /** store vertex ids */
+  private final int[] heap;
+
+  /** position[vertexId] = index in heap, or -1 if not in heap */
+  private final int[] vertexHeapPosition;
+
+  /** score[vertexId] = fScore (g + h) for that vertex */
+  private final double[] vertexScores;
   private int size = 0;
 
   private int maxHeapSize;
@@ -32,13 +37,18 @@ public final class FourAryMinHeapOpenSet {
     final double[] vertexScoresRef = vertexScores;
     final int[] vertexHeapPositionRef = vertexHeapPosition;
 
-    int vertexIndex = localHeapRef[heapIndex];          // 1. Store the vertex we are moving.
-    double vertexScore = vertexScoresRef[vertexIndex];  // 2. Cache its score (f-score) for comparisons.
+    // 1. Store the vertex we are moving.
+    int vertexIndex = localHeapRef[heapIndex];
+    // 2. Cache its score (f-score) for comparisons.
+    double vertexScore = vertexScoresRef[vertexIndex];
 
-    while (heapIndex > 0) {                             // 3. Stop if we reach the root (index 0).
-      final int parent = (heapIndex - 1) >>> 2;         // 4-ARY HEAP: parent index = (i-1)/4
+    // 3. Stop if we reach the root (index 0).
+    while (heapIndex > 0) {
+      // 4-ARY HEAP: parent index = (i-1)/4
+      final int parent = (heapIndex - 1) >>> 2;
 
-      final int parentVertex = localHeapRef[parent];    // 5. Get the vertex ID of the parent.
+      // 5. Get the vertex ID of the parent.
+      final int parentVertex = localHeapRef[parent];
       final double parentScore = vertexScoresRef[parentVertex];
 
       // 6. If the parent is already smaller/equal, the heap is valid. Stop.
@@ -48,7 +58,8 @@ public final class FourAryMinHeapOpenSet {
 
       // 7. Otherwise, pull the parent down into our current slot.
       localHeapRef[heapIndex] = parentVertex;
-      vertexHeapPositionRef[parentVertex] = heapIndex;  // Update parent's position tracker.
+      // Update parent's position tracker.
+      vertexHeapPositionRef[parentVertex] = heapIndex;
 
       // 8. Move our target "index" up to where the parent used to be.
       heapIndex = parent;
@@ -71,13 +82,18 @@ public final class FourAryMinHeapOpenSet {
     final double[] vertexScoresRef = vertexScores;
     final int[] vertexHeapPositionRef = vertexHeapPosition;
 
-    final int vertexIndex = localHeapRef[heapIndex];      // 1. Store the vertex we are moving.
-    final double vertexScore = vertexScoresRef[vertexIndex]; // 2. Cache its score.
+    // 1. Store the vertex we are moving.
+    final int vertexIndex = localHeapRef[heapIndex];
+    // 2. Cache its score.
+    final double vertexScore = vertexScoresRef[vertexIndex];
 
-    while (true) {                                        // 4-ARY HEAP: we'll break when there are no children
-      final int firstChild = (heapIndex << 2) + 1;        // 4-ARY HEAP: first child index = 4*i + 1
+    // 4-ARY HEAP: we'll break when there are no children
+    while (true) {
+      // 4-ARY HEAP: first child index = 4*i + 1
+      final int firstChild = (heapIndex << 2) + 1;
       if (firstChild >= size) {
-        break;                                            // no children -> we're at a leaf
+        // no children -> we're at a leaf
+        break;
       }
 
       int smallestChildIdx = firstChild;
@@ -177,16 +193,19 @@ public final class FourAryMinHeapOpenSet {
    */
   public void insertOrDecrease(int vertexId, double newScore) {
     final int pos = vertexHeapPosition[vertexId];
-    if (pos == -1) {                                // New vertex in heap
+    // New vertex in heap
+    if (pos == -1) {
       heap[size] = vertexId;
       vertexHeapPosition[vertexId] = size;
       vertexScores[vertexId] = newScore;
-      siftUp(size);                                 // move new entry up until it is in the right position
+      // move new entry up until it is in the right position
+      siftUp(size);
       size++;
       maxHeapSize = Math.max(maxHeapSize, size);
-    } else if (newScore < vertexScores[vertexId]) { // Decrease score of existing
+    } else if (newScore < vertexScores[vertexId]) {
       vertexScores[vertexId] = newScore;
-      siftUp(pos);                                  // move new entry up until it is in the righ position
+      // move new entry up until it is in the righ position
+      siftUp(pos);
     }
     // If newScore >= old score, do nothing (existing is better)
   }

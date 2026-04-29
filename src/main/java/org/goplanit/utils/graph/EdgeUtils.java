@@ -38,7 +38,8 @@ public class EdgeUtils {
    * @param vertexToVertexMapping to use should contain original vertex as currently used on edge and then the value is the new vertex to replace it
    * @param replaceMissingMappings when true missing mappings results in a null assignment, otherwise they are left in-tact
    */
-  public static <E extends Edge, V extends Vertex> void updateEdgeVertices(Iterable<E> edges, Function<V,V> vertexToVertexMapping, boolean replaceMissingMappings) {
+  public static <E extends Edge, V extends Vertex> void updateEdgeVertices(
+          Iterable<E> edges, Function<V,V> vertexToVertexMapping, boolean replaceMissingMappings) {
     edges.forEach( edge -> {
       var newVertexA = vertexToVertexMapping.apply((V)edge.getVertexA());
       if(newVertexA!= null || replaceMissingMappings) {

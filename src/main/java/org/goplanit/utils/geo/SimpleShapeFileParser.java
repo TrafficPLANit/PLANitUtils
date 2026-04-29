@@ -4,6 +4,7 @@ import org.geotools.api.data.DataStore;
 import org.geotools.api.data.SimpleFeatureSource;
 import org.geotools.api.feature.simple.SimpleFeature;
 import org.geotools.api.feature.simple.SimpleFeatureType;
+import org.geotools.api.filter.Filter;
 import org.geotools.data.shapefile.files.ShpFiles;
 import org.geotools.data.shapefile.shp.ShapefileReader;
 import org.geotools.data.simple.SimpleFeatureIterator;
@@ -13,7 +14,6 @@ import org.geotools.feature.simple.SimpleFeatureTypeBuilder;
 import org.goplanit.utils.exceptions.PlanItRunTimeException;
 import org.goplanit.utils.misc.FileUtils;
 import org.goplanit.utils.misc.Pair;
-import org.geotools.api.filter.Filter;
 import org.jamel.dbf.DbfReader;
 import org.jamel.dbf.structure.DbfDataType;
 import org.jamel.dbf.structure.DbfField;
@@ -94,29 +94,29 @@ public class SimpleShapeFileParser {
   public static Pair<DbfReader,SimpleFeatureType> parseDbfExplicitlyAsSimpleFeatureType(
       String dbfFileLocation) throws FileNotFoundException {
 
-      // 1️⃣ Build feature type from DBF dynamically
+      // Build feature type from DBF dynamically
       DbfReader reader = new DbfReader(new FileInputStream(dbfFileLocation));
       int fieldCount = reader.getHeader().getFieldsCount();  // total number of fields
       List<DbfField> fields = getDbfFields(reader);
 
       SimpleFeatureTypeBuilder typeBuilder = new SimpleFeatureTypeBuilder();
       typeBuilder.setName("dummy_layer");
-      typeBuilder.add("the_geom", Geometry.class); // geometry
+      typeBuilder.add("the_geom", Geometry.class);
 
       for (DbfField field : fields) {
-        DbfDataType type = field.getDataType(); // returns DbfDataType enum
+        DbfDataType type = field.getDataType();
         switch (type) {
-          case CHAR:                  // string field
+          case CHAR:
             typeBuilder.add(field.getName(), String.class);
             break;
-          case NUMERIC:                   // numeric field
-          case FLOAT:                 // floating point
+          case NUMERIC:
+          case FLOAT:
             typeBuilder.add(field.getName(), Double.class);
             break;
           case LOGICAL:               // boolean
             typeBuilder.add(field.getName(), Boolean.class);
             break;
-          case DATE:                  // date
+          case DATE:
             typeBuilder.add(field.getName(), java.util.Date.class);
             break;
           default:
@@ -238,9 +238,10 @@ public class SimpleShapeFileParser {
           "from wrong location");
       try {
         // todo: not tested needs work
-        var result = readShapefileWithDbf(new File(location), new File(FileUtils.getFileNameWithoutExtension(location) + ".dbf"));
+        readShapefileWithDbf(
+                new File(location), new File(FileUtils.getFileNameWithoutExtension(location) + ".dbf"));
       }catch(Exception e1){
-        e1.printStackTrace();
+        e.printStackTrace();
       }
     } catch(IOException e) {
       e.printStackTrace();
