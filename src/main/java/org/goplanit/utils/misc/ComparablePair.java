@@ -12,7 +12,7 @@ import java.util.function.Consumer;
  * @param <A> first object in pair
  * @param <B> second object in pair
  */
-public class ComparablePair<A extends Comparable<A>, B extends Comparable<B>> extends Pair<A, B>
+public class ComparablePair<A extends Comparable<? super A>, B extends Comparable<? super B>> extends Pair<A, B>
         implements Comparable<Pair<A,B>>{
 
   /** Factory method
