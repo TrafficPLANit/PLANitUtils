@@ -12,7 +12,6 @@ import org.goplanit.utils.graph.directed.EdgeSegment;
 import org.goplanit.utils.id.IdAble;
 import org.goplanit.utils.math.Precision;
 import org.goplanit.utils.misc.Pair;
-import org.goplanit.utils.network.layer.physical.Node;
 import org.goplanit.utils.zoning.Zone;
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.Envelope;
@@ -464,7 +463,7 @@ public class PlanitGraphGeoUtils {
    */
   public static boolean isVertexNearBoundingBox(
       Vertex node, Envelope boundingBox, double maxDistanceMeters, PlanitJtsCrsUtils geoUtils) {
-    return geoUtils.isGeometryNearBoundingBox(node.getPosition(), boundingBox, maxDistanceMeters);
+    return geoUtils.isGeometryNearEnvelope(node.getPosition(), boundingBox, maxDistanceMeters);
   }
 
 }

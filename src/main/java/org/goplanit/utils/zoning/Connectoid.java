@@ -203,9 +203,11 @@ public interface Connectoid extends ExternalIdAble, ManagedId, Iterable<Connecto
    * @param accessZone to check
    * @param type type specifier
    * @param mode to check
+   * @param defaultIfZoneTypeAbsent value to return if no entry exists for zone/type combination
    * @return true when allowed, false otherwise
    */
-  public abstract boolean isModeAllowed(Zone accessZone, ZoneConnectoidType type, Mode mode);
+  public abstract boolean isModeAllowed(
+      Zone accessZone, ZoneConnectoidType type, Mode mode, boolean  defaultIfZoneTypeAbsent);
 
   /**
    * Verify if any of the provided modes is allowed on the access zone connectoid combination
@@ -213,10 +215,12 @@ public interface Connectoid extends ExternalIdAble, ManagedId, Iterable<Connecto
    * @param accessZone to check
    * @param type type specifier
    * @param modes to check
+   * @param defaultIfZoneTypeAbsent value to return if no entry exists for zone/type combination
    * @return true if success, false otherwise
    */
-  public default boolean isAnyModeAllowed(Zone accessZone, ZoneConnectoidType type, Collection<Mode> modes){
-    return modes.stream().anyMatch(m -> isModeAllowed(accessZone, type, m));
+  public default boolean isAnyModeAllowed(
+      Zone accessZone, ZoneConnectoidType type, Collection<Mode> modes, boolean  defaultIfZoneTypeAbsent){
+    return modes.stream().anyMatch(m -> isModeAllowed(accessZone, type, m, defaultIfZoneTypeAbsent));
   }
 
   /**
@@ -225,10 +229,13 @@ public interface Connectoid extends ExternalIdAble, ManagedId, Iterable<Connecto
    * @param accessZone to check
    * @param types types specifier
    * @param modes to check
+   * @param defaultIfZoneTypeAbsent value to return if no entry exists for zone/type combination
    * @return true if success, false otherwise
    */
-  public default boolean isAnyModeAllowed(Zone accessZone, Set<ZoneConnectoidType> types, Collection<Mode> modes){
-    return modes.stream().anyMatch(m -> types.stream().anyMatch(t -> isModeAllowed(accessZone, t, m)));
+  public default boolean isAnyModeAllowed(
+      Zone accessZone, Set<ZoneConnectoidType> types, Collection<Mode> modes, boolean defaultIfZoneTypeAbsent){
+    return modes.stream().anyMatch(m -> types.stream().anyMatch(
+        t -> isModeAllowed(accessZone, t, m, defaultIfZoneTypeAbsent)));
   }
 
   /**
@@ -240,6 +247,9 @@ public interface Connectoid extends ExternalIdAble, ManagedId, Iterable<Connecto
    */
   public default Collection<Mode> getAllowedModesFrom(
       Zone accessZone, ZoneConnectoidType type, Collection<Mode> modes){
+    if(!hasAccessZoneEntry(accessZone, type)){
+      return Collections.emptyList();
+    }
     return getAccessZoneEntry(accessZone, type).getAllowedModesFrom(modes);
   }
 

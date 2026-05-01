@@ -38,8 +38,8 @@ public class PlanitEntityGeoUtils {
     return Double.POSITIVE_INFINITY;
   }
 
-  /** find the distance from the edge to the point. This method computes the actual distance between any location on any line segment of the edge
-   * and the reference node and it is therefore very precise.
+  /** find the distance from the edge to the point. This method computes the actual distance between any location
+   * on any line segment of the edge and the reference node and it is therefore very precise.
    *
    * @param coord used
    * @param edge to check against using its geometry
