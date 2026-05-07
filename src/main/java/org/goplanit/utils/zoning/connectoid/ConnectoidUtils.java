@@ -1,7 +1,8 @@
-package org.goplanit.utils.zoning;
+package org.goplanit.utils.zoning.connectoid;
 
 import org.goplanit.utils.network.layer.macroscopic.MacroscopicLink;
 import org.goplanit.utils.network.layer.physical.Link;
+import org.goplanit.utils.zoning.Zone;
 
 import java.util.*;
 import java.util.function.Function;

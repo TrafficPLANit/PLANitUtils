@@ -1,4 +1,4 @@
-package org.goplanit.utils.zoning;
+package org.goplanit.utils.zoning.connectoid;
 
 
 import org.goplanit.utils.misc.IterableUtils;

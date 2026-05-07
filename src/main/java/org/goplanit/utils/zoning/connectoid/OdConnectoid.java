@@ -1,4 +1,4 @@
-package org.goplanit.utils.zoning;
+package org.goplanit.utils.zoning.connectoid;
 
 /**
  * An undirected connectoid is accessed through a referenced node where all incoming/outgoing

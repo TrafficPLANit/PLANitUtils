@@ -1,9 +1,10 @@
-package org.goplanit.utils.zoning;
+package org.goplanit.utils.zoning.connectoid;
 
 import org.goplanit.utils.id.ManagedIdEntityFactory;
 import org.goplanit.utils.network.layer.physical.Node;
+import org.goplanit.utils.zoning.Zone;
 
-import static org.goplanit.utils.zoning.ConnectoidAccessZoneEntry.DEFAULT_LENGTH_KM;
+import static org.goplanit.utils.zoning.connectoid.ConnectoidAccessZoneEntry.DEFAULT_LENGTH_KM;
 
 /** Factory interface for undirected connectoids
  * 

@@ -1,15 +1,15 @@
-package org.goplanit.utils.od;
+package org.goplanit.utils.zoning.zonetozone;
 
 import org.goplanit.utils.misc.HashUtils;
 
 /**
- * This interface represents a hashed based implementation for handling origin-demand matrices of a certain type where the data is modelled by a single hash key generated from the
- * OD zone information
+ * This interface represents a hashed based implementation for handling origin-demand matrices of a certain type
+ * where the data is modeled by a single hash key generated from the zone-to-zone information
  * 
  * @author markr
  *
  */
-public interface OdHashed<T> extends OdData<T> {
+public interface ZoneToZoneHashed<T> extends ZoneToZoneData<T> {
 
   /**
    * generate a hash based on origin and destination zone id
@@ -28,5 +28,5 @@ public interface OdHashed<T> extends OdData<T> {
    * @return iterator through all available non-empty origin-destination entries
    */
   @Override
-  public abstract OdHashedIterator<T> iterator();
+  public abstract ZoneToZoneHashedIterator<T> iterator();
 }

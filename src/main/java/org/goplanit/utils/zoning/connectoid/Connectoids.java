@@ -1,7 +1,7 @@
-package org.goplanit.utils.zoning;
+package org.goplanit.utils.zoning.connectoid;
 
-import org.goplanit.utils.graph.ManagedGraphEntities;
 import org.goplanit.utils.id.ManagedIdEntities;
+import org.goplanit.utils.zoning.Zone;
 import org.goplanit.utils.zoning.modifier.event.ZoningModifierListener;
 
 import java.util.Map;

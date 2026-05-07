@@ -1,7 +1,7 @@
-package org.goplanit.utils.od;
+package org.goplanit.utils.zoning.zonetozone;
 
-import org.goplanit.utils.zoning.OdZones;
 import org.goplanit.utils.zoning.Zone;
+import org.goplanit.utils.zoning.Zones;
 
 /**
  * Base Hash key oriented Iterator which runs through available ods that have non-zero values
@@ -12,9 +12,9 @@ import org.goplanit.utils.zoning.Zone;
  * @author markr
  *
  */
-public class OdHashedIterator<T> implements OdDataIterator<T> {
+public class ZoneToZoneHashedIterator<T> implements ZoneToZoneDataIterator<T> {
 
-  private final OdHashed<T> container;
+  private final ZoneToZoneHashed<T> container;
 
   /**
    * Id of the origin zone
@@ -34,15 +34,15 @@ public class OdHashedIterator<T> implements OdDataIterator<T> {
   /**
    * Zones object to store travel analysis zones (from Zoning object)
    */
-  protected OdZones zones;
+  protected Zones<? extends Zone> zones;
 
   /**
    * Increment the location cursor until we reach a non-empty entry
    */
   protected void updateCurrentLocation() {
     do {
-      originId = currentLocation / container.getNumberOfOdZones();
-      destinationId = currentLocation % container.getNumberOfOdZones();
+      originId = currentLocation / container.getNumberOfZones();
+      destinationId = currentLocation % container.getNumberOfZones();
       currentLocation++;
     } while (getCurrentValue() == null && hasNext());
   }
@@ -53,7 +53,7 @@ public class OdHashedIterator<T> implements OdDataIterator<T> {
    * @param container object containing the data to be iterated through
    * @param zones to use
    */
-  public OdHashedIterator(final OdHashed<T> container, OdZones zones) {
+  public ZoneToZoneHashedIterator(final ZoneToZoneHashed<T> container, Zones<? extends Zone> zones) {
     super();
     currentLocation = 0;
     this.container = container;
@@ -67,7 +67,7 @@ public class OdHashedIterator<T> implements OdDataIterator<T> {
    */
   @Override
   public boolean hasNext() {
-    return currentLocation < (container.getNumberOfOdZones() * container.getNumberOfOdZones());
+    return currentLocation < (container.getNumberOfZones() * container.getNumberOfZones());
   }
 
   /**
@@ -76,7 +76,7 @@ public class OdHashedIterator<T> implements OdDataIterator<T> {
    * @return the origin zone object at the current cell
    */
   @Override
-  public Zone getCurrentOrigin() {
+  public Zone getCurrentFromZone() {
     return zones.get(originId);
   }
 
@@ -86,7 +86,7 @@ public class OdHashedIterator<T> implements OdDataIterator<T> {
    * @return the destination zone object for the current cell
    */
   @Override
-  public Zone getCurrentDestination() {
+  public Zone getCurrentToZone() {
     return zones.get(destinationId);
   }
 

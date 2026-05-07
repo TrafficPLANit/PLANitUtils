@@ -1,13 +1,13 @@
-package org.goplanit.utils.od;
+package org.goplanit.utils.zoning.zonetozone;
 
 /**
- * This class contains common methods for handling origin-demand matrices of a certain type where the entire matrix is modelled even if some combinations of ODs do not contain any
- * data.
+ * This class contains common methods for handling zone-to-zone matrices of a certain type where the entire
+ * matrix is modeled even if some combinations of ODs do not contain any data.
  * 
  * @author gman6028, markr
  *
  */
-public interface OdMatrix<T, U> extends OdData<T> {
+public interface ZoneToZoneMatrix<T, U> extends ZoneToZoneData<T> {
 
   /**
    * Count number of non-empty entries by iterating over them
@@ -26,10 +26,10 @@ public interface OdMatrix<T, U> extends OdData<T> {
   }
 
   /**
-   * Returns an iterator which can iterate through all the origin-destination cells in the matrix
+   * Returns an iterator which can iterate through all the cells in the matrix
    * 
    * @return iterator through all the origin-destination cells
    */
   @Override
-  public abstract OdMatrixIterator<T, U> iterator();
+  public abstract ZoneToZoneMatrixIterator<T, U> iterator();
 }

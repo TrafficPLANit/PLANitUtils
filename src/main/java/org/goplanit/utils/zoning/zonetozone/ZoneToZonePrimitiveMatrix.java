@@ -1,4 +1,4 @@
-package org.goplanit.utils.od;
+package org.goplanit.utils.zoning.zonetozone;
 
 import java.util.logging.Logger;
 
@@ -6,6 +6,7 @@ import org.goplanit.utils.id.IdAble;
 import org.goplanit.utils.id.IdGroupingToken;
 import org.goplanit.utils.zoning.OdZones;
 import org.goplanit.utils.zoning.Zone;
+import org.goplanit.utils.zoning.Zones;
 import org.ojalgo.array.Array2D;
 
 /**
@@ -14,11 +15,11 @@ import org.ojalgo.array.Array2D;
  * @author gman6028, markr
  *
  */
-public abstract class OdPrimitiveMatrix<T extends Number> extends OdMatrixImpl<T, Array2D<T>> {
+public abstract class ZoneToZonePrimitiveMatrix<T extends Number> extends ZoneToZoneMatrixImpl<T, Array2D<T>> {
 
   /** the logger */
   @SuppressWarnings("unused")
-  private static final Logger LOGGER = Logger.getLogger(OdPrimitiveMatrix.class.getCanonicalName());
+  private static final Logger LOGGER = Logger.getLogger(ZoneToZonePrimitiveMatrix.class.getCanonicalName());
 
   /**
    * Constructor for Od matrix containing primitives, i.e. number based
@@ -29,8 +30,12 @@ public abstract class OdPrimitiveMatrix<T extends Number> extends OdMatrixImpl<T
    * @param zones          holder for zones considered in the matrix
    * @param matrixContents container for the matrix contents
    */
-  public OdPrimitiveMatrix(
-          Class<? extends IdAble> idTokenClass, IdGroupingToken idToken, Class<T> valueClass, OdZones zones, Array2D<T> matrixContents) {
+  public ZoneToZonePrimitiveMatrix(
+          Class<? extends IdAble> idTokenClass,
+          IdGroupingToken idToken,
+          Class<T> valueClass,
+          Zones<? extends Zone> zones,
+          Array2D<T> matrixContents) {
     super(idTokenClass, idToken, valueClass, zones, matrixContents);
   }
 
@@ -40,7 +45,7 @@ public abstract class OdPrimitiveMatrix<T extends Number> extends OdMatrixImpl<T
    * @param other to copy
    * @param contentFactory to use
    */
-  public OdPrimitiveMatrix(OdPrimitiveMatrix<T> other, Array2D.Factory<T> contentFactory) {
+  public ZoneToZonePrimitiveMatrix(ZoneToZonePrimitiveMatrix<T> other, Array2D.Factory<T> contentFactory) {
     super(other);
     this.matrixContainer = contentFactory.copy(other.matrixContainer); // shallow copy
   }
@@ -49,36 +54,36 @@ public abstract class OdPrimitiveMatrix<T extends Number> extends OdMatrixImpl<T
    * {@inheritDoc}
    */
   @Override
-  public void setValue(Zone origin, Zone destination, T value) {
-    matrixContainer.set(origin.getId(), destination.getId(), value);
+  public void setValue(Zone from, Zone to, T value) {
+    matrixContainer.set(from.getId(), to.getId(), value);
   }
 
   /**
    * {@inheritDoc}
    */
-  public T getValue(Zone origin, Zone destination) {
-    return matrixContainer.get(origin.getId(), destination.getId());
-  }
-
-  /**
-   * {@inheritDoc}
-   */
-  @Override
-  public T getValue(long originId, long destinationId) {
-    return matrixContainer.get(originId, destinationId);
+  public T getValue(Zone from, Zone to) {
+    return matrixContainer.get(from.getId(), to.getId());
   }
 
   /**
    * {@inheritDoc}
    */
   @Override
-  public abstract OdPrimitiveMatrix<T> shallowClone();
+  public T getValue(long from, long to) {
+    return matrixContainer.get(from, to);
+  }
 
   /**
    * {@inheritDoc}
    */
   @Override
-  public OdPrimitiveMatrix<T> deepClone(){
+  public abstract ZoneToZonePrimitiveMatrix<T> shallowClone();
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public ZoneToZonePrimitiveMatrix<T> deepClone(){
     /* for a primitive matrix the deep clone is the same as a shallow copy since contents are immutable */
     return shallowClone();
   }
@@ -89,6 +94,6 @@ public abstract class OdPrimitiveMatrix<T extends Number> extends OdMatrixImpl<T
    * @return iterator through all the origin-destination cells
    */
   @Override
-  public abstract OdMatrixIterator<T, Array2D<T>> iterator();
+  public abstract ZoneToZoneMatrixIterator<T, Array2D<T>> iterator();
   
 }

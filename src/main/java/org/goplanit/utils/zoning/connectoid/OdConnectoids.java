@@ -1,4 +1,4 @@
-package org.goplanit.utils.zoning;
+package org.goplanit.utils.zoning.connectoid;
 
 
 import java.util.function.BiConsumer;

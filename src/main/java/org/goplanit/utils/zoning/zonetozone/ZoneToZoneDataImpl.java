@@ -1,32 +1,33 @@
-package org.goplanit.utils.od;
+package org.goplanit.utils.zoning.zonetozone;
 
 import org.goplanit.utils.id.IdAble;
 import org.goplanit.utils.id.IdAbleImpl;
 import org.goplanit.utils.id.IdGroupingToken;
-import org.goplanit.utils.zoning.OdZones;
+import org.goplanit.utils.zoning.Zone;
+import org.goplanit.utils.zoning.Zones;
 
 /**
- * Base class containing common methods required by all classes which implement ODData
+ * Base class containing common methods required by all classes which implement ZoneToZoneData
  * 
  * @author gman6028
  *
  * @param <T> the type of data to be stored for each origin-destination cell
  */
-public abstract class OdDataImpl<T> extends IdAbleImpl implements OdData<T> {
+public abstract class ZoneToZoneDataImpl<T> extends IdAbleImpl implements ZoneToZoneData<T> {
 
   protected Class<T> dataClass;
 
   /**
    * holder for zones considered in the matrix
    */
-  protected OdZones zones;
+  protected Zones<? extends Zone> zones;
 
   /**
    * Access to underlying zones
    *
    * @return odZones
    */
-  public OdZones getOdZones() {
+  public Zones<? extends Zone> getZones() {
     return zones;
   }
 
@@ -38,7 +39,11 @@ public abstract class OdDataImpl<T> extends IdAbleImpl implements OdData<T> {
    * @param dataClass    class of the entries for each od
    * @param zones        zones considered in the matrix
    */
-  public OdDataImpl(final Class<? extends IdAble> idTokenClass, IdGroupingToken idToken, Class<T> dataClass, final OdZones zones) {
+  public ZoneToZoneDataImpl(
+      final Class<? extends IdAble> idTokenClass,
+      IdGroupingToken idToken, Class<T> dataClass,
+      final Zones<? extends Zone> zones) {
+
     super(generateId(idToken, idTokenClass));
     this.zones = zones;
     this.dataClass = dataClass;
@@ -49,7 +54,7 @@ public abstract class OdDataImpl<T> extends IdAbleImpl implements OdData<T> {
    * 
    * @param other to copy
    */
-  public OdDataImpl(OdDataImpl<? extends T> other) {
+  public ZoneToZoneDataImpl(ZoneToZoneDataImpl<? extends T> other) {
     super(other);
     this.zones = other.zones;
   }
@@ -67,7 +72,7 @@ public abstract class OdDataImpl<T> extends IdAbleImpl implements OdData<T> {
    * 
    * @return number of zones in the object
    */
-  public int getNumberOfOdZones() {
+  public int getNumberOfZones() {
     return zones.size();
   }
 
@@ -75,11 +80,11 @@ public abstract class OdDataImpl<T> extends IdAbleImpl implements OdData<T> {
    * {@inheritDoc}
    */
   @Override
-  public abstract OdDataImpl<T> shallowClone();
+  public abstract ZoneToZoneDataImpl<T> shallowClone();
 
   /**
    * {@inheritDoc}
    */
   @Override
-  public abstract OdDataImpl<T> deepClone();
+  public abstract ZoneToZoneDataImpl<T> deepClone();
 }

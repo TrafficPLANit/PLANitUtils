@@ -1,10 +1,11 @@
-package org.goplanit.utils.od;
+package org.goplanit.utils.zoning.zonetozone;
 
-import org.goplanit.utils.zoning.OdZones;
 import org.goplanit.utils.zoning.Zone;
+import org.goplanit.utils.zoning.Zones;
 
 /**
- * BAse matrix oriented Iterator which runs through rows and columns of some matrix type of container, making the value, row and column of each cell available
+ * Base matrix oriented Iterator which runs through rows and columns of some matrix type of container,
+ * making the value, row and column of each cell available
  *
  * 
  * @param <T> type of values in matrix
@@ -13,7 +14,7 @@ import org.goplanit.utils.zoning.Zone;
  * @author gman6028, markr
  *
  */
-public abstract class OdMatrixIterator<T, U> implements OdDataIterator<T> {
+public abstract class ZoneToZoneMatrixIterator<T, U> implements ZoneToZoneDataIterator<T> {
 
   /** the contents */
   private U matrixContents;
@@ -21,12 +22,12 @@ public abstract class OdMatrixIterator<T, U> implements OdDataIterator<T> {
   /**
    * Id of the origin zone
    */
-  protected int originId;
+  protected int fromId;
 
   /**
    * Id of the destination zone
    */
-  protected int destinationId;
+  protected int toId;
 
   /**
    * Marker used to store the current position in the OD matrix (used internally, not accessible from other classes)
@@ -36,14 +37,14 @@ public abstract class OdMatrixIterator<T, U> implements OdDataIterator<T> {
   /**
    * Zones object to store travel analysis zones (from Zoning object)
    */
-  protected OdZones zones;
+  protected Zones<? extends Zone> zones;
 
   /**
    * Increment the location cursor for the next iteration
    */
   protected void updateCurrentLocation() {
-    originId = currentLocation / zones.size();
-    destinationId = currentLocation % zones.size();
+    fromId = currentLocation / zones.size();
+    toId = currentLocation % zones.size();
     currentLocation++;
   }
 
@@ -62,7 +63,7 @@ public abstract class OdMatrixIterator<T, U> implements OdDataIterator<T> {
    * @param matrixContents matrix object containing the data to be iterated through
    * @param zones          Zones object defining the zones in the network
    */
-  public OdMatrixIterator(U matrixContents, OdZones zones) {
+  public ZoneToZoneMatrixIterator(U matrixContents, Zones<? extends Zone> zones) {
     super();
     this.zones = zones;
     currentLocation = 0;
@@ -85,8 +86,8 @@ public abstract class OdMatrixIterator<T, U> implements OdDataIterator<T> {
    * @return the origin zone object at the current cell
    */
   @Override
-  public Zone getCurrentOrigin() {
-    return zones.get(originId);
+  public Zone getCurrentFromZone() {
+    return zones.get(fromId);
   }
 
   /**
@@ -95,8 +96,8 @@ public abstract class OdMatrixIterator<T, U> implements OdDataIterator<T> {
    * @return the destination zone object for the current cell
    */
   @Override
-  public Zone getCurrentDestination() {
-    return zones.get(destinationId);
+  public Zone getCurrentToZone() {
+    return zones.get(toId);
   }
 
   /**

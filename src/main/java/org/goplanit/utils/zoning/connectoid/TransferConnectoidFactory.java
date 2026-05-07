@@ -1,9 +1,10 @@
-package org.goplanit.utils.zoning;
+package org.goplanit.utils.zoning.connectoid;
 
 import org.goplanit.utils.graph.directed.DirectedVertex;
 import org.goplanit.utils.id.ManagedIdEntityFactory;
 import org.goplanit.utils.mode.Mode;
 import org.goplanit.utils.network.layer.physical.LinkSegment;
+import org.goplanit.utils.zoning.Zone;
 
 import java.util.Collection;
 

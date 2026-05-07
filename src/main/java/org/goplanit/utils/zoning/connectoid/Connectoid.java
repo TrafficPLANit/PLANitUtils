@@ -1,4 +1,4 @@
-package org.goplanit.utils.zoning;
+package org.goplanit.utils.zoning.connectoid;
 
 import java.util.*;
 import java.util.stream.Stream;
@@ -8,6 +8,7 @@ import org.goplanit.utils.graph.directed.DirectedVertex;
 import org.goplanit.utils.id.ExternalIdAble;
 import org.goplanit.utils.id.ManagedId;
 import org.goplanit.utils.mode.Mode;
+import org.goplanit.utils.zoning.Zone;
 
 /**
  * the connecting component between zone(s) and the network.

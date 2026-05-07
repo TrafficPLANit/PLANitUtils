@@ -1,11 +1,8 @@
-package org.goplanit.utils.zoning;
+package org.goplanit.utils.zoning.connectoid;
 
 import org.goplanit.utils.graph.directed.EdgeSegment;
-import org.goplanit.utils.mode.Mode;
 
 import java.util.Collection;
-import java.util.TreeSet;
-import java.util.stream.Collectors;
 
 /**
  * In addition to the #ConnectoidAccessZoneEntry we also capture access link segments and specific allowed modes

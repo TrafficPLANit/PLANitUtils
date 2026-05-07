@@ -1,18 +1,19 @@
-package org.goplanit.utils.zoning;
+package org.goplanit.utils.zoning.connectoid;
 
 import org.goplanit.utils.mode.Mode;
+import org.goplanit.utils.zoning.Zone;
 
 import java.util.*;
 import java.util.stream.Collectors;
 
 /**
- *each connectoid may provide access to one or more zones of some type, e.g. OD and/or transfer. Each single combination
+ * each connectoid may provide access to one or more zones of some type, e.g. OD and/or transfer. Each single combination
  * is captured in this class with specific properties such as length and type
  *
  * @author markr
  *
  */
-public interface ConnectoidAccessZoneEntry {
+public interface ConnectoidAccessZoneEntry{
 
   /**
    * Default connectoid length in km

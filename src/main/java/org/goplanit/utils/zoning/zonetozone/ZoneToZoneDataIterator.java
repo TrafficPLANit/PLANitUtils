@@ -1,4 +1,4 @@
-package org.goplanit.utils.od;
+package org.goplanit.utils.zoning.zonetozone;
 
 import java.util.Iterator;
 
@@ -11,21 +11,21 @@ import org.goplanit.utils.zoning.Zone;
  *
  * @param <T> the type of data stored for each origin-destination cell
  */
-public interface OdDataIterator<T> extends Iterator<T> {
+public interface ZoneToZoneDataIterator<T> extends Iterator<T> {
 
   /**
    * Returns the origin zone object for the current cell
    * 
    * @return the origin zone object at the current cell
    */
-  public Zone getCurrentOrigin();
+  public Zone getCurrentFromZone();
 
   /**
    * Returns the destination zone object for the current cell
    * 
    * @return the destination zone object for the current cell
    */
-  public Zone getCurrentDestination();
+  public Zone getCurrentToZone();
 
   /**
    * Returns the value at the current cell

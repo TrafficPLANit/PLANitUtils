@@ -1,26 +1,25 @@
-package org.goplanit.utils.od;
+package org.goplanit.utils.zoning.zonetozone;
 
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.logging.Logger;
 
 import org.goplanit.utils.id.IdAble;
 import org.goplanit.utils.id.IdGroupingToken;
-import org.goplanit.utils.zoning.OdZones;
 import org.goplanit.utils.zoning.Zone;
+import org.goplanit.utils.zoning.Zones;
 
 /**
- * This class stores paths by their origin and destination by creating a unique hash for the combined ids of the od zones.
+ * This class stores paths by their origin and destination by creating a unique hash for the combined ids of the zones.
  * This results in a memory efficient implementation requiring only a single hash based container,
- * instead of having as many containers as there are origins. It also means only conducting a single lookup despite the fact we have
- * two keys (o and d).
+ * instead of having as many containers as there are origins. It also means only conducting a single lookup despite
+ * the fact we have two keys (from and to).
  *
  * @author markr
  *
  */
-public class OdHashedImpl<T> extends OdDataImpl<T> implements OdHashed<T> {
+public class ZoneToZoneHashedImpl<T> extends ZoneToZoneDataImpl<T> implements ZoneToZoneHashed<T> {
 
-  private static final Logger LOGGER = Logger.getLogger(OdHashedImpl.class.getCanonicalName());
+  private static final Logger LOGGER = Logger.getLogger(ZoneToZoneHashedImpl.class.getCanonicalName());
 
   /** the hashed OD values where the key is based on the combined ids of origin and destination */
   protected final HashMap<Integer, T> odHashed;
@@ -33,8 +32,11 @@ public class OdHashedImpl<T> extends OdDataImpl<T> implements OdHashed<T> {
    * @param valueClass class of the values in container
    * @param zones   the zones being used
    */
-  public OdHashedImpl(
-          Class<? extends IdAble> idClass, final IdGroupingToken groupId, Class<T> valueClass, final OdZones zones) {
+  public ZoneToZoneHashedImpl(
+          Class<? extends IdAble> idClass,
+          final IdGroupingToken groupId,
+          Class<T> valueClass,
+          final Zones<? extends Zone> zones) {
     super(idClass, groupId, valueClass, zones);
     this.odHashed = new HashMap<>();
   }
@@ -46,8 +48,11 @@ public class OdHashedImpl<T> extends OdDataImpl<T> implements OdHashed<T> {
    * @param valueClass class of the values in container
    * @param zones   the zones being used
    */
-  public OdHashedImpl(final IdGroupingToken groupId, Class<T> valueClass, final OdZones zones) {
-    this(OdHashedImpl.class, groupId, valueClass, zones);
+  public ZoneToZoneHashedImpl(
+      final IdGroupingToken groupId,
+      Class<T> valueClass,
+      final Zones<? extends Zone> zones) {
+    this(ZoneToZoneHashedImpl.class, groupId, valueClass, zones);
   }
 
   /**
@@ -56,7 +61,7 @@ public class OdHashedImpl<T> extends OdDataImpl<T> implements OdHashed<T> {
    * 
    * @param other to copy from
    */
-  public OdHashedImpl(final OdHashedImpl<? extends T> other) {
+  public ZoneToZoneHashedImpl(final ZoneToZoneHashedImpl<? extends T> other) {
     super(other);
     this.odHashed = new HashMap<>(other.odHashed);
   }
@@ -65,49 +70,49 @@ public class OdHashedImpl<T> extends OdDataImpl<T> implements OdHashed<T> {
    * {@inheritDoc}
    */
   @Override
-  public T getValue(Zone origin, Zone destination) {
+  public T getValue(Zone from, Zone to) {
     /* hash to single key */
-    return odHashed.get(OdHashed.generateHashKey(origin.getId(), destination.getId()));
+    return odHashed.get(ZoneToZoneHashed.generateHashKey(from.getId(), to.getId()));
   }
 
   /**
    * {@inheritDoc}
    */
   @Override
-  public T getValue(long originId, long destinationId) {
+  public T getValue(long from, long to) {
     /* hash to single key */
-    return odHashed.get(OdHashed.generateHashKey(originId, destinationId));
+    return odHashed.get(ZoneToZoneHashed.generateHashKey(from, to));
   }
 
   /**
    * {@inheritDoc}
    */
   @Override
-  public void setValue(Zone origin, Zone destination, T value) {
-    odHashed.put(OdHashed.generateHashKey(origin.getId(), destination.getId()), value);
+  public void setValue(Zone from, Zone to, T value) {
+    odHashed.put(ZoneToZoneHashed.generateHashKey(from.getId(), to.getId()), value);
   }
 
   /**
    * {@inheritDoc}
    */
   @Override
-  public OdHashedIterator<T> iterator(){
-    return new OdHashedIterator<>(this, getOdZones());
+  public ZoneToZoneHashedIterator<T> iterator(){
+    return new ZoneToZoneHashedIterator<>(this, getZones());
   }
 
   /**
    * {@inheritDoc}
    */
   @Override
-  public OdHashedImpl<T> shallowClone(){
-    return new OdHashedImpl<>(this);
+  public ZoneToZoneHashedImpl<T> shallowClone(){
+    return new ZoneToZoneHashedImpl<>(this);
   }
 
   /**
    * {@inheritDoc}
    */
   @Override
-  public  OdHashedImpl<T> deepClone(){
+  public ZoneToZoneHashedImpl<T> deepClone(){
     LOGGER.severe("No deep copy available of OdHashedImpl instance due to unknown type T, shallow copy instead");
     return shallowClone();
   }

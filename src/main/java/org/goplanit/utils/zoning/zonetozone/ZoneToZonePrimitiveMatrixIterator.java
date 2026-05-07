@@ -1,6 +1,7 @@
-package org.goplanit.utils.od;
+package org.goplanit.utils.zoning.zonetozone;
 
-import org.goplanit.utils.zoning.OdZones;
+import org.goplanit.utils.zoning.Zone;
+import org.goplanit.utils.zoning.Zones;
 import org.ojalgo.array.Array2D;
 
 /**
@@ -10,7 +11,7 @@ import org.ojalgo.array.Array2D;
  *
  * @param <T> type of primitive used which must be a Number derived type
  */
-public class OdPrimitiveMatrixIterator<T extends Number> extends OdMatrixIterator<T, Array2D<T>> {
+public class ZoneToZonePrimitiveMatrixIterator<T extends Number> extends ZoneToZoneMatrixIterator<T, Array2D<T>> {
 
   /**
    * Constructor
@@ -18,7 +19,7 @@ public class OdPrimitiveMatrixIterator<T extends Number> extends OdMatrixIterato
    * @param matrixContents in preferred container format for primitives
    * @param zones          zones
    */
-  public OdPrimitiveMatrixIterator(Array2D<T> matrixContents, OdZones zones) {
+  public ZoneToZonePrimitiveMatrixIterator(Array2D<T> matrixContents, Zones<? extends Zone> zones) {
     super(matrixContents, zones);
   }
 
@@ -27,7 +28,7 @@ public class OdPrimitiveMatrixIterator<T extends Number> extends OdMatrixIterato
    */
   @Override
   public T getCurrentValue() {
-    return getMatrixContent().get(originId, destinationId);
+    return getMatrixContent().get(fromId, toId);
   }
 
 }
