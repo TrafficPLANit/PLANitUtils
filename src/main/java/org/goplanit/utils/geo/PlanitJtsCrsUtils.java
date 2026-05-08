@@ -2,6 +2,7 @@ package org.goplanit.utils.geo;
 
 import org.geotools.api.geometry.Position;
 import org.geotools.api.referencing.crs.CoordinateReferenceSystem;
+import org.geotools.api.referencing.crs.EngineeringCRS;
 import org.geotools.api.referencing.crs.GeographicCRS;
 import org.geotools.api.referencing.crs.ProjectedCRS;
 import org.geotools.geometry.Position2D;
@@ -155,7 +156,7 @@ public class PlanitJtsCrsUtils {
     this.toLinearMeterConverter = null;
 
     /* viable only if non-cartesian based */
-    if (crs instanceof ProjectedCRS) {
+    if (crs instanceof ProjectedCRS || crs instanceof EngineeringCRS) {
       // no need for geodetic distance calcs, use projection direction possibly with meter
       // conversion layered on top
       this.geoCalculator = null;
