@@ -17,7 +17,7 @@ public class CollectionsTest {
 
     PriorityQueue<Pair<Integer,Double>> referenceContainer =
             new PriorityQueue<>(Comparator.comparingDouble(Pair::second));
-    FourAryMinHeapOpenSet binaryHeap = new FourAryMinHeapOpenSet(numVertices);
+    FourAryMinHeapOpenSet fourAryHeap = new FourAryMinHeapOpenSet(numVertices);
 
     List<Pair<Integer,Double>> values = List.of(
       Pair.of(0,10.0),
@@ -32,17 +32,17 @@ public class CollectionsTest {
       Pair.of(9,999999999.0));
 
     referenceContainer.addAll(values);
-    values.forEach(e -> binaryHeap.insertOrDecrease(e.first(), e.second()));
+    values.forEach(e -> fourAryHeap.insertOrDecrease(e.first(), e.second()));
 
     while(!referenceContainer.isEmpty()) {
       var next = referenceContainer.poll();
-      assert(!binaryHeap.isEmpty());
-      var nextIntInHeap = binaryHeap.poll();
+      assert(!fourAryHeap.isEmpty());
+      var nextIntInHeap = fourAryHeap.poll();
       double nextInHeapValue = values.get(nextIntInHeap).second();
       assertEquals(next.first(), nextIntInHeap);
       assertEquals(next.second(), nextInHeapValue);
     }
-    assert(binaryHeap.isEmpty());
+    assert(fourAryHeap.isEmpty());
 
   }
 }
