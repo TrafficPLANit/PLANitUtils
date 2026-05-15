@@ -8,8 +8,8 @@ import org.goplanit.utils.id.ManagedId;
 import java.io.Serializable;
 
 /**
- * A Movement comprises a combined and ordered traversal of two adjacent edge segments (from, to) without itself representing
- * a particular graph entity (unlike a conjugate link segment).
+ * A Movement comprises a combined and ordered traversal of two adjacent edge segments (from, to) without itself
+ * representing a particular graph entity (unlike a conjugate link segment).
  * 
  * @author markr
  *
@@ -19,6 +19,20 @@ public interface Movement extends ExternalIdAble, ManagedId, Serializable {
   /** id class for generating ids */
   public static final Class<Movement> MOVEMENT_ID_CLASS = Movement.class;
 
+  /**
+   * Check if permissible
+   *
+   * @return true when permissible, false otherwise
+   */
+  public abstract boolean isPermissible();
+
+  /**
+   * inverse of {@link #isPermissible()}
+   * @return true when banned, false otherwise
+   */
+  public default boolean isBanned(){
+    return !isPermissible();
+  }
 
   /** collect edge segment from, i.e., the incoming leg of the movement
    *
@@ -48,6 +62,10 @@ public interface Movement extends ExternalIdAble, ManagedId, Serializable {
     return getSegmentTo() != null;
   }
 
+  public void setSegmentFrom(EdgeSegment segment);
+
+  public void setSegmentTo(EdgeSegment segment);
+
   /**
    * Get the vertex in the centre of the movement connecting the two edge segments
    *
@@ -66,5 +84,4 @@ public interface Movement extends ExternalIdAble, ManagedId, Serializable {
    * {@inheritDoc}
    */
   public abstract Movement deepClone();
-  
-}
+  }

@@ -13,21 +13,23 @@ import org.goplanit.utils.id.ManagedIdEntityFactory;
 public interface MovementFactory extends ManagedIdEntityFactory<Movement> {
   
   /**
-   * Create link segment
+   * Create movement
    *
    * @param from  the from segment
    * @param to the to segment
+   * @param banned flag whether banned or not
    * @return the created movement
    */
-  public abstract Movement create(final EdgeSegment from, final EdgeSegment to);
+  public abstract Movement create(final EdgeSegment from, final EdgeSegment to, boolean banned);
 
   /**
    * Create movement and register it
    *
    * @param from  the from segment
    * @param to the to segment
+   * @param banned flag whether banned or not
    * @return the created and registered movement
    */
-  public abstract Movement registerNew(final EdgeSegment from, final EdgeSegment to);
+  public abstract Movement registerNew(final EdgeSegment from, final EdgeSegment to, boolean banned);
 
 }

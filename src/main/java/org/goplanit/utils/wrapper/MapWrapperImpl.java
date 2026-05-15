@@ -93,7 +93,7 @@ public class MapWrapperImpl<K, V> implements MapWrapper<K, V>{
   public MapWrapperImpl(final Map<K, V> mapToWrap, final Function<V, K> valueToKey, final Collection<V> populateWith) {
     this.theMap = mapToWrap;
     this.valueToKey = valueToKey;
-    populateWith.forEach( value -> register(value));
+    populateWith.forEach(this::register);
   }  
   
   /** Special copy(like) constructor allowing one to create a copy with a different index function
@@ -103,10 +103,11 @@ public class MapWrapperImpl<K, V> implements MapWrapper<K, V>{
    * @param valueToKey function to map values to their key
    * @param populateWith values to populate the map to wrap with based on provided index function
    */
-  public <U> MapWrapperImpl(final Map<K, V> mapToWrap, final Function<V, K> valueToKey, final MapWrapper<U,V> populateWith) {
+  public <U> MapWrapperImpl(
+      final Map<K, V> mapToWrap, final Function<V, K> valueToKey, final MapWrapper<U,V> populateWith) {
     this.theMap = mapToWrap;
     this.valueToKey = valueToKey;
-    populateWith.forEach( value -> register(value));
+    populateWith.forEach(this::register);
   }   
     
   /** Copy constructor which creates a new underlying map and copies entries over (shallow)
@@ -138,7 +139,8 @@ public class MapWrapperImpl<K, V> implements MapWrapper<K, V>{
   public V register(final V value) {
     var key = getKeyByValue(value);
     if(key == null){
-      LOGGER.warning(String.format("Not allowed to register null key on %s for entity %s, ignored", MapWrapperImpl.class, value.toString()));
+      LOGGER.warning(String.format("Not allowed to register null key on %s for entity %s, ignored",
+          MapWrapperImpl.class, value.toString()));
       return null;
     }
     return theMap.put(getKeyByValue(value),value);

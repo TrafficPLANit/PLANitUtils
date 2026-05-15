@@ -1,5 +1,6 @@
 package org.goplanit.utils.network.layer.physical;
 
+import org.apache.commons.collections4.map.MultiKeyMap;
 import org.goplanit.utils.graph.GraphEntities;
 import org.goplanit.utils.graph.GraphEntity;
 import org.goplanit.utils.id.ExternalIdAble;
@@ -35,6 +36,22 @@ public interface UntypedPhysicalLayer<N extends Node, L extends Link, LS extends
    * @return the nodes
    */
   public abstract GraphEntities<N> getNodes();
+
+  /**
+   * Verify if movements have been generated and are non-empty
+   *
+   * @return true when present, false otherwise
+   */
+  public default boolean hasMovements(){
+    return !getMovements().isEmpty();
+  }
+
+  /**
+   * Access to movements container (which may be empty if no movements have been generated)
+   *
+   * @return movements container
+   */
+  public abstract Movements getMovements();
 
   /**
    * {@inheritDoc}
@@ -73,6 +90,17 @@ public interface UntypedPhysicalLayer<N extends Node, L extends Link, LS extends
    */
   public default long getNumberOfLinkSegments() {
     return getLinkSegments().size();
+  }
+
+  /**
+   * Create a (new) mapping from entry/sexit segment combinations to their movement (if any)
+   *
+   * @return mapping that was created
+   */
+  public default MultiKeyMap<Object, Movement> createEntryExitSegmentToMovementMapping(){
+    MultiKeyMap<Object, Movement> entryExitSegment2MovementMap = new MultiKeyMap<>();
+    getMovements().forEach( m -> entryExitSegment2MovementMap.put(m.getSegmentFrom(), m.getSegmentTo(), m));
+    return entryExitSegment2MovementMap;
   }
 
 }
