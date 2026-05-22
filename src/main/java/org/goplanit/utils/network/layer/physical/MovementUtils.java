@@ -4,78 +4,123 @@ import org.goplanit.utils.graph.directed.EdgeSegment;
 import org.goplanit.utils.network.layers.UntypedPhysicalNetworkLayers;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
-import java.util.Set;
-import java.util.stream.Collectors;
 
+/**
+ * Builds a fully array-based compiled relation index:
+ * incoming segment -> (outgoing segment + movement id)
+ */
 public class MovementUtils {
 
-  /**
-   * Drop in replacement for expensive explicit Movement objects. Instead, we generate id mapping for
-   * link-to-link allowed/banned movements without creating any instances and whether they are banned or not
-   * this is more efficient than expensive maps or explicitly generating all turns, and especially useful when
-   * data needs to be attached to turns but we do not want to create these turn objects.
-   * <p>
-   *   Assumption is here that ordering of entry and exit segments on node DOES NOT CHANGE, if it does we need to
-   *   recompute the compiled ids
-   * </p>
-   * <p>
-   *   so for a given turn base don entry exit segment the unique network wide movement id is produced that can be
-   *   used to index simulation data easily. If a turn is banned the returned id is -1.
-   * </p>
-   *
-   * @param layers for which the movements hold todo: practically this does not support multiple layers yet
-   * @param movements to create compiled ids for, these may just be banned movements or a hybrid
-   * @return compiledTurnIds for fast look up functionality and data storage by unique indices given a node and entry
-   * exit segment
-   */
-  public static CompiledMovementIds createCompiledTurnDataIndices(
-      UntypedPhysicalNetworkLayers<?> layers, Movements movements){
+  public static CompiledRelationIndex createCompiledMovementIndices(
+      UntypedPhysicalNetworkLayers<?> layers,
+      Movements movements) {
 
-    Map<Long, NodeMovementTable> nodeMovementMappingTables = new HashMap<>();
+    // ------------------------------------------------------------
+    // Step 1: banned movements (original style, no streams)
+    // ------------------------------------------------------------
+    Map<EdgeSegment, List<EdgeSegment>> bannedByEntryExit = new HashMap<>();
 
-    Map<EdgeSegment, Set<EdgeSegment>> bannedByEntryExit = new HashMap<>();
-    if(movements != null) {
-      bannedByEntryExit = movements.stream().filter(Movement::isBanned).collect(
-          Collectors.groupingBy(Movement::getSegmentFrom,
-              Collectors.mapping(Movement::getSegmentTo, Collectors.toSet()
-              )));
-    }
-    final var bannedByEntryExitFinal = bannedByEntryExit;
+    if (movements != null) {
+      for (Movement m : movements) {
 
-    int[] nextPermissibleTurnId = new int[1]; // raw array trick to avoid requirement of finals in almbda
-    layers.stream().flatMap(l -> l.getNodes().stream()).forEach( node ->
-    {
-      var table = new NodeMovementTable(node);
-
-      long nodeId = node.getId();
-      Set<EdgeSegment> bannedExits;
-      int inIndex = 0;
-      int outIndex = 0;
-      for (var inSegment : node.getEntryLinkSegments()) {
-        bannedExits = bannedByEntryExitFinal.get(inSegment);
-        outIndex = 0;
-        for (var outSegment : node.getExitLinkSegments()) {
-          if (inSegment.equals(outSegment)){
-            ++outIndex;
-            continue;
-          }
-
-          if(bannedExits!=null && bannedExits.contains(outSegment)){
-            ++outIndex;
-            continue;
-          }
-
-          table.set(inIndex, outIndex, nextPermissibleTurnId[0]++);
-          ++outIndex;
+        if (!m.isBanned()) {
+          continue;
         }
-        ++inIndex;
+
+        EdgeSegment from = m.getSegmentFrom();
+        EdgeSegment to = m.getSegmentTo();
+
+        bannedByEntryExit
+            .computeIfAbsent(from, k -> new java.util.ArrayList<>())
+            .add(to);
       }
+    }
 
-      nodeMovementMappingTables.put(nodeId, table);
+    // ------------------------------------------------------------
+    // PASS 1: find max segment id + count valid transitions
+    // ------------------------------------------------------------
+    int maxSegmentId = 0;
+    for (var layer : layers) {
+      for (var segment : layer.getLinkSegments()) {
+        Math.max(maxSegmentId, (int) segment.getId());
+      }
+    }
 
-    });
+    int[] numExitsPerIncomingSegment = new int[maxSegmentId + 1];
+    for (var layer : layers) {
+      for (var node : layer.getNodes()) {
+        for (var in : node.getEntryLinkSegments()) {
 
-    return new CompiledMovementIds(nodeMovementMappingTables, nextPermissibleTurnId[0]);
+          int inId = (int) in.getId();
+          List<EdgeSegment> bannedOut = bannedByEntryExit.get(in);
+
+          for (var out : node.getExitLinkSegments()) {
+
+            if (in.equals(out)) {
+              continue;
+            }
+
+            if (bannedOut != null && bannedOut.contains(out)) {
+              continue;
+            }
+
+            numExitsPerIncomingSegment[inId]++;
+          }
+        }
+      }
+    }
+
+    // ------------------------------------------------------------
+    // Allocate exact arrays
+    // ------------------------------------------------------------
+    long[][] outgoingByIn = new long[maxSegmentId + 1][];
+    long[][] movementByIn = new long[maxSegmentId + 1][];
+
+    for (int i = 0; i <= maxSegmentId; i++) {
+      if (numExitsPerIncomingSegment[i] > 0) {
+        outgoingByIn[i] = new long[numExitsPerIncomingSegment[i]];
+        movementByIn[i] = new long[numExitsPerIncomingSegment[i]];
+      }
+    }
+
+    // ------------------------------------------------------------
+    // PASS 2: fill arrays
+    // ------------------------------------------------------------
+    int[] cursor = new int[maxSegmentId + 1];
+    long nextMovementId = 0;
+
+    for (var layer : layers) {
+      for (var node : layer.getNodes()) {
+
+        for (var in : node.getEntryLinkSegments()) {
+
+          int inId = (int) in.getId();
+          List<EdgeSegment> bannedOut = bannedByEntryExit.get(in);
+
+          for (var out : node.getExitLinkSegments()) {
+
+            if (in.equals(out)) {
+              continue;
+            }
+
+            if (bannedOut != null && bannedOut.contains(out)) {
+              continue;
+            }
+
+            int pos = cursor[inId]++;
+            outgoingByIn[inId][pos] = out.getId();
+            movementByIn[inId][pos] = nextMovementId++;
+          }
+        }
+      }
+    }
+
+    return new CompiledRelationIndex(
+        outgoingByIn,
+        movementByIn,
+        nextMovementId
+    );
   }
 }
