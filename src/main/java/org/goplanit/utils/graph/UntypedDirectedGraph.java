@@ -5,6 +5,7 @@ import org.goplanit.utils.graph.directed.DirectedGraphUtils;
 import org.goplanit.utils.graph.directed.DirectedVertex;
 import org.goplanit.utils.graph.directed.EdgeSegment;
 import org.goplanit.utils.misc.Pair;
+import org.goplanit.utils.network.layer.physical.Movements;
 
 import java.util.ArrayDeque;
 import java.util.Deque;
@@ -26,6 +27,22 @@ public interface UntypedDirectedGraph<V extends DirectedVertex, E extends Direct
    * @return edges segments
    */
   public abstract GraphEntities<ES> getEdgeSegments();
+
+  /**
+   * Verify if movements have been generated and are non-empty
+   *
+   * @return true when present, false otherwise
+   */
+  public default boolean hasMovements(){
+    return !getMovements().isEmpty();
+  }
+
+  /**
+   * Access to movements container (which may be empty if no movements have been generated)
+   *
+   * @return movements container
+   */
+  public abstract Movements getMovements();
     
   /** Verify if empty, empty when no nodes, edges, edge segments exist
    * 
@@ -62,7 +79,7 @@ public interface UntypedDirectedGraph<V extends DirectedVertex, E extends Direct
    * @param initialVertexSegmentInclusionCondition predicate for initial condition on edge segments to consider
    * @param vertexSegmentInclusionCondition predicate for general condition on edge segments to consider
    * @param vertexSegmentTerminationCondition predicate for termination condition for successful search completion
-   * @return found vertex (if any) absed on termination and the back links for all processed vertices
+   * @return found vertex (if any) based on termination and the back links for all processed vertices
    */
   public default Pair<V, Map<V, ES>> breadthFirstSearch(
       V startVertex,

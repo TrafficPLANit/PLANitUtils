@@ -2,17 +2,18 @@ package org.goplanit.utils.network.layer.physical;
 
 import org.goplanit.utils.graph.directed.EdgeSegment;
 import org.goplanit.utils.network.layers.UntypedPhysicalNetworkLayers;
+import org.goplanit.utils.zoning.TransferZone;
+import org.goplanit.utils.zoning.TransferZoneGroup;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.function.Function;
 
-/**
- * Builds a fully array-based compiled relation index:
- * incoming segment -> (outgoing segment + movement id)
- */
 public class MovementUtils {
 
+  /**
+   * Builds a fully array-based compiled relation index:
+   * incoming segment -> (outgoing segment + movement id) where we exclude banned movements and u-turns
+   */
   public static CompiledRelationIndex createCompiledMovementIndices(
       UntypedPhysicalNetworkLayers<?> layers,
       Movements movements) {
@@ -44,30 +45,24 @@ public class MovementUtils {
     int maxSegmentId = 0;
     for (var layer : layers) {
       for (var segment : layer.getLinkSegments()) {
-        Math.max(maxSegmentId, (int) segment.getId());
+        maxSegmentId = Math.max(maxSegmentId, (int) segment.getId());
       }
     }
 
     int[] numExitsPerIncomingSegment = new int[maxSegmentId + 1];
     for (var layer : layers) {
-      for (var node : layer.getNodes()) {
-        for (var in : node.getEntryLinkSegments()) {
-
-          int inId = (int) in.getId();
-          List<EdgeSegment> bannedOut = bannedByEntryExit.get(in);
-
-          for (var out : node.getExitLinkSegments()) {
-
-            if (in.equals(out)) {
-              continue;
-            }
-
-            if (bannedOut != null && bannedOut.contains(out)) {
-              continue;
-            }
-
-            numExitsPerIncomingSegment[inId]++;
+      for (var entry : layer.getLinkSegments()) {
+        List<EdgeSegment> bannedOut = bannedByEntryExit.get(entry);
+        for (var exit : entry.getDownstreamVertex().getExitEdgeSegments()) {
+          if (entry.equals(exit)) {
+            continue;
           }
+
+          if (bannedOut != null && bannedOut.contains(exit)) {
+            continue;
+          }
+
+          numExitsPerIncomingSegment[(int) entry.getId()]++;
         }
       }
     }
@@ -77,7 +72,6 @@ public class MovementUtils {
     // ------------------------------------------------------------
     long[][] outgoingByIn = new long[maxSegmentId + 1][];
     long[][] movementByIn = new long[maxSegmentId + 1][];
-
     for (int i = 0; i <= maxSegmentId; i++) {
       if (numExitsPerIncomingSegment[i] > 0) {
         outgoingByIn[i] = new long[numExitsPerIncomingSegment[i]];
@@ -92,27 +86,21 @@ public class MovementUtils {
     long nextMovementId = 0;
 
     for (var layer : layers) {
-      for (var node : layer.getNodes()) {
-
-        for (var in : node.getEntryLinkSegments()) {
-
-          int inId = (int) in.getId();
-          List<EdgeSegment> bannedOut = bannedByEntryExit.get(in);
-
-          for (var out : node.getExitLinkSegments()) {
-
-            if (in.equals(out)) {
-              continue;
-            }
-
-            if (bannedOut != null && bannedOut.contains(out)) {
-              continue;
-            }
-
-            int pos = cursor[inId]++;
-            outgoingByIn[inId][pos] = out.getId();
-            movementByIn[inId][pos] = nextMovementId++;
+      for (var entry : layer.getLinkSegments()) {
+        var inId = (int) entry.getId();
+        List<EdgeSegment> bannedOut = bannedByEntryExit.get(entry);
+        for (var exit : entry.getDownstreamVertex().getExitEdgeSegments()) {
+          if (entry.equals(exit)) {
+            continue;
           }
+
+          if (bannedOut != null && bannedOut.contains(exit)) {
+            continue;
+          }
+
+          int pos = cursor[inId]++;
+          outgoingByIn[inId][pos] = exit.getId();
+          movementByIn[inId][pos] = nextMovementId++;
         }
       }
     }
@@ -122,5 +110,38 @@ public class MovementUtils {
         movementByIn,
         nextMovementId
     );
+  }
+
+  /**
+   * For the given mapping replace all segment from and to references on movements based on the new mapping
+   * @param movements to update
+   * @param segmentToSegmentMapping mapping to use
+   * @param removeMissingMappings when true remove movement from container if no mapping exists
+   * @param <T> type of segment
+   */
+  public static <T extends EdgeSegment> void updateMovementSegmentMapping(
+      Movements movements, Function<T, T> segmentToSegmentMapping, boolean removeMissingMappings) {
+
+    Set<Movement> toRemove = new TreeSet<>();
+    for(var movement :  movements){
+      if(movement.hasSegmentFrom()) {
+        var newSegment = segmentToSegmentMapping.apply((T) movement.getSegmentFrom());
+        if(newSegment != null) {
+          movement.setSegmentFrom(newSegment);
+        }else{
+          toRemove.add(movement);
+        }
+      }
+      if(movement.hasSegmentTo()) {
+        var newSegment = segmentToSegmentMapping.apply((T) movement.getSegmentTo());
+        if(newSegment != null) {
+          movement.setSegmentTo(newSegment);
+        }else{
+          toRemove.add(movement);
+        }
+      }
+    }
+
+    toRemove.forEach(movements::remove);
   }
 }

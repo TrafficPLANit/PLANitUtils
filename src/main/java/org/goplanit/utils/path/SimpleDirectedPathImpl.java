@@ -1,13 +1,8 @@
 package org.goplanit.utils.path;
 
-import org.goplanit.utils.geo.PlanitJtsUtils;
-import org.goplanit.utils.graph.EdgeUtils;
 import org.goplanit.utils.graph.directed.EdgeSegment;
 import org.goplanit.utils.graph.directed.EdgeSegmentUtils;
-import org.goplanit.utils.misc.IterableUtils;
 import org.locationtech.jts.geom.Geometry;
-import org.locationtech.jts.geom.GeometryFactory;
-import org.locationtech.jts.geom.LineString;
 
 import java.util.*;
 import java.util.logging.Logger;

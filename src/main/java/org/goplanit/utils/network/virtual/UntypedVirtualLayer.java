@@ -5,9 +5,12 @@ import org.goplanit.utils.exceptions.PlanItRunTimeException;
 import org.goplanit.utils.geo.PlanitJtsUtils;
 import org.goplanit.utils.graph.GraphEntityDeepCopyMapper;
 import org.goplanit.utils.graph.directed.DirectedVertex;
+import org.goplanit.utils.id.ManagedIdDeepCopyMapper;
 import org.goplanit.utils.id.ManagedIdEntities;
 import org.goplanit.utils.network.layer.NetworkLayer;
 import org.goplanit.utils.network.layer.UntypedDirectedGraphLayer;
+import org.goplanit.utils.network.layer.physical.Movement;
+import org.goplanit.utils.network.layer.physical.Movements;
 import org.goplanit.utils.network.virtual.graph.ConnectoidDirectedEdge;
 import org.goplanit.utils.network.virtual.physical.ConnectoidSegment;
 
@@ -43,6 +46,13 @@ public interface UntypedVirtualLayer<
   public abstract ManagedIdEntities<V> getVertices();
 
   /**
+   * Access each movement on virtual network.
+   *
+   * @return movements
+   */
+  public abstract Movements getMovements();
+
+  /**
    * Recreate the ids for all registered entities with or without resetting, this includes child managed ids, i.e.,
    * nested managedIdentities containers if so indicated
    *
@@ -54,6 +64,7 @@ public interface UntypedVirtualLayer<
     getConnectoidSegments().recreateIds(resetManagedIdClass);
     getConnectoidLinks().recreateIds(resetManagedIdClass);
     getVertices().recreateIds(resetManagedIdClass);
+    getMovements().recreateIds(resetManagedIdClass);
   }
 
   /**
@@ -74,12 +85,15 @@ public interface UntypedVirtualLayer<
    * @param connectoidLinkMapper to use for tracking mapping between original and copied entity (may be null)
    * @param connectoidSegmentMapper to use for tracking mapping between original and copied entity (may be null)
    * @param vertexMapper to use for tracking mapping between original and copied entity (may be null)
+   * @param movementMapper to apply in case of deep copy to each original to copy combination
+   *                       (when provided, may be null)
    * @return deep copy
    */
   public UntypedVirtualLayer<V,E,ES> deepCloneWithMapping(
           GraphEntityDeepCopyMapper<E> connectoidLinkMapper,
           GraphEntityDeepCopyMapper<ES> connectoidSegmentMapper,
-          GraphEntityDeepCopyMapper<V> vertexMapper);
+          GraphEntityDeepCopyMapper<V> vertexMapper,
+          ManagedIdDeepCopyMapper<Movement> movementMapper);
 
   /**
    * Clear the entire layer from vertices, edges, and segments
@@ -88,6 +102,7 @@ public interface UntypedVirtualLayer<
     getVertices().clear();
     getConnectoidLinks().clear();
     getConnectoidSegments().clear();
+    getMovements().clear();
   }
 
   public default boolean hasConnectoidLinks(){
@@ -96,6 +111,10 @@ public interface UntypedVirtualLayer<
 
   public default boolean hasConnectoidSegments(){
     return getConnectoidSegments()!=null && !getConnectoidSegments().isEmpty();
+  }
+
+  public default boolean hasMovements(){
+    return getMovements()!=null && !getMovements().isEmpty();
   }
 
 }

@@ -1,6 +1,5 @@
 package org.goplanit.utils.network.layer;
 
-import org.goplanit.utils.id.IdGroupingToken;
 import org.goplanit.utils.mode.Mode;
 import org.goplanit.utils.network.layer.macroscopic.*;
 import org.goplanit.utils.network.layer.physical.Node;

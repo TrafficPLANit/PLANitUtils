@@ -3,6 +3,8 @@ package org.goplanit.utils.network.virtual;
 import org.goplanit.utils.graph.GraphEntityDeepCopyMapper;
 import org.goplanit.utils.graph.directed.DirectedVertex;
 import org.goplanit.utils.id.IdGroupingToken;
+import org.goplanit.utils.id.ManagedIdDeepCopyMapper;
+import org.goplanit.utils.network.layer.physical.Movement;
 import org.goplanit.utils.network.virtual.graph.ConnectoidDirectedEdge;
 import org.goplanit.utils.network.virtual.physical.ConnectoidSegment;
 
@@ -51,13 +53,15 @@ public interface VirtualNetwork extends UntypedVirtualNetwork<VirtualNetworkLaye
    * @param connectoidEdgeMapper to use for tracking mapping between original and copied entity (may be null)
    * @param connectoidSegmentMapper to use for tracking mapping between original and copied entity (may be null)
    * @param centroidVertexMapper to use for tracking mapping between original and copied entity (may be null)
+   * @param movementMapper to use for tracking mapping between original and copied entity (may be null)
    * @return deep copy
    */
   @Override
   public VirtualNetwork deepCloneWithMapping(
           GraphEntityDeepCopyMapper<? extends ConnectoidDirectedEdge> connectoidEdgeMapper,
           GraphEntityDeepCopyMapper<? extends ConnectoidSegment> connectoidSegmentMapper,
-          GraphEntityDeepCopyMapper<? extends DirectedVertex> centroidVertexMapper);
+          GraphEntityDeepCopyMapper<? extends DirectedVertex> centroidVertexMapper,
+          ManagedIdDeepCopyMapper<Movement> movementMapper);
 
 
 }

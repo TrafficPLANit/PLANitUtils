@@ -1,6 +1,7 @@
 package org.goplanit.utils.network.virtual;
 
 import org.goplanit.utils.id.IdGroupingToken;
+import org.goplanit.utils.network.layer.physical.Movements;
 import org.goplanit.utils.network.virtual.graph.CentroidVertex;
 import org.goplanit.utils.network.virtual.graph.CentroidVertices;
 import org.goplanit.utils.network.virtual.physical.ConnectoidLink;
@@ -49,6 +50,7 @@ public interface VirtualNetworkLayer extends UntypedVirtualLayer<CentroidVertex,
    */
   @Override
   public abstract CentroidVertices getVertices();
+
 
   /** Create a conjugate version of this layer
    * 
