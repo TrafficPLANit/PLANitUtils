@@ -8,8 +8,10 @@ import org.goplanit.utils.id.ManagedId;
 import java.io.Serializable;
 
 /**
- * A Movement comprises a combined and ordered traversal of two adjacent edge segments (from, to) without itself
- * representing a particular graph entity (unlike a conjugate link segment).
+ * A Movement comprises a combined and ordered traversal of two adjacent edge segments (from, to).
+ * While currently it has a flag on whether it is banned or not, in practice ALL instantiated movements should be banned
+ * as permissible movements are to be inferred from the banned ones.
+ * todo: rename Movement to reflect they are always banned and remove flag
  * 
  * @author markr
  *

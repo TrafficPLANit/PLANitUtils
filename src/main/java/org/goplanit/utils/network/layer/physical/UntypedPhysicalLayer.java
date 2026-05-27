@@ -43,7 +43,7 @@ public interface UntypedPhysicalLayer<N extends Node, L extends Link, LS extends
    * @return true when present, false otherwise
    */
   public default boolean hasMovements(){
-    return !getMovements().isEmpty();
+    return getMovements()!= null && !getMovements().isEmpty();
   }
 
   /**

@@ -159,12 +159,12 @@ public interface ConnectoidAccessZoneEntry{
   }
 
   /**
-   * {@inheritDoc}
+   * Shallow clone access zone entry
    */
   public abstract ConnectoidAccessZoneEntry shallowClone();
 
   /**
-   * {@inheritDoc}
+   * Deep clone access zone entry
    */
   public abstract ConnectoidAccessZoneEntry deepClone();
 

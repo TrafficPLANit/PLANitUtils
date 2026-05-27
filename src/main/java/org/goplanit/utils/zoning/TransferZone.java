@@ -134,7 +134,7 @@ public interface TransferZone extends Zone {
   public abstract TransferZone deepClone();
   
   /**
-   * {@inheritDoc}
+   * Get the id class for id generation
    */
   public default Class<TransferZone> getTransferZoneIdClass() {
     return TRANSFER_ZONE_ID_CLASS;
