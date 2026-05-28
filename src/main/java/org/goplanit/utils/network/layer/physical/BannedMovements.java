@@ -10,7 +10,7 @@ import java.util.function.BiConsumer;
  * 
  * @author markr
   */
-public interface Movements extends ManagedIdEntities<Movement> {
+public interface BannedMovements extends ManagedIdEntities<BannedMovement> {
 
   /**
    * {@inheritDoc}
@@ -22,18 +22,18 @@ public interface Movements extends ManagedIdEntities<Movement> {
    * {@inheritDoc}
    */
   @Override
-  public abstract Movements shallowClone();
+  public abstract BannedMovements shallowClone();
 
   /**
    * {@inheritDoc}
    */
   @Override
-  public abstract Movements deepClone();
+  public abstract BannedMovements deepClone();
 
   /**
    * {@inheritDoc}
    */
   @Override
-  public abstract Movements deepCloneWithMapping(BiConsumer<Movement, Movement> mapper);
+  public abstract BannedMovements deepCloneWithMapping(BiConsumer<BannedMovement, BannedMovement> mapper);
 
 }

@@ -106,6 +106,17 @@ public interface LinkSegment extends EdgeSegment {
   }
 
   /**
+   * Find any allowed mode from poolof allowed modes and return it
+   * @return any of the allowed modes, null if none are allowed
+   */
+  public default Mode getAnyAllowedMode(){
+    for(var mode : getAllowedModes()){
+      return mode;
+    }
+    return null;
+  }
+
+  /**
    * Return id of this instance. This id is expected to be generated using the
    * org.planit.utils.misc.IdGenerator
    * 

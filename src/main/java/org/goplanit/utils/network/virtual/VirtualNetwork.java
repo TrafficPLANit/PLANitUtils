@@ -4,7 +4,7 @@ import org.goplanit.utils.graph.GraphEntityDeepCopyMapper;
 import org.goplanit.utils.graph.directed.DirectedVertex;
 import org.goplanit.utils.id.IdGroupingToken;
 import org.goplanit.utils.id.ManagedIdDeepCopyMapper;
-import org.goplanit.utils.network.layer.physical.Movement;
+import org.goplanit.utils.network.layer.physical.BannedMovement;
 import org.goplanit.utils.network.virtual.graph.ConnectoidDirectedEdge;
 import org.goplanit.utils.network.virtual.physical.ConnectoidSegment;
 
@@ -61,7 +61,7 @@ public interface VirtualNetwork extends UntypedVirtualNetwork<VirtualNetworkLaye
           GraphEntityDeepCopyMapper<? extends ConnectoidDirectedEdge> connectoidEdgeMapper,
           GraphEntityDeepCopyMapper<? extends ConnectoidSegment> connectoidSegmentMapper,
           GraphEntityDeepCopyMapper<? extends DirectedVertex> centroidVertexMapper,
-          ManagedIdDeepCopyMapper<Movement> movementMapper);
+          ManagedIdDeepCopyMapper<BannedMovement> movementMapper);
 
 
 }

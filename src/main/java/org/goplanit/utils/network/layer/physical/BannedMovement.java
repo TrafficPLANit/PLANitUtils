@@ -8,33 +8,15 @@ import org.goplanit.utils.id.ManagedId;
 import java.io.Serializable;
 
 /**
- * A Movement comprises a combined and ordered traversal of two adjacent edge segments (from, to).
- * While currently it has a flag on whether it is banned or not, in practice ALL instantiated movements should be banned
- * as permissible movements are to be inferred from the banned ones.
- * todo: rename Movement to reflect they are always banned and remove flag
- * 
+ * A Bannedmovement comprises a combined and ordered traversal of two adjacent edge segments (from, to).
+ *
  * @author markr
  *
  */
-public interface Movement extends ExternalIdAble, ManagedId, Serializable {
+public interface BannedMovement extends ExternalIdAble, ManagedId, Serializable {
   
   /** id class for generating ids */
-  public static final Class<Movement> MOVEMENT_ID_CLASS = Movement.class;
-
-  /**
-   * Check if permissible
-   *
-   * @return true when permissible, false otherwise
-   */
-  public abstract boolean isPermissible();
-
-  /**
-   * inverse of {@link #isPermissible()}
-   * @return true when banned, false otherwise
-   */
-  public default boolean isBanned(){
-    return !isPermissible();
-  }
+  public static final Class<BannedMovement> BANNED_MOVEMENT_ID_CLASS = BannedMovement.class;
 
   /** collect edge segment from, i.e., the incoming leg of the movement
    *
@@ -80,10 +62,10 @@ public interface Movement extends ExternalIdAble, ManagedId, Serializable {
   /**
    * {@inheritDoc}
    */
-  public abstract Movement shallowClone();
+  public abstract BannedMovement shallowClone();
 
   /**
    * {@inheritDoc}
    */
-  public abstract Movement deepClone();
+  public abstract BannedMovement deepClone();
   }

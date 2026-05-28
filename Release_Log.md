@@ -14,7 +14,7 @@ PLANitUtils release log.
 * [GENERAL] Belgium added as country name
 * [GENERAL] Added support for conjugate (inverted) networks
 * [GENERAL] Added support for simple CSV parser utilities + unit test
-* #16 Support for movements
+* #16 Support for bannedMovements
 
 **Changes**
 * [GENERAL] Moved IdMappers from PLANit core to here

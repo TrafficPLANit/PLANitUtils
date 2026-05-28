@@ -1,16 +1,12 @@
 package org.goplanit.utils.network.virtual;
 
-import org.geotools.api.referencing.crs.CoordinateReferenceSystem;
-import org.goplanit.utils.exceptions.PlanItRunTimeException;
-import org.goplanit.utils.geo.PlanitJtsUtils;
 import org.goplanit.utils.graph.GraphEntityDeepCopyMapper;
 import org.goplanit.utils.graph.directed.DirectedVertex;
 import org.goplanit.utils.id.ManagedIdDeepCopyMapper;
 import org.goplanit.utils.id.ManagedIdEntities;
-import org.goplanit.utils.network.layer.NetworkLayer;
 import org.goplanit.utils.network.layer.UntypedDirectedGraphLayer;
-import org.goplanit.utils.network.layer.physical.Movement;
-import org.goplanit.utils.network.layer.physical.Movements;
+import org.goplanit.utils.network.layer.physical.BannedMovement;
+import org.goplanit.utils.network.layer.physical.BannedMovements;
 import org.goplanit.utils.network.virtual.graph.ConnectoidDirectedEdge;
 import org.goplanit.utils.network.virtual.physical.ConnectoidSegment;
 
@@ -50,7 +46,7 @@ public interface UntypedVirtualLayer<
    *
    * @return movements
    */
-  public abstract Movements getMovements();
+  public abstract BannedMovements getMovements();
 
   /**
    * Recreate the ids for all registered entities with or without resetting, this includes child managed ids, i.e.,
@@ -93,7 +89,7 @@ public interface UntypedVirtualLayer<
           GraphEntityDeepCopyMapper<E> connectoidLinkMapper,
           GraphEntityDeepCopyMapper<ES> connectoidSegmentMapper,
           GraphEntityDeepCopyMapper<V> vertexMapper,
-          ManagedIdDeepCopyMapper<Movement> movementMapper);
+          ManagedIdDeepCopyMapper<BannedMovement> movementMapper);
 
   /**
    * Clear the entire layer from vertices, edges, and segments

@@ -6,6 +6,7 @@ import java.util.function.Consumer;
 import java.util.stream.Stream;
 
 import org.goplanit.utils.graph.Edge;
+import org.goplanit.utils.network.layer.physical.Node;
 
 /**
  * Directed Edge interface connecting two vertices in a directional fashion. Each edge has one or
@@ -215,5 +216,35 @@ public interface DirectedEdge extends Edge {
     }
 
     return edgeSegment.isDirectionAb() ? removeEdgeSegmentAb() : removeEdgeSegmentBa();
+  }
+
+  /**
+   * Find the segment going towards the given vertex (if it is a vertex on the link)
+   * @param downstreamVertex to go towards
+   * @return segment in direction (if available), or null
+   */
+  public default EdgeSegment getSegmentUpstreamOf(DirectedVertex downstreamVertex){
+    if(isVertexA(downstreamVertex)){
+      return getEdgeSegmentBa();
+    }else if(isVertexB(downstreamVertex)){
+      return getEdgeSegmentAb();
+    }else{
+      return null;
+    }
+  }
+
+  /**
+   * Find the segment downstream of the given vertex (if it is a vertex on the link)
+   * @param upstreamVertex from segment to find
+   * @return segment in direction (if available), or null
+   */
+  public default  EdgeSegment getSegmentDownstreamFrom(DirectedVertex upstreamVertex){
+    if(isVertexA(upstreamVertex)){
+      return getEdgeSegmentAb();
+    }else if(isVertexB(upstreamVertex)){
+      return getEdgeSegmentBa();
+    }else{
+      return null;
+    }
   }
 }

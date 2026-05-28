@@ -5,12 +5,9 @@ import org.goplanit.utils.graph.directed.DirectedGraphUtils;
 import org.goplanit.utils.graph.directed.DirectedVertex;
 import org.goplanit.utils.graph.directed.EdgeSegment;
 import org.goplanit.utils.misc.Pair;
-import org.goplanit.utils.network.layer.physical.Movements;
+import org.goplanit.utils.network.layer.physical.BannedMovements;
 
-import java.util.ArrayDeque;
-import java.util.Deque;
 import java.util.Map;
-import java.util.TreeMap;
 import java.util.function.BiPredicate;
 import java.util.function.Predicate;
 
@@ -42,7 +39,7 @@ public interface UntypedDirectedGraph<V extends DirectedVertex, E extends Direct
    *
    * @return movements container
    */
-  public abstract Movements getMovements();
+  public abstract BannedMovements getMovements();
     
   /** Verify if empty, empty when no nodes, edges, edge segments exist
    * 

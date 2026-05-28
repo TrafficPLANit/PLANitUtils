@@ -1,7 +1,5 @@
 package org.goplanit.utils.network.layer.physical;
 
-import org.goplanit.utils.exceptions.PlanItException;
-import org.goplanit.utils.graph.GraphEntityFactory;
 import org.goplanit.utils.graph.directed.EdgeSegment;
 import org.goplanit.utils.id.ManagedIdEntityFactory;
 
@@ -10,26 +8,24 @@ import org.goplanit.utils.id.ManagedIdEntityFactory;
  * @author markr
  *
  */
-public interface MovementFactory extends ManagedIdEntityFactory<Movement> {
+public interface MovementFactory extends ManagedIdEntityFactory<BannedMovement> {
   
   /**
    * Create movement
    *
    * @param from  the from segment
    * @param to the to segment
-   * @param banned flag whether banned or not
    * @return the created movement
    */
-  public abstract Movement create(final EdgeSegment from, final EdgeSegment to, boolean banned);
+  public abstract BannedMovement create(final EdgeSegment from, final EdgeSegment to);
 
   /**
    * Create movement and register it
    *
    * @param from  the from segment
    * @param to the to segment
-   * @param banned flag whether banned or not
    * @return the created and registered movement
    */
-  public abstract Movement registerNew(final EdgeSegment from, final EdgeSegment to, boolean banned);
+  public abstract BannedMovement registerNew(final EdgeSegment from, final EdgeSegment to);
 
 }

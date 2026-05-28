@@ -6,6 +6,7 @@ import org.geotools.api.referencing.operation.TransformException;
 import org.geotools.geometry.jts.JTS;
 import org.goplanit.utils.exceptions.PlanItRunTimeException;
 import org.goplanit.utils.geo.PlanitJtsUtils;
+import org.goplanit.utils.graph.directed.DirectedVertex;
 import org.goplanit.utils.math.Precision;
 import org.goplanit.utils.misc.Pair;
 import org.locationtech.jts.geom.Envelope;
@@ -34,6 +35,15 @@ public interface Edge extends Serializable, GraphEntity {
    */
   public default boolean isVertexA(Vertex vertex) {
     return getVertexA() == vertex;
+  }
+
+  /** Verify if passed in vertex is the same object reference as vertex B
+   *
+   * @param vertex to check
+   * @return true when identical object instance, false otherwise
+   */
+  public default boolean isVertexB(DirectedVertex vertex){
+    return getVertexB() == vertex;
   }
 
   /**

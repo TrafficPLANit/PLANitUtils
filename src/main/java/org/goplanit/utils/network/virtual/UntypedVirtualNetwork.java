@@ -4,8 +4,7 @@ import org.geotools.api.referencing.crs.CoordinateReferenceSystem;
 import org.goplanit.utils.graph.GraphEntityDeepCopyMapper;
 import org.goplanit.utils.graph.directed.DirectedVertex;
 import org.goplanit.utils.id.ManagedIdDeepCopyMapper;
-import org.goplanit.utils.misc.LoggingUtils;
-import org.goplanit.utils.network.layer.physical.Movement;
+import org.goplanit.utils.network.layer.physical.BannedMovement;
 import org.goplanit.utils.network.virtual.graph.ConnectoidDirectedEdge;
 import org.goplanit.utils.network.virtual.physical.ConnectoidSegment;
 
@@ -99,5 +98,5 @@ public interface UntypedVirtualNetwork<L extends
           GraphEntityDeepCopyMapper<? extends ConnectoidDirectedEdge> connectoidEdgeMapper,
           GraphEntityDeepCopyMapper<? extends ConnectoidSegment> connectoidSegmentMapper,
           GraphEntityDeepCopyMapper<? extends DirectedVertex> connectoidVertexMapper,
-          ManagedIdDeepCopyMapper<Movement> movementMapper);
+          ManagedIdDeepCopyMapper<BannedMovement> movementMapper);
 }
