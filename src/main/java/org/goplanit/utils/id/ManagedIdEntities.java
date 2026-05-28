@@ -142,6 +142,18 @@ public interface ManagedIdEntities<E extends ManagedId> extends LongMapWrapper<E
   }
 
   /**
+   * Lay an index on the entities based on provided mapping function which is used to construct the index.
+   * It is assumed the index is not unique.
+   *
+   * @param mappingFunction to construct keys in resulting index map
+   * @return map with key being the index and value containing original entities relating to it
+   * @param <T> type of the index
+   */
+  public default <T> Map<T,List<E>> createGroupByIndex(Function<E, T> mappingFunction){
+    return this.stream().collect(Collectors.groupingBy(mappingFunction));
+  }
+
+  /**
    * Create a raw array where each entity is indexed by its id. Explicitly construct of type E which is likely
    * more specific than the managedIdClass identifier
    *

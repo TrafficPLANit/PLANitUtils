@@ -9,6 +9,7 @@ import org.goplanit.utils.graph.modifier.event.GraphModifierEventProducer;
 import org.goplanit.utils.id.ExternalIdAble;
 import org.goplanit.utils.misc.Pair;
 import org.goplanit.utils.network.layer.UntypedDirectedGraphLayer;
+import org.goplanit.utils.network.layer.physical.BannedMovement;
 
 import java.util.*;
 import java.util.function.Function;
@@ -26,20 +27,6 @@ public interface UntypedDirectedGraphLayerModifier<
         V extends DirectedVertex,
         E extends DirectedEdge,
         S extends EdgeSegment> extends TopologicalLayerModifier, GraphModifierEventProducer {
-    
-  /**
-   * Break the passed in link by inserting the passed in node in between. After completion the original links remain
-   * as (NodeA,NodeToBreakAt), and new links as inserted for (NodeToBreakAt,NodeB).
-   * Underlying link segments (if any) are also updated accordingly in the same manner
-   * 
-   * @param linkToBreak        the link to break
-   * @param nodeToBreakAt      the node to break at
-   * @param crs                to use to recompute link lengths of broken links
-   * @return the broken edges for each original edge's id
-   */
-  public default Map<Long, Pair<E,E>> breakAt(E linkToBreak, V nodeToBreakAt, CoordinateReferenceSystem crs) {
-    return breakAt(List.of(linkToBreak), nodeToBreakAt, crs);
-  }
 
   /**
    * Break the passed in links by inserting the passed in node in between. After completion the original links remain
@@ -51,52 +38,29 @@ public interface UntypedDirectedGraphLayerModifier<
    * @param crs                to use to recompute link lengths of broken links
    * @return the broken edges for each original edge's id
    */
-  public abstract Map<Long, Pair<E,E>> breakAt(List<E> linksToBreak, V nodeToBreakAt, CoordinateReferenceSystem crs);
+  public abstract Map<Long, Pair<E,E>> breakAt(
+      List<E> linksToBreak, V nodeToBreakAt, CoordinateReferenceSystem crs);
 
   /**
-   * Break the passed in links by inserting the passed in node in between. After completion the original links remain
-   * as (NodeA,NodeToBreakAt), and new links as inserted for (NodeToBreakAt,NodeB).
+   * Break the passed in links by inserting the passed in node in between. After completion the original
+   * links remain as (NodeA,NodeToBreakAt), and new links as inserted for (NodeToBreakAt,NodeB).
    * Underlying link segments (if any) are also updated accordingly in the same manner.
+   * we pass in indexed movements to speed up the updating of the touched movements (if any). If any
+   * banned movements exist on the broken edges layer, or many edges are to broken with successive calls,
+   * this should be the go to, to optimize performance compared to equivalent method without this index. It is assumed
+   * the passed on movements are the drop-in replacement for the layer's movements container
    *
-   * @param <K> type of key
-   * @param linksToBreak links that will be broken if they contain theNode as an internal geo location
-   * @param nodeToBreakAt      the node to break at
-   * @param crs of the network layer
-   * @param linkToKey mapping results in group by key for result map
-   * @return newly created PLANit links by a custom key obtained from original broken link and each entry containing
-   * all broken links for all original link's mapping to the given key value
-   *
+   * @param linksToBreak  the links to break
+   * @param nodeToBreakAt the node to break at
+   * @param movementsByCentreVertex precompiled index for movements so they can be quickly updated
+   * @param crs           to use to recompute link lengths of broken links
+   * @return the broken links for each original link's internal id
    */
-  public default <K> Map<K, Set<E>> breakAt(
-      List<E> linksToBreak, V nodeToBreakAt, CoordinateReferenceSystem crs, Function<E,K> linkToKey){
-    Map<K, Set<E>> groupNewLinksByOriginalLinkKey = new HashMap<>();
-
-    if(linksToBreak != null) {
-
-      try {
-        /* performing breaking of links at the node given, returns the broken links by the original link's PLANit
-         * edge id */
-        Map<Long, Pair<E,E>> localBrokenLinks = breakAt(linksToBreak, nodeToBreakAt, crs);
-        /* add newly created links to the mapping from original broken link to a key, e.g. external id, that together
-         * form this entire original link*/
-        if(localBrokenLinks != null) {
-          localBrokenLinks.forEach((id, links) -> {
-            List.of(links.first(),links.second()).forEach( brokenLink -> {
-              final K brokenLinkKey = linkToKey.apply(brokenLink);
-              groupNewLinksByOriginalLinkKey.putIfAbsent(brokenLinkKey, new HashSet<>());
-              groupNewLinksByOriginalLinkKey.get(brokenLinkKey).add(brokenLink);
-            });
-          });
-        }
-      }catch(PlanItRunTimeException e) {
-        throw new PlanItRunTimeException("Unable to break links %s for node %s, something unexpected went wrong",e,
-            linksToBreak.stream().map(ExternalIdAble::getExternalId).collect(
-                    Collectors.toSet()).toString(), nodeToBreakAt.getExternalId());
-      }
-    }
-
-    return groupNewLinksByOriginalLinkKey;
-  }
+  public abstract Map<Long, Pair<E,E>> breakAt(
+      List<E> linksToBreak,
+      V nodeToBreakAt,
+      Map<? extends V, List<BannedMovement>> movementsByCentreVertex,
+      CoordinateReferenceSystem crs);
 
   /**
    * Recreate all managed id entities on the layer
