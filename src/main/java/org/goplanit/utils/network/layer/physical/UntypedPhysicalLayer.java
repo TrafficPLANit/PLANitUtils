@@ -89,6 +89,15 @@ public interface UntypedPhysicalLayer<N extends Node, L extends Link, LS extends
   }
 
   /**
+   * Number of banned movements
+   *
+   * @return number of banned movements
+   */
+  public default long getNumberOfBannedMovements(){
+    return getBannedMovements().size();
+  }
+
+  /**
    * Create a (new) mapping from entry/sexit segment combinations to their movement (if any)
    *
    * @return mapping that was created
