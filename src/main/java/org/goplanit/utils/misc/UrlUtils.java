@@ -80,24 +80,28 @@ public class UrlUtils {
     return host != null && !"".equals(host);
   }
 
-  /** Construct a URL based on a given a location either local or not
+  /** Construct a URL based on a given a location either local or not. If fails throw PLANit run time exception
    *
    * @param path to convert
    * @return URL representation
    */
   public static URL createFrom(String path) {
     try {
-      var result = new URL(path);
-      return result;
-    } catch (Exception e) {
+      return new URI(path).toURL();
+    } catch (Exception ignored) {
     }
 
     /* try again, now as local file or resource rather than web based */
+    URL result = null;
     try {
-      return createFromLocalPathOrResource(path);
+      result = createFromLocalPathOrResource(path);
+      if(result == null){
+        throw new PlanItRunTimeException("Unable to extract URL from %s",path);
+      }
     }catch (Exception e) {
       throw new PlanItRunTimeException("Unable to extract URL from %s",path);
     }
+    return result;
   }
   
   /** Construct a URL based on a given local (possibly relative) file location and include full path in the URL if
