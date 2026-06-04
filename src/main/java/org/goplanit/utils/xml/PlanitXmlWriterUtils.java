@@ -1,12 +1,11 @@
 package org.goplanit.utils.xml;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.OutputStreamWriter;
-import java.io.Writer;
+import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.logging.Logger;
+import java.util.zip.GZIPOutputStream;
 
 import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
@@ -34,27 +33,41 @@ public class PlanitXmlWriterUtils {
   public static final String XML_V1= "1.0";
   
   /**
-   * create an xml stream writer for the given path
+   * create an XML stream writer for the given path
    * @param xmlFilePath to create the writer for
+   * @param asGZip when true write out as gzipped file and append .gz to file name (if not done so already)
    * @return created xml stream writer and writer instances
    */
-  public static Pair<XMLStreamWriter, Writer> createXMLWriter(Path xmlFilePath) {
-    Path absoluteXmlPath = xmlFilePath.toAbsolutePath();
+  public static Pair<XMLStreamWriter, Writer> createXMLWriter(final Path xmlFilePath, boolean asGZip) {
+    var absoluteDirectoryPath = xmlFilePath.getParent().toAbsolutePath();
+    var correctedPath = Path.of(xmlFilePath.toString());
+    if(asGZip && !xmlFilePath.endsWith(".gz")){
+      correctedPath = Path.of(absoluteDirectoryPath.toString(),xmlFilePath.getFileName().toString() + ".gz");
+    }
+    Path absoluteXmlPath = correctedPath.toAbsolutePath();
         
     /* create dir if not present */
-    File directory = absoluteXmlPath.getParent().toFile();
+    File directory = absoluteDirectoryPath.toFile();
     if(!directory.exists()) {      
       if(!directory.mkdirs()) {
-        throw new PlanItRunTimeException(String.format("Unable to create Xml writer output directory %s",directory.toString()));
+        throw new PlanItRunTimeException(String.format("Unable to create Xml writer output directory %s",
+            directory));
       }      
     }
     
     /* create writer */
     Writer theWriter = null;
-    try {    
-      theWriter = new OutputStreamWriter(new FileOutputStream(absoluteXmlPath.toFile()), "UTF-8");
+    try {
+      OutputStream theStream = new FileOutputStream(absoluteXmlPath.toFile());
+      if(asGZip) {
+        theStream = new GZIPOutputStream(theStream);
+      }
+      theWriter = new OutputStreamWriter(theStream, StandardCharsets.UTF_8);
+
       XMLOutputFactory xmlOutputFactory = XMLOutputFactory.newInstance();
+
       return Pair.of(xmlOutputFactory.createXMLStreamWriter(theWriter),theWriter);
+
     } catch (XMLStreamException | IOException e) {
       try {
         theWriter.flush();
