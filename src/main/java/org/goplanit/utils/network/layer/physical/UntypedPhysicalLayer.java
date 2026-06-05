@@ -38,7 +38,7 @@ public interface UntypedPhysicalLayer<N extends Node, L extends Link, LS extends
    *
    * @return true when present, false otherwise
    */
-  public default boolean hasMovements(){
+  public default boolean hasBannedMovements(){
     return getBannedMovements()!= null && !getBannedMovements().isEmpty();
   }
 
