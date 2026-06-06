@@ -9,10 +9,8 @@ import org.goplanit.utils.exceptions.PlanItException;
 import org.goplanit.utils.geo.PlanitJtsCrsUtils;
 import org.goplanit.utils.graph.Edge;
 import org.goplanit.utils.graph.Vertex;
-import org.goplanit.utils.graph.directed.DirectedVertex;
 import org.goplanit.utils.graph.modifier.event.GraphModifierEventProducer;
 import org.goplanit.utils.misc.Pair;
-import org.goplanit.utils.network.layer.physical.BannedMovement;
 
 /**
  * Modify graph elements

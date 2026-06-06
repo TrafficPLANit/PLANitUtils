@@ -1,19 +1,16 @@
-package org.goplanit.utils.network.layer.physical;
+package org.goplanit.utils.graph.directed;
 
-import org.goplanit.utils.graph.directed.DirectedVertex;
-import org.goplanit.utils.graph.directed.EdgeSegment;
-import org.goplanit.utils.id.ExternalIdAble;
-import org.goplanit.utils.id.ManagedId;
+import org.goplanit.utils.graph.GraphEntity;
 
 import java.io.Serializable;
 
 /**
- * A Bannedmovement comprises a combined and ordered traversal of two adjacent edge segments (from, to).
+ * A Banned movement comprises a combined and ordered traversal of two adjacent edge segments (from, to).
  *
  * @author markr
  *
  */
-public interface BannedMovement extends ExternalIdAble, ManagedId, Serializable {
+public interface BannedMovement extends Serializable, GraphEntity {
   
   /** id class for generating ids */
   public static final Class<BannedMovement> BANNED_MOVEMENT_ID_CLASS = BannedMovement.class;
@@ -46,14 +43,22 @@ public interface BannedMovement extends ExternalIdAble, ManagedId, Serializable 
     return getSegmentTo() != null;
   }
 
+  /**
+   * Set from segment
+   * @param segment to set
+   */
   public void setSegmentFrom(EdgeSegment segment);
 
+  /**
+   * Set to segment
+   * @param segment to set
+   */
   public void setSegmentTo(EdgeSegment segment);
 
   /**
    * Get the vertex in the centre of the movement connecting the two edge segments
    *
-   * @return centre vertex
+   * @return centre-vertex
    */
   public default DirectedVertex getCentreVertex(){
     return getSegmentFrom().getDownstreamVertex();

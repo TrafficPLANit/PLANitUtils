@@ -7,7 +7,7 @@ import org.goplanit.utils.graph.directed.DirectedVertex;
 import org.goplanit.utils.graph.directed.EdgeSegment;
 import org.goplanit.utils.graph.modifier.event.DirectedGraphModifierEventProducer;
 import org.goplanit.utils.misc.Pair;
-import org.goplanit.utils.network.layer.physical.BannedMovement;
+import org.goplanit.utils.graph.directed.BannedMovement;
 
 import java.util.List;
 import java.util.Map;

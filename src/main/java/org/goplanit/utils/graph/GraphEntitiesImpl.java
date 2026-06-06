@@ -4,6 +4,8 @@ import java.util.TreeMap;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
 
+import org.goplanit.utils.geo.GeometryIndexedContainer;
+import org.goplanit.utils.geo.GeometryIndexedContainerImpl;
 import org.goplanit.utils.wrapper.LongMapWrapperImpl;
 
 /**

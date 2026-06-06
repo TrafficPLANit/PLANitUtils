@@ -1,19 +1,15 @@
 package org.goplanit.utils.network.layer.modifier;
 
 import org.geotools.api.referencing.crs.CoordinateReferenceSystem;
-import org.goplanit.utils.exceptions.PlanItRunTimeException;
 import org.goplanit.utils.graph.directed.DirectedEdge;
 import org.goplanit.utils.graph.directed.DirectedVertex;
 import org.goplanit.utils.graph.directed.EdgeSegment;
 import org.goplanit.utils.graph.modifier.event.GraphModifierEventProducer;
-import org.goplanit.utils.id.ExternalIdAble;
 import org.goplanit.utils.misc.Pair;
 import org.goplanit.utils.network.layer.UntypedDirectedGraphLayer;
-import org.goplanit.utils.network.layer.physical.BannedMovement;
+import org.goplanit.utils.graph.directed.BannedMovement;
 
 import java.util.*;
-import java.util.function.Function;
-import java.util.stream.Collectors;
 
 /**
  * Modifier with additional functionality related to modifications to layers derived from

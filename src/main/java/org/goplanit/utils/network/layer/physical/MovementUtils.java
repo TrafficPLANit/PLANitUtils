@@ -1,5 +1,7 @@
 package org.goplanit.utils.network.layer.physical;
 
+import org.goplanit.utils.graph.directed.BannedMovement;
+import org.goplanit.utils.graph.directed.BannedMovements;
 import org.goplanit.utils.graph.directed.EdgeSegment;
 
 import java.util.*;

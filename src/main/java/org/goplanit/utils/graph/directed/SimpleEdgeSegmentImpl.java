@@ -3,9 +3,11 @@ package org.goplanit.utils.graph.directed;
 import org.goplanit.utils.id.ExternalIdAbleImpl;
 import org.goplanit.utils.id.IdGenerator;
 import org.goplanit.utils.id.IdGroupingToken;
+import org.locationtech.jts.geom.Geometry;
 
 /**
- * SimpleEdgeSegmentImpl represents a directed edge. It is a simple implementation to allow for testing within this package.
+ * SimpleEdgeSegmentImpl represents a directed edge. It is a simple implementation to allow for testing within
+ * this package.
  *
  * @author markr
  *
@@ -116,6 +118,14 @@ public class SimpleEdgeSegmentImpl extends ExternalIdAbleImpl implements EdgeSeg
   @Override
   public long recreateManagedIds(IdGroupingToken tokenId) {
     return IdGenerator.generateId(tokenId, EDGE_SEGMENT_ID_CLASS);
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public Geometry getGeometry() {
+    return null;
   }
 }
 

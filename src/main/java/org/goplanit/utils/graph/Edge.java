@@ -5,6 +5,7 @@ import org.geotools.api.referencing.operation.MathTransform;
 import org.geotools.api.referencing.operation.TransformException;
 import org.geotools.geometry.jts.JTS;
 import org.goplanit.utils.exceptions.PlanItRunTimeException;
+import org.goplanit.utils.geo.GeometryEnabled;
 import org.goplanit.utils.geo.PlanitJtsUtils;
 import org.goplanit.utils.graph.directed.DirectedVertex;
 import org.goplanit.utils.math.Precision;
@@ -50,6 +51,7 @@ public interface Edge extends Serializable, GraphEntity {
    * Collect the geometry of this edge, if not available null is returned
    * @return lineString
    */
+  @Override
   public abstract LineString getGeometry();
   
   /**
@@ -266,16 +268,7 @@ public interface Edge extends Serializable, GraphEntity {
   public default boolean hasVertices(){
     return hasVertexA() && hasVertexB();
   }
-  
-  /**
-   * check if geometry is available
-   * 
-   * @return true when available, false otherwise
-   */
-  public default boolean hasGeometry() {
-    return getGeometry()!=null;
-  }
-  
+
   /** verify if the geometry is in the A to B direction of the link, both vertices must have geometry present.
    * @return true if in A to B direction, false otherwise
    */
@@ -283,11 +276,12 @@ public interface Edge extends Serializable, GraphEntity {
     return isGeometryInAbDirection(false);
   }
 
-  /** verify if the geometry is in the A to B direction of the edge. When one of the vertices has no geometry, we may or may not allow for
-   * this. If this is the case, we enforce that at least one end of the geometry is matched to the other vertex's geometry to
-   * infer direction.
+  /** verify if the geometry is in the A to B direction of the edge. When one of the vertices has no geometry,
+   * we may or may not allow for this. If this is the case, we enforce that at least one end of the geometry is
+   * matched to the other vertex's geometry to infer direction.
    *
-   * @param allowSingleVertexWithoutGeometry when true, we assume that geometry of edge is ok to be not matching vertex on one end
+   * @param allowSingleVertexWithoutGeometry when true, we assume that geometry of edge is ok to be not matching
+   *                                         vertex on one end
    * @return true if in A to B direction, false otherwise
    */
   public default boolean isGeometryInAbDirection(boolean allowSingleVertexWithoutGeometry) {
@@ -351,8 +345,8 @@ public interface Edge extends Serializable, GraphEntity {
   }
 
   /**
-   * Update the geometry by taking the current geometry and inject a coordinate at the projected location between existing coordinates using the passed in location.
-   * this replaces the existing geometry instance which is returned.
+   * Update the geometry by taking the current geometry and inject a coordinate at the projected location between
+   * existing coordinates using the passed in location. this replaces the existing geometry instance which is returned.
    *
    * @param projectedLinearLocation to use as reference point of new coordinate
    * @return old geometry that is now replaced

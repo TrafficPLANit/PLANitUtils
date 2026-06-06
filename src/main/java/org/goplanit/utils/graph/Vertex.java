@@ -4,6 +4,7 @@ import org.geotools.api.geometry.MismatchedDimensionException;
 import org.geotools.api.referencing.operation.MathTransform;
 import org.geotools.api.referencing.operation.TransformException;
 import org.geotools.geometry.jts.JTS;
+import org.goplanit.utils.geo.GeometryEnabled;
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.Point;
 
@@ -78,6 +79,15 @@ public interface Vertex extends Serializable, GraphEntity {
    * @return direct position reflecting point location
    */
   public abstract Point getPosition();
+
+  /**
+   * Geometry is always a point for a vertex
+   * @return position of vertex
+   */
+  @Override
+  public default Point getGeometry(){
+    return getPosition();
+  }
   
   /**
    * Add edge, do not invoke when parsing networks, this connection is

@@ -2,6 +2,8 @@ package org.goplanit.utils.network.layer.physical;
 
 import org.apache.commons.collections4.map.MultiKeyMap;
 import org.goplanit.utils.graph.GraphEntities;
+import org.goplanit.utils.graph.directed.BannedMovement;
+import org.goplanit.utils.graph.directed.BannedMovements;
 import org.goplanit.utils.network.layer.UntypedDirectedGraphLayer;
 
 /**

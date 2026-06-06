@@ -1,5 +1,7 @@
 package org.goplanit.utils.graph;
 
+import org.goplanit.utils.geo.GeometryIndexableContainer;
+
 import java.util.function.BiConsumer;
 
 /**
@@ -8,7 +10,7 @@ import java.util.function.BiConsumer;
  * @author markr
  */
 public interface Vertices extends GraphEntities<Vertex> {
-      
+
   /**
    * Collect the vertex factory to use for creating instances
    * 

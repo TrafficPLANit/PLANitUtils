@@ -1,4 +1,4 @@
-package org.goplanit.utils.network.layer.physical;
+package org.goplanit.utils.graph.directed;
 
 import org.goplanit.utils.id.ManagedIdEntities;
 
@@ -16,7 +16,7 @@ public interface BannedMovements extends ManagedIdEntities<BannedMovement> {
    * {@inheritDoc}
    */
   @Override
-  public abstract MovementFactory getFactory();
+  public abstract BannedMovementFactory getFactory();
 
   /**
    * {@inheritDoc}

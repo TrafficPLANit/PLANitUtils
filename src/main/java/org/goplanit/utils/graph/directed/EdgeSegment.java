@@ -5,7 +5,7 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 
 import org.goplanit.utils.graph.GraphEntity;
-import org.goplanit.utils.network.layer.physical.Node;
+import org.locationtech.jts.geom.Geometry;
 
 /**
  * EdgeSegment represents an edge in a particular (single) direction. Each edge
@@ -221,8 +221,8 @@ public interface EdgeSegment extends Serializable, GraphEntity {
   }
 
   /**
-   * Assuming geometry is present, if not false is returned, we verify if the geometry is provided in the direction of the
-   * segment or not
+   * Assuming geometry is present, if not false is returned, we verify if the geometry is provided in the
+   * direction of the segment or not
    *
    * @param allowSingleVertexWithoutGeometry when true, we assume that geometry of edge is ok to be not matching
    *                                         vertex on one end
@@ -270,8 +270,19 @@ public interface EdgeSegment extends Serializable, GraphEntity {
    *
    * @return true when parent has geometry, false otherwise
    */
+  @Override
   public default boolean hasGeometry(){
     return getParent().hasGeometry();
+  }
+
+  /**
+   * Get geometry, delegates to parent (edge) and retrieves that geometry
+   *
+   * @return geometry of parent edge
+   */
+  @Override
+  public default Geometry getGeometry(){
+    return getParent().getGeometry();
   }
 
 }

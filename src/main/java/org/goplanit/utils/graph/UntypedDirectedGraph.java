@@ -5,7 +5,7 @@ import org.goplanit.utils.graph.directed.DirectedGraphUtils;
 import org.goplanit.utils.graph.directed.DirectedVertex;
 import org.goplanit.utils.graph.directed.EdgeSegment;
 import org.goplanit.utils.misc.Pair;
-import org.goplanit.utils.network.layer.physical.BannedMovements;
+import org.goplanit.utils.graph.directed.BannedMovements;
 
 import java.util.Map;
 import java.util.function.BiPredicate;

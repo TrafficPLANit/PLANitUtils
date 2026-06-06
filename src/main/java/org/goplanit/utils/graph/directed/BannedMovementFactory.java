@@ -1,6 +1,5 @@
-package org.goplanit.utils.network.layer.physical;
+package org.goplanit.utils.graph.directed;
 
-import org.goplanit.utils.graph.directed.EdgeSegment;
 import org.goplanit.utils.id.ManagedIdEntityFactory;
 
 /** Factory to create movements and register them on its container
@@ -8,7 +7,7 @@ import org.goplanit.utils.id.ManagedIdEntityFactory;
  * @author markr
  *
  */
-public interface MovementFactory extends ManagedIdEntityFactory<BannedMovement> {
+public interface BannedMovementFactory extends ManagedIdEntityFactory<BannedMovement> {
   
   /**
    * Create movement
