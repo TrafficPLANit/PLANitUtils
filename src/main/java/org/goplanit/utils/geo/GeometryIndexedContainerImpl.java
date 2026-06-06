@@ -22,6 +22,7 @@ public class GeometryIndexedContainerImpl<E extends GeometryEnabled> implements 
   /**
    * {@inheritDoc}
    */
+  @Override
   public void buildIndex(Iterable<E> entities) {
     for (E entity : entities) {
       if (entity.hasGeometry()) {
@@ -35,6 +36,7 @@ public class GeometryIndexedContainerImpl<E extends GeometryEnabled> implements 
   /**
    * {@inheritDoc}
    */
+  @Override
   @SuppressWarnings("unchecked")
   public List<E> findInBounds(double minX, double minY, double maxX, double maxY) {
     Envelope queryEnv = new Envelope(minX, maxX, minY, maxY);
