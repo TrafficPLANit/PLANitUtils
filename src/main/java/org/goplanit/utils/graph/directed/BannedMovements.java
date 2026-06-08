@@ -1,5 +1,6 @@
 package org.goplanit.utils.graph.directed;
 
+import org.goplanit.utils.graph.GraphEntities;
 import org.goplanit.utils.id.ManagedIdEntities;
 
 import java.util.function.BiConsumer;
@@ -10,7 +11,7 @@ import java.util.function.BiConsumer;
  * 
  * @author markr
   */
-public interface BannedMovements extends ManagedIdEntities<BannedMovement> {
+public interface BannedMovements extends ManagedIdEntities<BannedMovement>, GraphEntities<BannedMovement> {
 
   /**
    * {@inheritDoc}

@@ -1,5 +1,6 @@
 package org.goplanit.utils.graph.directed;
 
+import org.goplanit.utils.graph.GraphEntityFactory;
 import org.goplanit.utils.id.ManagedIdEntityFactory;
 
 /** Factory to create movements and register them on its container
@@ -7,7 +8,8 @@ import org.goplanit.utils.id.ManagedIdEntityFactory;
  * @author markr
  *
  */
-public interface BannedMovementFactory extends ManagedIdEntityFactory<BannedMovement> {
+public interface BannedMovementFactory extends
+    ManagedIdEntityFactory<BannedMovement>, GraphEntityFactory<BannedMovement> {
   
   /**
    * Create movement
