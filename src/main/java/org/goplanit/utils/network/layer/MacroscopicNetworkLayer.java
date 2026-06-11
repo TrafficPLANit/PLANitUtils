@@ -1,5 +1,6 @@
 package org.goplanit.utils.network.layer;
 
+import org.goplanit.utils.graph.directed.BannedMovements;
 import org.goplanit.utils.mode.Mode;
 import org.goplanit.utils.network.layer.macroscopic.*;
 import org.goplanit.utils.network.layer.physical.Node;
@@ -49,8 +50,8 @@ public interface MacroscopicNetworkLayer extends UntypedPhysicalLayer<Node, Macr
    * @return the nodes
    */
   @Override
-  public abstract Nodes getNodes();  
-    
+  public abstract Nodes getNodes();
+
   /**
    * Provide access to registered macroscopic link segment types used across all macroscopic link segments
    * 

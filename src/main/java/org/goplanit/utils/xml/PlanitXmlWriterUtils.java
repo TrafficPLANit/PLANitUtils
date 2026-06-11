@@ -111,7 +111,8 @@ public class PlanitXmlWriterUtils {
    * @param indentationLevel to use
    * @throws XMLStreamException thrown if error
    */
-  public static void writeEmptyElement(XMLStreamWriter xmlWriter, String xmlElementName, int indentationLevel) throws XMLStreamException {
+  public static void writeEmptyElement(XMLStreamWriter xmlWriter, String xmlElementName, int indentationLevel)
+      throws XMLStreamException {
     writeIndentation(xmlWriter, indentationLevel);
     xmlWriter.writeEmptyElement(xmlElementName);
   }  
@@ -124,7 +125,8 @@ public class PlanitXmlWriterUtils {
    * @param indentationLevel to use
    * @throws XMLStreamException thrown if error
    */
-  public static  void writeStartElementNewLine(XMLStreamWriter xmlWriter, String xmlElementName, int indentationLevel) throws XMLStreamException {
+  public static  void writeStartElementNewLine(XMLStreamWriter xmlWriter, String xmlElementName, int indentationLevel)
+      throws XMLStreamException {
     writeStartElement(xmlWriter, xmlElementName, indentationLevel);
     writeNewLine(xmlWriter);
   }
@@ -137,13 +139,15 @@ public class PlanitXmlWriterUtils {
    * @param indentationLevel to use
    * @throws XMLStreamException thrown if error
    */
-  public static void writeStartElement(XMLStreamWriter xmlWriter, String xmlElementName, int indentationLevel) throws XMLStreamException {
+  public static void writeStartElement(XMLStreamWriter xmlWriter, String xmlElementName, int indentationLevel)
+      throws XMLStreamException {
     writeIndentation(xmlWriter,indentationLevel);
     xmlWriter.writeStartElement(xmlElementName);
   }
 
   /**
-   * Write an element without attributes (with indentation) as well as its content and end element, e.g. {@code <xmlElementName><![CDATA[elementCData]]></xmlElementName>}
+   * Write an element without attributes (with indentation) as well as its content and end element,
+   * e.g. {@code <xmlElementName><![CDATA[elementCData]]></xmlElementName>}
    *
    * @param xmlWriter to use
    * @param xmlElementName element to start tag, e.g. {@code <xmlElementName>}
@@ -151,7 +155,9 @@ public class PlanitXmlWriterUtils {
    * @param indentationLevel to use
    * @throws XMLStreamException thrown if error
    */
-  public static void writeElementWithCData(XMLStreamWriter xmlWriter, String xmlElementName, String elementCData, int indentationLevel) throws XMLStreamException {
+  public static void writeElementWithCData(
+      XMLStreamWriter xmlWriter, String xmlElementName, String elementCData, int indentationLevel)
+      throws XMLStreamException {
     writeIndentation(xmlWriter, indentationLevel);
     xmlWriter.writeStartElement(xmlElementName);
     xmlWriter.writeCData(elementCData);
@@ -159,7 +165,8 @@ public class PlanitXmlWriterUtils {
   }
 
   /**
-   * Write an element CDATA without attributes (with indentation) as well as its content and end element, e.g. {@code <xmlElementName><![CDATA[elementCData]]></xmlElementName>}.
+   * Write an element CDATA without attributes (with indentation) as well as its content and end element,
+   * e.g. {@code <xmlElementName><![CDATA[elementCData]]></xmlElementName>}.
    * Add newline afterwards
    *
    * @param xmlWriter to use
@@ -168,14 +175,16 @@ public class PlanitXmlWriterUtils {
    * @param indentationLevel to use
    * @throws XMLStreamException thrown if error
    */
-  public static void writeElementWithCDataNewLine(XMLStreamWriter xmlWriter, String xmlElementName, String elementCData, int indentationLevel) throws XMLStreamException {
+  public static void writeElementWithCDataNewLine(
+      XMLStreamWriter xmlWriter, String xmlElementName, String elementCData, int indentationLevel)
+      throws XMLStreamException {
     writeElementWithCData(xmlWriter, xmlElementName, elementCData, indentationLevel);
     writeNewLine(xmlWriter);
   }
 
   /**
-   * Write an element without attributes (with indentation) as well as its content and end element, e.g. {@code <xmlElementName>value</xmlElementName>}.
-   * Add newline afterwards
+   * Write an element without attributes (with indentation) as well as its content and end element,
+   * e.g. {@code <xmlElementName>value</xmlElementName>}. Add newline afterwards
    *
    * @param xmlWriter to use
    * @param xmlElementName element to start tag, e.g. {@code <xmlElementName>}
@@ -183,13 +192,16 @@ public class PlanitXmlWriterUtils {
    * @param indentationLevel to use
    * @throws XMLStreamException thrown if error
    */
-  public static void writeElementWithValueWithNewLine(XMLStreamWriter xmlWriter, String xmlElementName, String elementValue, int indentationLevel) throws XMLStreamException {
+  public static void writeElementWithValueWithNewLine(
+      XMLStreamWriter xmlWriter, String xmlElementName, String elementValue, int indentationLevel)
+      throws XMLStreamException {
     writeElementWithValue(xmlWriter, xmlElementName, elementValue, indentationLevel);
     writeNewLine(xmlWriter);
   }
 
   /**
-   * Write an element CDATA without attributes (with indentation) as well as its content and end element, e.g. {@code <xmlElementName>value</xmlElementName>}.
+   * Write an element CDATA without attributes (with indentation) as well as its content and end element,
+   * e.g. {@code <xmlElementName>value</xmlElementName>}.
 
    *
    * @param xmlWriter to use
@@ -198,10 +210,25 @@ public class PlanitXmlWriterUtils {
    * @param indentationLevel to use
    * @throws XMLStreamException thrown if error
    */
-  public static void writeElementWithValue(XMLStreamWriter xmlWriter, String xmlElementName, String elementValue, int indentationLevel) throws XMLStreamException {
+  public static void writeElementWithValue(
+      XMLStreamWriter xmlWriter, String xmlElementName, String elementValue, int indentationLevel)
+      throws XMLStreamException {
     writeStartElement(xmlWriter, xmlElementName, indentationLevel);
     xmlWriter.writeCharacters(elementValue);
     xmlWriter.writeEndElement();
+  }
+
+  /**
+   * Write raw value with prefix of indentation level
+   * @param xmlWriter to use
+   * @param elementValueContent content
+   * @param indentationLevel indentation level
+   * @throws XMLStreamException thrown if error
+   */
+  public static void writeValueWithIndentationPrefix(
+      XMLStreamWriter xmlWriter, String elementValueContent, int indentationLevel) throws XMLStreamException {
+    writeIndentation(xmlWriter,indentationLevel);
+    xmlWriter.writeCharacters(elementValueContent);
   }
 
   /**
@@ -242,7 +269,8 @@ public class PlanitXmlWriterUtils {
    * @throws XMLStreamException thrown if error
    * @throws IOException thrown if error
    */
-  public static void endXmlDocument(Pair<XMLStreamWriter, Writer> xmlFileWriterPair) throws XMLStreamException, IOException {
+  public static void endXmlDocument(Pair<XMLStreamWriter, Writer> xmlFileWriterPair)
+      throws XMLStreamException, IOException {
     XMLStreamWriter xmlWriter = xmlFileWriterPair.first();
     Writer writer = xmlFileWriterPair.second();
     xmlWriter.writeEndDocument();

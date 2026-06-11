@@ -100,7 +100,7 @@ public interface UntypedPhysicalLayer<N extends Node, L extends Link, LS extends
   }
 
   /**
-   * Create a (new) mapping from entry/sexit segment combinations to their movement (if any)
+   * Create a (new) mapping from entry/exit segment combinations to their movement (if any)
    *
    * @return mapping that was created
    */
