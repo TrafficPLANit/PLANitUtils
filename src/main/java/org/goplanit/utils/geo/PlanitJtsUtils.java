@@ -8,10 +8,15 @@ import java.util.stream.Collectors;
 
 import org.geotools.api.geometry.Position;
 import org.geotools.api.referencing.crs.CoordinateReferenceSystem;
+import org.geotools.api.referencing.cs.AxisDirection;
+import org.geotools.api.referencing.cs.CoordinateSystemAxis;
+import org.geotools.api.referencing.operation.CoordinateOperationFactory;
 import org.geotools.api.referencing.operation.MathTransform;
 import org.geotools.geometry.jts.JTS;
 import org.geotools.geometry.jts.JTSFactoryFinder;
 import org.geotools.referencing.CRS;
+import org.geotools.referencing.ReferencingFactoryFinder;
+import org.geotools.util.factory.Hints;
 import org.goplanit.utils.exceptions.PlanItException;
 import org.goplanit.utils.exceptions.PlanItRunTimeException;
 import org.goplanit.utils.math.Precision;
@@ -42,7 +47,8 @@ public class PlanitJtsUtils {
   protected static final GeometryFactory jtsGeometryFactory = JTSFactoryFinder.getGeometryFactory();
    
   /**
-   * Convenience method that wraps the CRS.findMathTransform by catching exceptions and producing a planit excepion only as well as allowing for lenient transformer
+   * Convenience method that wraps the geotools findMathTransform by catching exceptions
+   * as well as allowing for lenient transformer and axis inversion if needed
    * 
    * @param sourceCRS      the source
    * @param destinationCRS the destination
@@ -57,9 +63,24 @@ public class PlanitJtsUtils {
     PlanitCrsUtils.silenceHsqlLogging();
 
     try {
+      // axis order may differ between source and destination, account for that
+      CRS.AxisOrder sourceOrder = CRS.getAxisOrder(sourceCRS);
+      CRS.AxisOrder destOrder = CRS.getAxisOrder(destinationCRS);
+
+      // If the source and destination do not share the same structural format,
+      // we must force an axis layout alignment to prevent cross-contamination.
+      boolean structuresDoNotMatch = (sourceOrder != destOrder);
+
+      // Maintain your lenient datum shifts
+      Map<Hints.Key, Object> hintsMap = new HashMap<>();
+      hintsMap.put(Hints.FORCE_LONGITUDE_FIRST_AXIS_ORDER, structuresDoNotMatch);
+      hintsMap.put(Hints.LENIENT_DATUM_SHIFT, Boolean.TRUE);
+      Hints theHints = new Hints(hintsMap);
+
+      CoordinateOperationFactory factory = ReferencingFactoryFinder.getCoordinateOperationFactory(theHints);
+
       /* allows for some lenience in transformation due to different datums */
-      boolean lenient = true;
-      return CRS.findMathTransform(sourceCRS, destinationCRS, lenient);
+      return factory.createOperation(sourceCRS, destinationCRS).getMathTransform();
     } catch (Exception e) {
       throw new PlanItRunTimeException(
               String.format("error during creation of transformer from CRS %s to CRS %s",
