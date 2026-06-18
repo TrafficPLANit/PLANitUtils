@@ -223,7 +223,7 @@ public class SimpleShapeFileParser {
             layerGeometries.add(feature);
           }
           if (logStats) {
-            LOGGER.info(String.format("Parsed Shape file layer: %s - containing %d geometries",
+            LOGGER.info(String.format("Parsed GIS layer: %s - containing %d geometries",
                 layerName, layerGeometries.size()));
           }
         }
