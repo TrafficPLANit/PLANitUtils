@@ -182,7 +182,7 @@ public class SimpleShapeFileParser {
    * Parse a shape file and convert into a memory model of JTS features by layer applying the provided geotools filter
    *
    * @param location to parse from can be a local file or url
-   * @param filter to use
+   * @param filter to use, may be null
    * @param logStats when true log number of geometries per layer
    * @return map of feature type and the features by layer with layer name as key
    */

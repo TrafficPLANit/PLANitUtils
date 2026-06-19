@@ -23,7 +23,7 @@ import org.locationtech.jts.geom.Polygon;
 import org.locationtech.jts.linearref.LinearLocation;
 
 /**
- * A class with utility methods that levarage the geospatial information of planit enities pertaining to graphs.
+ * A class with utility methods that leverage the geospatial information of PLANit enities pertaining to graphs.
  * For geo utilities only utilising JTS entities, we refer the user to PlanitJtsUtils instead. this class is dedicated to
  * functionality that directly requires the involvement of Planit Graph elements (vertices, edges, etc.).
  * 

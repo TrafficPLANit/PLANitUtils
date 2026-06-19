@@ -153,7 +153,7 @@ public interface MapWrapper<K, V> extends Iterable<V> {
    * @param iterable to add elements of
    */
   public default void addAll(Iterable<? extends V> iterable) {
-    iterable.forEach( v -> register(v));
+    iterable.forEach(this::register);
   }
   
   /** apply provided consumer to each element in values as long as that element is registered on this wrapper
@@ -194,6 +194,7 @@ public interface MapWrapper<K, V> extends Iterable<V> {
    * @param comparingFunction to apply to sorted stream
    * @return stream of all entries (values) ordered by given comparing function
    */
+  @SuppressWarnings("unchecked")
   public default <M extends Comparable> Stream<V> streamSorted(Function<V,M> comparingFunction){
     return stream().sorted(Comparator.comparing(comparingFunction));
   }

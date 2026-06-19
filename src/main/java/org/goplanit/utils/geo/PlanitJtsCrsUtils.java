@@ -64,7 +64,8 @@ public class PlanitJtsCrsUtils {
   /** for linear projected CRS we may need additional to meter converter, this tracks that converter */
   protected UnitConverter toLinearMeterConverter;
 
-  /** jts geometry factory, jts geometry differs from opengis implementation by not carrying the crs and being more lightweight */
+  /** jts geometry factory, jts geometry differs from opengis implementation by not carrying the crs and
+   * being more lightweight */
   protected static final GeometryFactory jtsGeometryFactory = JTSFactoryFinder.getGeometryFactory();
 
   /**
@@ -196,10 +197,9 @@ public class PlanitJtsCrsUtils {
     Coordinate closestCoordinate = null;
     if(geometry !=null ){      
       Coordinate[] coordinates = geometry.getCoordinates();
-      for(int index = 0 ; index < coordinates.length; ++index) {
-        Coordinate coordinate = coordinates[index];
+      for (Coordinate coordinate : coordinates) {
         double distanceMeters = getDistanceInMetres(coord, coordinate);
-        if(minDistanceMetersToCoordinate > distanceMeters) {
+        if (minDistanceMetersToCoordinate > distanceMeters) {
           minDistanceMetersToCoordinate = distanceMeters;
           closestCoordinate = coordinate;
         }
@@ -282,7 +282,7 @@ public class PlanitJtsCrsUtils {
       throw new PlanItRunTimeException("Method getClosestLinearLocationOnGeometry not supported for " +
               "provided geometry type %s",geometry.getClass().getName());
     }      
-  }   
+  }
   
   /** Find the closest location from the reference coordinate to the line string expressed as a linear location.
    * Here we project onto the geometry, so we find the location with the actual closest distance and create a
