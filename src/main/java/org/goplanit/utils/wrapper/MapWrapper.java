@@ -31,9 +31,17 @@ public interface MapWrapper<K, V> extends Iterable<V> {
   public static <KK,VV> VV firstMatch(MapWrapper<KK,VV> mapWrapper, Predicate<VV> valuePredicate) {
     return mapWrapper.stream().filter(valuePredicate).findFirst().orElse(null);
   }
-  
+
   /**
-   * Register on the internal container (no null keys allowed which will trigger a warning and the value not to be registered)
+   * Get the mapping function used
+   *
+   * @return mapping function
+   */
+  Function<V, K> getValueToKey();
+
+  /**
+   * Register on the internal container (no null keys allowed which will trigger a warning and the
+   * value not to be registered)
    * 
    * @param value to register
    * @return old value if any
