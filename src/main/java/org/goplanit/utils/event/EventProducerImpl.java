@@ -12,9 +12,10 @@ import java.util.TreeSet;
 import java.util.logging.Logger;
 
 /**
- * The EventProducer is the base class able to produce events. It provides protected methods to register listeners and remove listeners
- * as well as ways to fire a generic event. Event producing classes should either extend this class to provide more user friendly public methods
- * with the correct signatures that enforce the appropriate event and listener combinations suitable for that particular class while internally
+ * The EventProducer is the base class able to produce events. It provides protected methods to register listeners
+ * and remove listeners as well as ways to fire a generic event. Event producing classes should either extend
+ * this class to provide more user friendly public methods with the correct signatures that enforce the
+ * appropriate event and listener combinations suitable for that particular class while internally
  * making use of this implementations functionality. 
  * 
  * @author markr
@@ -27,7 +28,8 @@ public abstract class EventProducerImpl{
   /** The collection of interested listeners by event and priority */
   protected Map<EventType, Map<EventListenerPriority, List<EventListener>>> listeners;
   
-  /** Add a listener for one or more event types (collected from listener's known supported types) that are presumably triggered by this producer 
+  /** Add a listener for one or more event types (collected from listener's known supported types) that
+   * are presumably triggered by this producer
    * 
    * @param listener to register
    * @param priority to apply for the combination of listener and event type(s)
@@ -35,7 +37,8 @@ public abstract class EventProducerImpl{
   protected final synchronized void addListener(final EventListener listener, EventListenerPriority priority){
     if(!listener.hasKnownSupportedEventTypes()) {
       LOGGER.severe("IGNORED: unable to identify listener's supported event types, "
-          + "consider registering with explicit event types, or provide supported types by implementing hasKnownSupportedEventTypes() on listener");
+          + "consider registering with explicit event types, or provide supported types by implementing " +
+          "hasKnownSupportedEventTypes() on listener");
     }
     if(listener.getKnownSupportedEventTypes().length > 0) {
       addListener(listener, priority, listener.getKnownSupportedEventTypes());
@@ -59,7 +62,8 @@ public abstract class EventProducerImpl{
       }
   }  
     
-  /** Add a listener for one or more event types that are presumably triggered by this producer, with the default priority (low) 
+  /** Add a listener for one or more event types that are presumably triggered by this producer, with the default
+   *  priority (low)
    * 
    * @param listener to register
    * @param eventTypes to register the listener for
@@ -68,7 +72,8 @@ public abstract class EventProducerImpl{
     addListener(listener, EventListenerPriority.LOW, eventTypes);
   }    
   
-  /** add a listener for one or more event types that are presumably triggered by this producer absed on its known supported types.
+  /** add a listener for one or more event types that are presumably triggered by this producer based on its
+   *  known supported types.
    *  If no known types are not available the listener will not be added and a warning is issued
    * 
    * @param listener to add
@@ -140,8 +145,8 @@ public abstract class EventProducerImpl{
 
   /** Let derived class deal with the handling of the listener, where based on the derived event implementation
    * the listener's concrete class can be determined which in turn allows for calling the right event callback method
-   * which is unknown at this base level since this event mechanism does not force a particular notification method signature
-   * on its listener interface
+   * which is unknown at this base level since this event mechanism does not force a particular notification
+   * method signature on its listener interface
    * 
    * @param eventListener to notify for the event
    * @param event to process for the listener

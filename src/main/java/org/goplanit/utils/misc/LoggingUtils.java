@@ -96,8 +96,19 @@ public class LoggingUtils {
    */   
   public static String demandsPrefix(long demandsId) {
     return surroundWithBrackets(String.format("demands id: %d", demandsId));
-  }  
-  
+  }
+
+  /**
+   * Create a prefix for the logger so that all logging items specific to a particular discrete demands
+   * are prefixed with the exact same string, i.e.  {@code [disc.demands id: <id> ]}
+   *
+   * @param discreteDemandsId the demands id
+   * @return demands prefix
+   */
+  public static String discreteDemandsPrefix(long discreteDemandsId) {
+    return surroundWithBrackets(String.format("disc.demands id: %d", discreteDemandsId));
+  }
+
   /**
    * Create a prefix for the logger so that all logging items specific to a particular service network
    * are prefixed with the exact same string, i.e.  {@code [services network id: <id> ]}
