@@ -37,6 +37,14 @@ public interface Zone extends ExternalIdAble, ManagedId {
    * @return property itself
    */
   public abstract Object getInputProperty(final String key);
+
+  /**
+   * set the centroid for this zone. It is assumed the centroid is correctly configured to be compatible
+   * with this zoneImpl
+   *
+   * @param centroid to set
+   */
+  public void setCentroid(Centroid centroid);
   
   /**
    * Returns the centroid of this zone
