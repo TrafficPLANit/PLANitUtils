@@ -3,6 +3,8 @@ package org.goplanit.utils.zoning.zonetozone;
 import org.goplanit.utils.id.IdAble;
 import org.goplanit.utils.zoning.Zone;
 
+import javax.annotation.Nonnull;
+
 /**
  * Interface defining methods for objects which store data related to zone-to-zone data
  * 
@@ -80,6 +82,7 @@ public interface ZoneToZoneData<T> extends IdAble, Iterable<T> {
    * 
    * @return iterator through all the origin-destination cells
    */
+  @Nonnull
   public ZoneToZoneDataIterator<T> iterator();
 
   /**

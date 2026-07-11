@@ -2,9 +2,9 @@ package org.goplanit.utils.zoning.zonetozone;
 
 import java.util.logging.Logger;
 
+import org.checkerframework.checker.nullness.qual.NonNull;
 import org.goplanit.utils.id.IdAble;
 import org.goplanit.utils.id.IdGroupingToken;
-import org.goplanit.utils.zoning.OdZones;
 import org.goplanit.utils.zoning.Zone;
 import org.goplanit.utils.zoning.Zones;
 import org.ojalgo.array.Array2D;
@@ -94,6 +94,6 @@ public abstract class ZoneToZonePrimitiveMatrix<T extends Number> extends ZoneTo
    * @return iterator through all the origin-destination cells
    */
   @Override
-  public abstract ZoneToZoneMatrixIterator<T, Array2D<T>> iterator();
+  public abstract @NonNull ZoneToZoneMatrixIterator<T, Array2D<T>> iterator();
   
 }

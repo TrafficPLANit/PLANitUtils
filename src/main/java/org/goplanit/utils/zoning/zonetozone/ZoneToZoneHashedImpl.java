@@ -3,6 +3,7 @@ package org.goplanit.utils.zoning.zonetozone;
 import java.util.HashMap;
 import java.util.logging.Logger;
 
+import org.checkerframework.checker.nullness.qual.NonNull;
 import org.goplanit.utils.id.IdAble;
 import org.goplanit.utils.id.IdGroupingToken;
 import org.goplanit.utils.zoning.Zone;
@@ -96,7 +97,7 @@ public class ZoneToZoneHashedImpl<T> extends ZoneToZoneDataImpl<T> implements Zo
    * {@inheritDoc}
    */
   @Override
-  public ZoneToZoneHashedIterator<T> iterator(){
+  public @NonNull ZoneToZoneHashedIterator<T> iterator(){
     return new ZoneToZoneHashedIterator<>(this, getZones());
   }
 

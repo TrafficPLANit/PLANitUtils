@@ -1,5 +1,6 @@
 package org.goplanit.utils.zoning.zonetozone;
 
+import org.checkerframework.checker.nullness.qual.NonNull;
 import org.goplanit.utils.misc.HashUtils;
 
 /**
@@ -28,5 +29,5 @@ public interface ZoneToZoneHashed<T> extends ZoneToZoneData<T> {
    * @return iterator through all available non-empty origin-destination entries
    */
   @Override
-  public abstract ZoneToZoneHashedIterator<T> iterator();
+  public abstract @NonNull ZoneToZoneHashedIterator<T> iterator();
 }

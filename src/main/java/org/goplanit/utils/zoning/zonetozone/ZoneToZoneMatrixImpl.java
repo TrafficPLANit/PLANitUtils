@@ -2,9 +2,9 @@ package org.goplanit.utils.zoning.zonetozone;
 
 import java.util.logging.Logger;
 
+import org.checkerframework.checker.nullness.qual.NonNull;
 import org.goplanit.utils.id.IdAble;
 import org.goplanit.utils.id.IdGroupingToken;
-import org.goplanit.utils.zoning.OdZones;
 import org.goplanit.utils.zoning.Zone;
 import org.goplanit.utils.zoning.Zones;
 
@@ -58,7 +58,7 @@ public abstract class ZoneToZoneMatrixImpl<T, U> extends ZoneToZoneDataImpl<T> i
    * {@inheritDoc}
    */
   @Override
-  public abstract ZoneToZoneMatrixIterator<T, U> iterator();
+  public abstract @NonNull ZoneToZoneMatrixIterator<T, U> iterator();
 
   /**
    * {@inheritDoc}

@@ -2,6 +2,7 @@ package org.goplanit.utils.misc;
 
 import org.goplanit.utils.time.TimePeriod;
 
+import java.util.Objects;
 import java.util.function.Predicate;
 import java.util.logging.Logger;
 
@@ -274,7 +275,80 @@ public class LoggingUtils {
     return testResult;
   }
 
-  /** log the given warning message if predicate holds
+    /** width used for aligned settings labels */
+  private static final int SETTINGS_LABEL_WIDTH = 45;
+
+  /** create indentation for the provided nesting level
+   *
+   * @param level to create indentation for
+   * @return indentation string
+   */
+  private static String createSettingsIndentation(int level) {
+    return level > 0 ? "  ".repeat(level) : "";
+  }
+
+  /** normalise settings values for logging
+   *
+   * @param value to normalise
+   * @return string representation to use in logs
+   */
+  private static String normaliseSettingsValue(Object value) {
+    return Objects.toString(value, "not set");
+  }
+
+  /** create a header for a settings block
+   *
+   * @param title to use
+   * @return formatted header
+   */
+  public static String settingsHeader(String title) {
+    return surroundWithBrackets("Settings") + title;
+  }
+
+  /** create a section header within a settings block
+   *
+   * @param title to use
+   * @param level indentation level to apply
+   * @return formatted section header
+   */
+  public static String settingsSection(String title, int level) {
+    return createSettingsIndentation(level) + surroundWithBrackets(title).trim();
+  }
+
+  /** create a key/value settings log entry
+   *
+   * @param label to use
+   * @param value to log
+   * @param level indentation level to apply
+   * @return formatted key/value settings entry
+   */
+  public static String settingsValue(String label, Object value, int level) {
+    return String.format("%s- %-" + SETTINGS_LABEL_WIDTH + "s : %s",
+        createSettingsIndentation(level), label, normaliseSettingsValue(value));
+  }
+
+  /** create a free-form settings log entry
+   *
+   * @param text to use
+   * @param level indentation level to apply
+   * @return formatted settings entry
+   */
+  public static String settingsEntry(String text, int level) {
+    return createSettingsIndentation(level) + "- " + text;
+  }
+
+  /** create a mapping settings log entry
+   *
+   * @param from mapping source label
+   * @param to mapping target value
+   * @param level indentation level to apply
+   * @return formatted mapping settings entry
+   */
+  public static String settingsMapping(String from, Object to, int level) {
+    return String.format("%s- %-" + SETTINGS_LABEL_WIDTH + "s -> %s",
+        createSettingsIndentation(level), from, normaliseSettingsValue(to));
+  }
+/** log the given warning message if predicate holds
    *
    * @param <T> type of test object to aply predicate to
    * @param logger the logger to use
