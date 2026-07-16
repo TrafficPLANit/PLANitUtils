@@ -8,6 +8,7 @@ import org.geotools.api.referencing.cs.CoordinateSystem;
 import org.geotools.api.referencing.cs.CoordinateSystemAxis;
 import org.geotools.referencing.CRS;
 import org.goplanit.utils.epsg.ProjectedEpsgCodesByCountry;
+import org.goplanit.utils.exceptions.PlanItRunTimeException;
 import tech.units.indriya.unit.Units;
 
 import javax.measure.Unit;
@@ -143,6 +144,33 @@ public class PlanitCrsUtils {
       }
     }
     return false;
+  }
+
+  /** Extract the srs name to use based on the provided Crs
+   *
+   * @param crs to use
+   * @return srsName found (epsg code)
+   */
+  public static String extractSrsName(CoordinateReferenceSystem crs) {
+    String srsName = "";
+    if(!crs.getIdentifiers().isEmpty()) {
+      /* spatial crs based on epsg code*/
+      Integer epsgCode = null;
+      try {
+        epsgCode = CRS.lookupEpsgCode(crs, false);
+        if(epsgCode == null) {
+          /* full scan */
+          epsgCode = CRS.lookupEpsgCode(crs, true);
+        }
+        srsName = String.format("EPSG:%s",epsgCode.toString());
+      }catch (Exception e) {
+        LOGGER.severe(e.getMessage());
+        throw new PlanItRunTimeException("Unable to extract EPSG code from crs %s", crs.getName());
+      }
+    }else if(!crs.equals(PlanitJtsCrsUtils.CARTESIANCRS)) {
+      throw new PlanItRunTimeException("Unable to extract EPSG code from crs %s", crs.getName());
+    }
+    return srsName;
   }
 
 }

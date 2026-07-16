@@ -4,12 +4,9 @@ import java.text.DecimalFormat;
 import java.util.*;
 import java.util.function.Consumer;
 import java.util.logging.Logger;
-import java.util.stream.Collectors;
 
 import org.geotools.api.geometry.Position;
 import org.geotools.api.referencing.crs.CoordinateReferenceSystem;
-import org.geotools.api.referencing.cs.AxisDirection;
-import org.geotools.api.referencing.cs.CoordinateSystemAxis;
 import org.geotools.api.referencing.operation.CoordinateOperationFactory;
 import org.geotools.api.referencing.operation.MathTransform;
 import org.geotools.geometry.jts.JTS;
@@ -323,6 +320,17 @@ public class PlanitJtsUtils {
   }
 
   /**
+   * create a polygon based on the passed exterior ring and interior ring "holes"
+   *
+   * @param exteriorRing to use
+   * @param interiorRings to use
+   * @return created polygon
+   */
+  public static Polygon createPolygonWithHoles(LinearRing exteriorRing, ArrayList<LinearRing> interiorRings) {
+    return jtsGeometryFactory.createPolygon(exteriorRing,interiorRings.toArray(new LinearRing[0]));
+  }
+
+  /**
    * create a polygon based on the passed coordinate array
    * 
    * @param coords to use
@@ -330,6 +338,19 @@ public class PlanitJtsUtils {
    */
   public static Polygon createPolygon(Coordinate[] coords) {
     return jtsGeometryFactory.createPolygon(jtsGeometryFactory.createLinearRing(coords));
+  }
+
+  /**
+   * Create a multi-polygon based on the passed array of polygon components
+   *
+   * @param polygons array of pre-constructed JTS Polygon objects
+   * @return created multi-polygon
+   */
+  public static MultiPolygon createMultiPolygon(Polygon[] polygons) {
+    if (polygons == null || polygons.length == 0) {
+      return jtsGeometryFactory.createMultiPolygon();
+    }
+    return jtsGeometryFactory.createMultiPolygon(polygons);
   }
   
   /**
@@ -420,6 +441,43 @@ public class PlanitJtsUtils {
     return false;
   }
 
+  /** check if 2d flat coord array is closed, i.e., first coordinate is the same as the last
+   *  in 2D
+   *
+   * @param coordList to check
+   * @return true when closed, false otherwise
+   */
+  public static boolean isClosed2D(List<Double> coordList) {
+    if (coordList != null && coordList.size() >= 6) {
+      int size = coordList.size();
+
+      return coordList.get(0).equals(coordList.get(size - 2)) &&
+          coordList.get(1).equals(coordList.get(size - 1));
+    }
+    return false;
+  }
+
+  /** check if polygon (exterior and interior rings are closed, i.e., first coordinate is the same as the last
+   *  in 2D
+   *
+   * @param polygon to check
+   * @return true when closed, false otherwise
+   */
+  public static boolean isClosed2D(Polygon polygon) {
+    if (!PlanitJtsUtils.isClosed2D(polygon.getExteriorRing().getCoordinates())) {
+      return false;
+    }
+
+    // Check each interior ring (hole) independently using your method
+    for (int j = 0; j < polygon.getNumInteriorRing(); j++) {
+      var holeRing = polygon.getInteriorRingN(j);
+      if (!PlanitJtsUtils.isClosed2D(holeRing.getCoordinates())) {
+        return false;
+      }
+    }
+    return true;
+  }
+
   /** check if coord linked list is closed, i.e., first coordinate is the same as the last
    *  in 2D
    *
@@ -431,6 +489,44 @@ public class PlanitJtsUtils {
       return coordList.getFirst().equals2D(coordList.getLast());
     }
     return false;
+  }
+
+  /**
+   * Defensive make closed for raw 2d coordinate lists (X1, Y1, X2, Y2...).
+   * Safely repairs floating-point rounding mismatches up to the configured tolerance threshold,
+   * but flags true data errors that exceed it.
+   *
+   * @param coords The raw coordinate list.
+   * @param toleranceEpsilon The maximum allowed gap distance to auto-close.
+   */
+  public static List<Double> makeClosed2DWithinTolerance(List<Double> coords, double toleranceEpsilon) {
+    if (coords == null || coords.size() < 6) {
+      return coords;
+    }
+
+    int size = coords.size();
+    double firstX = coords.get(0);
+    double firstY = coords.get(1);
+    double lastX = coords.get(size - 2);
+    double lastY = coords.get(size - 1);
+
+    double diffX = Math.abs(firstX - lastX);
+    double diffY = Math.abs(firstY - lastY);
+
+    if (diffX == 0.0 && diffY == 0.0) {
+      return coords;
+    }
+
+    // Configurable rounding tolerance check
+    if (diffX < toleranceEpsilon && diffY < toleranceEpsilon) {
+      List<Double> closedList = new ArrayList<>(coords);
+      closedList.set(size - 2, firstX);
+      closedList.set(size - 1, firstY);
+      return closedList;
+    }
+
+    LOGGER.warning(String.format("Not closed within tolerance of %.15f",toleranceEpsilon));
+    return coords;
   }
   
   /** create a copy of the passed in coord array and close it by adding a new coordinate at the end that
@@ -453,6 +549,28 @@ public class PlanitJtsUtils {
     }
   }
 
+  /** create a copy of the passed in flat 2d coord list and close it by adding a new coordinate at the end that
+   * matches the first. If the array is already closed, it is returned as is. If not eligible for closing,
+   * run time exception is thrown.
+   *
+   * @param coordList to make closed
+   * @return closed list
+   */
+  public static List<Double> makeClosed2D(final List<Double> coordList) {
+    if (coordList != null && coordList.size() >= 6) {
+      if (!isClosed2D(coordList)) {
+        List<Double> closedList = new ArrayList<>(coordList);
+
+        closedList.add(coordList.get(0));
+        closedList.add(coordList.get(1));
+        return closedList;
+      }
+      return coordList;
+    } else {
+      throw new PlanItRunTimeException("Cannot make passed in flat coordinates closed 2D");
+    }
+  }
+
   /** create a copy of the passed in coord list and close it by adding a new coordinate at the end that matches the first.
    * If the list is already closed, it is returned as is. If not eligible for closing, exception is thrown.
    *
@@ -469,6 +587,52 @@ public class PlanitJtsUtils {
       return coordinateList;
     }else {
       throw new PlanItRunTimeException("Cannot make passed in coordinates list closed 2D");
+    }
+  }
+
+  /** create a copy and close it by adding a new coordinate at the end of any exteroir or interior ring
+   * that is not closed.
+   *
+   * @param polygon to make closed if possible
+   * @return closed array
+   */
+  public static Polygon makeClosed2D(final Polygon polygon){
+    boolean modified = false;
+
+    var exteriorRing = polygon.getExteriorRing();
+    var exteriorCoords = exteriorRing.getCoordinates();
+
+    if (!PlanitJtsUtils.isClosed2D(exteriorCoords)) {
+      exteriorCoords = PlanitJtsUtils.makeClosed2D(exteriorCoords);
+      modified = true;
+    }
+
+    var polishedHoles = new ArrayList<LinearRing>();
+    for (int j = 0; j < polygon.getNumInteriorRing(); j++) {
+      var holeRing = polygon.getInteriorRingN(j);
+      var holeCoords = holeRing.getCoordinates();
+
+      if (!PlanitJtsUtils.isClosed2D(holeCoords)) {
+        holeCoords = PlanitJtsUtils.makeClosed2D(holeCoords);
+        modified = true;
+
+        // Rebuild the individual hole ring using the closed coordinates
+        var tempHolePoly = PlanitJtsUtils.createPolygon(holeCoords);
+        polishedHoles.add(tempHolePoly.getExteriorRing());
+      } else {
+        polishedHoles.add(holeRing);
+      }
+    }
+
+    if (!modified) {
+      return polygon;
+    }
+
+    if (polishedHoles.isEmpty()) {
+      return PlanitJtsUtils.createPolygon(exteriorCoords);
+    } else {
+      var cleanShellPoly = PlanitJtsUtils.createPolygon(exteriorCoords);
+      return PlanitJtsUtils.createPolygonWithHoles(cleanShellPoly.getExteriorRing(), polishedHoles);
     }
   }
 
@@ -875,4 +1039,5 @@ public class PlanitJtsUtils {
     }
     return true;
   }
+
 }
