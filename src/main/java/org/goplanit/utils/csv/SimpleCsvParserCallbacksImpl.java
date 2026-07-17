@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Implementation of SimpleCsvParserCallBacks. to be used in Conjunction with
+ * Implementation of SimpleCsvParserCallBacks. To be used in Conjunction with
  * SimpleCsvParser
  *
  * @author markr
