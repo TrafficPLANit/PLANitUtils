@@ -1,6 +1,9 @@
 package org.goplanit.utils.epsg;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.logging.Logger;
 
 import org.goplanit.utils.locale.CountryNames;
@@ -26,7 +29,7 @@ public class ProjectedEpsgCodesByCountry {
   public static final String GERMANY_DHDN = "EPSG:31468";
   
   /** Area of use: Netherlands, Rijks Driehoek Stelsel, EPSG:28992 */
-  public static final String NETHERLANDS_RDS = "EPSG:31468";  
+  public static final String NETHERLANDS_RDS = "EPSG:28992";
   
   /** Area of use: world, EPSG:4326, accessible via countryname: "global" as CountryNames.GLOBAL */
   public static final String WORLD_WG84 = "EPSG:4326";
@@ -68,6 +71,17 @@ public class ProjectedEpsgCodesByCountry {
 
   public static boolean hasEpsgDefined(String countryName) {
     return countryToEpsgCodes.containsKey(countryName);
+  }
+
+  /**
+   * Get all country names for which a projected EPSG mapping is defined.
+   *
+   * @return sorted country names
+   */
+  public static List<String> getCountryNames() {
+    var countryNames = new ArrayList<>(countryToEpsgCodes.keySet());
+    Collections.sort(countryNames);
+    return countryNames;
   }
 
 }

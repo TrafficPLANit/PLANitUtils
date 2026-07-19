@@ -108,6 +108,25 @@ public class PlanitCrsUtils {
   }
 
   /**
+   * Create the EPSG code for the WGS84 UTM zone covering the provided longitude/latitude location.
+   *
+   * <p>The returned code uses the standard WGS84 north/south UTM EPSG ranges:
+   * `EPSG:32601`-`EPSG:32660` for the northern hemisphere and
+   * `EPSG:32701`-`EPSG:32760` for the southern hemisphere.</p>
+   *
+   * @param longitudeInDegrees longitude in degrees
+   * @param latitudeInDegrees latitude in degrees
+   * @return EPSG code string for the matching WGS84 UTM zone
+   */
+  public static String createWgs84UtmZoneEpsgCode(double longitudeInDegrees, double latitudeInDegrees) {
+    int utmZone = (int) Math.floor((longitudeInDegrees + 180.0) / 6.0) + 1;
+    utmZone = Math.max(1, Math.min(60, utmZone));
+
+    final int epsgBase = latitudeInDegrees >= 0.0 ? 32600 : 32700;
+    return String.format("EPSG:%d", epsgBase + utmZone);
+  }
+
+  /**
    * Verify if the first two planar axes are length-compatible.
    *
    * <p>This is intended for planar operations such as drawing, viewport handling, and local
