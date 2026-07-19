@@ -22,6 +22,16 @@ public class PlanitCrsUtils {
   
   /** the logger to use */
   private static final Logger LOGGER = Logger.getLogger(PlanitCrsUtils.class.getCanonicalName());
+
+  /**
+   * Verify if unit is compatible with a length unit.
+   *
+   * @param unit to verify
+   * @return true when compatible with a length unit, false otherwise
+   */
+  private static boolean isLengthCompatibleUnit(Unit<?> unit) {
+    return unit != null && unit.getSystemUnit() != null && unit.getSystemUnit().isCompatible(Units.METRE);
+  }
   
   /**
    * make sure we silence the Hsql logging that is used by CRS to collect crs for different countries.
@@ -98,6 +108,35 @@ public class PlanitCrsUtils {
   }
 
   /**
+   * Verify if the first two planar axes are length-compatible.
+   *
+   * <p>This is intended for planar operations such as drawing, viewport handling, and local
+   * geometric calculations where the first two axes must both use a length-compatible unit. It is
+   * not a guarantee that the CRS is low-distortion or otherwise optimal for the covered area.</p>
+   *
+   * @param crs to check
+   * @return true when the first two planar axes are length-compatible, false otherwise
+   */
+  public static boolean hasFirstTwoPlanarAxesWithLengthCompatibleUnits(CoordinateReferenceSystem crs) {
+    if (crs == null || crs.getCoordinateSystem() == null) {
+      return false;
+    }
+
+    CoordinateSystem cs = crs.getCoordinateSystem();
+    if (cs.getDimension() < 2) {
+      return false;
+    }
+
+    for (int i = 0; i < 2; i++) {
+      CoordinateSystemAxis axis = cs.getAxis(i);
+      if (axis == null || !isLengthCompatibleUnit(axis.getUnit())) {
+        return false;
+      }
+    }
+    return true;
+  }
+
+  /**
    * Verify if CRS is linear and compatible with a length unit, e.g., km, m, etc. IF so distances can be computed
    * cheaply and do not need a geodetic calclulator
    *
@@ -115,7 +154,7 @@ public class PlanitCrsUtils {
       // isCompatible(Units.METRE) means:
       // - the unit is a length unit compatible with metres
       //   (metres, kilometres, etc.), not degrees.
-      if (unit.getSystemUnit().isCompatible(Units.METRE)) {
+      if (isLengthCompatibleUnit(unit)) {
         return true;
       }
     }
