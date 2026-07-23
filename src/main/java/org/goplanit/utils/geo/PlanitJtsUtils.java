@@ -369,7 +369,60 @@ public class PlanitJtsUtils {
            new Coordinate(envelope.getMinX(),envelope.getMinY()) /* repeat initial coordinate to close polygon*/
       };
    return createPolygon(coordinates);
-  }     
+  }
+
+  /**
+   * Computes the centroid location for a given polygon or multipolygon geometry.
+   * If a multipolygon is supplied, the centroid is derived specifically from the
+   * single constituent polygon containing the largest surface area to prevent
+   * the point from warping into dead zones between disjoint territories.
+   *
+   * @param geometry the input zone geometry to inspect
+   * @return the calculated centroid point, or null if the geometry is invalid or unsupported
+   */
+  public static Point extractPolygonCentre(Geometry geometry) {
+    if (geometry == null || geometry.isEmpty()) {
+      LOGGER.warning("Supplied geometry is null or empty, unable to compute centre location");
+      return null;
+    }
+
+    // Direct polygon evaluation
+    if (geometry instanceof Polygon) {
+      return geometry.getCentroid();
+    }
+
+    // Complex multi-part polygon evaluation
+    if (geometry instanceof MultiPolygon) {
+      MultiPolygon multiPolygon = (MultiPolygon) geometry;
+
+      Polygon largestPolygon = null;
+      double maxArea = -1.0;
+
+      // Scan through all sub-geometries to isolate the dominant component
+      int numGeometries = multiPolygon.getNumGeometries();
+      for (int i = 0; i < numGeometries; i++) {
+        Polygon currentPolygon = (Polygon) multiPolygon.getGeometryN(i);
+        double currentArea = currentPolygon.getArea();
+
+        if (currentArea > maxArea) {
+          maxArea = currentArea;
+          largestPolygon = currentPolygon;
+        }
+      }
+
+      // Return the center of mass belonging to the largest standalone region
+      if (largestPolygon != null) {
+        return largestPolygon.getCentroid();
+      }
+    }
+
+    // Fallback error logging for line strings, points, or collection wrappers
+    LOGGER.warning(String.format(
+        "Unsupported geometry type encountered (%s). Centroid calculation requires a Polygon or MultiPolygon.",
+        geometry.getGeometryType()));
+
+    return null;
+  }
 
   /**
    * Convert OpenGIS directPosition to JTS coordinates

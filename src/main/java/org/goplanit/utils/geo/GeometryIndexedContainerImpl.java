@@ -38,9 +38,16 @@ public class GeometryIndexedContainerImpl<E extends GeometryEnabled> implements 
    */
   @Override
   @SuppressWarnings("unchecked")
-  public List<E> findInBounds(double minX, double minY, double maxX, double maxY) {
-    Envelope queryEnv = new Envelope(minX, maxX, minY, maxY);
-    return (List<E>) tree.query(queryEnv);
+  public List<E> query(double minX, double minY, double maxX, double maxY) {
+    return query(new Envelope(minX, maxX, minY, maxY));
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  @SuppressWarnings("unchecked")
+  public List<E> query(Envelope envelope) {
+    return (List<E>) tree.query(envelope);
   }
 
 }

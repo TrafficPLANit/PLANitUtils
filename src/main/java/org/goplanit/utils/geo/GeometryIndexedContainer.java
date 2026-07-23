@@ -26,5 +26,13 @@ public interface GeometryIndexedContainer<E extends GeometryEnabled> {
    * @param maxY to use
    * @return found entities
    */
-  public List<E> findInBounds(double minX, double minY, double maxX, double maxY);
+  public abstract  List<E> query(double minX, double minY, double maxX, double maxY);
+
+  /**
+   * look up based on envelope
+   *
+   * @param envelope to use
+   * @return found entities
+   */
+  public abstract List<E> query(Envelope envelope);
 }
