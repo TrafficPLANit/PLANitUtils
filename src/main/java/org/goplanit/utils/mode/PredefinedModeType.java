@@ -34,7 +34,7 @@ public enum PredefinedModeType {
   HEAVY_GOODS_VEHICLE("hgv"),        /* non-articulated goods vehicle, over to 3.5 tonnes */
   LARGE_HEAVY_GOODS_VEHICLE("lhgv"), /* articulated large truck */
   TAXI("taxi"),                       /* non-shared payment taxi (likes) */
-  RIDE_SHARE("ride share");           /* shared payment ride likes (uber, didi, etc.)
+  RIDE_SHARE("ride_share");           /* shared payment ride likes (uber, didi, etc.)
 
   
   /** string representation of predefined mode type */
