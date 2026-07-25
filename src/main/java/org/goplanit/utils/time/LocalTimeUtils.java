@@ -46,7 +46,7 @@ public class LocalTimeUtils {
    * Verify if a given start-end time in LocalTime is valid given we are working with a time period that may wrap around
    * a day, e.g., the period does not run from midnight-midnight but we have a period from let's say 3:00AM-2:59AM the
    * next day. In such case a start time of 4AM and an end time of 2AM is valid, despite the within day time being not
-   * in chronological order. If the period time does not wrap aaround, the normal startTime<end time rules apply
+   * in chronological order. If the period time does not wrap aaround, the normal startTime before end time rules apply
    *
    * @param timePeriodStartTime to use as reference
    * @param timePeriodEndTime to use as reference
@@ -105,7 +105,7 @@ public class LocalTimeUtils {
 
   /**
    * Formats raw total seconds into an unbounded HH:mm:ss string, allowing hours to safely exceed
-   * 24 (e.g., 97198 -> "26:59:58").
+   * 24 (e.g., 97198 becomes "26:59:58").
    *
    * @param totalSeconds raw duration or wall-clock offset in seconds
    * @return a zero-padded formatted time string
