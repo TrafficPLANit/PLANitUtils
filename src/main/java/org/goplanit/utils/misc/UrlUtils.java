@@ -95,11 +95,7 @@ public class UrlUtils {
     URL result = null;
     try {
       result = createFromLocalPathOrResource(path);
-      if(result == null){
-        throw new PlanItRunTimeException("Unable to extract URL from %s",path);
-      }
     }catch (Exception e) {
-      throw new PlanItRunTimeException("Unable to extract URL from %s",path);
     }
     return result;
   }
