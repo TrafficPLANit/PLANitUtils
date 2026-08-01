@@ -46,7 +46,7 @@ public class LocalTimeUtils {
    * Verify if a given start-end time in LocalTime is valid given we are working with a time period that may wrap around
    * a day, e.g., the period does not run from midnight-midnight but we have a period from let's say 3:00AM-2:59AM the
    * next day. In such case a start time of 4AM and an end time of 2AM is valid, despite the within day time being not
-   * in chronological order. If the period time does not wrap aaround, the normal startTime before end time rules apply
+   * in chronological order. If the period time does not wrap around, the normal startTime before end time rules apply
    *
    * @param timePeriodStartTime to use as reference
    * @param timePeriodEndTime to use as reference

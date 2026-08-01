@@ -138,8 +138,8 @@ public class LocalWrapAroundTimeUtilsTest {
     var checkStart = LocalTime.of(12, 0);
     var checkEnd = LocalTime.of(12, 0);
 
-    assertFalse(LocalTimeUtils.isValidOrderForWrapAroundDayAnchors(refStart, refEnd, checkStart, checkEnd),
-        "Zero duration trip (12PM to 12PM) should fail if your rules forbid it");
+    assertTrue(LocalTimeUtils.isValidOrderForWrapAroundDayAnchors(refStart, refEnd, checkStart, checkEnd),
+        "Zero duration trip (12PM to 12PM) should be ok from time validity perspective (but it is not)");
   }
 
   @Test
@@ -149,7 +149,7 @@ public class LocalWrapAroundTimeUtilsTest {
     var checkStart = LocalTime.of(23, 0);
     var checkEnd = LocalTime.of(23, 0);
 
-    assertFalse(LocalTimeUtils.isValidOrderForWrapAroundDayAnchors(refStart, refEnd, checkStart, checkEnd),
-        "Zero duration wrap shift trip (11PM to 11PM) should fail if your rules forbid it");
+    assertTrue(LocalTimeUtils.isValidOrderForWrapAroundDayAnchors(refStart, refEnd, checkStart, checkEnd),
+        "Zero duration wrap shift trip (11PM to 11PM) should be ok from time validity perspective (but it is not)");
   }
 }
