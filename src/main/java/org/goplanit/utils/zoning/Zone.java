@@ -108,7 +108,7 @@ public interface Zone extends ExternalIdAble, ManagedId {
    * {@inheritDoc}
    */
   @Override
-  public default Class<Zone> getIdClass() {
+  public default Class<? extends Zone> getIdClass() {
     return ZONE_ID_CLASS;
   }
   

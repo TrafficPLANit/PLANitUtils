@@ -27,6 +27,14 @@ public interface Connectoid extends ExternalIdAble, ManagedId, Iterable<Connecto
   /** the class ot use for id generation */
   public static final Class<Connectoid> CONNECTOID_ID_CLASS = Connectoid.class;
 
+  /**
+   * Access to connectoid id class
+   * @return CONNECTOID_ID_CLASS
+   */
+  public static Class<Connectoid> getConnectoidIdClass(){
+    return CONNECTOID_ID_CLASS;
+  }
+
   /** Set the name of the connectoid
    * 
    * @param name its name
