@@ -44,14 +44,15 @@ public interface DirectedSubGraph <V extends DirectedVertex, E extends EdgeSegme
   public abstract boolean containsEdgeSegment(long edgeSegmentId);
   
   /**
-   * The number of registered vertices. This method provides the number of vertices corresponding to these registered edge
-   * segments
+   * The number of registered vertices. This method provides the number of vertices corresponding to
+   * these registered edge segments
    * 
    * @return number of vertices
    */
   public abstract long getNumberOfVertices();  
   
-  /** collect the number of exit or entry edgesegments that are present in the subgraph for the given vertex on the parent graph
+  /** Collect the number of exit or entry edge segments that are present in the subgraph for the given
+   * vertex on the parent graph
    *  
    * @param vertex to verify
    * @param exitSegments flag, when true check exit segments, when false check entry segments

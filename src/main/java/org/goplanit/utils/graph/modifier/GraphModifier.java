@@ -3,11 +3,14 @@ package org.goplanit.utils.graph.modifier;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Function;
+import java.util.function.Predicate;
 
 import org.geotools.api.referencing.crs.CoordinateReferenceSystem;
 import org.goplanit.utils.exceptions.PlanItException;
 import org.goplanit.utils.geo.PlanitJtsCrsUtils;
 import org.goplanit.utils.graph.Edge;
+import org.goplanit.utils.graph.UntypedSubGraph;
 import org.goplanit.utils.graph.Vertex;
 import org.goplanit.utils.graph.modifier.event.GraphModifierEventProducer;
 import org.goplanit.utils.misc.Pair;
@@ -40,7 +43,7 @@ public interface GraphModifier<V extends Vertex, E extends Edge>
   /**
    * remove any subgraphs below a given size from the graph if they exist and subsequently reorder the
    * internal ids if needed.
-   * 
+   *
    * @param belowSize         remove subgraphs below the given size
    * @param aboveSize         remove subgraphs above the given size (typically set to maximum value)
    * @param alwaysKeepLargest indicate if the largest of the subgraphs is always to be kept even if it does
@@ -49,20 +52,36 @@ public interface GraphModifier<V extends Vertex, E extends Edge>
   public abstract void removeDanglingSubGraphs(Integer belowSize, Integer aboveSize, boolean alwaysKeepLargest);
 
   /**
-   * remove the subgraph identified by the passed in vertices and all attached entities such as links.
+   * remove any subgraphs below a given size from the graph if they exist and subsequently reorder the
+   * internal ids if needed.
+   * 
+   * @param belowSize         remove subgraphs below the given size
+   * @param aboveSize         remove subgraphs above the given size (typically set to maximum value)
+   * @param alwaysKeepLargest indicate if the largest of the subgraphs is always to be kept even if it does
+   *                          not match the criteria
+   * @param identifySubGraphForVertex function that given a starting vertex identifies the connected subgraph
+   */
+  public abstract void removeDanglingSubGraphs(
+      Integer belowSize,
+      Integer aboveSize,
+      boolean alwaysKeepLargest,
+      Function<V, UntypedSubGraph<V,E>> identifySubGraphForVertex);
+
+  /**
+   * remove the subgraph identified
    * 
    * @param subGraphToRemove the one to remove
    */
-  public abstract void removeSubGraph(Set<? extends V> subGraphToRemove);
-  
+  public void removeSubGraph(UntypedSubGraph<V,E> subGraphToRemove);
+
   /**
    * Remove the (sub)graph in which the passed in vertex resides. Apply reordering of internal ids of remaining network.
    * remove  all attached entities such as links as well.
-   * 
+   *
    * @param referenceVertex to identify subnetwork by
    * @throws PlanItException thrown if error
    */
-  public abstract void removeSubGraphOf(V referenceVertex) throws PlanItException;
+  public abstract void removeSubGraphOf(Vertex referenceVertex) throws PlanItException;
 
   /**
    * Break the passed in edges by inserting the passed in vertex in between. After completion the original edges

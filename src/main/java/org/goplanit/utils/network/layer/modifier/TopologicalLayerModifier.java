@@ -12,7 +12,8 @@ import org.goplanit.utils.graph.modifier.TopologicalModifier;
 public interface TopologicalLayerModifier extends TopologicalModifier{
   
   /**
-   * remove any dangling subnetworks below a given size from the network if they exist and subsequently reorder the internal ids if needed
+   * Remove any dangling subnetworks below a given size from the network if they exist and subsequently reorder
+   * the internal ids if needed
    * 
    * @param belowSize         remove subnetworks below the given size
    * @param aboveSize         remove subnetworks above the given size (typically set to maximum value)
@@ -21,6 +22,7 @@ public interface TopologicalLayerModifier extends TopologicalModifier{
    */
   public abstract void removeDanglingSubnetworks(
           final Integer belowSize, Integer aboveSize, boolean alwaysKeepLargest, boolean recreateManagedIds);
+
 
   /**
    * remove any dangling subnetworks from the layer if they exist and subsequently reorder the internal ids if needed

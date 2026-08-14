@@ -10,6 +10,7 @@ import org.goplanit.utils.network.layer.UntypedDirectedGraphLayer;
 import org.goplanit.utils.graph.directed.BannedMovement;
 
 import java.util.*;
+import java.util.function.Predicate;
 
 /**
  * Modifier with additional functionality related to modifications to layers derived from
@@ -23,6 +24,25 @@ public interface UntypedDirectedGraphLayerModifier<
         V extends DirectedVertex,
         E extends DirectedEdge,
         S extends EdgeSegment> extends TopologicalLayerModifier, GraphModifierEventProducer {
+
+  /**
+   * Remove any dangling subnetworks below a given size from the network if they exist and subsequently reorder
+   * the internal ids if needed
+   *
+   * @param belowSize         remove subnetworks below the given size
+   * @param aboveSize         remove subnetworks above the given size (typically set to maximum value)
+   * @param alwaysKeepLargest when true the largest of the subnetworks is always kept, otherwise not
+   * @param recreateManagedIds when true recreate managed id entities so they are contiguous again
+   * @param testEdgeSegment only when both segments test positive on an edge, the edge tests positive for a vertex and
+   *                        it is considered part of the subnetwork being considered. When always testing positive there
+   *                        is effectively no restriction on the edge segments and all are considered
+   */
+  public abstract void removeDanglingSubnetworks(
+      final Integer belowSize,
+      Integer aboveSize,
+      boolean alwaysKeepLargest,
+      boolean recreateManagedIds,
+      Predicate<S> testEdgeSegment);
 
   /**
    * Break the passed in links by inserting the passed in node in between. After completion the original links remain
