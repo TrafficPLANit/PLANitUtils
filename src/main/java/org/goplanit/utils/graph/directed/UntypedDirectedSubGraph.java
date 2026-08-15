@@ -1,5 +1,8 @@
 package org.goplanit.utils.graph.directed;
 
+import org.goplanit.utils.graph.Edge;
+import org.goplanit.utils.graph.UntypedGraph;
+import org.goplanit.utils.graph.UntypedSubGraph;
 import org.goplanit.utils.id.IdAble;
 import org.goplanit.utils.misc.Pair;
 
@@ -9,31 +12,31 @@ import java.util.function.Predicate;
 
 /**
  * A directed subgraph interface for a given parent graph by registering edge segments on it
- * (and therefore vertices and edges)
  * 
  * @author markr
  *
  */
-public interface DirectedSubGraph <V extends DirectedVertex, E extends EdgeSegment> extends IdAble {
+public interface UntypedDirectedSubGraph<V extends DirectedVertex, E extends DirectedEdge, ES extends EdgeSegment>
+    extends UntypedSubGraph<V,E> {
     
   /** Register an edge segment on the subgraph
    * 
    * @param edgeSegment to add
    */
-  public abstract void addEdgeSegment(E edgeSegment);
+  public abstract void addEdgeSegment(ES edgeSegment);
   
   /** Remove an edge segment on the subgraph
    * 
    * @param edgeSegment to remove
    */
-  public abstract void removeEdgeSegment(E edgeSegment);  
+  public abstract void removeEdgeSegment(ES edgeSegment);
   
   /** Verify if given edge segment is registered on this subgraph
    * 
    * @param edgeSegment to verify
    * @return true when registered, false otherwise
    */
-  public abstract boolean containsEdgeSegment(E edgeSegment);
+  public abstract boolean containsEdgeSegment(ES edgeSegment);
 
   /**
    * Verify if the bush contains the given edge segment
@@ -43,14 +46,7 @@ public interface DirectedSubGraph <V extends DirectedVertex, E extends EdgeSegme
    */
   public abstract boolean containsEdgeSegment(long edgeSegmentId);
   
-  /**
-   * The number of registered vertices. This method provides the number of vertices corresponding to
-   * these registered edge segments
-   * 
-   * @return number of vertices
-   */
-  public abstract long getNumberOfVertices();  
-  
+
   /** Collect the number of exit or entry edge segments that are present in the subgraph for the given
    * vertex on the parent graph
    *  
@@ -63,12 +59,18 @@ public interface DirectedSubGraph <V extends DirectedVertex, E extends EdgeSegme
     var segments = exitSegments ? vertex.getExitEdgeSegments() : vertex.getEntryEdgeSegments();
     int numSubGraphVertexSegments = 0;
     for(var segment : segments) {
-      if(containsEdgeSegment((E)segment)) {
+      if(containsEdgeSegment((ES)segment)) {
         ++numSubGraphVertexSegments;
       }
     }
     return numSubGraphVertexSegments;
   }
+
+  /**
+   * total number of registered edge segments on subgraph
+   * @return total
+   */
+  public abstract int getNumberOfEdgeSegments();
   
   /** Check if no vertices (and therefore not edge segments are present on this sub graph
    * 
@@ -87,10 +89,10 @@ public interface DirectedSubGraph <V extends DirectedVertex, E extends EdgeSegme
    * @param vertexSegmentTerminationCondition predicate for termination condition for successful search completion
    * @return found vertex (if any) absed on termination and the back links for all processed vertices
    */
-  public default Pair<V, Map<V, E>> breadthFirstSearch(
+  public default Pair<V, Map<V, ES>> breadthFirstSearch(
       V startVertex,
       boolean invertDirection,
-      BiPredicate<V,E> vertexSegmentTerminationCondition){
+      BiPredicate<V,ES> vertexSegmentTerminationCondition){
     return breadthFirstSearch(
         startVertex, invertDirection, es -> true, (prevEs,es) -> true, vertexSegmentTerminationCondition);
   }
@@ -109,21 +111,21 @@ public interface DirectedSubGraph <V extends DirectedVertex, E extends EdgeSegme
    * @param initialVertexSegmentInclusionCondition predicate for initial condition on edge segments to consider
    * @param vertexSegmentInclusionCondition predicate for general condition on edge segments to consider (prevEdgeSegment, currEdgeSegment)
    * @param vertexSegmentTerminationCondition predicate for termination condition for successful search completion
-   * @return found vertex (if any) absed on termination and the back links for all processed vertices
+   * @return found vertex (if any) based on termination and the back links for all processed vertices
    */
-  public default Pair<V, Map<V, E>> breadthFirstSearch(
+  public default Pair<V, Map<V, ES>> breadthFirstSearch(
       V startVertex,
       boolean invertDirection,
-      Predicate<E> initialVertexSegmentInclusionCondition,
-      BiPredicate<E,E> vertexSegmentInclusionCondition,
-      BiPredicate<V,E> vertexSegmentTerminationCondition){
+      Predicate<ES> initialVertexSegmentInclusionCondition,
+      BiPredicate<ES,ES> vertexSegmentInclusionCondition,
+      BiPredicate<V,ES> vertexSegmentTerminationCondition){
 
     // supplement with condition it must be in the subgraph
-    Predicate<E> initialInclusionCondition = es ->
+    Predicate<ES> initialInclusionCondition = es ->
         containsEdgeSegment(es) && initialVertexSegmentInclusionCondition.test(es);
 
     // supplement with condition it must be in the subgraph
-    BiPredicate<E, E> regularInclusionCondition = (prevEs, es) ->
+    BiPredicate<ES, ES> regularInclusionCondition = (prevEs, es) ->
         containsEdgeSegment(es) && vertexSegmentInclusionCondition.test(prevEs, es);
 
     // delegate
@@ -139,12 +141,12 @@ public interface DirectedSubGraph <V extends DirectedVertex, E extends EdgeSegme
    * {@inheritDoc}
    */
   @Override
-  public abstract DirectedSubGraph<V,E> shallowClone();
+  public abstract UntypedDirectedSubGraph<V,E,ES> shallowClone();
 
   /**
    * {@inheritDoc}
    */
   @Override
-  public abstract DirectedSubGraph<V,E> deepClone();
+  public abstract UntypedDirectedSubGraph<V,E,ES> deepClone();
   
 }

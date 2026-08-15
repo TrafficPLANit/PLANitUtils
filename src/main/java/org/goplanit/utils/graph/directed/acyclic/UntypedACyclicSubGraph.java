@@ -4,31 +4,35 @@ import java.util.Deque;
 import java.util.Iterator;
 import java.util.Set;
 
-import org.goplanit.utils.graph.directed.DirectedSubGraph;
+import org.goplanit.utils.graph.Edge;
+import org.goplanit.utils.graph.directed.DirectedEdge;
+import org.goplanit.utils.graph.directed.UntypedDirectedSubGraph;
 import org.goplanit.utils.graph.directed.DirectedVertex;
 import org.goplanit.utils.graph.directed.EdgeSegment;
-import org.goplanit.utils.misc.Pair;
 
 /**
  * 
- * An untyped acyclic sub graph contains a subset of a full graph, with generics regarding vertices and edges, without cycles. The active subset of the graph is tracked by
- * explicitly registering edge segments. Edge segments are by definition directed.
+ * An untyped acyclic sub graph contains a subset of a full graph, with generics regarding vertices and edges,
+ * without cycles. The active subset of the graph is tracked by explicitly registering edge segments.
+ * Edge segments are by definition directed.
  * <p>
- * A topological sort on the current state of the graph allows for fast traversal of the graph for various algorithms (shortest path). It also reveals if the graph is still
- * acyclic.
+ * A topological sort on the current state of the graph allows for fast traversal of the graph for various
+ * algorithms (shortest path). It also reveals if the graph is still acyclic.
  * <p>
- * To allow for maximum flexibility we do not require any information on how the edges, vertices, edge segments of this graph are configured, i.e., they may be an amalgamation of
- * other (combined) graphs. As long as their internal structure (downstream, upstream vertices, exit and entry segments) represent a valid acyclic graph structure, then any
- * implementation should be able to deal with it.
+ * To allow for maximum flexibility we do not require any information on how the edges, vertices, edge segments of
+ * this graph are configured, i.e., they may be an amalgamation of other (combined) graphs. As long as their
+ * internal structure (downstream, upstream vertices, exit and entry segments) represent a valid acyclic graph
+ * structure, then any implementation should be able to deal with it.
  * 
  * @author markr
  *
  */
-public interface UntypedACyclicSubGraph<V extends DirectedVertex, E extends EdgeSegment>
-        extends DirectedSubGraph<V, E>, Iterable<V> {
+public interface UntypedACyclicSubGraph<V extends DirectedVertex, E extends DirectedEdge, ES extends EdgeSegment>
+        extends UntypedDirectedSubGraph<V, E, ES>, Iterable<V> {
 
   /**
-   * Root vertices of this acyclic graph. Roots can either be a starting point or end point depending on the direction of the dag
+   * Root vertices of this acyclic graph. Roots can either be a starting point or end point depending on the
+   * direction of the dag
    * 
    * @return root vertices
    */
@@ -42,7 +46,8 @@ public interface UntypedACyclicSubGraph<V extends DirectedVertex, E extends Edge
   public abstract void addRootVertex(V rootVertex);  
 
   /**
-   * Indicates if the direction of the graph is inverted, i.e., when inverted the root vertex is the final vertex and all other vertices precede it, otherwise it is a starting
+   * Indicates if the direction of the graph is inverted, i.e., when inverted the root vertex is the final
+   * vertex and all other vertices precede it, otherwise it is a starting
    * point and all other vertices succeed it
    * 
    * @return true when inverted, false otherwise
@@ -62,7 +67,8 @@ public interface UntypedACyclicSubGraph<V extends DirectedVertex, E extends Edge
   /**
    * Collect iterator over topologically sorted vertices
    * 
-   * @param update when true the topological sort is conducted based on the current state of the subgraph, when false the most recent (if any) result is returned
+   * @param update when true the topological sort is conducted based on the current state of the subgraph,
+   *               when false the most recent (if any) result is returned
    * @return iterator
    */
   public default Iterator<V> getTopologicalIterator(boolean update) {
@@ -89,12 +95,12 @@ public interface UntypedACyclicSubGraph<V extends DirectedVertex, E extends Edge
    * {@inheritDoc}
    */
   @Override
-  public abstract UntypedACyclicSubGraph<V, E> shallowClone();
+  public abstract UntypedACyclicSubGraph<V, E, ES> shallowClone();
 
   /**
    * {@inheritDoc}
    */
   @Override
-  public abstract UntypedACyclicSubGraph<V, E> deepClone();
+  public abstract UntypedACyclicSubGraph<V, E, ES> deepClone();
 
 }

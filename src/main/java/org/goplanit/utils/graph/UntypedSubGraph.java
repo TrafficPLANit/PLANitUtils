@@ -103,25 +103,17 @@ public interface UntypedSubGraph<V extends Vertex, E extends Edge> extends IdAbl
     return parentEdges.stream().filter(this::containsEdge).collect(Collectors.toList());
   }
 
-  public default int getNumberOfEdges(GraphEntities<? extends E> parentEdges) {
-    int numSubGraphEdges = 0;
-    for(var edge : parentEdges) {
-      if(containsEdge(edge)) {
-        ++numSubGraphEdges;
-      }
-    }
-    return numSubGraphEdges;
-  }
+  /**
+   * Number of edges on subgraph
+   * @return number
+   */
+  public abstract int getNumberOfEdges();
 
-  public default int getNumberOfVertices(GraphEntities<? extends V> parentVertices) {
-    int numSubGraphVertices = 0;
-    for(var vertex : parentVertices) {
-      if(containsVertex(vertex)) {
-        ++numSubGraphVertices;
-      }
-    }
-    return numSubGraphVertices;
-  }
+  /**
+   * Number of vertices on subgraph
+   * @return number
+   */
+  public abstract int getNumberOfVertices();
 
   /**
    * {@inheritDoc}

@@ -2,15 +2,13 @@ package org.goplanit.utils.graph.modifier;
 
 import org.geotools.api.referencing.crs.CoordinateReferenceSystem;
 import org.goplanit.utils.geo.PlanitJtsCrsUtils;
-import org.goplanit.utils.graph.directed.DirectedEdge;
-import org.goplanit.utils.graph.directed.DirectedVertex;
-import org.goplanit.utils.graph.directed.EdgeSegment;
+import org.goplanit.utils.graph.directed.*;
 import org.goplanit.utils.graph.modifier.event.DirectedGraphModifierEventProducer;
 import org.goplanit.utils.misc.Pair;
-import org.goplanit.utils.graph.directed.BannedMovement;
 
 import java.util.List;
 import java.util.Map;
+import java.util.function.Predicate;
 
 /**
  * Modify directed graph elements .
@@ -36,6 +34,18 @@ public interface DirectedGraphModifier extends
    * @param movement to remove
    */
   public abstract void removeMovement(BannedMovement  movement);
+
+  /**
+   * Remove a directed subgraph
+   *
+   * todo: needs work
+   *
+   * @param subGraphToRemove to remove
+   * @param testEdge constraint
+   */
+  public abstract void removeDirectedSubGraph(
+      UntypedDirectedSubGraph<DirectedVertex, DirectedEdge, EdgeSegment> subGraphToRemove,
+      Predicate<? super DirectedEdge> testEdge);
 
   /**
    * Identical to the {@code breakEdgeAt(DirectedVertex, Ex, PlanitJtsCrsUtils)} implementation except that we
