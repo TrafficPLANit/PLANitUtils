@@ -13,7 +13,7 @@ public class LocalWrapAroundTimeUtilsTest {
   // =========================================================================
 
   @Test
-  public void testStandardDay_ValidChronologicalTrip() {
+  public void testStandardDayValidChronologicalTrip() {
     var refStart = LocalTime.of(8, 0);
     var refEnd = LocalTime.of(17, 0);
     var checkStart = LocalTime.of(9, 0);
@@ -24,7 +24,7 @@ public class LocalWrapAroundTimeUtilsTest {
   }
 
   @Test
-  public void testStandardDay_InvalidOrder() {
+  public void testStandardDayInvalidOrder() {
     var refStart = LocalTime.of(8, 0);
     var refEnd = LocalTime.of(17, 0);
     var checkStart = LocalTime.of(14, 0);
@@ -35,7 +35,7 @@ public class LocalWrapAroundTimeUtilsTest {
   }
 
   @Test
-  public void testStandardDay_EntirelyOutsideShift() {
+  public void testStandardDayEntirelyOutsideShift() {
     var refStart = LocalTime.of(8, 0);
     var refEnd = LocalTime.of(17, 0);
     var checkStart = LocalTime.of(18, 0);
@@ -50,7 +50,7 @@ public class LocalWrapAroundTimeUtilsTest {
   // =========================================================================
 
   @Test
-  public void testWrapShift_ValidCrossMidnightTrip() {
+  public void testWrapShiftValidCrossMidnightTrip() {
     // Javadoc scenario: 3:00 AM to 2:59 AM the next day
     var refStart = LocalTime.of(3, 0);
     var refEnd = LocalTime.of(2, 59);
@@ -62,7 +62,7 @@ public class LocalWrapAroundTimeUtilsTest {
   }
 
   @Test
-  public void testWrapShift_ValidBeforeMidnightOnly() {
+  public void testWrapShiftValidBeforeMidnightOnly() {
     var refStart = LocalTime.of(22, 0); // 10 PM
     var refEnd = LocalTime.of(6, 0);   // 6 AM
     var checkStart = LocalTime.of(22, 30);
@@ -73,7 +73,7 @@ public class LocalWrapAroundTimeUtilsTest {
   }
 
   @Test
-  public void testWrapShift_ValidAfterMidnightOnly() {
+  public void testWrapShiftValidAfterMidnightOnly() {
     var refStart = LocalTime.of(22, 0); // 10 PM
     var refEnd = LocalTime.of(6, 0);   // 6 AM
     var checkStart = LocalTime.of(1, 0);
@@ -84,7 +84,7 @@ public class LocalWrapAroundTimeUtilsTest {
   }
 
   @Test
-  public void testWrapShift_InvalidChronologicalFlow() {
+  public void testWrapShiftInvalidChronologicalFlow() {
     var refStart = LocalTime.of(2, 0);  // 2 AM
     var refEnd = LocalTime.of(1, 0);   // 1 AM next day
     var checkStart = LocalTime.of(0, 0); // Midnight
@@ -95,7 +95,7 @@ public class LocalWrapAroundTimeUtilsTest {
   }
 
   @Test
-  public void testWrapShift_CrossesDeadZone() {
+  public void testWrapShiftCrossesDeadZone() {
     var refStart = LocalTime.of(22, 0); // 10 PM
     var refEnd = LocalTime.of(6, 0);   // 6 AM
     var checkStart = LocalTime.of(5, 0);
@@ -106,11 +106,11 @@ public class LocalWrapAroundTimeUtilsTest {
   }
 
   // =========================================================================
-  // 3. BOUNDARY & IDENTITY TESTS
+  // 3. BOUNDARY & EQUAL START/END TESTS
   // =========================================================================
 
   @Test
-  public void testBoundary_TripStartsExactlyOnOpening() {
+  public void testBoundaryTripStartsExactlyOnOpening() {
     var refStart = LocalTime.of(22, 0);
     var refEnd = LocalTime.of(6, 0);
     var checkStart = LocalTime.of(22, 0);
@@ -121,7 +121,7 @@ public class LocalWrapAroundTimeUtilsTest {
   }
 
   @Test
-  public void testBoundary_TripEndsExactlyOnClosing() {
+  public void testBoundaryTripEndsExactlyOnClosing() {
     var refStart = LocalTime.of(22, 0);
     var refEnd = LocalTime.of(6, 0);
     var checkStart = LocalTime.of(1, 0);
@@ -132,24 +132,24 @@ public class LocalWrapAroundTimeUtilsTest {
   }
 
   @Test
-  public void testIdentity_ZeroDurationStandardDay() {
+  public void testStandardDayEqualStartAndEndIsOrdered() {
     var refStart = LocalTime.of(8, 0);
     var refEnd = LocalTime.of(17, 0);
     var checkStart = LocalTime.of(12, 0);
     var checkEnd = LocalTime.of(12, 0);
 
-    assertFalse(LocalTimeUtils.isValidOrderForWrapAroundDayAnchors(refStart, refEnd, checkStart, checkEnd),
-        "Zero duration trip (12PM to 12PM) should fail if your rules forbid it");
+    assertTrue(LocalTimeUtils.isValidOrderForWrapAroundDayAnchors(refStart, refEnd, checkStart, checkEnd),
+        "Equal start and end (12PM to 12PM) is ordered, the end does not precede the start");
   }
 
   @Test
-  public void testIdentity_ZeroDurationWrapShift() {
+  public void testWrapShiftEqualStartAndEndIsOrdered() {
     var refStart = LocalTime.of(22, 0);
     var refEnd = LocalTime.of(6, 0);
     var checkStart = LocalTime.of(23, 0);
     var checkEnd = LocalTime.of(23, 0);
 
-    assertFalse(LocalTimeUtils.isValidOrderForWrapAroundDayAnchors(refStart, refEnd, checkStart, checkEnd),
-        "Zero duration wrap shift trip (11PM to 11PM) should fail if your rules forbid it");
+    assertTrue(LocalTimeUtils.isValidOrderForWrapAroundDayAnchors(refStart, refEnd, checkStart, checkEnd),
+        "Equal start and end (11PM to 11PM) is ordered, the end does not precede the start");
   }
 }
