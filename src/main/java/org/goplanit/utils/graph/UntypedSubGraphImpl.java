@@ -1,6 +1,5 @@
 package org.goplanit.utils.graph;
 
-import org.goplanit.graph.directed.acyclic.UntypedACyclicSubGraphImpl;
 import org.goplanit.utils.id.IdGenerator;
 import org.goplanit.utils.id.IdGroupingToken;
 
@@ -20,10 +19,10 @@ import java.util.logging.Logger;
 public class UntypedSubGraphImpl<V extends Vertex, E extends Edge> implements UntypedSubGraph<V, E> {
 
   /** logger to use */
-  private static final Logger LOGGER = Logger.getLogger(UntypedACyclicSubGraphImpl.class.getCanonicalName());
+  private static final Logger LOGGER = Logger.getLogger(UntypedSubGraphImpl.class.getCanonicalName());
 
   /**
-   * The id of this acyclic sub graph
+   * The id of this sub graph
    */
   private final long id;
 
@@ -42,12 +41,10 @@ public class UntypedSubGraphImpl<V extends Vertex, E extends Edge> implements Un
    * @param numberOfParentEdges number of edges of the parent this subgraph is a subset from
    */
   public UntypedSubGraphImpl(
-      final IdGroupingToken groupId, int numberOfParentVertices, int numberOfParentEdges,) {
+      final IdGroupingToken groupId, int numberOfParentVertices, int numberOfParentEdges) {
     this.id = IdGenerator.generateId(groupId, UntypedSubGraph.class);
     this.registeredEdges = new BitSet(numberOfParentEdges);
     this.registeredVertices = new BitSet(numberOfParentVertices);
-
-    registeredVertices.
   }
 
   /**

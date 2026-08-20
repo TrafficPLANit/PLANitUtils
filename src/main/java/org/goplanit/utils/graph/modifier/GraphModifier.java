@@ -42,7 +42,7 @@ public interface GraphModifier<V extends Vertex, E extends Edge>
 
   /**
    * remove any subgraphs below a given size from the graph if they exist and subsequently reorder the
-   * internal ids if needed.
+   * internal ids if needed. there are no rules imposed on anything beyond connectivity
    *
    * @param belowSize         remove subgraphs below the given size
    * @param aboveSize         remove subgraphs above the given size (typically set to maximum value)
@@ -65,7 +65,7 @@ public interface GraphModifier<V extends Vertex, E extends Edge>
       Integer belowSize,
       Integer aboveSize,
       boolean alwaysKeepLargest,
-      Function<V, UntypedSubGraph<V,E>> identifySubGraphForVertex);
+      Function<V, ? extends UntypedSubGraph<V,E>> identifySubGraphForVertex);
 
   /**
    * remove the subgraph identified
@@ -81,7 +81,7 @@ public interface GraphModifier<V extends Vertex, E extends Edge>
    * @param referenceVertex to identify subnetwork by
    * @throws PlanItException thrown if error
    */
-  public abstract void removeSubGraphOf(Vertex referenceVertex) throws PlanItException;
+  public abstract void removeSubGraphOf(V referenceVertex) throws PlanItException;
 
   /**
    * Break the passed in edges by inserting the passed in vertex in between. After completion the original edges

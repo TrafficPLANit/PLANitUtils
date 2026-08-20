@@ -21,7 +21,7 @@ public class UntypedDirectedSubGraphImpl<V extends DirectedVertex, E extends Dir
 
   /** logger to use */
   private static final Logger LOGGER = Logger.getLogger(
-      org.goplanit.graph.directed.acyclic.UntypedACyclicSubGraphImpl.class.getCanonicalName());
+      UntypedDirectedSubGraphImpl.class.getCanonicalName());
 
   /** track the edge segments used via a bit set, where 1 at index indicates the edge with id=index is included */
   private BitSet registeredEdgeSegments;
@@ -40,7 +40,7 @@ public class UntypedDirectedSubGraphImpl<V extends DirectedVertex, E extends Dir
       int numberOfParentVertices,
       int numberOfParentEdges,
       int numberOfParentEdgeSegments) {
-    super(groupId, numberOfParentEdges, numberOfParentVertices);
+    super(groupId, numberOfParentVertices, numberOfParentEdges);
     this.registeredEdgeSegments = new BitSet(numberOfParentEdgeSegments);
   }
 

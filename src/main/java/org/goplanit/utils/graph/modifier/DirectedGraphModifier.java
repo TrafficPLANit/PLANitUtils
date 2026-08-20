@@ -8,6 +8,7 @@ import org.goplanit.utils.misc.Pair;
 
 import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
 import java.util.function.Predicate;
 
 /**
@@ -16,8 +17,25 @@ import java.util.function.Predicate;
  * @author markr
  *
  */
-public interface DirectedGraphModifier extends
-        GraphModifier<DirectedVertex, DirectedEdge>, DirectedGraphModifierEventProducer{
+public interface DirectedGraphModifier<V extends DirectedVertex, E extends DirectedEdge, ES extends EdgeSegment>
+    extends GraphModifier<V, E>, DirectedGraphModifierEventProducer{
+
+  /**
+   * remove any directed subgraphs below a given size from the graph if they exist and subsequently reorder the
+   * internal ids if needed.
+   *
+   * @param belowSize         remove subgraphs below the given size
+   * @param aboveSize         remove subgraphs above the given size (typically set to maximum value)
+   * @param alwaysKeepLargest indicate if the largest of the subgraphs is always to be kept even if it does
+   *                          not match the criteria
+   * @param identifySubGraphForVertex function that given a starting vertex identifies the connected directed subgraph
+   */
+  public abstract void removeDanglingDirectedSubGraphs(
+      Integer belowSize,
+      Integer aboveSize,
+      boolean alwaysKeepLargest,
+      Function<DirectedVertex, ? extends UntypedDirectedSubGraph<DirectedVertex, DirectedEdge, EdgeSegment>>
+          identifySubGraphForVertex);
 
   /**
    * Remove an edge segment by removing it from the graph and the edge it is connected to. Any registered events
@@ -25,7 +43,7 @@ public interface DirectedGraphModifier extends
    *
    * @param edgeSegment to remove
    */
-  public abstract void removeEdgeSegment(EdgeSegment edgeSegment);
+  public abstract void removeEdgeSegment(ES edgeSegment);
 
   /**
    * Remove a movement by removing it from the graph. Any registered events
@@ -38,18 +56,14 @@ public interface DirectedGraphModifier extends
   /**
    * Remove a directed subgraph
    *
-   * todo: needs work
-   *
    * @param subGraphToRemove to remove
-   * @param testEdge constraint
    */
-  public abstract void removeDirectedSubGraph(
-      UntypedDirectedSubGraph<DirectedVertex, DirectedEdge, EdgeSegment> subGraphToRemove,
-      Predicate<? super DirectedEdge> testEdge);
+  public abstract void removeDirectedSubGraph(UntypedDirectedSubGraph<V, E, ES> subGraphToRemove);
 
   /**
    * Identical to the {@code breakEdgeAt(DirectedVertex, Ex, PlanitJtsCrsUtils)} implementation except that we
-   * pass in indexed movements to speed up the updating of the touched movements (if any). If any banned movements exist on
+   * pass in indexed movements to speed up the updating of the touched movements (if any). If any banned movements
+   * exist on
    * the broken edge's layer this should be the go to optimise performance. It is assumed the passed on movements are
    * the drop-in replacement for the layer's movements container
    *
@@ -61,7 +75,7 @@ public interface DirectedGraphModifier extends
    * @return newly created edge due to breaking, null if not feasible
    */
   public abstract <Ex extends DirectedEdge> Ex breakEdgeAt(
-      final DirectedVertex vertexToBreakAt,
+      final V vertexToBreakAt,
       final Ex edgeToBreak,
       Map<? extends DirectedVertex, List<BannedMovement>> movementsByCentreVertex,
       final PlanitJtsCrsUtils geoUtils);
@@ -81,7 +95,7 @@ public interface DirectedGraphModifier extends
    */
   public abstract <Ex extends DirectedEdge> Map<Long, Pair<Ex, Ex>> breakEdgesAt(
       final List<Ex> edgesToBreak,
-      final DirectedVertex vertexToBreakAt,
+      final V vertexToBreakAt,
       Map<? extends DirectedVertex, List<BannedMovement>> movementsByCentreVertex,
       final CoordinateReferenceSystem crs);
 

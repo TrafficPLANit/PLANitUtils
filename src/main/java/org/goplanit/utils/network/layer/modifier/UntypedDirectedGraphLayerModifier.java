@@ -42,7 +42,7 @@ public interface UntypedDirectedGraphLayerModifier<
       Integer aboveSize,
       boolean alwaysKeepLargest,
       boolean recreateManagedIds,
-      Predicate<S> testEdgeSegment);
+      Predicate<? super S> testEdgeSegment);
 
   /**
    * Break the passed in links by inserting the passed in node in between. After completion the original links remain
