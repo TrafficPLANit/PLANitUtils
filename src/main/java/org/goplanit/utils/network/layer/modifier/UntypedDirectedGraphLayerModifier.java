@@ -142,4 +142,12 @@ public interface UntypedDirectedGraphLayerModifier<
    * @param edgeSegment to remove
    */
   public void removeEdgeSegment(S edgeSegment);
+
+  /**
+   * Remove a vertex from the layer. It is up to the caller to ensure nothing is still attached to it, since a
+   * vertex outliving its edges is the expected case here rather than an error.
+   *
+   * @param vertex to remove
+   */
+  public void removeVertex(V vertex);
 }
