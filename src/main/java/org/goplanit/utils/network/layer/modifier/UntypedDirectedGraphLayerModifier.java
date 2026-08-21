@@ -37,6 +37,9 @@ public interface UntypedDirectedGraphLayerModifier<
    * @param testEdgeSegment only when both segments test positive on an edge, the edge tests positive for a vertex and
    *                        it is considered part of the subnetwork being considered. When always testing positive there
    *                        is effectively no restriction on the edge segments and all are considered
+   * @see #removeDanglingSubnetworks(Integer, Integer, boolean, boolean, Predicate, Connectivity) applies
+   *      {@link Connectivity#STRONG}, so infrastructure that cannot be both entered and left counts as a
+   *      subnetwork of its own
    */
   public abstract void removeDanglingSubnetworks(
       final Integer belowSize,

@@ -262,7 +262,7 @@ public class ConnectivityAssessment {
     @Override
     public String toString() {
       return String.format(
-          "largest weakly connected %d, strongly connected %d, trapped %d (%.2f%%) in %d pockets "
+          "Largest weakly connected %d, strongly connected %d, trapped %d (%.2f%%) in %d pockets "
               + "[no destination %d, no origin %d, severed %d, partial %d]",
           largestWeak.size(), largestStrong.size(), getNumberOfTrapped(), getTrappedPercentage(),
           pocketCount, exitOnly.size(), entryOnly.size(), severed.size(), partial.size());
