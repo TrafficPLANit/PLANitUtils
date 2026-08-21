@@ -1,6 +1,7 @@
 package org.goplanit.utils.network.layer.macroscopic;
 
 import org.goplanit.utils.graph.directed.EdgeSegment;
+import org.goplanit.utils.mode.Mode;
 import org.goplanit.utils.mode.TrackModeType;
 
 import java.util.function.Predicate;
@@ -63,5 +64,27 @@ public class MacroscopicLinkSegmentUtils {
   public static Predicate<EdgeSegment> exclusivelyOfTrackType(final TrackModeType trackType) {
     return edgeSegment -> edgeSegment instanceof MacroscopicLinkSegment &&
         isExclusivelyOfTrackType((MacroscopicLinkSegment) edgeSegment, trackType);
+  }
+
+  /**
+   * Create a predicate selecting only those edge segments that are macroscopic link segments permitting the given
+   * mode.
+   * <p>
+   * Shaped as a {@code Predicate<EdgeSegment>} for the same reason as
+   * {@link #exclusivelyOfTrackType(TrackModeType)}: the graph level algorithms know nothing about modes, since an
+   * edge segment carries no mode information at all. Mode access is a network layer concept, and a predicate is
+   * the seam through which it reaches a graph algorithm without that algorithm having to learn about it.
+   * </p>
+   * <p>
+   * Useful for asking connectivity questions per mode, e.g. whether the car network is strongly connected, which
+   * is a different question from whether the infrastructure carrying it is.
+   * </p>
+   *
+   * @param mode the mode that must be permitted
+   * @return predicate to use
+   */
+  public static Predicate<EdgeSegment> permitsMode(final Mode mode) {
+    return edgeSegment -> edgeSegment instanceof MacroscopicLinkSegment &&
+        ((MacroscopicLinkSegment) edgeSegment).isModeAllowed(mode);
   }
 }
