@@ -1,9 +1,11 @@
 package org.goplanit.utils.graph.directed;
 
+import org.goplanit.utils.graph.GraphEntities;
 import org.goplanit.utils.graph.UntypedSubGraphImpl;
 import org.goplanit.utils.id.IdGroupingToken;
 
 import java.util.BitSet;
+import java.util.List;
 import java.util.logging.Logger;
 
 /**
@@ -102,6 +104,14 @@ public class UntypedDirectedSubGraphImpl<V extends DirectedVertex, E extends Dir
   @Override
   public int getNumberOfEdgeSegments() {
     return registeredEdgeSegments.cardinality();
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public List<ES> getEdgeSegments(GraphEntities<? extends ES> parentEdgeSegments) {
+    return collectRegistered(registeredEdgeSegments, parentEdgeSegments);
   }
 
   /**

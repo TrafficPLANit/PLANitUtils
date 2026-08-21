@@ -86,7 +86,12 @@ public interface UntypedSubGraph<V extends Vertex, E extends Edge> extends IdAbl
   }
 
   /**
-   * Construct a new list from all vertices on this subgraph. (costly)
+   * Construct a new list from all vertices on this subgraph.
+   * <p>
+   * This fallback scans the entire parent container, so its cost is proportional to the whole graph rather than to
+   * this subgraph. Implementations that track membership by id should override it with a keyed lookup, as
+   * {@code UntypedSubGraphImpl} does, otherwise callers that materialise many subgraphs become quadratic.
+   * </p>
    * @param parentVertices to check against
    * @return list of vertices
    */
@@ -95,7 +100,7 @@ public interface UntypedSubGraph<V extends Vertex, E extends Edge> extends IdAbl
   }
 
   /**
-   * Construct a new list from all edges on this subgraph. (costly)
+   * Construct a new list from all edges on this subgraph. See {@link #getVertices(GraphEntities)} regarding cost.
    * @param parentEdges to check against
    * @return list of edges
    */

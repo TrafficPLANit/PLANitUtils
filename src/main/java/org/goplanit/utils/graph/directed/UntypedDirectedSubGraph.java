@@ -1,11 +1,13 @@
 package org.goplanit.utils.graph.directed;
 
 import org.goplanit.utils.graph.Edge;
+import org.goplanit.utils.graph.GraphEntities;
 import org.goplanit.utils.graph.UntypedGraph;
 import org.goplanit.utils.graph.UntypedSubGraph;
 import org.goplanit.utils.id.IdAble;
 import org.goplanit.utils.misc.Pair;
 
+import java.util.List;
 import java.util.Map;
 import java.util.function.BiPredicate;
 import java.util.function.Predicate;
@@ -71,6 +73,24 @@ public interface UntypedDirectedSubGraph<V extends DirectedVertex, E extends Dir
    * @return total
    */
   public abstract int getNumberOfEdgeSegments();
+
+  /**
+   * Construct a new list from all edge segments registered on this subgraph.
+   * <p>
+   * Implementations tracking membership by id should resolve this by keyed lookup rather than by scanning the
+   * parent container, so that the cost is proportional to the subgraph and not to the entire graph. Callers that
+   * materialise many subgraphs, e.g. dangling subnetwork removal, otherwise become quadratic in the graph size.
+   * </p>
+   *
+   * @param parentEdgeSegments to collect the registered segments from
+   * @return list of edge segments on this subgraph
+   */
+  @SuppressWarnings("unchecked")
+  public default List<ES> getEdgeSegments(GraphEntities<? extends ES> parentEdgeSegments) {
+    /* fallback for implementations that do not track membership by id, see note above on cost */
+    return parentEdgeSegments.stream().filter(es -> containsEdgeSegment((ES) es))
+        .map(es -> (ES) es).collect(java.util.stream.Collectors.toList());
+  }
   
   /** Check if no vertices (and therefore not edge segments are present on this sub graph
    * 

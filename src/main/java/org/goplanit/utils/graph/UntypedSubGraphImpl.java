@@ -3,7 +3,9 @@ package org.goplanit.utils.graph;
 import org.goplanit.utils.id.IdGenerator;
 import org.goplanit.utils.id.IdGroupingToken;
 
+import java.util.ArrayList;
 import java.util.BitSet;
+import java.util.List;
 import java.util.logging.Logger;
 
 /**
@@ -164,6 +166,54 @@ public class UntypedSubGraphImpl<V extends Vertex, E extends Edge> implements Un
     return registeredVertices.cardinality();
   }
 
+
+  /**
+   * {@inheritDoc}
+   * <p>
+   * Membership is tracked by id in a bit set, so the members are collected by walking the set bits and looking each
+   * one up in the parent container, which is a keyed lookup. The interface default instead scans the whole parent
+   * container and tests each entity for membership, making a single call proportional to the size of the entire
+   * graph rather than to the size of this subgraph. That difference dominates any caller that identifies or removes
+   * many subgraphs, e.g. dangling subnetwork removal, which calls this once per subgraph and would otherwise be
+   * quadratic in the graph size.
+   * </p>
+   */
+  @Override
+  public List<V> getVertices(GraphEntities<? extends V> parentVertices) {
+    return collectRegistered(registeredVertices, parentVertices);
+  }
+
+  /**
+   * {@inheritDoc}
+   * <p>
+   * See {@link #getVertices(GraphEntities)} for why this does not use the scanning default.
+   * </p>
+   */
+  @Override
+  public List<E> getEdges(GraphEntities<? extends E> parentEdges) {
+    return collectRegistered(registeredEdges, parentEdges);
+  }
+
+  /** Collect the parent entities whose id is registered in the given bit set.
+   *
+   * @param <T> type of entity
+   * @param registered bit set holding the ids that are part of this subgraph
+   * @param parentEntities container to look the ids up in
+   * @return the registered entities present on the parent container
+   */
+  protected static <T> List<T> collectRegistered(
+      final BitSet registered, final GraphEntities<? extends T> parentEntities) {
+    var result = new ArrayList<T>(registered.cardinality());
+    for (int id = registered.nextSetBit(0); id >= 0; id = registered.nextSetBit(id + 1)) {
+      var entity = parentEntities.get(id);
+      if (entity != null) {
+        /* an id can be registered while the entity is no longer on the parent container, e.g. when a caller
+         * removes entities in between identifying a subgraph and materialising it */
+        result.add(entity);
+      }
+    }
+    return result;
+  }
 
   /**
    * {@inheritDoc}
