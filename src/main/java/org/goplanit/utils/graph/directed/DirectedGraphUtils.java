@@ -3,6 +3,7 @@ package org.goplanit.utils.graph.directed;
 import org.goplanit.utils.exceptions.PlanItRunTimeException;
 import org.goplanit.utils.graph.*;
 import org.goplanit.utils.graph.directed.algorithms.BreadthFirstSearch;
+import org.goplanit.utils.graph.directed.algorithms.StronglyConnectedComponents;
 import org.goplanit.utils.id.IdGenerator;
 import org.goplanit.utils.id.IdGroupingToken;
 import org.goplanit.utils.misc.Pair;
@@ -148,40 +149,185 @@ public class DirectedGraphUtils {
     while (!verticesToExplore.isEmpty()) {
       DirectedVertex currVertex = verticesToExplore.pop();
 
-      Collection<E> edgesOfCurrVertex = (Collection<E>) currVertex.getEdges();
-      boolean allEdgesIncluded = true;
-      for (E currEdge : edgesOfCurrVertex) {
-
-        if(!testEdge.test(currEdge) || !qualifiesOnEdgeSegments(currEdge, testEdgeSegment, strict)){
-          /* vertex is attached to something outside the subgraph, so not wholly contained by it */
-          allEdgesIncluded = false;
-          continue;
-        }
-        subGraph.addEdge(currEdge);
-
-        /* register the qualifying segments of this edge; under strict rules that is all of them by construction.
-         * An edge only exposes its segments as the base type, while the graph guarantees they are ES */
-        if(currEdge.hasEdgeSegmentAb() && testEdgeSegment.test((ES) currEdge.getEdgeSegmentAb())){
-          subGraph.addEdgeSegment((ES) currEdge.getEdgeSegmentAb());
-        }
-        if(currEdge.hasEdgeSegmentBa() && testEdgeSegment.test((ES) currEdge.getEdgeSegmentBa())){
-          subGraph.addEdgeSegment((ES) currEdge.getEdgeSegmentBa());
-        }
-
-        /* both extremities are candidates; they are tested independently since an already visited vertex A must
-         * not stop vertex B from being explored */
-        exploreIfUnvisited(currEdge.getVertexA(), currVertex, visitedVertices, verticesToExplore);
-        exploreIfUnvisited(currEdge.getVertexB(), currVertex, visitedVertices, verticesToExplore);
-      }
-
-      /* lenient: reaching a vertex means an incident edge was included, so it qualifies. A vertex without any
-       * included edges (an isolated reference vertex) still forms a subgraph of size one.
-       * strict: every incident edge must be included, which holds vacuously for an isolated vertex */
-      if(!strict || allEdgesIncluded){
-        subGraph.addVertex((V) currVertex);
-      }
+      /* every qualifying edge belongs to this subgraph, since a weakly connected subgraph is closed under edges:
+       * anything reachable is by definition part of it. Each included edge extends the frontier */
+      registerVertexAndItsEdges(
+          subGraph, currVertex, testEdge, testEdgeSegment, strict,
+          (edge, vertex) -> true,
+          edge -> {
+            /* both extremities are candidates; they are tested independently since an already visited vertex A
+             * must not stop vertex B from being explored */
+            exploreIfUnvisited(edge.getVertexA(), currVertex, visitedVertices, verticesToExplore);
+            exploreIfUnvisited(edge.getVertexB(), currVertex, visitedVertices, verticesToExplore);
+          });
     }
     return subGraph;
+  }
+
+  /**
+   * Apply the inclusion rules of
+   * {@link #identifySubGraphForVertex(UntypedDirectedGraph, DirectedVertex, Predicate, Predicate, boolean)} to a
+   * single vertex, registering the vertex and its qualifying edges and edge segments on the given subgraph.
+   * <p>
+   * Shared by both notions of connectivity, which differ only in how they arrive at the vertices to apply this to
+   * and in whether an edge can lead out of the subgraph at all.
+   * </p>
+   *
+   * @param subGraph to register on
+   * @param currVertex the vertex to judge
+   * @param testEdge when an edge tests positive it is eligible for inclusion
+   * @param testEdgeSegment when an edge segment tests positive it is eligible for inclusion
+   * @param strict when true the vertex is only registered if all of its edges are included
+   * @param withinSubGraph whether an otherwise eligible edge belongs to this subgraph given the vertex it is
+   *          considered from. An edge ruled out here is not registered, but unlike an edge that fails the tests it
+   *          does not stop its vertex from being registered, see
+   *          {@link #identifyStronglyConnectedSubGraphs(UntypedDirectedGraph, Predicate, Predicate, boolean)}
+   * @param onIncludedEdge invoked for each edge registered, allowing a caller to extend its traversal
+   * @param <V> type of vertex
+   * @param <E> type of edge
+   * @param <ES> type of edge segment
+   */
+  @SuppressWarnings("unchecked")
+  private static <V extends DirectedVertex, E extends DirectedEdge, ES extends EdgeSegment>
+  void registerVertexAndItsEdges(
+      UntypedDirectedSubGraphImpl<V,E,ES> subGraph,
+      DirectedVertex currVertex,
+      Predicate<? super E> testEdge,
+      Predicate<? super ES> testEdgeSegment,
+      boolean strict,
+      BiPredicate<E, DirectedVertex> withinSubGraph,
+      Consumer<E> onIncludedEdge) {
+
+    boolean allEdgesIncluded = true;
+    for (E currEdge : (Collection<E>) currVertex.getEdges()) {
+
+      if(!testEdge.test(currEdge) || !qualifiesOnEdgeSegments(currEdge, testEdgeSegment, strict)){
+        /* vertex is attached to something outside the subgraph, so not wholly contained by it */
+        allEdgesIncluded = false;
+        continue;
+      }
+
+      if(!withinSubGraph.test(currEdge, currVertex)){
+        /* eligible, yet not part of this subgraph. Deliberately without disqualifying the vertex */
+        continue;
+      }
+
+      subGraph.addEdge(currEdge);
+
+      /* register the qualifying segments of this edge; under strict rules that is all of them by construction.
+       * An edge only exposes its segments as the base type, while the graph guarantees they are ES */
+      if(currEdge.hasEdgeSegmentAb() && testEdgeSegment.test((ES) currEdge.getEdgeSegmentAb())){
+        subGraph.addEdgeSegment((ES) currEdge.getEdgeSegmentAb());
+      }
+      if(currEdge.hasEdgeSegmentBa() && testEdgeSegment.test((ES) currEdge.getEdgeSegmentBa())){
+        subGraph.addEdgeSegment((ES) currEdge.getEdgeSegmentBa());
+      }
+
+      onIncludedEdge.accept(currEdge);
+    }
+
+    /* lenient: reaching a vertex means an incident edge was included, so it qualifies. A vertex without any
+     * included edges (an isolated reference vertex) still forms a subgraph of size one.
+     * strict: every incident edge must be included, which holds vacuously for an isolated vertex */
+    if(!strict || allEdgesIncluded){
+      subGraph.addVertex((V) currVertex);
+    }
+  }
+
+  /**
+   * Partition a directed graph into its strongly connected subgraphs, i.e. groups of vertices that can each reach
+   * every other one while following direction.
+   * <p>
+   * The counterpart of {@link #identifySubGraphForVertex(UntypedDirectedGraph, DirectedVertex, Predicate,
+   * Predicate, boolean)} for {@link Connectivity#STRONG}. Where that method discovers one subgraph per call by
+   * traversing outwards from a vertex, this partitions the graph in a single pass and returns the result keyed by
+   * vertex, because a caller pruning subgraphs asks the question once per vertex and repeating the partition for
+   * each of them would be quadratic in the size of the graph.
+   * </p>
+   * <b>Inclusion rules, and how they differ from the weakly connected case.</b> A weakly connected subgraph is
+   * closed under edges: no edge leaves it. A strongly connected one is not, and the edge that leaves it is the
+   * very thing that makes it a separate component. That forces a distinction the weakly connected case never has
+   * to make, since there an excluded edge can only ever mean the first of these:
+   * <ul>
+   *   <li>an edge that <b>fails the tests</b> belongs to infrastructure this partition is not concerned with, e.g.
+   *   a rail segment while road is being partitioned. Its vertex is shared with a network judged separately and
+   *   must not be considered wholly contained here, exactly as in the weakly connected case</li>
+   *   <li>an edge that <b>passes the tests but leads to another component</b> is part of this same network and is
+   *   merely the boundary between two of its components. It is registered on neither subgraph and does not stop
+   *   its vertices from being wholly contained, since it cannot outlive whichever of the two is removed</li>
+   * </ul>
+   * Without that distinction every component would retain the vertex its outgoing boundary edge attaches to, and
+   * pruning would leave a stub vertex behind for each one.
+   * <p>
+   * Traversal follows individual edge segments rather than edges, which is what direction means here: a segment is
+   * traversable when it passes the segment test and its parent edge passes the edge test. Strictness governs what
+   * is registered, not what is reachable.
+   * </p>
+   * <p>
+   * Every vertex of the reference graph appears as a key, so a caller may look up any vertex without a null check.
+   * A vertex whose incident edges are all excluded maps to a subgraph holding nothing, which is the correct answer:
+   * it belongs to no part of the network being partitioned.
+   * </p>
+   *
+   * @param referenceGraph the parent graph the subgraphs are a subset of
+   * @param testEdge when an edge tests positive it is eligible for inclusion
+   * @param testEdgeSegment when an edge segment tests positive it is eligible for inclusion
+   * @param strict see the inclusion rules on the weakly connected counterpart
+   * @return the strongly connected subgraph each vertex belongs to
+   * @param <V> type of vertex
+   * @param <E> type of edge
+   * @param <ES> type of edge segment
+   */
+  @SuppressWarnings("unchecked")
+  public static <V extends DirectedVertex, E extends DirectedEdge, ES extends EdgeSegment>
+  Map<V, UntypedDirectedSubGraph<V,E,ES>> identifyStronglyConnectedSubGraphs(
+      UntypedDirectedGraph<V,E,ES> referenceGraph,
+      Predicate<? super E> testEdge,
+      Predicate<? super ES> testEdgeSegment,
+      boolean strict) {
+
+    /* a segment may be followed when it is eligible in its own right and its parent edge is too, so that an edge
+     * ruled out at edge level cannot be traversed through one of its segments */
+    Predicate<EdgeSegment> traversable = es ->
+        testEdgeSegment.test((ES) es) && (es.getParent() == null || testEdge.test((E) es.getParent()));
+
+    var components =
+        StronglyConnectedComponents.execute(referenceGraph.getVertices(), traversable).getComponents();
+
+    /* resolved up front rather than through the result's own lookup, so that the boundary test below is a plain
+     * map read for both endpoints of every edge considered */
+    Map<DirectedVertex, Integer> componentIndexByVertex = new HashMap<>();
+    for (int index = 0; index < components.size(); ++index) {
+      for (var vertex : components.get(index)) {
+        componentIndexByVertex.put(vertex, index);
+      }
+    }
+
+    var numVertices = UndirectedGraphUtils.getNumberOfVerticesRegisteredUnderIdToken(referenceGraph);
+    var numEdges = UndirectedGraphUtils.getNumberOfEdgesRegisteredUnderIdToken(referenceGraph);
+    var numEdgeSegments = getNumberOfEdgeSegmentsRegisteredUnderIdToken(referenceGraph);
+
+    /* an edge belongs to the subgraph only when it stays inside the component it is considered from, which is the
+     * one respect in which strongly connected identification differs from weakly connected identification */
+    BiPredicate<E, DirectedVertex> withinSameComponent = (edge, vertex) -> {
+      var adjacentVertex = edge.getVertexA().idEquals(vertex) ? edge.getVertexB() : edge.getVertexA();
+      return adjacentVertex != null &&
+          Objects.equals(componentIndexByVertex.get(vertex), componentIndexByVertex.get(adjacentVertex));
+    };
+
+    Map<V, UntypedDirectedSubGraph<V,E,ES>> subGraphByVertex = new HashMap<>();
+    for (var component : components) {
+
+      var subGraph = new UntypedDirectedSubGraphImpl<V,E,ES>(
+          IdGroupingToken.collectGlobalToken(), (int) numVertices, (int) numEdges, (int) numEdgeSegments);
+
+      for (var currVertex : component) {
+        registerVertexAndItsEdges(
+            subGraph, currVertex, testEdge, testEdgeSegment, strict, withinSameComponent, edge -> {});
+        subGraphByVertex.put(currVertex, subGraph);
+      }
+    }
+    return subGraphByVertex;
   }
 
   /**

@@ -1,6 +1,7 @@
 package org.goplanit.utils.network.layer.modifier;
 
 import org.geotools.api.referencing.crs.CoordinateReferenceSystem;
+import org.goplanit.utils.graph.directed.Connectivity;
 import org.goplanit.utils.graph.directed.DirectedEdge;
 import org.goplanit.utils.graph.directed.DirectedVertex;
 import org.goplanit.utils.graph.directed.EdgeSegment;
@@ -43,6 +44,36 @@ public interface UntypedDirectedGraphLayerModifier<
       boolean alwaysKeepLargest,
       boolean recreateManagedIds,
       Predicate<? super S> testEdgeSegment);
+
+  /**
+   * Remove any dangling subnetworks as per
+   * {@link #removeDanglingSubnetworks(Integer, Integer, boolean, boolean, Predicate)}, with control over what
+   * being part of the same subnetwork means.
+   * <p>
+   * Under {@link Connectivity#WEAK} a subnetwork is anything reachable while ignoring direction, which is the
+   * established behaviour. Under {@link Connectivity#STRONG} it is what is mutually reachable while following
+   * direction, so infrastructure that can be driven out of but never into is treated as a separate subnetwork and
+   * becomes a candidate for removal in its own right.
+   * </p>
+   * <p>
+   * Note that size thresholds lose much of their meaning under the strong notion, since it tends to yield a large
+   * number of very small components, most of them a single vertex.
+   * </p>
+   *
+   * @param belowSize         remove subnetworks below the given size
+   * @param aboveSize         remove subnetworks above the given size (typically set to maximum value)
+   * @param alwaysKeepLargest when true the largest of the subnetworks is always kept, otherwise not
+   * @param recreateManagedIds when true recreate managed id entities so they are contiguous again
+   * @param testEdgeSegment see {@link #removeDanglingSubnetworks(Integer, Integer, boolean, boolean, Predicate)}
+   * @param connectivity what constitutes belonging to the same subnetwork
+   */
+  public abstract void removeDanglingSubnetworks(
+      final Integer belowSize,
+      Integer aboveSize,
+      boolean alwaysKeepLargest,
+      boolean recreateManagedIds,
+      Predicate<? super S> testEdgeSegment,
+      Connectivity connectivity);
 
   /**
    * Break the passed in links by inserting the passed in node in between. After completion the original links remain
