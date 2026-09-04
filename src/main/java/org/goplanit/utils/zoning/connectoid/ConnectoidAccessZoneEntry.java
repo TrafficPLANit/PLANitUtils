@@ -61,7 +61,7 @@ public interface ConnectoidAccessZoneEntry{
    */
   public default boolean hasLength() {
     try {
-      return getLengthKm().isEmpty();
+      return getLengthKm().isPresent();
     } catch (Exception e) {
       return false;
     }
