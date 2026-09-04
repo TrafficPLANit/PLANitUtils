@@ -13,6 +13,7 @@ import org.goplanit.utils.id.IdAble;
 import org.goplanit.utils.math.Precision;
 import org.goplanit.utils.misc.Pair;
 import org.goplanit.utils.zoning.Zone;
+import org.locationtech.jts.algorithm.ConvexHull;
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.Envelope;
 import org.locationtech.jts.geom.Geometry;
@@ -464,6 +465,25 @@ public class PlanitGraphGeoUtils {
   public static boolean isVertexNearBoundingBox(
       Vertex node, Envelope boundingBox, double maxDistanceMeters, PlanitJtsCrsUtils geoUtils) {
     return geoUtils.isGeometryNearEnvelope(node.getPosition(), boundingBox, maxDistanceMeters);
+  }
+
+  /** Create the convex hull around the given vertices, being the tightest convex outline containing all their
+   * positions. To be preferred over a bounding box whenever the outline decides what falls within the area the
+   * vertices cover, a box also claiming the empty corners around an area that is not itself rectangular.
+   *
+   * @param <V> type of vertex
+   * @param vertices to create the hull around, any vertex without a position is ignored
+   * @return the created hull, an empty geometry when no vertex carries a position
+   */
+  public static <V extends Vertex> Geometry createConvexHull(Iterable<V> vertices) {
+    var coordinates = new ArrayList<Coordinate>();
+    for (var vertex : vertices) {
+      if (vertex.hasPosition()) {
+        coordinates.add(vertex.getPosition().getCoordinate());
+      }
+    }
+    return new ConvexHull(
+        coordinates.toArray(new Coordinate[0]), PlanitJtsUtils.jtsGeometryFactory).getConvexHull();
   }
 
 }
