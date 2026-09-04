@@ -10,9 +10,6 @@ import java.util.Collection;
  */
 public class PlanItRunTimeException extends RuntimeException {
 
-  /**
-   * Logger for this class
-   */
   private static final long serialVersionUID = 567458653348604906L;
 
   /**
@@ -112,7 +109,8 @@ public class PlanItRunTimeException extends RuntimeException {
    * @param objectArgs to format exception string with
    * @throws PlanItRunTimeException thrown when condition not met
    */
-  public static <T> void throwIfNullOrEmpty(Collection<T> collection, String message, Object... objectArgs) throws PlanItRunTimeException{
+  public static <T> void throwIfNullOrEmpty(Collection<T> collection, String message, Object... objectArgs)
+          throws PlanItRunTimeException{
     throwIf(collection==null || collection.isEmpty(), message, objectArgs);
   }
 

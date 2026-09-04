@@ -2,6 +2,7 @@ package org.goplanit.utils.network.layer.macroscopic;
 
 import java.util.Collection;
 import java.util.Set;
+import java.util.TreeMap;
 import java.util.stream.Collectors;
 
 import org.goplanit.utils.id.ExternalIdAble;
@@ -20,7 +21,8 @@ import org.goplanit.utils.mode.PredefinedModeType;
 public interface MacroscopicLinkSegmentType extends ExternalIdAble, ManagedId {
   
   /** id class for generating ids */
-  public static final Class<MacroscopicLinkSegmentType> MACROSCOPIC_LINK_SEGMENT_TYPE_ID_CLASS = MacroscopicLinkSegmentType.class;   
+  public static final Class<MacroscopicLinkSegmentType> MACROSCOPIC_LINK_SEGMENT_TYPE_ID_CLASS =
+          MacroscopicLinkSegmentType.class;
   
   /**
    * If no macroscopic link segment type is defined the default takes on "default" 
@@ -36,6 +38,11 @@ public interface MacroscopicLinkSegmentType extends ExternalIdAble, ManagedId {
    * Default capacity per lane if not set is 180 pcu/lane/km
    */
   public static final double DEFAULT_MAX_DENSITY_PER_LANE = MacroscopicConstants.DEFAULT_MAX_DENSITY_PCU_KM_LANE;
+
+  /**
+   * Default critical speed if not set is 80 km/h
+   */
+  public static final double DEFAULT_CRITICAL_SPEED = MacroscopicConstants.DEFAULT_CRITICAL_SPEED;
 
   /**
    * {@inheritDoc}
@@ -78,7 +85,8 @@ public interface MacroscopicLinkSegmentType extends ExternalIdAble, ManagedId {
    * @return capacity per lane in pcu/h/lane or default
    */
   public default double getExplicitCapacityPerLaneOrDefault() {
-    return isExplicitCapacityPerLaneSet() ? getExplicitCapacityPerLane() : MacroscopicConstants.DEFAULT_CAPACITY_PCU_HOUR_LANE;
+    return isExplicitCapacityPerLaneSet() ?
+            getExplicitCapacityPerLane() : MacroscopicConstants.DEFAULT_CAPACITY_PCU_HOUR_LANE;
   }
   
   /** Verify if capacity per lane is set explicitly or relies on default
@@ -91,8 +99,8 @@ public interface MacroscopicLinkSegmentType extends ExternalIdAble, ManagedId {
 
   /**
    * Return the maximum density per lane for this macroscopic link segment type. This signifies a jam density
-   * that is to be preferred over any inferred density. If this is set any fundamental diagrams used by assignment are to be made 
-   * compatible with this explicitly set density
+   * that is to be preferred over any inferred density. If this is set any fundamental diagrams used by assignment are
+   * to be made compatible with this explicitly set density
    * 
    * @return the maximum density per lane in pcu/km/lane, null if not set
    */
@@ -104,7 +112,8 @@ public interface MacroscopicLinkSegmentType extends ExternalIdAble, ManagedId {
    * @return the maximum density per lane in pcu/km/lane
    */
   public default double getExplicitMaximumDensityPerLaneOrDefault() {
-    return isExplicitMaximumDensityPerLaneSet() ? getExplicitMaximumDensityPerLane() : MacroscopicConstants.DEFAULT_MAX_DENSITY_PCU_KM_LANE;
+    return isExplicitMaximumDensityPerLaneSet() ?
+            getExplicitMaximumDensityPerLane() : MacroscopicConstants.DEFAULT_MAX_DENSITY_PCU_KM_LANE;
   }
   
   /** Verify if maximum density per lane is set explicitly or relies on default
@@ -123,19 +132,22 @@ public interface MacroscopicLinkSegmentType extends ExternalIdAble, ManagedId {
   public abstract void setAccessGroupProperties(final Collection<AccessGroupProperties> AccessProperties);
   
   /**
-   * Set access properties for this link segment type, any modes with existing access properties are overwritten by the given 
-   * properties.
+   * Set access properties for this link segment type, any modes with existing access properties are overwritten by
+   * the given properties.
    * 
    * @param accessProperties to set
    */
   public abstract void setAccessGroupProperties(final AccessGroupProperties accessProperties);
 
-  /** Add access group properties for the modes allowed by it. By adding instead of setting them, it is verified these properties do not yet exist, if they already exist
-   * they are not registered and a warning is issued. To make sure only new group access properties are registered use {@link #findEqualAccessPropertiesForAnyMode(AccessGroupProperties)}
+  /** Add access group properties for the modes allowed by it. By adding instead of setting them, it is verified
+   * these properties do not yet exist, if they already exist they are not registered and a warning is issued.
+   * To make sure only new group access properties are registered
+   * use {@link #findEqualAccessPropertiesForAnyMode(AccessGroupProperties)}
    * 
    * @param accessProperties to register
+   * @param logWarning when true warn as indicated, no warning logged otherwise
    */  
-  public abstract void addAccessGroupProperties(AccessGroupProperties accessProperties);
+  public abstract void addAccessGroupProperties(AccessGroupProperties accessProperties, boolean logWarning);
 
   /** Remove the mode properties for the passed in mode (if present)
    * 
@@ -151,6 +163,17 @@ public interface MacroscopicLinkSegmentType extends ExternalIdAble, ManagedId {
    * @return the mode properties for this link and mode
    */
   public abstract AccessGroupProperties getAccessProperties(final Mode mode);
+
+  /**
+   * Returns the access properties container for this link segment type by mode
+   * <p>
+   *   Note that values are shared if identical, so do not make changes unless you are cetain
+   *   they apply to all modes that share the properties
+   * </p>
+   *
+   * @return the properties for this link for all modes
+   */
+  public abstract TreeMap<Mode, AccessGroupProperties> getAccessProperties();
   
   /**
    * Verify if mode is available on type
@@ -161,8 +184,8 @@ public interface MacroscopicLinkSegmentType extends ExternalIdAble, ManagedId {
   public abstract boolean isModeAllowed(final Mode mode);
 
   /**
-   * Verify if predefined mode type is available on type. Note that for custom modes all custom modes are type with CUSTOM
-   * so a match based on mode type has little meaning in this context
+   * Verify if predefined mode type is available on type. Note that for custom modes all custom modes are type with
+   * CUSTOM so a match based on mode type has little meaning in this context
    *
    * @param modeType to verify
    * @return available modes
@@ -190,10 +213,11 @@ public interface MacroscopicLinkSegmentType extends ExternalIdAble, ManagedId {
    * @return collection which is a subset of the passed in modes containing only the ones that are available
    */
   public default Set<Mode> getAllowedModesFrom(final Collection<Mode> modes){
-    return modes.stream().filter(mode -> isModeAllowed(mode)).collect(Collectors.toSet());
+    return modes.stream().filter(this::isModeAllowed).collect(Collectors.toSet());
   }
 
-  /** Method which identifies which of the passed in modes is available on the link segment but not in the passed in collection of modes
+  /** Method which identifies which of the passed in modes is available on the link segment but not in the passed
+   * in collection of modes
    * @param modes to exclude from the available modes
    * @return collection which is a subset of the available modes, namely excludes the the passed in modes
    */
@@ -210,16 +234,17 @@ public interface MacroscopicLinkSegmentType extends ExternalIdAble, ManagedId {
   }
 
   /** find group access properties that are equal to the ones that are passed in except for the allowed modes, i.e.,
-   * find existing access properties for any mode that match the ones provided. IF found they are returned, otherwise null is returned
+   * find existing access properties for any mode that match the ones provided. IF found they are returned,
+   * otherwise null is returned
    * 
    * @param accessProperties to match against
    * @return access properties found matching, null if no match is found
    */
   public abstract AccessGroupProperties findEqualAccessPropertiesForAnyMode(AccessGroupProperties accessProperties);
   
-  /** Collect the maximum speed based on the combination of the mode and any restrictions imposed by the type on this mode.
-   * If the mode is not available on this type a limit of 0.0 is returned, otherwise it is the minimum speed of the mode maximum speed
-   * and the restricted speed of the type for this mode
+  /** Collect the maximum speed based on the combination of the mode and any restrictions imposed by the type on this
+   * mode. If the mode is not available on this type a limit of 0.0 is returned, otherwise it is the minimum speed of
+   * the mode maximum speed and the restricted speed of the type for this mode
    * 
    * @param mode to use
    * @return the maximum speed in km/h
@@ -231,9 +256,11 @@ public interface MacroscopicLinkSegmentType extends ExternalIdAble, ManagedId {
     return getAccessProperties(mode).getMaximumSpeedOrDefaultKmH(mode.getMaximumSpeedKmH());
   }
   
-  /** Collect the critical speed based on the combination of the mode and any restrictions imposed by the type on this mode.
-   * If the mode is not available on this type null is returned, otherwise it is the minimum speed of the mode maximum speed
-   * and the restricted critical speed of the type for this mode
+  /** Collect the critical speed based on the combination of the mode, any restrictions imposed by the type on this
+   * mode, and the default critical speed.
+   * If the mode is not available on this type null is returned, otherwise it is the minimum speed of the mode
+   * maximum speed the restricted critical speed of the type for this mode. If no critical speed is set, it is the
+   * minimum of the mode's ,maximum speed and the default critical speed instead.
    * 
    * @param mode to use
    * @return the critical speed in km/h
@@ -242,7 +269,8 @@ public interface MacroscopicLinkSegmentType extends ExternalIdAble, ManagedId {
     if(!isModeAllowed(mode)) {
       return null;
     }
-    return getAccessProperties(mode).getCriticalSpeedOrDefaultKmH(mode.getMaximumSpeedKmH());
+    return getAccessProperties(mode).getCriticalSpeedOrDefaultKmH(
+            Math.min(DEFAULT_CRITICAL_SPEED, getMaximumSpeedKmH(mode)));
   }  
 
   /**
@@ -258,7 +286,7 @@ public interface MacroscopicLinkSegmentType extends ExternalIdAble, ManagedId {
    * @param toBeRemovedModes all the modes to make i
    */
   public default void removeModeAccess(final Set<Mode> toBeRemovedModes) {
-    toBeRemovedModes.forEach( mode -> removeModeAccess(mode));
+    toBeRemovedModes.forEach(this::removeModeAccess);
   }
 
   /**
@@ -277,4 +305,13 @@ public interface MacroscopicLinkSegmentType extends ExternalIdAble, ManagedId {
   public default boolean hasName(){
     return !StringUtils.isNullOrBlank(getName());
   }
+
+  /**
+   * Verify if other is functionally identical, so excluding name, and id fields
+   * but considering all other fields with meaning
+   *
+   * @param other to verify
+   * @return true if functionally equal, false otherwise
+   */
+  public abstract boolean isFunctionalEqual(MacroscopicLinkSegmentType other);
 }

@@ -39,7 +39,8 @@ public class PiecewiseLinearCumulativeCurve {
     CumulativePoint currentLast = cumulatives.getLast();
     if (!cumulativePoint.isLater(currentLast, timeInSecondsEpsilon)) {
       String errorMessage =
-          "new cumulative point does not occur later than last available cumulative point in cumulative curve, this is not allowed";
+          "new cumulative point does not occur later than last available cumulative point in cumulative curve, " +
+                  "this is not allowed";
       LOGGER.severe(errorMessage);
       throw new PlanItException(errorMessage);
     }

@@ -1,10 +1,8 @@
 package org.goplanit.utils.misc;
 
-import org.goplanit.utils.geo.PlanitJtsCrsUtils;
 import org.goplanit.utils.time.TimePeriod;
-import org.locationtech.jts.geom.Envelope;
-import org.locationtech.jts.geom.Geometry;
 
+import java.util.Objects;
 import java.util.function.Predicate;
 import java.util.logging.Logger;
 
@@ -20,7 +18,7 @@ public class LoggingUtils {
    * @param message to surround with brackets
    * @return bracketed string
    */
-  public static String surroundwithBrackets(String message) {
+  public static String surroundWithBrackets(String message) {
     return String.format("[%s] ", message);
   }
   
@@ -32,7 +30,7 @@ public class LoggingUtils {
    * @return runId prefix
    */
   public static String runIdPrefix(long runId) {
-    return surroundwithBrackets(String.format("run id: %d", runId));
+    return surroundWithBrackets(String.format("run id: %d", runId));
   }
   
   /**
@@ -43,7 +41,7 @@ public class LoggingUtils {
    * @return project prefix
    */  
   public static String projectPrefix(long projectId) {
-    return surroundwithBrackets(String.format("project id: %d", projectId));
+    return surroundWithBrackets(String.format("project id: %d", projectId));
   }
   
   /**
@@ -54,7 +52,7 @@ public class LoggingUtils {
    * @return network prefix
    */    
   public static String networkPrefix(long networkId) {
-    return surroundwithBrackets(String.format("network id: %d", networkId));
+    return surroundWithBrackets(String.format("network id: %d", networkId));
   }
 
   /**
@@ -65,7 +63,18 @@ public class LoggingUtils {
    * @return network layer prefix
    */
   public static String networkLayerPrefix(long layerId) {
-    return surroundwithBrackets(String.format("n-layer id: %d", layerId));
+    return surroundWithBrackets(String.format("n-layer id: %d", layerId));
+  }
+
+  /**
+   * Create a prefix for the logger so that all logging items specific to a particular virtual network layer
+   * are prefixed with the exact same string, i.e.  {@code [vn-layer id: <id> ]}
+   *
+   * @param layerId the network layerid
+   * @return network layer prefix
+   */
+  public static String virtualNetworkLayerPrefix(long layerId) {
+    return surroundWithBrackets(String.format("vn-layer id: %d", layerId));
   }
   
   /**
@@ -76,7 +85,7 @@ public class LoggingUtils {
    * @return zoning prefix
    */   
   public static String zoningPrefix(long zoningId) {
-    return surroundwithBrackets(String.format("zoning id: %d", zoningId));
+    return surroundWithBrackets(String.format("zoning id: %d", zoningId));
   }  
   
   /**
@@ -87,9 +96,20 @@ public class LoggingUtils {
    * @return demands prefix
    */   
   public static String demandsPrefix(long demandsId) {
-    return surroundwithBrackets(String.format("demands id: %d", demandsId));
-  }  
-  
+    return surroundWithBrackets(String.format("demands id: %d", demandsId));
+  }
+
+  /**
+   * Create a prefix for the logger so that all logging items specific to a particular discrete demands
+   * are prefixed with the exact same string, i.e.  {@code [disc.demands id: <id> ]}
+   *
+   * @param discreteDemandsId the demands id
+   * @return demands prefix
+   */
+  public static String discreteDemandsPrefix(long discreteDemandsId) {
+    return surroundWithBrackets(String.format("disc.demands id: %d", discreteDemandsId));
+  }
+
   /**
    * Create a prefix for the logger so that all logging items specific to a particular service network
    * are prefixed with the exact same string, i.e.  {@code [services network id: <id> ]}
@@ -98,7 +118,7 @@ public class LoggingUtils {
    * @return service network prefix
    */    
   public static String serviceNetworkPrefix(long serviceNetworkId) {
-    return surroundwithBrackets(String.format("services network id: %d", serviceNetworkId));
+    return surroundWithBrackets(String.format("services network id: %d", serviceNetworkId));
   }
 
   /**
@@ -109,7 +129,7 @@ public class LoggingUtils {
    * @return service network prefix
    */
   public static String serviceNetworkLayerPrefix(long serviceNetworkLayerId) {
-    return surroundwithBrackets(String.format("s_layer id: %d", serviceNetworkLayerId));
+    return surroundWithBrackets(String.format("s_layer id: %d", serviceNetworkLayerId));
   }
 
   /**
@@ -120,7 +140,7 @@ public class LoggingUtils {
    * @return routed services prefix
    */    
   public static String routedServicesPrefix(long routedServicesId) {
-    return surroundwithBrackets(String.format("routed services id: %d", routedServicesId));
+    return surroundWithBrackets(String.format("routed services id: %d", routedServicesId));
   }
 
   /**
@@ -131,7 +151,7 @@ public class LoggingUtils {
    * @return routed services prefix
    */
   public static String routedServiceLayerPrefix(long routedServiceLayerId) {
-    return surroundwithBrackets(String.format("rs_layer id: %d", routedServiceLayerId));
+    return surroundWithBrackets(String.format("rs_layer id: %d", routedServiceLayerId));
   }
 
   
@@ -143,7 +163,7 @@ public class LoggingUtils {
    * @return od path sets Prefix
    */     
   public static String odPathSetsPrefix(long odPathSetsId) {
-    return surroundwithBrackets(String.format("od path sets id: %d", odPathSetsId));
+    return surroundWithBrackets(String.format("od path sets id: %d", odPathSetsId));
   }  
   
   /**
@@ -154,7 +174,7 @@ public class LoggingUtils {
    * @return output formatter prefix
    */     
   public static String outputFormatterPrefix(long outputFormatterId) {
-    return surroundwithBrackets(String.format("output formatter id: %d", outputFormatterId));
+    return surroundWithBrackets(String.format("output formatter id: %d", outputFormatterId));
   }  
   
   /**
@@ -166,8 +186,10 @@ public class LoggingUtils {
    * @return time period prefix
    */
   public static String timePeriodPrefix(TimePeriod timePeriod) {
-    String timePeriodReference = timePeriod.hasExternalId() ? "external id: " + timePeriod.getExternalId() : (timePeriod.hasXmlId() ? "xml id: "+timePeriod.getXmlId() : "");
-    return surroundwithBrackets(String.format("time period: %s (id %d)", timePeriodReference, timePeriod.getId()));
+    String timePeriodReference = timePeriod.hasExternalId() ?
+            "external id: " + timePeriod.getExternalId() :
+            (timePeriod.hasXmlId() ? "xml id: "+timePeriod.getXmlId() : "");
+    return surroundWithBrackets(String.format("time period: %s (id %d)", timePeriodReference, timePeriod.getId()));
   }  
   
   /**
@@ -178,7 +200,8 @@ public class LoggingUtils {
    * @return iteration prefix
    */  
   public static String iterationPrefix(int iterationIndex) {
-    return surroundwithBrackets(String.format("iteration: %d", iterationIndex));
+    return surroundWithBrackets(String.format("" +
+        "iteration: %d", iterationIndex));
   }  
   
   /** create a string that states if item is activated or deactivated based and provide the simple class name
@@ -195,7 +218,7 @@ public class LoggingUtils {
    * @return the string  {@code [<class simple name>]}
    */
   public static String getClassNameWithBrackets(Object item) {
-    return surroundwithBrackets(item.getClass().getSimpleName());
+    return surroundWithBrackets(item.getClass().getSimpleName());
   }
 
   /** surround the string with repetitions of given character
@@ -225,11 +248,14 @@ public class LoggingUtils {
    * @param logger to use
    * @param message to log
    * @param arguments arguments of message
+   * @return result of null test
    */
-  public static void LogSevereIfNull(Object object, Logger logger, String message, Object... arguments){
-    if(object==null){
+  public static boolean LogSevereIfNull(Object object, Logger logger, String message, Object... arguments){
+    boolean testResult = object==null;
+    if(testResult){
       logger.severe(String.format(message, arguments));
     }
+    return testResult;
   }
 
   /**
@@ -239,25 +265,104 @@ public class LoggingUtils {
    * @param logger to use
    * @param message to log
    * @param arguments arguments of message
+   * @return result of null test
    */
-  public static void LogFineIfNull(Object object, Logger logger, String message, Object... arguments){
-    if(object==null){
+  public static boolean LogFineIfNull(Object object, Logger logger, String message, Object... arguments){
+    boolean testResult = object==null;
+    if(testResult){
       logger.fine(String.format(message, arguments));
     }
+    return testResult;
   }
 
-  /** log the given warning message if predicate holds
+    /** width used for aligned settings labels */
+  private static final int SETTINGS_LABEL_WIDTH = 45;
+
+  /** create indentation for the provided nesting level
+   *
+   * @param level to create indentation for
+   * @return indentation string
+   */
+  private static String createSettingsIndentation(int level) {
+    return level > 0 ? "  ".repeat(level) : "";
+  }
+
+  /** normalise settings values for logging
+   *
+   * @param value to normalise
+   * @return string representation to use in logs
+   */
+  private static String normaliseSettingsValue(Object value) {
+    return Objects.toString(value, "not set");
+  }
+
+  /** create a header for a settings block
+   *
+   * @param title to use
+   * @return formatted header
+   */
+  public static String settingsHeader(String title) {
+    return surroundWithBrackets("Settings") + title;
+  }
+
+  /** create a section header within a settings block
+   *
+   * @param title to use
+   * @param level indentation level to apply
+   * @return formatted section header
+   */
+  public static String settingsSection(String title, int level) {
+    return createSettingsIndentation(level) + surroundWithBrackets(title).trim();
+  }
+
+  /** create a key/value settings log entry
+   *
+   * @param label to use
+   * @param value to log
+   * @param level indentation level to apply
+   * @return formatted key/value settings entry
+   */
+  public static String settingsValue(String label, Object value, int level) {
+    return String.format("%s- %-" + SETTINGS_LABEL_WIDTH + "s : %s",
+        createSettingsIndentation(level), label, normaliseSettingsValue(value));
+  }
+
+  /** create a free-form settings log entry
+   *
+   * @param text to use
+   * @param level indentation level to apply
+   * @return formatted settings entry
+   */
+  public static String settingsEntry(String text, int level) {
+    return createSettingsIndentation(level) + "- " + text;
+  }
+
+  /** create a mapping settings log entry
+   *
+   * @param from mapping source label
+   * @param to mapping target value
+   * @param level indentation level to apply
+   * @return formatted mapping settings entry
+   */
+  public static String settingsMapping(String from, Object to, int level) {
+    return String.format("%s- %-" + SETTINGS_LABEL_WIDTH + "s -> %s",
+        createSettingsIndentation(level), from, normaliseSettingsValue(to));
+  }
+/** log the given warning message if predicate holds
    *
    * @param <T> type of test object to aply predicate to
    * @param logger the logger to use
    * @param message to log if not too close to bounding box
    * @param testObject to test on
    * @param predicate to use
+   * @return result of predicate
    */
-  public static <T> void logWarningIf(Logger logger, String message, T testObject, Predicate<T> predicate) {
-    if(predicate.test(testObject)) {
+  public static <T> boolean logWarningIf(Logger logger, String message, T testObject, Predicate<T> predicate) {
+    boolean testResult = predicate.test(testObject);
+    if(testResult) {
       logger.warning(message);
     }
+    return testResult;
   }
 
   }

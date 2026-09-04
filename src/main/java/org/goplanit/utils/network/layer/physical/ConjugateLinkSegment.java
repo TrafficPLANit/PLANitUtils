@@ -9,20 +9,8 @@ import org.goplanit.utils.misc.Pair;
  * @author markr
  *
  */
-public interface ConjugateLinkSegment extends ConjugateEdgeSegment {
-  
-  /** additional id class for generating link segment ids */
-  public static final Class<ConjugateLinkSegment> CONJUGATE_LINK_SEGMENT_ID_CLASS = ConjugateLinkSegment.class;   
-  
-  /**
-   * Return class used to generate unique link ids via the id generator
-   * 
-   * @return class type
-   */
-  public default Class<? extends ConjugateLinkSegment> getConjugateLinkSegmentIdClass(){
-    return CONJUGATE_LINK_SEGMENT_ID_CLASS;
-  }   
-      
+public interface ConjugateLinkSegment extends ConjugateEdgeSegment, LinkSegment {
+
   /**
    * {@inheritDoc}
    */
@@ -33,25 +21,22 @@ public interface ConjugateLinkSegment extends ConjugateEdgeSegment {
    * {@inheritDoc}
    */
   @Override
-  public default ConjugateNode getUpstreamVertex() {
-    return (ConjugateNode) ConjugateEdgeSegment.super.getUpstreamVertex();
-  }
+  public abstract ConjugateNode getUpstreamVertex();
 
   /**
    * {@inheritDoc}
    */
   @Override
-  public default ConjugateNode getDownstreamVertex() {
-    return (ConjugateNode) ConjugateEdgeSegment.super.getDownstreamVertex();
-  }
+  public abstract ConjugateNode getDownstreamVertex();
   
   /**
    * {@inheritDoc}
    */
   @SuppressWarnings("unchecked")
   @Override
-  public default Pair<? extends LinkSegment,? extends LinkSegment> getOriginalAdjcentEdgeSegments(){
-    return (Pair<? extends LinkSegment, ? extends LinkSegment>) ConjugateEdgeSegment.super.getOriginalAdjcentEdgeSegments();
+  public default Pair<? extends LinkSegment,? extends LinkSegment> getOriginalAdjacentEdgeSegments(){
+    return (Pair<? extends LinkSegment, ? extends LinkSegment>)
+            ConjugateEdgeSegment.super.getOriginalAdjacentEdgeSegments();
   }
 
   /**

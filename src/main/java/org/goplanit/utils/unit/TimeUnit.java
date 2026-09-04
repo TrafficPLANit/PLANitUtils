@@ -43,6 +43,16 @@ public class TimeUnit extends SimpleUnit{
    * minute to second conversion multiplier
    */
   public static final double MINUTE_2_SECOND = HOUR_2_MINUTE;
+
+  /**
+   * second to millisecond multiplier
+   */
+  public static final double SECOND_2_MILLISECOND = 1000.0;
+
+  /**
+   * millisecond to second multiplier
+   */
+  public static final double MILLISECOND_2_SECOND = 1/SECOND_2_MILLISECOND;
   
   /**
    * second to minute conversion multiplier
@@ -57,7 +67,32 @@ public class TimeUnit extends SimpleUnit{
   /**
    * second to hour conversion multiplier
    */
-  public static final double SECOND_2_HOUR = 1.0/HOUR_2_SECOND;  
+  public static final double SECOND_2_HOUR = 1.0/HOUR_2_SECOND;
+
+  /** convert millisecond to...
+   *
+   * @param to to unit
+   * @param value to convert
+   * @return converted value
+   */
+  public static double convertMilliSecondTo(UnitType to, double value) {
+    if(to==null) {
+      throw new PlanItRunTimeException("to unit null, conversion infeasible");
+    }
+    switch (to) {
+      case HOUR:
+        return value * MILLISECOND_2_SECOND * SECOND_2_HOUR;
+      case MINUTE:
+        return value * MILLISECOND_2_SECOND * SECOND_2_MINUTE;
+      case SECOND:
+        return value * MILLISECOND_2_SECOND;
+      case MILLISECOND:
+        return value;
+      default:
+        throw new PlanItRunTimeException(
+                String.format("conversion illegal or not supported yet from %s --> %s",UnitType.SECOND, to));
+    }
+  }
   
   /** convert second to... 
    * @param to to unit
@@ -66,7 +101,7 @@ public class TimeUnit extends SimpleUnit{
    */
   public static double convertSecondTo(UnitType to, double value){
     if(to==null) {
-      throw new PlanItRunTimeException(String.format("to unit null, conversion infeasible"));
+      throw new PlanItRunTimeException("to unit null, conversion infeasible");
     }
     switch (to) {    
     case HOUR:
@@ -75,6 +110,8 @@ public class TimeUnit extends SimpleUnit{
       return value * SECOND_2_MINUTE;
     case SECOND:
       return value;
+    case MILLISECOND:
+      return value * SECOND_2_MILLISECOND;
     default:
       throw new PlanItRunTimeException(
           String.format("conversion illegal or not supported yet from %s --> %s",UnitType.SECOND, to));
@@ -96,7 +133,9 @@ public class TimeUnit extends SimpleUnit{
     case HOUR:
       return value * MINUTE_2_HOUR;
     case SECOND:
-      return value * MINUTE_2_SECOND;        
+      return value * MINUTE_2_SECOND;
+    case MILLISECOND:
+        return value * MINUTE_2_SECOND * SECOND_2_MILLISECOND;
     default:
       throw new PlanItRunTimeException(
           String.format("conversion illegal or not supported yet from %s --> %s",UnitType.MINUTE, to));
@@ -118,10 +157,12 @@ public class TimeUnit extends SimpleUnit{
     case MINUTE:
       return value * HOUR_2_MINUTE;
     case SECOND:
-      return value * HOUR_2_SECOND;        
+      return value * HOUR_2_SECOND;
+    case MILLISECOND:
+      return value * HOUR_2_SECOND * SECOND_2_MILLISECOND;
     default:
       throw new PlanItRunTimeException(
-          String.format("conversion illegal or not supported yet from %s --> %s",UnitType.HOUR, to));
+          String.format("Conversion illegal or not supported yet from %s --> %s",UnitType.HOUR, to));
     }  
   }      
   
@@ -135,12 +176,14 @@ public class TimeUnit extends SimpleUnit{
       case MINUTE:
         return convertMinuteTo(toUnit.unitType, value);  
       case SECOND:
-        return convertSecondTo(toUnit.unitType, value);        
+        return convertSecondTo(toUnit.unitType, value);
       case HOUR:
         return convertHourTo(toUnit.unitType, value);
+      case MILLISECOND:
+        return convertMilliSecondTo(toUnit.unitType, value);
     default:
       throw new PlanItRunTimeException("Unsupported time unit encountered on from Unit");
     }    
-  }  
+  }
 
 }

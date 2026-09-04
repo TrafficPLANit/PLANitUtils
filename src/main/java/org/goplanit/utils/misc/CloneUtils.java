@@ -64,7 +64,7 @@ public class CloneUtils {
    * @return destination map
    */
   public static <K,V> Map<K,V> deepCloneFromTo(Map<K,V> sourceMap, Map<K,V> destinationMap ) {
-    sourceMap.entrySet().forEach(entry -> destinationMap.put(entry.getKey(), CloneUtils.deepClone(entry.getValue())));
+    sourceMap.forEach((key, value) -> destinationMap.put(key, CloneUtils.deepClone(value)));
     return destinationMap;
   }
 }

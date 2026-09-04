@@ -41,7 +41,8 @@ public interface MacroscopicLinkSegments extends ManagedGraphEntities<Macroscopi
    * {@inheritDoc}
    */
   @Override
-  public abstract MacroscopicLinkSegments deepCloneWithMapping(BiConsumer<MacroscopicLinkSegment, MacroscopicLinkSegment> mapper);
+  public abstract MacroscopicLinkSegments deepCloneWithMapping(
+          BiConsumer<MacroscopicLinkSegment, MacroscopicLinkSegment> mapper);
   
   /** Create a raw array of all free flow travel times of the registered macroscopic link segments where the index in the array corresponds
    * to the link segment id (not id). 
@@ -51,10 +52,20 @@ public interface MacroscopicLinkSegments extends ManagedGraphEntities<Macroscopi
    */
   public default double[] getFreeFlowTravelTimeHourPerLinkSegment(Mode mode) {
     double[] linkSegmentFreeFlowTravelTimes = new double[size()];
-    for(MacroscopicLinkSegment linkSegment : this){
-      linkSegmentFreeFlowTravelTimes[(int) linkSegment.getLinkSegmentId()] = linkSegment.computeFreeFlowTravelTimeHour(mode);
-    }
+    populateFreeFlowTravelTimeHourPerLinkSegment(mode, linkSegmentFreeFlowTravelTimes);
     return linkSegmentFreeFlowTravelTimes;
+  }
+
+  /** populate a pre-initialised raw array of all free flow travel times of the registered macroscopic link segments
+   * where the index in the array corresponds  to the link segment id (not id).
+   *
+   * @param mode to use
+   * @param costsToFill array to fill
+   */
+  public default void populateFreeFlowTravelTimeHourPerLinkSegment(Mode mode, double[] costsToFill) {
+    for(MacroscopicLinkSegment linkSegment : this){
+      costsToFill[(int) linkSegment.getLinkSegmentId()] = linkSegment.computeFreeFlowTravelTimeHour(mode);
+    }
   }
 
 }

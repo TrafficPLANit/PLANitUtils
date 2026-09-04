@@ -18,7 +18,8 @@ public interface DirectedEdgeFactory extends GraphEntityFactory<DirectedEdge> {
    * @return the created edge
    * @throws PlanItException thrown if there is an error
    */
-  public default DirectedEdge registerNew(final DirectedVertex vertexA, final DirectedVertex vertexB) throws PlanItException{
+  public default DirectedEdge registerNew(final DirectedVertex vertexA, final DirectedVertex vertexB)
+          throws PlanItException{
     return registerNew(vertexA, vertexB, false);
   }
   
@@ -31,7 +32,9 @@ public interface DirectedEdgeFactory extends GraphEntityFactory<DirectedEdge> {
    * @return the created edge
    * @throws PlanItException thrown if there is an error
    */
-  public abstract DirectedEdge registerNew(final DirectedVertex vertexA, final DirectedVertex vertexB, boolean registerOnVertices) throws PlanItException; 
+  public abstract DirectedEdge registerNew(
+          final DirectedVertex vertexA, final DirectedVertex vertexB, boolean registerOnVertices)
+          throws PlanItException;
 
   
 }

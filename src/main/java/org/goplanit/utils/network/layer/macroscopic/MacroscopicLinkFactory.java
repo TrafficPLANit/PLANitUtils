@@ -10,6 +10,14 @@ import org.goplanit.utils.network.layer.physical.Node;
  *
  */
 public interface MacroscopicLinkFactory extends LinkFactory<MacroscopicLink> {
+
+  /**
+   * Create new empty macroscopic link on container, nodes need to be registered separately after.
+   * Use with care.
+   *
+   * @return the created link without nodes
+   */
+  public abstract MacroscopicLink registerNew();
  
   /**
    * Create new macroscopic link on container, allow to be registered on nodes if indicated)
@@ -20,5 +28,6 @@ public interface MacroscopicLinkFactory extends LinkFactory<MacroscopicLink> {
    * @param registerOnNodes choice to register new edge on the vertices or not
    * @return the created link
    */
-  public abstract MacroscopicLink registerNew(final Node nodeA, final Node nodeB, double lengthKm, boolean registerOnNodes);
+  public abstract MacroscopicLink registerNew(
+      final Node nodeA, final Node nodeB, double lengthKm, boolean registerOnNodes);
 }

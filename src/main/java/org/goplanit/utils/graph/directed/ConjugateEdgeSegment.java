@@ -1,5 +1,7 @@
 package org.goplanit.utils.graph.directed;
 
+import org.goplanit.utils.exceptions.PlanItRunTimeException;
+import org.goplanit.utils.id.ExternalIdAbleUtils;
 import org.goplanit.utils.misc.Pair;
 
 /**
@@ -9,11 +11,7 @@ import org.goplanit.utils.misc.Pair;
  *
  */
 public interface ConjugateEdgeSegment extends EdgeSegment{
-  
-  /** id class for generating ids */
-  public static final Class<ConjugateEdgeSegment> CONJUGATE_EDGE_SEGMENT_ID_CLASS = ConjugateEdgeSegment.class;
-  
-  
+
   /**
    * {@inheritDoc}
    */
@@ -47,15 +45,7 @@ public interface ConjugateEdgeSegment extends EdgeSegment{
    */
   @Override
   public abstract ConjugateEdgeSegment deepClone();
-  
-  /**
-   * All edges use the CONJUGATE_EDGE_SEGMENT_ID_CLASS to generate the unique internal ids
-   */
-  @Override
-  public default Class<? extends ConjugateEdgeSegment> getIdClass() {
-    return CONJUGATE_EDGE_SEGMENT_ID_CLASS;
-  }   
-   
+
   /**
    * {@inheritDoc}
    */
@@ -64,12 +54,107 @@ public interface ConjugateEdgeSegment extends EdgeSegment{
     return (ConjugateEdgeSegment) EdgeSegment.super.getOppositeDirectionSegment();  
   }
 
+  // NEW and specific to conjugate aspect of class
+
   /**
-   * Adjacent edge segments in original graph for this conjugate
+   * check if original entry segment is not null
+   *
+   * @return true when present, false otherwise
+   */
+  public default boolean hasOriginalEntryEdgeSegment(){
+    return getParent().getOriginalAdjacentEdgeSegments(isDirectionAb()).firstNotNull();
+  }
+
+  /**
+   * check if original exit segment is not null
+   *
+   * @return true when present, false otherwise
+   */
+  public default boolean hasOriginalExitEdgeSegment(){
+    return getParent().getOriginalAdjacentEdgeSegments(isDirectionAb()).secondNotNull();
+  }
+
+  /**
+   * Verify if the two original underlying segments are each other's opposite direction (U-turn)
+   *
+   * @return true when original u-turn, false otherwise
+   */
+  public default boolean isOriginalEdgeSegmentsUTurn(){
+    var segments = getOriginalAdjacentEdgeSegments();
+    if(segments == null || getOriginalAdjacentEdgeSegments().anyIsNull()){
+      return false;
+    }
+    return segments.first().getOppositeDirectionSegment() == segments.second();
+  }
+
+  /**
+   * Adjacent edge segments (entry/exit) in original graph for this conjugate
+   *
    * @return edge segment pair
    */
-  public default Pair<? extends EdgeSegment,? extends EdgeSegment> getOriginalAdjcentEdgeSegments(){
+  public default Pair<? extends EdgeSegment,? extends EdgeSegment> getOriginalAdjacentEdgeSegments(){
     return getParent().getOriginalAdjacentEdgeSegments(isDirectionAb());
+  }
+
+  /**
+   * Access to the underlying original centre vertex for the two adjacent edge segments that underpin this conjugate
+   * edge segment
+   *
+   * @return original centre (middle) vertex
+   */
+  public default DirectedVertex getOriginalCentreVertex(){
+    if(getOriginalAdjacentEdgeSegments().first() != null){
+      return getOriginalAdjacentEdgeSegments().first().getDownstreamVertex();
+    }else if(getOriginalAdjacentEdgeSegments().second() != null){
+      return getOriginalAdjacentEdgeSegments().second().getUpstreamVertex();
+    }else{
+      throw new PlanItRunTimeException(
+              "At least one original edge segment expected to be present on conjugate segment (%s), but both are null",
+              getIdsAsString());
+    }
+  }
+
+  /**
+   * Get string rperesentation of original segments underpinning this conjugate edge segment
+   * @return from: (_from_ids_as_string_) to: (_to_ids_as_string_)
+   */
+  public default String getOriginalAdjacentEdgeSegmentsIdsAsString(){
+    if(!hasOriginalEntryEdgeSegment()){
+      return "no original ids available";
+    }
+    StringBuilder sb = new StringBuilder("from: (");
+    if(getOriginalAdjacentEdgeSegments().first()!=null){
+      sb.append(getOriginalAdjacentEdgeSegments().first().getIdsAsString());
+    }else{
+      sb.append("-");
+    }
+
+    sb.append(") to: (");
+    if(getOriginalAdjacentEdgeSegments().second()!=null){
+      sb.append(getOriginalAdjacentEdgeSegments().second().getIdsAsString());
+    }else{
+      sb.append("-");
+    }
+    sb.append(")");
+    return sb.toString();
+  }
+
+  /**
+   * populate the XMLId by either copying its internal id or using the underlying original edge XMLIds.
+   * Optionally post-fix as well. We use edge ids since the direction is already inferred from the ordering to
+   * make result more legible, e.g., if underlying edge ids were 5 and 8, we get 5 greater than 8
+   *
+   * @param deriveFromOriginalEdgeSegments when true use original edge segment XML ids, otherwise use internal
+   *                                       id of conjugates
+   * @param postFix to apply
+   */
+  public default void populateXmlId(boolean deriveFromOriginalEdgeSegments, String postFix){
+    var adjacentParentEdges =
+            getOriginalAdjacentEdgeSegments().shallowCopyAndApply(EdgeSegment::getParent);
+    setXmlId(
+            deriveFromOriginalEdgeSegments ?
+                    ExternalIdAbleUtils.joinXmlIdPair(adjacentParentEdges, ">", postFix) :
+                    getId() + postFix);
   }
 
 }

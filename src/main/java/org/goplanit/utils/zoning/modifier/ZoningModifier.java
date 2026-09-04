@@ -60,22 +60,29 @@ public interface ZoningModifier extends ZoningModifierEventProducer{
   public abstract void removeDanglingOdZones(boolean recreateIds);
   
   /**
-   * a Method that scans the zones and removes any zones that are not associated with any connectoids, i.e., are not connected to any
-   * physical network layer and therefore are considered dangling. If a transfer zone is removed and this zone belongs to a transfer zone group, it is also removed from this group
+   * a Method that scans the zones and removes any zones that are not associated with any connectoids, i.e.,
+   * are not connected to any physical network layer and therefore are considered dangling. If a transfer zone is
+   * removed and this zone belongs to a transfer zone group, it is also removed from this group
    *
    * <p>
-   *   fires two #RecreatedZoningEntitiesManagedIdsEvent upon completion one for od and one for transfer zones
+   *   fires two #RecreatedZoningEntitiesManagedIdsEvent upon completion one for od and one for transfer zones if
+   *   ids are recreated
    * </p>
+   *
+   * @param recreateManagedIds when true recreate ids, otherwise not
    */
-  public abstract void removeDanglingZones();
+  public abstract void removeDanglingZones(boolean recreateManagedIds);
 
   /**
-   * a Method that scans the transfer zone groups and removes any groups that are empty, i.e., have no transfer zones and are therefore considered dangling.
+   * a Method that scans the transfer zone groups and removes any groups that are empty, i.e., have no transfer zones
+   * and are therefore considered dangling.
    * <p>
-   *   fire #RecreatedZoningEntitiesManagedIdsEvent upon completion with those transfer zone groups
+   *   fire #RecreatedZoningEntitiesManagedIdsEvent upon completion with those transfer zone groups if ids are
+   *   recreated
    * </p>
+   * @param recreateManagedIds when true recreate ids, otherwise not
    */  
-  public abstract void removeDanglingTransferZoneGroups();
+  public abstract void removeDanglingTransferZoneGroups(boolean recreateManagedIds);
 
 
   /**
@@ -88,13 +95,16 @@ public interface ZoningModifier extends ZoningModifierEventProducer{
    * @param serviceNetworkLayers to check against
    * @param recreateManagedConnectoidIds when true recreate connectoid ids, when false do not
    */
-  public abstract void removeUnusedTransferConnectoids(ServiceNetworkLayers serviceNetworkLayers, boolean recreateManagedConnectoidIds);
+  public abstract void removeUnusedTransferConnectoids(
+          ServiceNetworkLayers serviceNetworkLayers, boolean recreateManagedConnectoidIds);
 
   /**
-   * Recreate all managed id entities owned by this zoning
+   * Recreate all managed id entities owned by this zoning. Virtual network ids are not part of this as they
+   * are shared with the physical network
    * <p>
    *   fires #RecreatedZoningManagedIdsEvent after each managedIds container that is has updated
    * </p>
+   * todo: add functionality to also deal with virtual network recreation in conjunction with physical network somehow
    */
   void recreateManagedIdEntities();
 

@@ -1,6 +1,7 @@
 package org.goplanit.utils.math;
 
 import java.text.DecimalFormat;
+import java.util.Comparator;
 
 /** Compare doubles with a certain precision
  * @author markr
@@ -8,9 +9,6 @@ import java.text.DecimalFormat;
  */
 public class Precision {
 
-  /** no tolerance, i.e., 0.0 */
-  public static final double EPSILON_0 = 0.0;
-  
   public static final double EPSILON_18 = 0.000000000000000001;
   
   public static final double EPSILON_15 = 0.000000000000001;
@@ -23,6 +21,13 @@ public class Precision {
   public static final double EPSILON_6 = 0.000001;
   
   public static final double EPSILON_3 = 0.001;
+
+  public static final double EPSILON_2 = 0.01;
+
+  public static final double EPSILON_1 = 0.1;
+
+  /** no tolerance, i.e., 0.0 */
+  public static final double EPSILON_0 = 0.0;
   
   /** default decimal format used applies a maximum of 8 decimals and a minimum of 2 */
   public static final DecimalFormat DEFAULT_DECIMAL_FORMAT;
@@ -138,7 +143,7 @@ public class Precision {
     return greater(d1,0,EPSILON_6);
   }
   
-  /** Verify if positive with Precision.EPSILON_6
+  /** Verify if positive with epsilon
    * @param d1 double 1
    * @param epsilon to consider
    * @return true when {@code d1 > epsilon} 
@@ -153,8 +158,9 @@ public class Precision {
    */
   public static boolean negative(double d1) {
     return smaller(d1,0,EPSILON_6);
-  }    
-  
+  }
+
+
   /** Verify if non-zero with Precision.EPSILON_6
    * 
    * @param d1 double 1
@@ -164,7 +170,7 @@ public class Precision {
     return positive(d1) || negative(d1);
   }
 
-  /** Opposite of {@link #equal(double, double)}
+  /** Opposite of {@link #equal(double, double)}, using a Precision.EPSILON_6
    * 
    * @param d1 to use
    * @param d2 to use
@@ -183,7 +189,45 @@ public class Precision {
    */
   public static boolean notEqual(double d1, double d2, double epsilon) {
     return !equal(d1, d2, epsilon);
-  }  
+  }
 
+  /**
+   * A double based compare with delta comparator where the (closed range) precision determines
+   * whether something is considered equal
+   *
+   * @param d1 first
+   * @param d2 second
+   * @param precision to apply
+   * @return 0 when equal, -1 when d1 is smaller than s2, +1 when d2 is larger than d1
+   */
+  public static int compareWithEpsilon(Double d1, Double d2, double precision) {
+    if(Precision.equal(d1,d2, precision)){
+      return 0;
+    }else if(Precision.smaller(d1,d2)){
+      return -1;
+    }else{
+      return 1;
+    }
+  }
 
+  /**
+   * Create a double based comparator with a configurable precision
+   *
+   * @param epsilon to apply
+   * @return double comparator
+   */
+  public static Comparator<Double> createComparator(double epsilon){
+    return (o1, o2) -> compareWithEpsilon(o1, o2, epsilon);
+  }
+
+  /**
+   * Create a double based comparator that takes objects and casts them to doubles before comparing
+   * with a configurable precision
+   *
+   * @param epsilon to apply
+   * @return double comparator disguised as object comparator
+   */
+  public static Comparator<Object> createComparatorWithCast(double epsilon){
+    return (o1, o2) -> compareWithEpsilon((Double) o1, (Double) o2, epsilon);
+  }
 }
