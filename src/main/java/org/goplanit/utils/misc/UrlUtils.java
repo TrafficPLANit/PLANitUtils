@@ -3,7 +3,6 @@ package org.goplanit.utils.misc;
 import org.goplanit.utils.exceptions.PlanItRunTimeException;
 import org.goplanit.utils.resource.ResourceUtils;
 
-import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URL;
@@ -47,9 +46,11 @@ public class UrlUtils {
    * @return true when local, false otherwise
    */
   public static boolean isLocalFile(URL url) {
-    return isLocal(url) &&
-        new File(
-            StringUtils.removeInitialStringWhenPresent(url.getFile(), "/")).isFile();
+    if(!isLocal(url)) {
+      return false;
+    }
+    Path localPath = asLocalPath(url);
+    return localPath != null && localPath.toFile().isFile();
   }
   
   /** Test if URL is a local file
@@ -58,8 +59,12 @@ public class UrlUtils {
    * @return true when local, false otherwise
    */
   public static boolean isLocalDirectory(URL url) {
-      return isLocal(url) && new File(url.getFile()).isDirectory();
-  }  
+    if(!isLocal(url)) {
+      return false;
+    }
+    Path localPath = asLocalPath(url);
+    return localPath != null && localPath.toFile().isDirectory();
+  }
   
   /** Test if URL is a local file
    * 
