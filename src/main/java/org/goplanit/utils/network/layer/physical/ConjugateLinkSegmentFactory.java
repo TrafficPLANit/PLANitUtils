@@ -23,11 +23,33 @@ public interface ConjugateLinkSegmentFactory extends GraphEntityFactory<Conjugat
    *
    * @param parent            the parent of this conjugate segment
    * @param directionAb           direction of travel
-   * @param registerOnNodeAndLink option to register the new conjugate segment on the underlying conjugate link and its conjugate nodes
+   * @param registerOnNodeAndLink option to register the new conjugate segment on the underlying conjugate link
+   *                              and its conjugate nodes
    * @return the created segment
    */
-  public ConjugateLinkSegment registerNew(ConjugateLink parent, boolean directionAb, boolean registerOnNodeAndLink);
-  
+  public ConjugateLinkSegment registerNew(
+          ConjugateLink parent,
+          boolean directionAb,
+          boolean registerOnNodeAndLink);
+
+  /**
+   * same as {@link #registerNew(ConjugateLink, boolean, boolean)} only now also populate XmlId based
+   * on configuration provided.
+   *
+   * @param parent            the parent of this conjugate segment
+   * @param directionAb           direction of travel
+   * @param registerOnNodeAndLink option to register the new conjugate segment on the underlying conjugate link
+   *                              and its conjugate nodes
+   * @param deriveXmlIdFromOriginalEdges when true use original edge XML ids, otherwise use internal id of conjugates
+   * @param xmlIdPostFix to apply
+   * @return the created segment
+   */
+  public ConjugateLinkSegment registerNew(
+          ConjugateLink parent,
+          boolean directionAb,
+          boolean registerOnNodeAndLink,
+          boolean deriveXmlIdFromOriginalEdges,
+          String xmlIdPostFix);
 
 
 }

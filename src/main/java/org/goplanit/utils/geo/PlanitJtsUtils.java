@@ -1,17 +1,19 @@
 package org.goplanit.utils.geo;
 
 import java.text.DecimalFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
+import java.util.function.Consumer;
 import java.util.logging.Logger;
-import java.util.stream.Collectors;
 
+import org.geotools.api.geometry.Position;
+import org.geotools.api.referencing.crs.CoordinateReferenceSystem;
+import org.geotools.api.referencing.operation.CoordinateOperationFactory;
+import org.geotools.api.referencing.operation.MathTransform;
 import org.geotools.geometry.jts.JTS;
 import org.geotools.geometry.jts.JTSFactoryFinder;
 import org.geotools.referencing.CRS;
+import org.geotools.referencing.ReferencingFactoryFinder;
+import org.geotools.util.factory.Hints;
 import org.goplanit.utils.exceptions.PlanItException;
 import org.goplanit.utils.exceptions.PlanItRunTimeException;
 import org.goplanit.utils.math.Precision;
@@ -22,10 +24,9 @@ import org.locationtech.jts.geom.*;
 import org.locationtech.jts.linearref.LinearLocation;
 import org.locationtech.jts.linearref.LocationIndexedLine;
 import org.locationtech.jts.operation.linemerge.LineMerger;
-import org.opengis.geometry.DirectPosition;
-import org.opengis.geometry.coordinate.PointArray;
-import org.opengis.referencing.crs.CoordinateReferenceSystem;
-import org.opengis.referencing.operation.MathTransform;
+//import org.opengis.geometry.DirectPosition;
+//import org.opengis.geometry.coordinate.PointArray;
+//import org.geotools.api.referencing.crs.CoordinateReferenceSystem;
 
 /**
  * General geographic related utils utilising the JTS API. 
@@ -43,29 +44,51 @@ public class PlanitJtsUtils {
   protected static final GeometryFactory jtsGeometryFactory = JTSFactoryFinder.getGeometryFactory();
    
   /**
-   * Convenience method that wraps the CRS.findMathTransform by catching exceptions and producing a planit excepion only as well as allowing for lenient transformer
+   * Convenience method that wraps the geotools findMathTransform by catching exceptions
+   * as well as allowing for lenient transformer and axis inversion if needed
    * 
    * @param sourceCRS      the source
    * @param destinationCRS the destination
    * @return transformer
    */
-  public static MathTransform findMathTransform(CoordinateReferenceSystem sourceCRS, CoordinateReferenceSystem destinationCRS){
-    PlanItRunTimeException.throwIfNull(sourceCRS, "source coordinate reference system null when creating math transform");
-    PlanItRunTimeException.throwIfNull(destinationCRS, "destination coordinate reference system null when creating math transform");
+  public static MathTransform findMathTransform(
+          CoordinateReferenceSystem sourceCRS, CoordinateReferenceSystem destinationCRS){
+    PlanItRunTimeException.throwIfNull(sourceCRS,
+            "source coordinate reference system null when creating math transform");
+    PlanItRunTimeException.throwIfNull(destinationCRS,
+            "destination coordinate reference system null when creating math transform");
     PlanitCrsUtils.silenceHsqlLogging();
 
     try {
+      // axis order may differ between source and destination, account for that
+      CRS.AxisOrder sourceOrder = CRS.getAxisOrder(sourceCRS);
+      CRS.AxisOrder destOrder = CRS.getAxisOrder(destinationCRS);
+
+      // If the source and destination do not share the same structural format,
+      // we must force an axis layout alignment to prevent cross-contamination.
+      boolean structuresDoNotMatch = (sourceOrder != destOrder);
+
+      // Maintain your lenient datum shifts
+      Map<Hints.Key, Object> hintsMap = new HashMap<>();
+      hintsMap.put(Hints.FORCE_LONGITUDE_FIRST_AXIS_ORDER, structuresDoNotMatch);
+      hintsMap.put(Hints.LENIENT_DATUM_SHIFT, Boolean.TRUE);
+      Hints theHints = new Hints(hintsMap);
+
+      CoordinateOperationFactory factory = ReferencingFactoryFinder.getCoordinateOperationFactory(theHints);
+
       /* allows for some lenience in transformation due to different datums */
-      boolean lenient = true;
-      return CRS.findMathTransform(sourceCRS, destinationCRS, lenient);
+      return factory.createOperation(sourceCRS, destinationCRS).getMathTransform();
     } catch (Exception e) {
-      throw new PlanItRunTimeException(String.format("error during creation of transformer from CRS %s to CRS %s", sourceCRS.toString(), destinationCRS.toString()), e);
+      throw new PlanItRunTimeException(
+              String.format("error during creation of transformer from CRS %s to CRS %s",
+                      sourceCRS.toString(), destinationCRS.toString()), e);
     }
 
   }
 
   /**
-   * Transform given geometry based on provided transformer, checkedd exceptions are converted to PLANitRunTimeException instead
+   * Transform given geometry based on provided transformer,
+   * checked exceptions are converted to PLANitRunTimeException instead
    *
    * @param geometry to transform
    * @param transformer to apply transformation
@@ -77,6 +100,32 @@ public class PlanitJtsUtils {
     }catch(Exception e){
       throw new PlanItRunTimeException("Unable to transform geometry %s",geometry, e);
     }
+  }
+
+  /**
+   * Transform given geometry based on provided transformer, If transformer is not available original geometry
+   * is returned, only when transformation fails issue is logged and null is returned
+   *
+   * @param geometry to transform
+   * @param transformer to apply transformation
+   * @return transformed geometry
+   */
+  public static Geometry transformGeometrySafe(Geometry geometry, MathTransform transformer){
+    if(geometry == null){
+      LOGGER.severe("Geometry absent, unable to perform transformation");
+      return null;
+    }
+
+    try {
+      if(transformer!=null) {
+        return JTS.transform(geometry, transformer);
+      }
+      return geometry;
+    }catch (Exception e) {
+      LOGGER.severe(e.getMessage());
+      LOGGER.severe(String.format("Unable to transform geometry from %s ",geometry.toString()));
+    }
+    return null;
   }
 
   /**
@@ -99,7 +148,7 @@ public class PlanitJtsUtils {
    * @param position in opengis format
    * @return JTS coordinate created
    */
-  public static Coordinate createCoordinate(DirectPosition position) {
+  public static Coordinate createCoordinate(Position position) {
     return new Coordinate(position.getOrdinate(0), position.getOrdinate(1));
   }
   
@@ -110,8 +159,7 @@ public class PlanitJtsUtils {
    * @return point object representing the location
    */
   public static Point createPoint(Coordinate coordinate) {
-    Point newPoint = jtsGeometryFactory.createPoint(coordinate);
-    return newPoint;
+    return jtsGeometryFactory.createPoint(coordinate);
   }  
 
   /**
@@ -134,7 +182,25 @@ public class PlanitJtsUtils {
    */
   public static LineSegment createLineSegment(Coordinate coordinate1, Coordinate coordinate2) {
     return new LineSegment(coordinate1, coordinate2);
-  }  
+  }
+
+  /**
+   * Create a Coordinate array from the doubles passed in (list of doubles containing x1,y1,x2,y2,etc. coordinates
+   *
+   * @param coordinateList source
+   * @return created coordinate array
+   */
+  public static Coordinate[] createCoordinates(List<Double> coordinateList){
+    PlanItRunTimeException.throwIf(coordinateList.size() % 2 != 0,
+            "coordinate list must contain an even number of entries to correctly identify (x,y) pairs");
+    Iterator<Double> iter = coordinateList.iterator();
+    Coordinate[] coordinateArray = new Coordinate[coordinateList.size() / 2];
+    int index = 0;
+    while (iter.hasNext()) {
+      coordinateArray[index++] = new Coordinate(iter.next(), iter.next());
+    }
+    return coordinateArray;
+  }
 
   /**
    * Create a JTS line string from the doubles passed in (list of doubles containing x1,y1,x2,y2,etc. coordinates
@@ -143,14 +209,7 @@ public class PlanitJtsUtils {
    * @return created line string
    */
   public static LineString createLineString(List<Double> coordinateList){
-    PlanItRunTimeException.throwIf(coordinateList.size() % 2 != 0, "coordinate list must contain an even number of entries to correctly identify (x,y) pairs");
-    Iterator<Double> iter = coordinateList.iterator();
-    Coordinate[] coordinateArray = new Coordinate[coordinateList.size() / 2];
-    int index = 0;
-    while (iter.hasNext()) {
-      coordinateArray[index++] = new Coordinate(iter.next(), iter.next());
-    }
-    return createLineString(coordinateArray);
+    return createLineString(createCoordinates(coordinateList));
   }
 
   /**
@@ -164,11 +223,12 @@ public class PlanitJtsUtils {
   public static LineString createLineString(String value, char ts, char cs){
     List<Double> coordinateDoubleList = new ArrayList<>();
     String[] tupleString = value.split("[" + ts + "]");
-    for (int index = 0; index < tupleString.length; ++index) {
-      String xyCoordinateString = tupleString[index];
+    for(String xyCoordinateString : tupleString) {
       String[] coordinateString = xyCoordinateString.split("[" + cs + "]");
       if (coordinateString.length != 2) {
-        throw new PlanItRunTimeException(String.format("invalid coordinate encountered, expected two coordinates in tuple, but found %d", coordinateString.length));
+        throw new PlanItRunTimeException(
+                String.format("invalid coordinate encountered, expected two coordinates in tuple, but found %d",
+                        coordinateString.length));
       }
       coordinateDoubleList.add(Double.parseDouble(coordinateString[0]));
       coordinateDoubleList.add(Double.parseDouble(coordinateString[1]));
@@ -195,9 +255,13 @@ public class PlanitJtsUtils {
    * @return the LineString created from the String
    */
   public static LineString createLineStringFromCsvString(String value, String ts, String cs){
-    if (ts.length() > 1 || cs.length() > 1) {
-      PlanItRunTimeException.throwIf(ts.length() > 1, String.format("tuple separating string to create LineString is not a single character but %s", ts));
-      PlanItRunTimeException.throwIf(cs.length() > 1, String.format("comma separating string to create LineString is not a single character but %s", cs));
+    if (ts.length() > 1) {
+      throw new PlanItRunTimeException(
+              "tuple separating string to create LineString is not a single character but %s", ts);
+    }
+    if(cs.length() > 1){
+      throw new PlanItRunTimeException(
+              "comma separating string to create LineString is not a single character but %s", cs);
     }
     return createLineString(value, ts.charAt(0), cs.charAt(0));
   }
@@ -211,7 +275,9 @@ public class PlanitJtsUtils {
    * @param df       decinal formatter to format the decimals of the coordinates
    * @return the LineString created from the String
    */
-  public static String createCsvStringFromCoordinates(Coordinate[] coordinates, Character ts, Character cs, DecimalFormat df) {
+  public static String createCsvStringFromCoordinates(
+          Coordinate[] coordinates, Character ts, Character cs, DecimalFormat df) {
+
     StringBuilder csvStringBuilder = new StringBuilder();
     for (int index = 0, lastIndex = coordinates.length - 1; index < coordinates.length; ++index) {
       Coordinate coordinate = coordinates[index];
@@ -240,8 +306,7 @@ public class PlanitJtsUtils {
    * @return polygon
    */
   public static Polygon createPolygon() {
-    Polygon polygon = jtsGeometryFactory.createPolygon();
-    return polygon;
+    return jtsGeometryFactory.createPolygon();
   }
 
   /**
@@ -255,6 +320,17 @@ public class PlanitJtsUtils {
   }
 
   /**
+   * create a polygon based on the passed exterior ring and interior ring "holes"
+   *
+   * @param exteriorRing to use
+   * @param interiorRings to use
+   * @return created polygon
+   */
+  public static Polygon createPolygonWithHoles(LinearRing exteriorRing, ArrayList<LinearRing> interiorRings) {
+    return jtsGeometryFactory.createPolygon(exteriorRing,interiorRings.toArray(new LinearRing[0]));
+  }
+
+  /**
    * create a polygon based on the passed coordinate array
    * 
    * @param coords to use
@@ -262,6 +338,19 @@ public class PlanitJtsUtils {
    */
   public static Polygon createPolygon(Coordinate[] coords) {
     return jtsGeometryFactory.createPolygon(jtsGeometryFactory.createLinearRing(coords));
+  }
+
+  /**
+   * Create a multi-polygon based on the passed array of polygon components
+   *
+   * @param polygons array of pre-constructed JTS Polygon objects
+   * @return created multi-polygon
+   */
+  public static MultiPolygon createMultiPolygon(Polygon[] polygons) {
+    if (polygons == null || polygons.length == 0) {
+      return jtsGeometryFactory.createMultiPolygon();
+    }
+    return jtsGeometryFactory.createMultiPolygon(polygons);
   }
   
   /**
@@ -280,7 +369,60 @@ public class PlanitJtsUtils {
            new Coordinate(envelope.getMinX(),envelope.getMinY()) /* repeat initial coordinate to close polygon*/
       };
    return createPolygon(coordinates);
-  }     
+  }
+
+  /**
+   * Computes the centroid location for a given polygon or multipolygon geometry.
+   * If a multipolygon is supplied, the centroid is derived specifically from the
+   * single constituent polygon containing the largest surface area to prevent
+   * the point from warping into dead zones between disjoint territories.
+   *
+   * @param geometry the input zone geometry to inspect
+   * @return the calculated centroid point, or null if the geometry is invalid or unsupported
+   */
+  public static Point extractPolygonCentre(Geometry geometry) {
+    if (geometry == null || geometry.isEmpty()) {
+      LOGGER.warning("Supplied geometry is null or empty, unable to compute centre location");
+      return null;
+    }
+
+    // Direct polygon evaluation
+    if (geometry instanceof Polygon) {
+      return geometry.getCentroid();
+    }
+
+    // Complex multi-part polygon evaluation
+    if (geometry instanceof MultiPolygon) {
+      MultiPolygon multiPolygon = (MultiPolygon) geometry;
+
+      Polygon largestPolygon = null;
+      double maxArea = -1.0;
+
+      // Scan through all sub-geometries to isolate the dominant component
+      int numGeometries = multiPolygon.getNumGeometries();
+      for (int i = 0; i < numGeometries; i++) {
+        Polygon currentPolygon = (Polygon) multiPolygon.getGeometryN(i);
+        double currentArea = currentPolygon.getArea();
+
+        if (currentArea > maxArea) {
+          maxArea = currentArea;
+          largestPolygon = currentPolygon;
+        }
+      }
+
+      // Return the center of mass belonging to the largest standalone region
+      if (largestPolygon != null) {
+        return largestPolygon.getCentroid();
+      }
+    }
+
+    // Fallback error logging for line strings, points, or collection wrappers
+    LOGGER.warning(String.format(
+        "Unsupported geometry type encountered (%s). Centroid calculation requires a Polygon or MultiPolygon.",
+        geometry.getGeometryType()));
+
+    return null;
+  }
 
   /**
    * Convert OpenGIS directPosition to JTS coordinates
@@ -288,7 +430,7 @@ public class PlanitJtsUtils {
    * @param positions List of GeoTools Position objects
    * @return coordinates array of JTS Coordinate objects
    */
-  public static Coordinate[] directPositionsToCoordinates(List<DirectPosition> positions) {
+  public static Coordinate[] directPositionsToCoordinates(List<Position> positions) {
     Coordinate[] coordinates = new Coordinate[positions.size()];
     for (int index = 0; index < coordinates.length; ++index) {
       coordinates[index] = createCoordinate(positions.get(index));
@@ -309,7 +451,10 @@ public class PlanitJtsUtils {
 
     int index = 0;
     while (index + dimensions - 1 < posList.size()) {
-      coordinates[index / dimensions] = new Coordinate(Double.parseDouble(posList.get(index).toString()), Double.parseDouble(posList.get(index + 1).toString()));
+      coordinates[index / dimensions] =
+              new Coordinate(
+                      Double.parseDouble(posList.get(index).toString()),
+                      Double.parseDouble(posList.get(index + 1).toString()));
       index += dimensions;
     }
     return coordinates;
@@ -348,15 +493,103 @@ public class PlanitJtsUtils {
     }
     return false;
   }
+
+  /** check if 2d flat coord array is closed, i.e., first coordinate is the same as the last
+   *  in 2D
+   *
+   * @param coordList to check
+   * @return true when closed, false otherwise
+   */
+  public static boolean isClosed2D(List<Double> coordList) {
+    if (coordList != null && coordList.size() >= 6) {
+      int size = coordList.size();
+
+      return coordList.get(0).equals(coordList.get(size - 2)) &&
+          coordList.get(1).equals(coordList.get(size - 1));
+    }
+    return false;
+  }
+
+  /** check if polygon (exterior and interior rings are closed, i.e., first coordinate is the same as the last
+   *  in 2D
+   *
+   * @param polygon to check
+   * @return true when closed, false otherwise
+   */
+  public static boolean isClosed2D(Polygon polygon) {
+    if (!PlanitJtsUtils.isClosed2D(polygon.getExteriorRing().getCoordinates())) {
+      return false;
+    }
+
+    // Check each interior ring (hole) independently using your method
+    for (int j = 0; j < polygon.getNumInteriorRing(); j++) {
+      var holeRing = polygon.getInteriorRingN(j);
+      if (!PlanitJtsUtils.isClosed2D(holeRing.getCoordinates())) {
+        return false;
+      }
+    }
+    return true;
+  }
+
+  /** check if coord linked list is closed, i.e., first coordinate is the same as the last
+   *  in 2D
+   *
+   * @param coordList to check
+   * @return true when closed, false otherwise
+   */
+  public static boolean isClosed2D(LinkedList<Coordinate> coordList) {
+    if(coordList != null && coordList.size()>2) {
+      return coordList.getFirst().equals2D(coordList.getLast());
+    }
+    return false;
+  }
+
+  /**
+   * Defensive make closed for raw 2d coordinate lists (X1, Y1, X2, Y2...).
+   * Safely repairs floating-point rounding mismatches up to the configured tolerance threshold,
+   * but flags true data errors that exceed it.
+   *
+   * @param coords The raw coordinate list.
+   * @param toleranceEpsilon The maximum allowed gap distance to auto-close.
+   */
+  public static List<Double> makeClosed2DWithinTolerance(List<Double> coords, double toleranceEpsilon) {
+    if (coords == null || coords.size() < 6) {
+      return coords;
+    }
+
+    int size = coords.size();
+    double firstX = coords.get(0);
+    double firstY = coords.get(1);
+    double lastX = coords.get(size - 2);
+    double lastY = coords.get(size - 1);
+
+    double diffX = Math.abs(firstX - lastX);
+    double diffY = Math.abs(firstY - lastY);
+
+    if (diffX == 0.0 && diffY == 0.0) {
+      return coords;
+    }
+
+    // Configurable rounding tolerance check
+    if (diffX < toleranceEpsilon && diffY < toleranceEpsilon) {
+      List<Double> closedList = new ArrayList<>(coords);
+      closedList.set(size - 2, firstX);
+      closedList.set(size - 1, firstY);
+      return closedList;
+    }
+
+    LOGGER.warning(String.format("Not closed within tolerance of %.15f",toleranceEpsilon));
+    return coords;
+  }
   
-  /** create a copy of the passed in coord array and close it by adding a new coordinate at the end that matches the first.
-   * If the array is already closed, it is returned as is. If not eligible for closing, exception is thrown.
+  /** create a copy of the passed in coord array and close it by adding a new coordinate at the end that
+   * matches the first. If the array is already closed, it is returned as is. If not eligible for closing,
+   * run time exception is thrown.
    * 
    * @param coordArray to make closed if possible
    * @return closed array
-   * @throws PlanItException thrown if error
    */
-  public static Coordinate[] makeClosed2D(final Coordinate[] coordArray) throws PlanItException {
+  public static Coordinate[] makeClosed2D(final Coordinate[] coordArray){
     if(coordArray!= null && coordArray.length >=2) {
       if(!isClosed2D(coordArray)) {
         Coordinate[] closedCoordArray = Arrays.copyOf(coordArray, coordArray.length+1);
@@ -365,9 +598,96 @@ public class PlanitJtsUtils {
       }
       return coordArray;
     }else {
-      throw new PlanItException("Cannot make passed in coordinates closed 2D");
+      throw new PlanItRunTimeException("Cannot make passed in coordinates closed 2D");
     }
-  }  
+  }
+
+  /** create a copy of the passed in flat 2d coord list and close it by adding a new coordinate at the end that
+   * matches the first. If the array is already closed, it is returned as is. If not eligible for closing,
+   * run time exception is thrown.
+   *
+   * @param coordList to make closed
+   * @return closed list
+   */
+  public static List<Double> makeClosed2D(final List<Double> coordList) {
+    if (coordList != null && coordList.size() >= 6) {
+      if (!isClosed2D(coordList)) {
+        List<Double> closedList = new ArrayList<>(coordList);
+
+        closedList.add(coordList.get(0));
+        closedList.add(coordList.get(1));
+        return closedList;
+      }
+      return coordList;
+    } else {
+      throw new PlanItRunTimeException("Cannot make passed in flat coordinates closed 2D");
+    }
+  }
+
+  /** create a copy of the passed in coord list and close it by adding a new coordinate at the end that matches the first.
+   * If the list is already closed, it is returned as is. If not eligible for closing, exception is thrown.
+   *
+   * @param coordinateList to make closed if possible
+   * @return closed version of original (copy + coord)
+   */
+  public static LinkedList<Coordinate> makeClosed2D(final LinkedList<Coordinate> coordinateList){
+    if(coordinateList!= null && coordinateList.size() >=2) {
+      if(!isClosed2D(coordinateList)) {
+        var closedList = new LinkedList<>(coordinateList);
+        closedList.addFirst(closedList.getLast().copy());
+        return closedList;
+      }
+      return coordinateList;
+    }else {
+      throw new PlanItRunTimeException("Cannot make passed in coordinates list closed 2D");
+    }
+  }
+
+  /** create a copy and close it by adding a new coordinate at the end of any exteroir or interior ring
+   * that is not closed.
+   *
+   * @param polygon to make closed if possible
+   * @return closed array
+   */
+  public static Polygon makeClosed2D(final Polygon polygon){
+    boolean modified = false;
+
+    var exteriorRing = polygon.getExteriorRing();
+    var exteriorCoords = exteriorRing.getCoordinates();
+
+    if (!PlanitJtsUtils.isClosed2D(exteriorCoords)) {
+      exteriorCoords = PlanitJtsUtils.makeClosed2D(exteriorCoords);
+      modified = true;
+    }
+
+    var polishedHoles = new ArrayList<LinearRing>();
+    for (int j = 0; j < polygon.getNumInteriorRing(); j++) {
+      var holeRing = polygon.getInteriorRingN(j);
+      var holeCoords = holeRing.getCoordinates();
+
+      if (!PlanitJtsUtils.isClosed2D(holeCoords)) {
+        holeCoords = PlanitJtsUtils.makeClosed2D(holeCoords);
+        modified = true;
+
+        // Rebuild the individual hole ring using the closed coordinates
+        var tempHolePoly = PlanitJtsUtils.createPolygon(holeCoords);
+        polishedHoles.add(tempHolePoly.getExteriorRing());
+      } else {
+        polishedHoles.add(holeRing);
+      }
+    }
+
+    if (!modified) {
+      return polygon;
+    }
+
+    if (polishedHoles.isEmpty()) {
+      return PlanitJtsUtils.createPolygon(exteriorCoords);
+    } else {
+      var cleanShellPoly = PlanitJtsUtils.createPolygon(exteriorCoords);
+      return PlanitJtsUtils.createPolygonWithHoles(cleanShellPoly.getExteriorRing(), polishedHoles);
+    }
+  }
 
   /**
    * Remove all coordinates in the line string up to but not including the first occurrence of the passed in position. In case the position cannot be found, an exception will be
@@ -380,13 +700,16 @@ public class PlanitJtsUtils {
   public static LineString createCopyWithoutCoordinatesBefore(Point position, LineString geometry){
     Optional<Integer> offset = findFirstCoordinatePosition(position.getCoordinate(), geometry, Precision.EPSILON_0);
 
-    if (!offset.isPresent()) {
-      throw new PlanItRunTimeException(String.format("Point (%s) does not exist on line string (%s), unable to create copy from this location", position.toString(), geometry.toString()));
+    if (offset.isEmpty()) {
+      throw new PlanItRunTimeException(
+              "Point (%s) does not exist on line string (%s), unable to create copy from this location",
+              position.toString(), geometry.toString());
     }
 
     Coordinate[] coordinates = copyCoordinatesFrom(offset.get(), geometry);
     if(coordinates.length == 1) {
-      throw new PlanItRunTimeException(String.format("Linestring (%s) without coordinates before %s results in single coordinate, unable to create linestring", geometry.toString(), position.toString()));
+      throw new PlanItRunTimeException("Linestring (%s) without coordinates before %s results in single " +
+              "coordinate, unable to create linestring", geometry.toString(), position.toString());
     }
 
     return createLineString(coordinates);
@@ -398,11 +721,12 @@ public class PlanitJtsUtils {
    * @param startIndex start index
    * @param geometry   to apply to
    * @return the line string created
-   * @throws PlanItException thrown if error
    */
-  public static LineString createCopyWithoutCoordinatesBefore(int startIndex, LineString geometry) throws PlanItException {
+  public static LineString createCopyWithoutCoordinatesBefore(
+          int startIndex, LineString geometry) {
+
     if (startIndex >= geometry.getNumPoints() || startIndex < 0) {
-      throw new PlanItException("invalid start index for extracting coordinates from line string geometry");
+      throw new PlanItRunTimeException("Invalid start index for extracting coordinates from line string geometry");
     }
     return createLineString(copyCoordinatesFrom(startIndex, geometry));
   }
@@ -417,8 +741,9 @@ public class PlanitJtsUtils {
   public static LineString createCopyWithoutCoordinatesAfter(Point position, LineString geometry){
     Optional<Integer> offset = findFirstCoordinatePosition(position.getCoordinate(), geometry, Precision.EPSILON_0);
 
-    if (!offset.isPresent()) {
-      throw new PlanItRunTimeException(String.format("Point (%s) does not exist on line string %s, unable to create copy from this location", position.toString(), geometry.toString()));
+    if (offset.isEmpty()) {
+      throw new PlanItRunTimeException("Point (%s) does not exist on line string %s, " +
+              "unable to create copy from this location", position.toString(), geometry.toString());
     }
 
     Coordinate[] coordinates = copyCoordinatesUpToNotIncluding(offset.get() + 1, geometry);
@@ -431,15 +756,14 @@ public class PlanitJtsUtils {
    * @param endIndex last index to keep, after is removed
    * @param geometry to apply to
    * @return the line string created
-   * @throws PlanItException thrown if error
    */
-  public static LineString createCopyWithoutCoordinatesAfter(int endIndex, LineString geometry) throws PlanItException {
+  public static LineString createCopyWithoutCoordinatesAfter(int endIndex, LineString geometry){
     if (geometry == null) {
       return null;
     }
 
     if (endIndex >= geometry.getNumPoints() || endIndex < 0) {
-      throw new PlanItException("invalid end index for extracting coordinates from line string geometry");
+      throw new PlanItRunTimeException("Invalid end index for extracting coordinates from line string geometry");
     }
     return createLineString(copyCoordinatesUpToNotIncluding(endIndex + 1, geometry));
   }
@@ -470,7 +794,7 @@ public class PlanitJtsUtils {
         coordinateList.add(coordinate);
       }
     }
-    return jtsGeometryFactory.createLineString(coordinateList.stream().toArray(Coordinate[]::new));
+    return jtsGeometryFactory.createLineString(coordinateList.toArray(Coordinate[]::new));
   }
   
   /**
@@ -482,7 +806,9 @@ public class PlanitJtsUtils {
    * @param tolerance the tolerance allowed
    * @return the position if present
    */
-  public static Optional<Integer> findFirstCoordinatePosition(Coordinate coordinateToLocate, int offset, LineString geometry, double tolerance) {
+  public static Optional<Integer> findFirstCoordinatePosition(
+          Coordinate coordinateToLocate, int offset, LineString geometry, double tolerance) {
+
     if (geometry == null || coordinateToLocate == null) {
       return Optional.empty();
     }
@@ -505,7 +831,9 @@ public class PlanitJtsUtils {
    * @param tolerance the tolerance allowed
    * @return the position if present
    */
-  public static Optional<Integer> findFirstCoordinatePosition(Coordinate coordinateToLocate, LineString geometry, double tolerance) {
+  public static Optional<Integer> findFirstCoordinatePosition(
+          Coordinate coordinateToLocate, LineString geometry, double tolerance) {
+
     final int offset = 0;
     return findFirstCoordinatePosition(coordinateToLocate, offset, geometry, tolerance);
   }
@@ -545,7 +873,8 @@ public class PlanitJtsUtils {
 
     int numCoordinates = geometry.getNumPoints();
     if (offset > untilPoint || untilPoint > numCoordinates) {
-      LOGGER.severe("unable to extract coordinates from line string, offset is larger than final point, and/or final point exceeds number of coordinates in geometry");
+      LOGGER.severe("unable to extract coordinates from line string, offset is " +
+              "larger than final point, and/or final point exceeds number of coordinates in geometry");
     }
 
     Coordinate[] coordinates = new Coordinate[untilPoint - offset];
@@ -569,19 +898,6 @@ public class PlanitJtsUtils {
   }
 
   /**
-   * Convert an open gis line string object to a JTS Gis LineString instance by copying the internal coordinates
-   * 
-   * @param openGisLineString to convert
-   * @return jtsLineString created
-   * @throws PlanItException thrown if there is an error
-   */
-  public static LineString convertToJtsLineString(org.opengis.geometry.coordinate.LineString openGisLineString) throws PlanItException {
-    PointArray samplePoints = openGisLineString.getSamplePoints();
-    List<Coordinate> coordinates = samplePoints.stream().map(point -> createCoordinate(point.getDirectPosition())).collect(Collectors.toList());
-    return jtsGeometryFactory.createLineString((Coordinate[]) coordinates.toArray());
-  }
-
-  /**
    * Cast a JTS MultiLineString with a single entry into a JTS LineString instance if valid
    * 
    * @param jtsMultiLineString JTS MultiLineString input object
@@ -589,7 +905,8 @@ public class PlanitJtsUtils {
    * @throws PlanItException thrown if there is an error in casting
    */
   public static LineString convertToLineString(MultiLineString jtsMultiLineString) throws PlanItException {
-    PlanItException.throwIf(((MultiLineString) jtsMultiLineString).getNumGeometries() > 1, "MultiLineString contains multiple LineStrings");
+    PlanItException.throwIf(((MultiLineString) jtsMultiLineString).getNumGeometries() > 1,
+            "MultiLineString contains multiple LineStrings");
     return (LineString) jtsMultiLineString.getGeometryN(0);
   }
 
@@ -600,11 +917,14 @@ public class PlanitJtsUtils {
    * @return line string pair, first from start to split location, second from split location to end
    */
   public static Pair<LineString, LineString> splitLineString(LineString geometry, LinearLocation splitLocation) {
+
     LocationIndexedLine locIndexedLine = new LocationIndexedLine(geometry);
-    LineString geometryStartToLinearLocation= (LineString)locIndexedLine.extractLine(locIndexedLine.getStartIndex(), splitLocation);
+    LineString geometryStartToLinearLocation=
+            (LineString)locIndexedLine.extractLine(locIndexedLine.getStartIndex(), splitLocation);
     LineString geometryLinearLocationToEnd = null;
     if(!splitLocation.isEndpoint(geometry)) {
-      geometryLinearLocationToEnd = (LineString) locIndexedLine.extractLine(splitLocation, locIndexedLine.getEndIndex());
+      geometryLinearLocationToEnd =
+              (LineString) locIndexedLine.extractLine(splitLocation, locIndexedLine.getEndIndex());
     }
     return Pair.of(geometryStartToLinearLocation, geometryLinearLocationToEnd);
   }
@@ -684,6 +1004,93 @@ public class PlanitJtsUtils {
    * @return the found angle
    */
   public static double minDiffAngleInDegrees(double angleDegrees1, double angleDegrees2) {
-    return Angle.toDegrees(Angle.diff(Angle.normalize(Angle.toRadians(angleDegrees1)),Angle.normalize(Angle.toRadians(angleDegrees2))));
+    return Angle.toDegrees(Angle.diff(
+            Angle.normalize(Angle.toRadians(angleDegrees1)),
+            Angle.normalize(Angle.toRadians(angleDegrees2))));
   }
+
+  /**
+   * Convert to doubles
+   *
+   * @param coordinates to convert
+   * @param reverseXAndY revert x and y
+   * @return double array
+   */
+  public static double[] convertToOrdinates(Coordinate[] coordinates, boolean reverseXAndY) {
+
+    double[] resultOrdinates = new double[coordinates.length*2];
+    int ordinateIndex = 0;
+    try {
+      for (int index = 0; index < coordinates.length; ++index, ++ordinateIndex) {
+        var currCoord = coordinates[index];
+        if (!reverseXAndY) {
+          resultOrdinates[ordinateIndex] = currCoord.x;
+          resultOrdinates[++ordinateIndex] = currCoord.y;
+        } else {
+          resultOrdinates[ordinateIndex] = currCoord.y;
+          resultOrdinates[++ordinateIndex] = currCoord.x;
+        }
+      }
+    }catch (Exception e) {
+    }
+    return resultOrdinates;
+  }
+
+  /**
+   * Add coord array contiguously in correct order to either the front or back of current contiguous coords by checking
+   * shared start/end nodes and if needed reverse adding to front or back depending on match found. the shared coordinate
+   * is not added to avoid duplicates in result
+   *
+   * @param contiguousCoords to add to
+   * @param coordArrayToAdd to add to contiguous coords
+   * @return true if success, false otherwise
+   */
+  public static boolean addCoordsContiguous(
+          final Deque<Coordinate> contiguousCoords, final Coordinate[] coordArrayToAdd) {
+
+    var currFirstCoord = coordArrayToAdd[0];
+    var currLastCoord = coordArrayToAdd[coordArrayToAdd.length-1];
+    var contiguousFirstCoord = contiguousCoords.getFirst();
+    var contiguousLastCoord = contiguousCoords.getLast();
+
+    Boolean reverseAdd = null;
+    Boolean addFront = null;
+    if(currFirstCoord.equals2D(contiguousFirstCoord)){
+      addFront = true;
+      reverseAdd = false;
+    }else if(currFirstCoord.equals2D(contiguousLastCoord)){
+      reverseAdd = false;
+      addFront = false;
+    }else if(currLastCoord.equals2D(contiguousLastCoord)){
+      reverseAdd = true;
+      addFront = false;
+    }else if(currLastCoord.equals2D(contiguousFirstCoord)){
+      reverseAdd = true;
+      addFront = true;
+    }
+
+    if(reverseAdd==null || addFront==null){
+      return false;
+    }
+
+    Consumer<Coordinate> applyInsert = addFront ? contiguousCoords::push : contiguousCoords::add;
+    // start at correct location and skip shared coord
+    int index = reverseAdd ? coordArrayToAdd.length-2: 1;
+    while(true){
+      applyInsert.accept(coordArrayToAdd[index]);
+      if(reverseAdd) {
+        --index;
+        if(index < 0 ){
+          break;
+        }
+      }else{
+        ++index;
+        if(index >= coordArrayToAdd.length){
+          break;
+        }
+      }
+    }
+    return true;
+  }
+
 }

@@ -29,7 +29,8 @@ public interface RoutedTripsSchedule extends RoutedTrips<RoutedTripSchedule> {
    * @return grouped by result
    */
   public default Map<List<ServiceLegSegment>, List<RoutedTripSchedule>> groupByServiceLegSegments(){
-    return groupBy(rts -> rts.getRelativeLegTimingsAsStream().map( rlt -> rlt.getParentLegSegment()).collect(Collectors.toList()));
+    return groupBy(rts -> rts.getRelativeLegTimingsAsStream().map(
+            rlt -> rlt.getParentLegSegment()).collect(Collectors.toList()));
   }
 
   /**

@@ -16,7 +16,8 @@ import org.goplanit.utils.wrapper.LongMapWrapperImpl;
  *
  * @param <E> type of managed id entity
  */
-public abstract class ManagedIdEntitiesImpl<E extends ManagedId> extends LongMapWrapperImpl<E> implements ManagedIdEntities<E> {
+public abstract class ManagedIdEntitiesImpl<E extends ManagedId> extends
+        LongMapWrapperImpl<E> implements ManagedIdEntities<E> {
   
   /** the class signature used for generating the managed id within the group defined by the token */
   protected final Class<? extends ManagedId> managedIdClass;
@@ -25,7 +26,8 @@ public abstract class ManagedIdEntitiesImpl<E extends ManagedId> extends LongMap
    * Constructor
    * 
    * @param valueToKey the mapping from key to value of the graph entity
-   * @param managedIdClass should reflect the class signature used for generating the managed id of this class when creating it via the factory
+   * @param managedIdClass should reflect the class signature used for generating the managed id of this class
+   *                      when creating it via the factory
    * of this container
    */
   protected ManagedIdEntitiesImpl(final Function<E, Long> valueToKey, final Class<? extends ManagedId> managedIdClass) {
@@ -34,8 +36,9 @@ public abstract class ManagedIdEntitiesImpl<E extends ManagedId> extends LongMap
   }
   
   /**
-   * Constructor. while not recommended it is allowed to create managed ids that do not rely on id generation of the class itself. It can be that they rely on child
-   * ids or synced ids of other internal referenced classes. In that case this constructor can be used directly. this however should generally be avoided.
+   * Constructor. while not recommended it is allowed to create managed ids that do not rely on id generation of
+   * the class itself. It can be that they rely on child ids or synced ids of other internal referenced classes.
+   * In that case this constructor can be used directly. this however should generally be avoided.
    * 
    * @param valueToKey the mapping from key to value of the graph entity
    */
@@ -68,7 +71,8 @@ public abstract class ManagedIdEntitiesImpl<E extends ManagedId> extends LongMap
   }
 
   /**
-   * updates the container keys based on currently presiding ids. Only to be used when an external force has changed already registered entity their ids
+   * updates the container keys based on currently presiding ids. Only to be used when an external force has
+   * changed already registered entity their ids
    */
   protected void updateIdMapping() {
     /* redo mapping */
@@ -91,7 +95,7 @@ public abstract class ManagedIdEntitiesImpl<E extends ManagedId> extends LongMap
    */
   @Override
   public void recreateIds(boolean resetManagedIdClass) {
-    if(resetManagedIdClass == true && managedIdClass!=null) {
+    if(resetManagedIdClass && managedIdClass!=null) {
       IdGenerator.reset(getFactory().getIdGroupingToken(), getManagedIdClass() /* e.g. managed id class */);
     }
     

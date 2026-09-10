@@ -71,7 +71,7 @@ public class DrivingDirectionDefaultByCountry {
     leftHandDriveCountries.add(CountryNames.SEYCHELLES);
     leftHandDriveCountries.add(CountryNames.SINGAPORE);
     leftHandDriveCountries.add(CountryNames.SOlOMON_ISLANDS);
-    leftHandDriveCountries.add(CountryNames.SOUNTH_AFRICA);
+    leftHandDriveCountries.add(CountryNames.SOUTH_AFRICA);
     leftHandDriveCountries.add(CountryNames.SRI_LANKA);
     leftHandDriveCountries.add(CountryNames.SURINAME);
     leftHandDriveCountries.add(CountryNames.TANZANIA);

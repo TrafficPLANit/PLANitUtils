@@ -25,7 +25,8 @@ public interface ConjugateDirectedEdges extends GraphEntities<ConjugateDirectedE
   public default ConjugateDirectedEdgeFactory getFactory(){
     /** override to change return type signature on interface, implementation must still
      * implement this method to provide access to an actual instance */
-    Logger.getLogger(ConjugateDirectedEdges.class.getCanonicalName()).warning("getFactory not implemented yet for conjugate directed edges implementation");
+    Logger.getLogger(ConjugateDirectedEdges.class.getCanonicalName()).warning(
+            "getFactory not implemented yet for conjugate directed edges implementation");
     return null;
   }  
 }

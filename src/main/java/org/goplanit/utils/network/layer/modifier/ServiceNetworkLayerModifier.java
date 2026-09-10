@@ -9,7 +9,10 @@ import org.goplanit.utils.network.layer.service.ServiceNode;
  *
  * @author markr
  */
-public interface ServiceNetworkLayerModifier<V extends ServiceNode, E extends ServiceLeg, S extends ServiceLegSegment> extends UntypedDirectedGraphLayerModifier<V,E,S> {
+public interface ServiceNetworkLayerModifier<
+        V extends ServiceNode,
+        E extends ServiceLeg,
+        S extends ServiceLegSegment> extends UntypedDirectedGraphLayerModifier<V,E,S> {
 
   /**
    * Method that will remove all entities (service nodes, legs, leg segments) that have no mapping present to the underlying physical network layer

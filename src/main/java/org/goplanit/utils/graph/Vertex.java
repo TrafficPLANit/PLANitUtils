@@ -1,18 +1,18 @@
 package org.goplanit.utils.graph;
 
+import org.geotools.api.geometry.MismatchedDimensionException;
+import org.geotools.api.referencing.operation.MathTransform;
+import org.geotools.api.referencing.operation.TransformException;
+import org.geotools.geometry.jts.JTS;
+import org.goplanit.utils.geo.GeometryEnabled;
+import org.locationtech.jts.geom.Coordinate;
+import org.locationtech.jts.geom.Point;
+
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.logging.Logger;
-
-import org.geotools.geometry.jts.JTS;
-import org.locationtech.jts.geom.Coordinate;
-import org.locationtech.jts.geom.Point;
-import org.opengis.geometry.MismatchedDimensionException;
-import org.opengis.referencing.operation.MathTransform;
-import org.opengis.referencing.operation.TransformException;
 
 /**
  * Vertex representation connected to one or more edges and/or edge segments
@@ -26,7 +26,30 @@ public interface Vertex extends Serializable, GraphEntity {
   public static final Logger LOGGER = Logger.getLogger(Vertex.class.getCanonicalName());
   
   /** id class for generating ids */
-  public static final Class<Vertex> VERTEX_ID_CLASS = Vertex.class;  
+  public static final Class<Vertex> VERTEX_ID_CLASS = Vertex.class;
+
+  /**
+   * Check if any input property has been registered
+   * @return true when present, false otherwise
+   */
+  public abstract boolean hasInputProperty();
+
+  /**
+   * Check if a given input property has been registered
+   *
+   * @param key key to check for
+   * @return true when present, false otherwise
+   */
+  public default boolean hasInputProperty(final String key){
+    return getInputProperty(key) != null;
+  }
+
+  /**
+   * Available input property keys, if any
+   *
+   * @return set of input properties, null when not present
+   */
+  public abstract Set<String> getInputPropertyKeys();
     
   /**
    * Add a property from the original input that is not part of the readily available members
@@ -56,6 +79,15 @@ public interface Vertex extends Serializable, GraphEntity {
    * @return direct position reflecting point location
    */
   public abstract Point getPosition();
+
+  /**
+   * Geometry is always a point for a vertex
+   * @return position of vertex
+   */
+  @Override
+  public default Point getGeometry(){
+    return getPosition();
+  }
   
   /**
    * Add edge, do not invoke when parsing networks, this connection is
@@ -73,7 +105,7 @@ public interface Vertex extends Serializable, GraphEntity {
    * @param toBeAdded the to be added edges
    */
   public default void addEdges(Collection<? extends Edge> toBeAdded){
-    toBeAdded.forEach( edge -> addEdge(edge));
+    toBeAdded.forEach(this::addEdge);
   }
   
   /**
@@ -138,7 +170,7 @@ public interface Vertex extends Serializable, GraphEntity {
    * @param toBeRemoved to remove
    */
   public default void removeEdges(Collection<? extends Edge> toBeRemoved){
-    toBeRemoved.forEach(e -> removeEdge(e));
+    toBeRemoved.forEach(this::removeEdge);
   }
 
   /**
@@ -153,8 +185,11 @@ public interface Vertex extends Serializable, GraphEntity {
    * @return edges for which this holds, if none hold an empty set is returned
    */
   public default Set<? extends Edge> getEdges(Vertex otherVertex) {
-    Set<Edge> edges = new HashSet<Edge>();
+    Set<Edge> edges = new HashSet<>();
     for (Edge edge : getEdges()) {
+      if(!edge.hasVertexA() || !edge.hasVertexB()){
+        continue;
+      }
       if (edge.getVertexA().getId() == this.getId() && edge.getVertexB().getId() == otherVertex.getId()) {
         edges.add(edge);
       } else if (edge.getVertexB().getId() == this.getId() && edge.getVertexA().getId() == otherVertex.getId()) {
@@ -162,7 +197,35 @@ public interface Vertex extends Serializable, GraphEntity {
       }
     }
     return edges;
-  }  
+  }
+
+  /**
+   * verify if the edge exists based on the other vertex
+   *
+   * @param otherVertex that defines the edge
+   * @return true if an edge exists
+   */
+  public default boolean hasEdge(Vertex otherVertex){
+    for (Edge edge : getEdges()) {
+      if (edge.getVertexA().getId() == this.getId() && edge.getVertexB().getId() == otherVertex.getId()) {
+        return true;
+      } else if (edge.getVertexB().getId() == this.getId() && edge.getVertexA().getId() == otherVertex.getId()) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  /**
+   * verify if the edge exists
+   *
+   * @param otherEdge to verify
+   * @return true if an edge exists on the vertex
+   */
+  public default boolean hasEdge(Edge otherEdge){
+    return hasEdge(otherEdge.getVertexA()) || hasEdge(otherEdge.getVertexB());
+  }
+
   
   /**
    * Number of entries in edge segments
@@ -192,8 +255,11 @@ public interface Vertex extends Serializable, GraphEntity {
    * @throws MismatchedDimensionException thrown if error
    * @throws TransformException thrown if error
    */
-  public default void transformPosition(MathTransform transformer) throws MismatchedDimensionException, TransformException {
-    setPosition((Point) JTS.transform(getPosition(),transformer));
+  public default void transformPosition(MathTransform transformer)
+      throws MismatchedDimensionException, TransformException {
+    if(hasPosition()) {
+      setPosition((Point) JTS.transform(getPosition(), transformer));
+    }
   }
 
   /** Verify if the vertex position is exactly equal (in 2D) to the passed in coordinate
@@ -224,7 +290,8 @@ public interface Vertex extends Serializable, GraphEntity {
       if (!edge.hasVertex(this)) {
         LOGGER.warning(
             String.format(
-                "Edge (id:%d) does not contain vertex (id:%d externalId:%s) even though the vertex is connected to it", edge.getId(), getId(), getExternalId()));
+                "Edge (id:%d) does not contain vertex (id:%d externalId:%s) even though the vertex is" +
+                        " connected to it", edge.getId(), getId(), getExternalId()));
         return false;
       }
     }

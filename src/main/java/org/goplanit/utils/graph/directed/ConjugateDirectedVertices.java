@@ -23,9 +23,10 @@ public interface ConjugateDirectedVertices extends GraphEntities<ConjugateDirect
    */
   @Override
   public default ConjugateDirectedVertexFactory getFactory(){
-    /** override to change return type signature on interface, implementation must still
+    /* override to change return type signature on interface, implementation must still
      * implement this method to provide access to an actual instance */
-    Logger.getLogger(ConjugateDirectedVertices.class.getCanonicalName()).warning("getFactory not implemented yet for conjugate directed vertices implementation");
+    Logger.getLogger(ConjugateDirectedVertices.class.getCanonicalName()).warning(
+            "getFactory not implemented yet for conjugate directed vertices implementation");
     return null;
   }  
   

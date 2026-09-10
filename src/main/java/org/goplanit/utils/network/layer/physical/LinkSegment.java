@@ -1,5 +1,6 @@
 package org.goplanit.utils.network.layer.physical;
 
+import org.goplanit.utils.graph.directed.DirectedVertex;
 import org.goplanit.utils.graph.directed.EdgeSegment;
 import org.goplanit.utils.id.IdGenerator;
 import org.goplanit.utils.id.IdGroupingToken;
@@ -26,7 +27,7 @@ public interface LinkSegment extends EdgeSegment {
    * 
    * @return class type
    */
-  public default Class<? extends LinkSegment> getLinkSegmentIdClass(){
+  public static Class<? extends LinkSegment> getLinkSegmentIdClass(){
     return LINK_SEGMENT_ID_CLASS;
   }  
   
@@ -36,7 +37,7 @@ public interface LinkSegment extends EdgeSegment {
    * @param groupId, contiguous id generation within this group for instances of this class
    * @return id of this link segment
    */
-  public default long generateLinkSegmentId(final IdGroupingToken groupId) {
+  public static long generateLinkSegmentId(final IdGroupingToken groupId) {
     return IdGenerator.generateId(groupId, getLinkSegmentIdClass());
   }  
 
@@ -82,6 +83,37 @@ public interface LinkSegment extends EdgeSegment {
       }
     }
     return allowedModes;
+  }
+
+  /**
+   * Check if any of the provided modes is allowed
+   *
+   * @param modes to check
+   * @return true when present false otherwise
+   */
+  public default boolean isAnyModeAllowed(Collection<Mode> modes){
+    return modes.stream().anyMatch(this::isModeAllowed);
+  }
+
+  /**
+   * Check if all of the provided modes is allowed
+   *
+   * @param modes to check
+   * @return true when present false otherwise
+   */
+  public default boolean isAllModesAllowedFrom(Collection<Mode> modes){
+    return modes.stream().allMatch(this::isModeAllowed);
+  }
+
+  /**
+   * Find any allowed mode from poolof allowed modes and return it
+   * @return any of the allowed modes, null if none are allowed
+   */
+  public default Mode getAnyAllowedMode(){
+    for(var mode : getAllowedModes()){
+      return mode;
+    }
+    return null;
   }
 
   /**
@@ -132,13 +164,13 @@ public interface LinkSegment extends EdgeSegment {
    * {@inheritDoc}
    */
   @Override  
-  public abstract Node getUpstreamVertex();
+  public abstract DirectedVertex getUpstreamVertex();
   
   /**
    * {@inheritDoc}
    */
   @Override  
-  public abstract Node getDownstreamVertex();
+  public abstract DirectedVertex getDownstreamVertex();
 
   /**
    * Verify if downstream node matches given node
@@ -147,7 +179,17 @@ public interface LinkSegment extends EdgeSegment {
    * @return true if equal, false otherwise
    */
   public default boolean isDownstreamNode(Node node){
-    return getDownstreamNode().equals(node);
+    return isDownstreamVertex(node);
+  }
+
+  /**
+   * Verify if upstream node matches given node
+   *
+   * @param node to check
+   * @return true if equal, false otherwise
+   */
+  public default boolean isUpstreamNode(Node node){
+    return isUpstreamVertex(node);
   }
 
   /**
@@ -161,16 +203,6 @@ public interface LinkSegment extends EdgeSegment {
   }
 
   /**
-   * Verify if upstream node matches given node
-   *
-   * @param node to check
-   * @return true if equal, false otherwise
-   */
-  public default boolean isUpstreamNode(Node node){
-    return getUpstreamNode().equals(node);
-  }
-
-  /**
    * {@inheritDoc}
    */
   public abstract LinkSegment shallowClone();
@@ -180,22 +212,13 @@ public interface LinkSegment extends EdgeSegment {
    */
   @Override
   public abstract LinkSegment deepClone();
-  
-  /**
-   * Return the parent link of this link segment
-   * 
-   * @return Link object which is the parent of this link segment
-   */
-  public default Link getParentLink() {
-    return getParent();
-  }
 
   /** Collect upstream vertex as node
    * 
    * @return upstream node
    */  
   public default Node getUpstreamNode() {
-    return getUpstreamVertex();
+    return (Node) getUpstreamVertex();
   }
   
   /** Collect downstream vertex as node
@@ -203,7 +226,7 @@ public interface LinkSegment extends EdgeSegment {
    * @return downstream node
    */
   public default Node getDownstreamNode() {
-    return getDownstreamVertex();
-  }  
+    return (Node) getDownstreamVertex();
+  }
 
 }

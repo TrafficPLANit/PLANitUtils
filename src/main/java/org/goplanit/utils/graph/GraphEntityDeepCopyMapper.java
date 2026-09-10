@@ -13,4 +13,11 @@ import java.util.function.Consumer;
  */
 public class GraphEntityDeepCopyMapper<T extends GraphEntity> extends DeepCopyMapper<T> {
 
+    /**
+     * Default constructor
+     */
+    public GraphEntityDeepCopyMapper(){
+        super();
+    }
+
 }
