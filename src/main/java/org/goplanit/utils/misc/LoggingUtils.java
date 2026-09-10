@@ -21,6 +21,21 @@ public class LoggingUtils {
   public static String surroundWithBrackets(String message) {
     return String.format("[%s] ", message);
   }
+
+  /**
+   * Express a count as an absolute number with its share of a total, e.g. "27 (0.1% of total)", so a log entry
+   * conveys the scale of an issue as well as its size
+   *
+   * @param count to express
+   * @param total to express the count as a share of, when zero or negative only the count is returned
+   * @return combined string
+   */
+  public static String countWithPercentage(long count, long total) {
+    if (total <= 0) {
+      return String.valueOf(count);
+    }
+    return String.format("%d (%.1f%% of total)", count, (100.0 * count) / total);
+  }
   
   /**
    * Create a prefix for the logger so that all logging items specific to a particular traffic assignment run
