@@ -121,17 +121,45 @@ public class LocalTimeUtils {
    * the anchor is read. Such a time both opens and closes the period, which is only decidable from context, so the
    * caller states which reading applies.
    *
-   * @param anchorStartTime start of the period to measure from
+   * @param anchorStartTime start of the period to measure from, when null there is no period and the seconds of
+   *                        day are returned as they are
    * @param timeToConvert time to express relative to the anchor
    * @param anchorClosesPeriod when true a time equal to the anchor yields a full day, being the end of the period,
-   *                           when false it yields zero, being its start
+   *                           when false it yields zero, being its start. Ignored without an anchor, since then
+   *                           there is no period to close
    * @return seconds elapsed since the anchor, in [0, SECONDS_IN_DAY] when the anchor closes the period and in
    *         [0, SECONDS_IN_DAY) otherwise
    */
   public static long secondsFromWrapAroundDayAnchor(
       LocalTime anchorStartTime, LocalTime timeToConvert, boolean anchorClosesPeriod) {
+    if (anchorStartTime == null) {
+      return timeToConvert.toSecondOfDay();
+    }
     long elapsedSeconds = secondsFromWrapAroundDayAnchor(anchorStartTime, timeToConvert);
     return elapsedSeconds == 0 && anchorClosesPeriod ? SECONDS_IN_DAY : elapsedSeconds;
+  }
+
+  /**
+   * Same as {@link #secondsFromWrapAroundDayAnchor(LocalTime, LocalTime, boolean)}, but only when the result does
+   * not fall before an earlier measure taken from the same anchor, so a series of times can be checked for being
+   * non-decreasing. A null time carries no information and leaves the earlier measure untouched. Once the period is
+   * under way a time landing on the anchor closes it rather than opening it.
+   *
+   * @param anchorStartTime start of the period to measure from, may be null in which case no wrap around occurs
+   * @param timeToConvert time to express relative to the anchor, may be null
+   * @param previousElapsedSeconds elapsed seconds of the most recent time measured from the same anchor
+   * @return seconds elapsed since the anchor, or -1 when the time falls before the earlier measure
+   */
+  public static long secondsFromWrapAroundDayAnchorIfNotBefore(
+      LocalTime anchorStartTime, LocalTime timeToConvert, long previousElapsedSeconds) {
+
+    if (timeToConvert == null) {
+      return previousElapsedSeconds;
+    }
+
+    long elapsedSeconds =
+        secondsFromWrapAroundDayAnchor(anchorStartTime, timeToConvert, previousElapsedSeconds > 0);
+    return elapsedSeconds < previousElapsedSeconds ? -1 : elapsedSeconds;
   }
 
   /**
