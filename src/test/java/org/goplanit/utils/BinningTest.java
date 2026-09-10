@@ -46,17 +46,24 @@ public class BinningTest {
 
     /* equal bounds with either end exclusive can never contain anything, so it is rejected rather than silently
      * never matching */
-    assertThrows(PlanItRunTimeException.class, () -> Bin.of(1, 1, true, false, null));
-    assertThrows(PlanItRunTimeException.class, () -> Bin.of(5, 2, true, true, null));
+    assertThrows(PlanItRunTimeException.class, () -> Bin.of(
+        1, 1, true, false, null));
+    assertThrows(PlanItRunTimeException.class, () -> Bin.of(
+        5, 2, true, true, null));
   }
 
   @Test
   public void labelIsInferredWhenNoneIsGiven() {
-    assertEquals("[2,5]", Bin.of(2, 5).getLabel());
-    assertEquals("[2,5)", Bin.of(2, 5, true, false, null).getLabel());
-    assertEquals("(2,5]", Bin.of(2, 5, false, true, null).getLabel());
-    assertEquals("(2,5)", Bin.of(2, 5, false, false, null).getLabel());
-    assertEquals("2-5", Bin.of(2, 5, "2-5").getLabel());
+    assertEquals("[2,5]", Bin.of(
+        2, 5).getLabel());
+    assertEquals("[2,5)", Bin.of(
+        2, 5, true, false, null).getLabel());
+    assertEquals("(2,5]", Bin.of(
+        2, 5, false, true, null).getLabel());
+    assertEquals("(2,5)", Bin.of(
+        2, 5, false, false, null).getLabel());
+    assertEquals("2-5", Bin.of(
+        2, 5, "2-5").getLabel());
     assertFalse(Bin.of(2, 5).hasLabel());
     assertTrue(Bin.of(2, 5, "2-5").hasLabel());
     assertEquals("2-5", Bin.of(2, 5).withLabel("2-5").getLabel());
@@ -65,26 +72,32 @@ public class BinningTest {
   @Test
   public void contiguityRequiresExactlyOneEndToClaimTheSharedBound() {
     /* meeting at 5 with only the second claiming it */
-    assertTrue(Bin.of(2, 5, true, false, null).isContiguousWith(Bin.of(5, 9, true, false, null)));
+    assertTrue(Bin.of(2, 5, true, false, null).isContiguousWith(
+        Bin.of(5, 9, true, false, null)));
     /* meeting at 5 with both claiming it, so 5 would be counted twice */
-    assertFalse(Bin.of(2, 5, true, true, null).isContiguousWith(Bin.of(5, 9, true, false, null)));
+    assertFalse(Bin.of(2, 5, true, true, null).isContiguousWith(
+        Bin.of(5, 9, true, false, null)));
     /* meeting at 5 with neither claiming it, so 5 would be lost */
-    assertFalse(Bin.of(2, 5, true, false, null).isContiguousWith(Bin.of(5, 9, false, true, null)));
+    assertFalse(Bin.of(2, 5, true, false, null).isContiguousWith(
+        Bin.of(5, 9, false, true, null)));
     /* not meeting at all */
-    assertFalse(Bin.of(2, 5, true, false, null).isContiguousWith(Bin.of(6, 9, true, false, null)));
+    assertFalse(Bin.of(2, 5, true, false, null).isContiguousWith(
+        Bin.of(6, 9, true, false, null)));
   }
 
   @Test
   public void configurationRejectsGapsOverlapsAndDisorder() {
     /* a gap between 5 and 6 */
     assertThrows(PlanItRunTimeException.class, () -> BinningConfiguration.of(
-        Bin.of(1, 5, true, false, null), Bin.of(6, 9, true, false, null)));
+        Bin.of(1, 5, true, false, null),
+        Bin.of(6, 9, true, false, null)));
     /* an overlap, both claiming 5 */
     assertThrows(PlanItRunTimeException.class, () -> BinningConfiguration.of(
         Bin.of(1, 5), Bin.of(5, 9)));
     /* out of order */
     assertThrows(PlanItRunTimeException.class, () -> BinningConfiguration.of(
-        Bin.of(5, 9, true, false, null), Bin.of(1, 5, true, false, null)));
+        Bin.of(5, 9, true, false, null),
+        Bin.of(1, 5, true, false, null)));
     /* nothing at all */
     assertThrows(PlanItRunTimeException.class, () -> BinningConfiguration.of(List.<Bin<Integer>>of()));
   }
@@ -92,7 +105,8 @@ public class BinningTest {
   @Test
   public void compositeIntegerConfigurationBinsEveryValueExactlyOnce() {
     /* the arrangement subnetwork sizes are reported by */
-    var configuration = BinBuilder.ofInclusiveIntegerUpperBounds(1, 1, 5, 20, 50, 200, Integer.MAX_VALUE);
+    var configuration = BinBuilder.ofInclusiveIntegerUpperBounds(
+        1, 1, 5, 20, 50, 200, Integer.MAX_VALUE);
 
     assertEquals(List.of("1", "2-5", "6-20", "21-50", "51-200", ">=201"), configuration.getLabels());
     assertEquals(6, configuration.size());
@@ -156,8 +170,10 @@ public class BinningTest {
     /* a single lower bound is simply everything from there on */
     assertEquals(List.of(">=1"), BinBuilder.ofInclusiveIntegerLowerBounds(1).getLabels());
 
-    assertThrows(PlanItRunTimeException.class, () -> BinBuilder.ofInclusiveIntegerLowerBounds(1, 6, 6));
-    assertThrows(PlanItRunTimeException.class, () -> BinBuilder.ofInclusiveIntegerLowerBounds(1, 21, 6));
+    assertThrows(PlanItRunTimeException.class, () ->
+        BinBuilder.ofInclusiveIntegerLowerBounds(1, 6, 6));
+    assertThrows(PlanItRunTimeException.class, () ->
+        BinBuilder.ofInclusiveIntegerLowerBounds(1, 21, 6));
     assertThrows(PlanItRunTimeException.class, BinBuilder::ofInclusiveIntegerLowerBounds);
   }
 
@@ -194,8 +210,10 @@ public class BinningTest {
     assertEquals(-1, configuration.binIndexOf(100.1));
     assertEquals(-1, configuration.binIndexOf(-0.1));
 
-    assertThrows(PlanItRunTimeException.class, () -> BinBuilder.ofEqualWidthDoubleBins(0.0, 100.0, 0));
-    assertThrows(PlanItRunTimeException.class, () -> BinBuilder.ofEqualWidthDoubleBins(100.0, 0.0, 4));
+    assertThrows(PlanItRunTimeException.class, () ->
+        BinBuilder.ofEqualWidthDoubleBins(0.0, 100.0, 0));
+    assertThrows(PlanItRunTimeException.class, () ->
+        BinBuilder.ofEqualWidthDoubleBins(100.0, 0.0, 4));
   }
 
   @Test
@@ -215,7 +233,8 @@ public class BinningTest {
 
   @Test
   public void countsAreCollectedPerBinWithOutOfRangeKeptApart() {
-    var configuration = BinBuilder.ofInclusiveIntegerUpperBounds(1, 1, 5, 20, Integer.MAX_VALUE);
+    var configuration = BinBuilder.ofInclusiveIntegerUpperBounds(
+        1, 1, 5, 20, Integer.MAX_VALUE);
     var counts = BinnedCount.of(configuration);
 
     assertTrue(counts.isEmpty());

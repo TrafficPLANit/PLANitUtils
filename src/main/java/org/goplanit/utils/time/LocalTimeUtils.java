@@ -104,6 +104,48 @@ public class LocalTimeUtils {
   }
 
   /**
+   * Express a time as the number of seconds elapsed since a wrap-around day anchor, i.e. the start of a period
+   * that need not begin at midnight. For an anchor of 3AM a time of 2AM yields 23 hours rather than a negative
+   * result, placing it on the following day as intended.
+   *
+   * @param anchorStartTime start of the period to measure from
+   * @param timeToConvert time to express relative to the anchor
+   * @return seconds elapsed since the anchor, always in [0, SECONDS_IN_DAY)
+   */
+  public static long secondsFromWrapAroundDayAnchor(LocalTime anchorStartTime, LocalTime timeToConvert) {
+    return Math.floorMod((long) timeToConvert.toSecondOfDay() - anchorStartTime.toSecondOfDay(), SECONDS_IN_DAY);
+  }
+
+  /**
+   * Same as {@link #secondsFromWrapAroundDayAnchor(LocalTime, LocalTime)}, with control over how a time equal to
+   * the anchor is read. Such a time both opens and closes the period, which is only decidable from context, so the
+   * caller states which reading applies.
+   *
+   * @param anchorStartTime start of the period to measure from
+   * @param timeToConvert time to express relative to the anchor
+   * @param anchorClosesPeriod when true a time equal to the anchor yields a full day, being the end of the period,
+   *                           when false it yields zero, being its start
+   * @return seconds elapsed since the anchor, in [0, SECONDS_IN_DAY] when the anchor closes the period and in
+   *         [0, SECONDS_IN_DAY) otherwise
+   */
+  public static long secondsFromWrapAroundDayAnchor(
+      LocalTime anchorStartTime, LocalTime timeToConvert, boolean anchorClosesPeriod) {
+    long elapsedSeconds = secondsFromWrapAroundDayAnchor(anchorStartTime, timeToConvert);
+    return elapsedSeconds == 0 && anchorClosesPeriod ? SECONDS_IN_DAY : elapsedSeconds;
+  }
+
+  /**
+   * Convert seconds from midnight to a LocalTime, wrapping around the day for values at or beyond 24 hours
+   * (e.g. 97200, i.e. 27:00, becomes 03:00) and for negative values.
+   *
+   * @param secondsFromMidnight to convert, may exceed a day or be negative
+   * @return corresponding LocalTime on a standard clock face
+   */
+  public static LocalTime ofSecondOfDayWrapped(long secondsFromMidnight) {
+    return LocalTime.ofSecondOfDay(Math.floorMod(secondsFromMidnight, SECONDS_IN_DAY));
+  }
+
+  /**
    * Formats raw total seconds into an unbounded HH:mm:ss string, allowing hours to safely exceed
    * 24 (e.g., 97198 becomes "26:59:58").
    *
