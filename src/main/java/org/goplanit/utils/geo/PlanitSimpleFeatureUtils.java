@@ -1,10 +1,14 @@
 package org.goplanit.utils.geo;
 
+import org.geotools.api.data.Query;
+import org.geotools.api.data.SimpleFeatureSource;
 import org.geotools.api.feature.simple.SimpleFeature;
 import org.geotools.api.feature.simple.SimpleFeatureType;
 import org.geotools.api.feature.type.GeometryDescriptor;
+import org.geotools.data.simple.SimpleFeatureIterator;
 import org.locationtech.jts.geom.Geometry;
 
+import java.io.IOException;
 import java.util.Arrays;
 
 /**
@@ -60,5 +64,29 @@ public class PlanitSimpleFeatureUtils {
     }
 
     return String.valueOf(rawValue).trim();
+  }
+
+  /**
+   * Count features in a feature source.
+   *
+   * @param featureSource feature source
+   * @return feature count
+   * @throws IOException when features cannot be read
+   */
+  public static int featureCount(SimpleFeatureSource featureSource) throws IOException {
+    var count = featureSource.getCount(Query.ALL);
+    if (count >= 0) {
+      return count;
+    }
+
+    var featureCollection = featureSource.getFeatures();
+    var iteratedCount = 0;
+    try (SimpleFeatureIterator iterator = featureCollection.features()) {
+      while (iterator.hasNext()) {
+        iterator.next();
+        iteratedCount++;
+      }
+    }
+    return iteratedCount;
   }
 }

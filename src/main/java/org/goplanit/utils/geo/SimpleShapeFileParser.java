@@ -25,10 +25,9 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.nio.file.Path;
 import java.util.*;
 import java.util.logging.Logger;
-
-import static org.goplanit.utils.geo.PlanitGeoDataStoreUtils.findOrCreateFileDataStore;
 
 public class SimpleShapeFileParser {
 
@@ -181,7 +180,7 @@ public class SimpleShapeFileParser {
   /**
    * Parse a shape file and convert into a memory model of JTS features by layer applying the provided geotools filter
    *
-   * @param location to parse from can be a local file or url
+   * @param location local shape file to parse
    * @param filter to use, may be null
    * @param logStats when true log number of geometries per layer
    * @return map of feature type and the features by layer with layer name as key
@@ -190,10 +189,15 @@ public class SimpleShapeFileParser {
       String location, Filter filter, boolean logStats){
 
     var featuresByLayer = new TreeMap<String,  Pair<SimpleFeatureType, List<SimpleFeature>>>();
+    DataStore dataStore = null;
     try {
+      PlanItRunTimeException.throwIf(
+          !FileUtils.getExtension(location).equalsIgnoreCase(
+              PlanitGeoDataStoreUtils.SHAPE_FILE_EXTENSION.substring(1)),
+          "Only shape files are supported by this parser, found: " + location);
 
-      // Initialize the data store with connection parameters
-      DataStore dataStore = findOrCreateFileDataStore(location);
+      dataStore = PlanitGeoDataStoreUtils.openDataStore(Path.of(location), true);
+      PlanItRunTimeException.throwIfNull(dataStore, "Unable to open shape file from " + location);
 
       if(logStats) {
         LOGGER.info("Parsing Shapes from: "+ location);
@@ -230,9 +234,6 @@ public class SimpleShapeFileParser {
         // Important: close the iterator
       }
 
-      // Close the data store
-      dataStore.dispose();
-
     }catch (IndexOutOfBoundsException e){
       LOGGER.severe("Error parsing shape file, perhaps dbf is using non-standard field names or format, or read" +
           "from wrong location");
@@ -246,6 +247,10 @@ public class SimpleShapeFileParser {
     } catch(IOException e) {
       e.printStackTrace();
       throw new PlanItRunTimeException("Unable to complete parsing shape file from " + location,e);
+    } finally {
+      if (dataStore != null) {
+        dataStore.dispose();
+      }
     }
     return featuresByLayer;
   }
@@ -253,7 +258,7 @@ public class SimpleShapeFileParser {
   /**
    * Parse a shape file and convert into a memory model of JTS features by layer
    *
-   * @param location to parse from can be a local file or url
+   * @param location local shape file to parse
    * @param logStats when true log number of geometries per layer
    * @return map of feature type and the features by layer with layer name as key
    */

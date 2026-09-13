@@ -3,18 +3,19 @@ package org.goplanit.utils.geo;
 import org.geotools.api.data.DataStore;
 import org.geotools.api.data.DataStoreFinder;
 import org.geotools.api.data.FileDataStoreFinder;
+import org.geotools.api.data.SimpleFeatureSource;
 import org.goplanit.utils.misc.FileUtils;
 import org.goplanit.utils.misc.Pair;
-import org.goplanit.utils.misc.UrlUtils;
-import org.goplanit.utils.resource.ResourceUtils;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -22,6 +23,12 @@ import java.util.stream.Stream;
 public class PlanitGeoDataStoreUtils {
 
   private static final Logger LOGGER = Logger.getLogger(SimpleShapeFileParser.class.getCanonicalName());
+
+  /** Shape file extension */
+  public static final String SHAPE_FILE_EXTENSION = ".shp";
+
+  /** GeoPackage file extension */
+  public static final String GEOPACKAGE_EXTENSION = ".gpkg";
 
   /**
    * Create a data store for database based type, e.g., geopackage. Use the dbType string to indicate which
@@ -128,5 +135,84 @@ public class PlanitGeoDataStoreUtils {
       LOGGER.severe("Cause: "+ (e.getMessage()));
     }
     return dataStore;
+  }
+
+  /**
+   * Open a GIS dataset file for reading.
+   *
+   * @param datasetFile dataset file
+   * @return data store
+   * @throws IOException when file cannot be read
+   */
+  public static DataStore openDataStore(Path datasetFile) throws IOException {
+    return openDataStore(datasetFile, true);
+  }
+
+  /**
+   * Open a GIS dataset file.
+   *
+   * @param datasetFile dataset file
+   * @param readOnly when true open database-backed stores in read-only mode
+   * @return data store
+   * @throws IOException when file cannot be read
+   */
+  public static DataStore openDataStore(Path datasetFile, boolean readOnly) throws IOException {
+    var fileName = datasetFile.getFileName().toString().toLowerCase(Locale.ROOT);
+    if (fileName.endsWith(GEOPACKAGE_EXTENSION)) {
+      return findFileDataBaseDataStoreWithParams(
+          datasetFile.toAbsolutePath().toString(),
+          Pair.of("dbtype", "geopkg"),
+          Pair.of("read-only", readOnly));
+    }
+    return findFileDataStore(datasetFile.toAbsolutePath().toString());
+  }
+
+  /**
+   * Count all features in a dataset.
+   *
+   * @param datasetFile dataset file
+   * @return total feature count
+   * @throws IOException when features cannot be read
+   */
+  public static int totalFeatureCount(Path datasetFile) throws IOException {
+    return layerFeatureCounts(datasetFile).values().stream().mapToInt(Integer::intValue).sum();
+  }
+
+  /**
+   * Count features per layer in a dataset.
+   *
+   * @param datasetFile dataset file
+   * @return layer feature counts
+   * @throws IOException when features cannot be read
+   */
+  public static Map<String, Integer> layerFeatureCounts(Path datasetFile) throws IOException {
+    DataStore dataStore = null;
+    try {
+      dataStore = openDataStore(datasetFile);
+      if (dataStore == null) {
+        throw new IllegalStateException("Unable to open GIS dataset: " + datasetFile);
+      }
+      var featureCounts = new LinkedHashMap<String, Integer>();
+      for (String typeName : sortedTypeNames(dataStore)) {
+        SimpleFeatureSource featureSource = dataStore.getFeatureSource(typeName);
+        featureCounts.put(typeName, PlanitSimpleFeatureUtils.featureCount(featureSource));
+      }
+      return featureCounts;
+    } finally {
+      if (dataStore != null) {
+        dataStore.dispose();
+      }
+    }
+  }
+
+  /**
+   * Collect sorted type names.
+   *
+   * @param dataStore to use
+   * @return sorted type names
+   * @throws IOException when type names cannot be read
+   */
+  public static List<String> sortedTypeNames(DataStore dataStore) throws IOException {
+    return Arrays.stream(dataStore.getTypeNames()).sorted().collect(Collectors.toList());
   }
 }
