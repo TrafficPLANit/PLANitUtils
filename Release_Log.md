@@ -14,7 +14,16 @@ PLANitUtils release log.
 * [GENERAL] Belgium added as country name
 * [GENERAL] Added support for conjugate (inverted) networks
 * [GENERAL] Added support for simple CSV parser utilities + unit test
-* #16 Support for bannedMovements
+* #17 Added a simple shape file parser, with experimental DBF parsing support
+* #18 Added a 4-ary heap implementation, including micro-optimisations
+* #20 Reworked zone connectoids to support separate OD and transfer connectoids, directed and undirected transfer entries, and explicit zone connectoid types
+* #21 Generalised OD data into zone-to-zone data, enabling transfer-zone skims
+* #22 Added banned-movement support at network-layer level, including compact implicit movement indices
+* #24 Added optional gzip output directly from the XML writer
+* #26 Added first-class graph/subgraph utilities and improved iteration performance for registered subgraph entities
+* #27 Added strong-connectivity detection, dangling-subnetwork removal, and vertex removal through layer modifiers
+* [GENERAL] Added direct Cartesian CRS support and automatic axis-inversion handling
+* [GENERAL] Added cross-platform URL handling and URL/resource-path resolution utilities
 
 **Changes**
 * [GENERAL] Moved IdMappers from PLANit core to here
