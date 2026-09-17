@@ -36,10 +36,29 @@ public class MacroscopicLinkSegmentUtils {
       /* without a type there is no mode information to judge the segment on */
       return false;
     }
+    return isExclusivelyOfTrackType(linkSegment.getLinkSegmentType(), trackType);
+  }
 
-    var allowedModes = linkSegment.getLinkSegmentType().getAllowedModes();
+  /**
+   * Verify whether a link segment type belongs exclusively to the network of a single track type, i.e. every mode
+   * it grants access to propagates over that track type. See
+   * {@link #isExclusivelyOfTrackType(MacroscopicLinkSegment, TrackModeType)} for why exclusivity is required
+   * rather than mere presence.
+   *
+   * @param linkSegmentType to verify, may be null
+   * @param trackType the track type all allowed modes must propagate over
+   * @return true when the type grants access to at least one mode and every such mode is of the given track type,
+   *         false otherwise
+   */
+  public static boolean isExclusivelyOfTrackType(
+      final MacroscopicLinkSegmentType linkSegmentType, final TrackModeType trackType) {
+    if (linkSegmentType == null) {
+      return false;
+    }
+
+    var allowedModes = linkSegmentType.getAllowedModes();
     if (allowedModes == null || allowedModes.isEmpty()) {
-      /* guard against an empty set matching every track type vacuously, which would make a segment without any
+      /* guard against an empty set matching every track type vacuously, which would make a type without any
        * mode access qualify for all of them at once */
       return false;
     }
