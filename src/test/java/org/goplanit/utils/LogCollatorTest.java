@@ -27,6 +27,59 @@ public class LogCollatorTest {
   private static final String WRONG_SIDE = "stop on wrong side of road";
 
   @Test
+  public void mergeAddsTotalsAndRetainsFromBothTest() {
+    var target = LogCollator.create();
+    target.increment(NO_PATH, "a1");
+    target.increment(WRONG_SIDE, "b1");
+
+    var source = LogCollator.create();
+    source.increment(NO_PATH, "a2");
+    source.increment(NO_PATH, "a3");
+
+    target.merge(source);
+
+    assertEquals(3, target.getOccurrences(NO_PATH));
+    assertEquals(1, target.getOccurrences(WRONG_SIDE));
+    assertEquals(4, target.getTotalOccurrences());
+
+    var retainedIds = target.getTemplate(NO_PATH).getRetainedOccurrences().stream().map(
+        LogCollator.Occurrence::getEntityId).collect(Collectors.toList());
+    assertTrue(retainedIds.containsAll(java.util.List.of("a1", "a2", "a3")));
+
+    /* the source is a separate record and must not be altered by being merged from */
+    assertEquals(2, source.getOccurrences(NO_PATH));
+  }
+
+  @Test
+  public void mergeKeepsTotalsExactBeyondRetentionLimitTest() {
+    var target = LogCollator.createWithRetentionLimit(2);
+    target.increment(NO_PATH, "a1");
+    target.increment(NO_PATH, "a2");
+
+    var source = LogCollator.createWithRetentionLimit(2);
+    source.increment(NO_PATH, "a3");
+    source.increment(NO_PATH, "a4");
+
+    target.merge(source);
+
+    /* every occurrence is counted, while retention stays within the limit a single collator would have applied */
+    assertEquals(4, target.getOccurrences(NO_PATH));
+    assertEquals(2, target.getTemplate(NO_PATH).getRetainedOccurrences().size());
+    assertTrue(target.getTemplate(NO_PATH).hasUnretainedOccurrences());
+  }
+
+  @Test
+  public void mergeOfNullAndEmptyIsHarmlessTest() {
+    var target = LogCollator.create();
+    target.increment(NO_PATH, "a1");
+
+    target.merge(null);
+    target.merge(LogCollator.create());
+
+    assertEquals(1, target.getTotalOccurrences());
+  }
+
+  @Test
   public void emptyCollatorTest() {
     var collator = LogCollator.create();
 
@@ -88,6 +141,20 @@ public class LogCollatorTest {
     var retainedIds = template.getRetainedOccurrences().stream().map(
         LogCollator.Occurrence::getEntityId).collect(Collectors.toList());
     assertEquals(java.util.List.of("leg_0", "leg_1", "leg_2"), retainedIds);
+  }
+
+  @Test
+  public void noRetentionTest() {
+    var collator = LogCollator.createWithRetentionLimit(LogCollator.NO_RETENTION);
+
+    IntStream.range(0, 10).forEach(i -> collator.increment(NO_PATH, "leg_" + i));
+
+    var template = collator.getTemplate(NO_PATH);
+
+    /* counting only, so the total is exact while nothing is available for listing */
+    assertEquals(10, template.getOccurrences());
+    assertTrue(template.getRetainedOccurrences().isEmpty());
+    assertTrue(template.hasUnretainedOccurrences());
   }
 
   @Test

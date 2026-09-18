@@ -42,6 +42,9 @@ public class LogCollator {
   /** retention limit indicating that every occurrence is retained */
   public static final int UNLIMITED_RETENTION = -1;
 
+  /** retention limit indicating that occurrences are counted but none are retained */
+  public static final int NO_RETENTION = 0;
+
   /**
    * A single recorded occurrence, identifying the entity that triggered it and any further context the call site
    * could supply
@@ -55,14 +58,22 @@ public class LogCollator {
     private final String detail;
 
     /**
+     * Further context in expanded form, for consumers with more room than a log line, may be null in which case the
+     * regular detail stands in
+     */
+    private final String expandedDetail;
+
+    /**
      * Constructor
      *
      * @param entityId entity the occurrence relates to, may be null
      * @param detail further context, may be null
+     * @param expandedDetail further context in expanded form, null to use the regular detail
      */
-    protected Occurrence(final String entityId, final String detail) {
+    protected Occurrence(final String entityId, final String detail, final String expandedDetail) {
       this.entityId = entityId;
       this.detail = detail;
+      this.expandedDetail = expandedDetail != null ? expandedDetail : detail;
     }
 
     /**
@@ -99,6 +110,25 @@ public class LogCollator {
      */
     public boolean hasDetail() {
       return !StringUtils.isNullOrBlank(detail);
+    }
+
+    /**
+     * Collect the further context in expanded form, falling back on the regular detail when the call site supplied only
+     * the one
+     *
+     * @return expanded detail, may be null
+     */
+    public String getExpandedDetail() {
+      return expandedDetail;
+    }
+
+    /**
+     * Verify if further context in expanded form is available
+     *
+     * @return true when expanded detail is present, false otherwise
+     */
+    public boolean hasExpandedDetail() {
+      return !StringUtils.isNullOrBlank(expandedDetail);
     }
   }
 
@@ -139,12 +169,53 @@ public class LogCollator {
      *
      * @param entityId entity the occurrence relates to, may be null
      * @param detail further context, may be null
+     * @param expandedDetail further context in expanded form, null to use the regular detail
      */
-    protected void increment(final String entityId, final String detail) {
+    protected void increment(final String entityId, final String detail, final String expandedDetail) {
       occurrences.increment();
-      if (maxRetained == UNLIMITED_RETENTION || numRetained.getAndIncrement() < maxRetained) {
-        retainedOccurrences.add(new Occurrence(entityId, detail));
+      if (maxRetained == NO_RETENTION) {
+        /* counting only, so do not pay for the retention bookkeeping on an occurrence that is never kept */
+        return;
       }
+      if (maxRetained == UNLIMITED_RETENTION || numRetained.getAndIncrement() < maxRetained) {
+        retainedOccurrences.add(new Occurrence(entityId, detail, expandedDetail));
+      }
+    }
+
+    /**
+     * Record an occurrence without retaining it, keeping the total exact while listing nothing
+     */
+    protected void incrementCountOnly() {
+      occurrences.increment();
+    }
+
+    /**
+     * Verify whether a further occurrence would be retained
+     *
+     * @return true when it would, false otherwise
+     */
+    protected boolean isRetaining() {
+      return maxRetained == UNLIMITED_RETENTION || numRetained.get() < maxRetained;
+    }
+
+    /**
+     * Absorb another template's occurrences, keeping the exact total while retaining as many of the other's retained
+     * occurrences as this template's own limit still permits
+     *
+     * @param other to absorb
+     */
+    protected void absorb(final CollatedTemplate other) {
+      long otherOccurrences = other.getOccurrences();
+      if (maxRetained != NO_RETENTION) {
+        for (var occurrence : other.retainedOccurrences) {
+          if (maxRetained != UNLIMITED_RETENTION && numRetained.getAndIncrement() >= maxRetained) {
+            break;
+          }
+          retainedOccurrences.add(occurrence);
+        }
+      }
+      /* added last so the total is never briefly lower than what has already been retained against it */
+      occurrences.add(otherOccurrences);
     }
 
     /**
@@ -214,7 +285,8 @@ public class LogCollator {
 
   /**
    * Create a collator retaining at most the given number of occurrences per template. Totals remain exact; only the
-   * occurrences available for listing are bounded
+   * occurrences available for listing are bounded. Pass {@link #NO_RETENTION} to count occurrences without retaining
+   * any, for templates expected to fire for a very large number of entities
    *
    * @param maxRetainedOccurrences upper bound on retained occurrences per template
    * @return created collator
@@ -251,11 +323,100 @@ public class LogCollator {
    * @param detail further context, may be null
    */
   public void increment(final String templateId, final String entityId, final String detail) {
+    increment(templateId, entityId, detail, null);
+  }
+
+  /**
+   * Record an occurrence of a condition for a given entity, with further context in both a form suited to a log line
+   * and an expanded form for consumers that list occurrences in full
+   *
+   * @param templateId short readable label identifying the condition
+   * @param entityId entity the occurrence relates to, may be null
+   * @param detail further context, may be null
+   * @param expandedDetail further context in expanded form, null to use the regular detail
+   */
+  public void increment(
+      final String templateId, final String entityId, final String detail, final String expandedDetail) {
     if (StringUtils.isNullOrBlank(templateId)) {
       throw new IllegalArgumentException("template id is required to collate an occurrence");
     }
     templatesById.computeIfAbsent(
-        templateId, id -> new CollatedTemplate(id, maxRetainedOccurrences)).increment(entityId, detail);
+        templateId, id -> new CollatedTemplate(id, maxRetainedOccurrences)).increment(
+        entityId, detail, expandedDetail);
+  }
+
+  /**
+   * Record an occurrence of a condition that is counted but never listed, i.e. one whose individual cases carry no
+   * information worth keeping. Retaining occurrences of such a condition costs memory and displaces the retained
+   * occurrences of conditions that are worth reading
+   *
+   * @param templateId short readable label identifying the condition
+   */
+  public void incrementCountOnly(final String templateId) {
+    if (StringUtils.isNullOrBlank(templateId)) {
+      throw new IllegalArgumentException("template id is required to collate an occurrence");
+    }
+    templatesById.computeIfAbsent(
+        templateId, id -> new CollatedTemplate(id, maxRetainedOccurrences)).incrementCountOnly();
+  }
+
+  /**
+   * Verify whether a further occurrence of a template would still be retained, so that a caller can avoid composing
+   * context that would be discarded on arrival.
+   * <p>
+   * Retention of a template only ever runs out and never reopens, so an occurrence answered with false would not have
+   * been retained by the time it was recorded either
+   * </p>
+   *
+   * @param templateId to verify for
+   * @return true when a further occurrence would be retained, false otherwise
+   */
+  public boolean isRetaining(final String templateId) {
+    if (maxRetainedOccurrences == NO_RETENTION) {
+      return false;
+    }
+    if (maxRetainedOccurrences == UNLIMITED_RETENTION) {
+      return true;
+    }
+    var template = templatesById.get(templateId);
+    return template == null || template.isRetaining();
+  }
+
+  /**
+   * Verify whether a further occurrence of a template would still fall within the sample the log summary shows, so that
+   * a caller can avoid composing context for an occurrence that is counted but never printed.
+   * <p>
+   * The sample only ever fills up, so an occurrence answered with false would not have been shown by the time it was
+   * recorded either
+   * </p>
+   *
+   * @param templateId to verify for
+   * @return true when a further occurrence would be shown, false otherwise
+   */
+  public boolean isWithinLogSample(final String templateId) {
+    if (logSampleSizeOfRetained <= 0) {
+      return false;
+    }
+    var template = templatesById.get(templateId);
+    return template == null || template.getOccurrences() < logSampleSizeOfRetained;
+  }
+
+  /**
+   * Absorb everything another collator recorded, leaving the other untouched.
+   * <p>
+   * Totals are exact afterwards, whereas the retained occurrences are those of this collator followed by as many of
+   * the other's as this collator's own retention limit still permits, so a merge never retains more than a single
+   * collator would have
+   * </p>
+   *
+   * @param other to absorb, ignored when null
+   */
+  public void merge(final LogCollator other) {
+    if (other == null) {
+      return;
+    }
+    other.templatesById.forEach((templateId, otherTemplate) -> templatesById.computeIfAbsent(
+        templateId, id -> new CollatedTemplate(id, maxRetainedOccurrences)).absorb(otherTemplate));
   }
 
   /**
@@ -381,8 +542,9 @@ public class LogCollator {
   }
 
   /**
-   * Create the sample of retained entity ids shown alongside a template's count, listing at most the configured
-   * sample size and marking that more exist where that is the case
+   * Create the sample of retained entities shown alongside a template's count, listing at most the configured sample
+   * size and marking that more exist where that is the case. An entity is accompanied by the context the call site
+   * supplied, so that the line states what kind of case this is rather than only how many there were
    *
    * @param template to create the sample for
    * @return sample to append, empty when there is nothing to show
@@ -392,13 +554,16 @@ public class LogCollator {
       return "";
     }
 
-    var sampleIds = template.getRetainedOccurrences().stream().filter(Occurrence::hasEntityId).map(
-        Occurrence::getEntityId).limit(logSampleSizeOfRetained).collect(Collectors.toList());
-    if (sampleIds.isEmpty()) {
+    var samples = template.getRetainedOccurrences().stream().filter(Occurrence::hasEntityId).limit(
+        logSampleSizeOfRetained).map(
+        occurrence -> occurrence.hasDetail()
+            ? String.format("%s (%s)", occurrence.getEntityId(), occurrence.getDetail())
+            : occurrence.getEntityId()).collect(Collectors.toList());
+    if (samples.isEmpty()) {
       return "";
     }
 
-    var more = template.getOccurrences() > sampleIds.size() ? ", ..." : "";
-    return String.format("   e.g. %s%s", String.join(", ", sampleIds), more);
+    var more = template.getOccurrences() > samples.size() ? ", ..." : "";
+    return String.format("   e.g. %s%s", String.join(", ", samples), more);
   }
 }
