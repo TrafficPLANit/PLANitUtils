@@ -119,6 +119,6 @@ public interface Mode extends ExternalIdAble, ManagedId {
    * @return true if present, false otherwise
    */
   public default boolean containsExternalId(char separator, String externalId){
-    return Arrays.stream(getSplitExternalId(separator)).anyMatch(e -> e.equals(separator));
+    return Arrays.asList(getSplitExternalId(separator)).contains(externalId);
   }
 }

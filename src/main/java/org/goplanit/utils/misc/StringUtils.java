@@ -1,8 +1,7 @@
 package org.goplanit.utils.misc;
 
-import org.apache.commons.lang3.CharSet;
-
 import java.nio.charset.Charset;
+import java.util.regex.Pattern;
 
 /**
  * Some simple string utilities
@@ -12,21 +11,22 @@ import java.nio.charset.Charset;
  */
 public class StringUtils {
 
+  /** precompiled regex pattern to split a string based on encountering a non-alphanumeric character */
+  public static final Pattern SPLIT_BY_NON_ALPHA_NUMERIC = Pattern.compile("[^a-zA-Z0-9]");
+
   /**
    * Create string ot use in String.format of form "0numPadding%d"
    * @param numPadding to apply
    * @return created String
    */
   private static String createPaddingFormatString(int numPadding){
-    var sb = new StringBuilder("%0");
-    sb.append(numPadding);
-    sb.append("d");
-    return sb.toString();
+    return "%0" + numPadding + "d";
   }
 
   /**
-   * A String might have some byte order mark preceding the string (for example InputStreamReader might include this). These are not visible in the string
-   * but do change the underlying bytes compared to a string without this BOM and comparing them will fail despite looking identical.
+   * A String might have some byte order mark preceding the string (for example InputStreamReader might include this).
+   * These are not visible in the string but do change the underlying bytes compared to a string without this BOM and
+   * comparing them will fail despite looking identical.
    * This method will remove the BOM from a copy of this string which is returned.
    *
    * @param value to remove BOM from
@@ -36,13 +36,13 @@ public class StringUtils {
     return value.replace("\uFeFF","");
   }
   
-  /** split string by anything but alpha numeric characters, i.e., a-zA-Z0-9
+  /** split string by anything but alphanumeric characters, i.e., a-zA-Z0-9
    *  
    * @param toSplit string to split
    * @return split string
    */
   public static String[] splitByAnythingExceptAlphaNumeric(String toSplit) {
-    return toSplit.split("[^a-zA-Z0-9]");
+    return SPLIT_BY_NON_ALPHA_NUMERIC.split(toSplit);
   }
 
   /** Verify if null or blank
@@ -51,6 +51,42 @@ public class StringUtils {
    */
   public static boolean isNullOrBlank(String string) {
     return string==null || string.isBlank();
+  }
+
+  /**
+   *  check if the line contains the string when converted to lower case and removing all spaces
+   *
+   * @param checkThisIfIt the string to check and see if it contains the containsThis
+   * @param containsThis the sub string to check for
+   * @return true when it does contain it, false otherwise
+   */
+  public static boolean containsInLowerCaseNoSpaces(String checkThisIfIt, String containsThis) {
+    return checkThisIfIt.replace(" ","").toLowerCase().contains(
+            containsThis.replace(" ","").toLowerCase());
+  }
+
+  /**
+   *  check if the line starts with the string when converted to lower case and removing all spaces
+   *
+   * @param checkThisIfIt the string to check and see if it starts with the startsWithThis
+   * @param startsWithThis the sub string to check for
+   * @return true when it does contain it, false otherwise
+   */
+  public static boolean startsWithInLowerCaseNoSpaces(String checkThisIfIt, String startsWithThis) {
+    return checkThisIfIt.replace(" ","").toLowerCase().startsWith(
+            startsWithThis.replace(" ","").toLowerCase());
+  }
+
+  /**
+   *  check if the line ends with the string when converted to lower case and removing all spaces
+   *
+   * @param checkThisIfIt the string to check and see if it ends with the startsWithThis
+   * @param endsWithThis the sub string to check for
+   * @return true when it does contain it, false otherwise
+   */
+  public static boolean endsWithInLowerCaseNoSpaces(String checkThisIfIt, String endsWithThis) {
+    return checkThisIfIt.replace(" ","").toLowerCase().endsWith(
+            endsWithThis.replace(" ","").toLowerCase());
   }
 
   /** Remove the given string from the beginning of the string if present and return result
@@ -92,15 +128,15 @@ public class StringUtils {
    */
   public static String printBytes(String str, final Charset encoding) {
     byte[] bytes = str.getBytes(encoding);
-    String output = str + "= byte[";
+    StringBuilder output = new StringBuilder(str + "= byte[");
     for (int i = 0; i < bytes.length; i++) {
-      output += Byte.toString(bytes[i]);
+      output.append(bytes[i]);
       if (i < bytes.length - 1) {
-        output += ", ";
+        output.append(", ");
       }
     }
-    output += "]";
-    return output;
+    output.append("]");
+    return output.toString();
   }
 
   /** print chars of the String
@@ -110,14 +146,43 @@ public class StringUtils {
    */
   public static String printChars(String str) {
     char[] chars = str.toCharArray();
-    String output = str + "= char[";
+    StringBuilder output = new StringBuilder(str + "= char[");
     for (int i = 0; i < chars.length; i++) {
-      output += String.valueOf(chars[i]);
+      output.append(chars[i]);
       if (i < chars.length - 1) {
-        output += ", ";
+        output.append(", ");
       }
     }
-    output += "]";
-    return output;
+    output.append("]");
+    return output.toString();
+  }
+
+  /**
+   * Remove all non-alpha numeric characters
+   *
+   * @param theString to apply to
+   * @return adjusted string
+   */
+  public static String removeAllNonAlphaNumeric(String theString) {
+    return theString.replaceAll("[^a-zA-Z0-9]", "");
+  }
+
+  /**
+   * Truncate a string if it exceeds the maximum specified length. If it does truncate and append "...(truncated)"
+   * as message
+   *
+   * @param theString the string to check
+   * @param maxLength final max length if exceeding the length (including message)
+   * @return truncated string
+   */
+  public static String truncateToWithMessage(String theString, int maxLength){
+    String suffix = "... (truncated)";
+
+    if (theString == null || theString.length() <= maxLength) {
+      return theString;
+    }
+
+    int end = Math.max(0, maxLength - suffix.length());
+    return theString.substring(0, end) + suffix;
   }
 }

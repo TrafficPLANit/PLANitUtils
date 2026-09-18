@@ -1,9 +1,13 @@
 package org.goplanit.utils.containers;
 
 import org.goplanit.utils.misc.Pair;
+import org.goplanit.utils.output.OutputUtils;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 /**
  * Utilities for lists
@@ -62,4 +66,39 @@ public class ListUtils {
     return permutations;
   }
 
+  /**
+   * Transpose the given list of lists, e.g., [[1,2,3,4],["a","b","c","d"]] becomes [[1,"a"],[2,"b"],[3,"c"],[4,"d"]]
+   *
+   * @param <V> value type of list
+   * @param <R> mapped return value of transposed list
+   * @param original the original list of lists
+   * @param mapEachValue apply map function to each value while transposing
+   * @return transpose the transposed list of lists
+   */
+  public static <V,R> List<? extends List<R>> transpose(
+          List<? extends List<V>> original, Function<V,R> mapEachValue) {
+    return IntStream.range(0,original.get(0).size()).mapToObj(
+            // for each col vector
+            rowIndex -> original.stream().map(
+                    // apply mapping to each value
+                    originalCol -> originalCol.get(rowIndex)).map(mapEachValue).collect(Collectors.toList())
+            // add all rows to list
+    ).collect(Collectors.toList());
+  }
+
+  /**
+   * Transpose the given list of lists, e.g., [[1,2,3,4],["a","b","c","d"]] becomes [[1,"a"],[2,"b"],[3,"c"],[4,"d"]]
+   *
+   * @param original the original list of lists
+   * @return transpose the transposed list of lists
+   */
+  public static List<? extends List<?>> transpose(List<? extends List<?>> original) {
+    return IntStream.range(0,original.get(0).size()).mapToObj(
+            // for each col vector
+            rowIndex -> original.stream().map(
+                    // format value and collect single row
+                    originalCol -> originalCol.get(rowIndex)).collect(Collectors.toList())
+            // add all rows to list
+    ).collect(Collectors.toList());
+  }
 }

@@ -11,17 +11,17 @@ public interface ConjugateDirectedVertexFactory extends GraphEntityFactory<Conju
 
   /** Create a new conjugate directed vertex (without registering on this class)
    * 
-   * @param originalEdge this directed vertex represents in the conjugate graph
+   * @param original this directed vertex represents in the conjugate graph
    * @return created conjugate vertex
    */
-  public abstract ConjugateDirectedVertex createNew(final DirectedEdge originalEdge);
+  public abstract ConjugateDirectedVertex createNew(final EdgeSegment original);
   
   /**
    * Create and register new conjugate directed vertex
    *
-   * @param originalEdge this directed vertex represents in the conjugate graph
+   * @param original this directed vertex represents in the conjugate graph
    * @return new conjugate directed vertex created and registered
    */
-  public abstract ConjugateDirectedVertex registerNew(final DirectedEdge originalEdge); 
+  public abstract ConjugateDirectedVertex registerNew(final EdgeSegment original);
   
 }

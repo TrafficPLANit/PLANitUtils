@@ -4,6 +4,8 @@ import org.goplanit.utils.exceptions.PlanItRunTimeException;
 import org.goplanit.utils.misc.CharacterUtils;
 import org.goplanit.utils.misc.StringUtils;
 
+import java.util.function.Function;
+
 /**
  * A class implementing this interface signals that it is external id-able. Anything that has an external id by definition should
  * also be Idable as well. Unlike an id, the external id is by definition modifiable.
@@ -16,6 +18,48 @@ import org.goplanit.utils.misc.StringUtils;
  *
  */
 public interface ExternalIdAble extends IdAble {
+
+  /**
+   * create a function that takes a a class that extends {@link ExternalIdAble} and generate the appropriate id based on the user configuration
+   *
+   * @param <T>      ExternalIdable
+   * @param clazz    to use
+   * @param idMapper the type of mapping function to create
+   * @return function that generates node id's for MATSIM node output
+   *
+   */
+  public static <T extends ExternalIdAble> Function<T, String> createIdMappingFunction(
+      Class<T> clazz, final IdMapperType idMapper) {
+    switch (idMapper) {
+      case ID:
+        return (instance) -> instance!=null ? Long.toString(instance.getId()) : null;
+      case EXTERNAL_ID:
+        return (instance) -> instance!=null ? instance.getExternalId() : null;
+      case XML:
+        return (instance) -> instance!=null ? instance.getXmlId() : null;
+      default:
+        throw new PlanItRunTimeException(String.format("unknown id mapping type found for %s %s",
+            clazz.getName(), idMapper));
+    }
+  }
+
+  /** get id based on the id mapping type (ID, XML_ID, EXTERNAL_ID)
+   *
+   * @param idMappingType type of id mapping
+   * @return id (in string format)
+   */
+  public default String getIdAsString(IdMapperType idMappingType){
+    switch (idMappingType) {
+      case ID:
+        return String.valueOf(getId());
+      case EXTERNAL_ID:
+        return getExternalId();
+      case XML:
+        return getXmlId();
+      default:
+        throw new PlanItRunTimeException(String.format("Unknown id mapping type %s found", idMappingType));
+    }
+  }
     
   /** get external id of the entity
    * @return external id
@@ -120,7 +164,8 @@ public interface ExternalIdAble extends IdAble {
    * @return string representation
    */
   public default String getIdsAsString(){
-    return String.format("id: %d, xmlId: %s, extId: %s", getId(), getXmlId(), getExternalId());
+    return String.format("id: %d, xmlId: %s, extId: %s",
+        getId(), hasXmlId() ? getXmlId() : "-", hasExternalId() ? getExternalId() : "-");
   }
 
 }

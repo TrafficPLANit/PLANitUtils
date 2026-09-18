@@ -16,6 +16,7 @@ public class DirectedEdgeUtils {
    * @param edgeSegmentToEdgeSegmentMapping to use should contain original edgeSegment and then the value is the new edgeSegment to replace it
    * @param removeMissingMappings when true if there is no mapping, the edgeSegment on the directed edge is nullified, otherwise it is left in-tact
    */
+  @SuppressWarnings("unchecked")
   public static <E extends DirectedEdge, ES extends EdgeSegment> void updateDirectedEdgeEdgeSegments(
       Iterable<E> edges, Function<ES, ES> edgeSegmentToEdgeSegmentMapping, boolean removeMissingMappings) {
 
