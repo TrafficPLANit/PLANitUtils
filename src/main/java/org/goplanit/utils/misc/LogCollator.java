@@ -54,6 +54,9 @@ public class LogCollator {
     /** entity the occurrence relates to, may be null when the condition is not entity specific */
     private final String entityId;
 
+    /** subtype of the entity the occurrence relates to, may be null when the entity is not subdivided */
+    private final String entitySubType;
+
     /** further context, may be null */
     private final String detail;
 
@@ -67,11 +70,14 @@ public class LogCollator {
      * Constructor
      *
      * @param entityId entity the occurrence relates to, may be null
+     * @param entitySubType subtype of the entity, may be null
      * @param detail further context, may be null
      * @param expandedDetail further context in expanded form, null to use the regular detail
      */
-    protected Occurrence(final String entityId, final String detail, final String expandedDetail) {
+    protected Occurrence(
+        final String entityId, final String entitySubType, final String detail, final String expandedDetail) {
       this.entityId = entityId;
+      this.entitySubType = entitySubType;
       this.detail = detail;
       this.expandedDetail = expandedDetail != null ? expandedDetail : detail;
     }
@@ -92,6 +98,24 @@ public class LogCollator {
      */
     public boolean hasEntityId() {
       return !StringUtils.isNullOrBlank(entityId);
+    }
+
+    /**
+     * Collect the subtype of the entity the occurrence relates to
+     *
+     * @return entity subtype, may be null
+     */
+    public String getEntitySubType() {
+      return entitySubType;
+    }
+
+    /**
+     * Verify if a subtype of the entity is identified
+     *
+     * @return true when an entity subtype is present, false otherwise
+     */
+    public boolean hasEntitySubType() {
+      return !StringUtils.isNullOrBlank(entitySubType);
     }
 
     /**
@@ -168,17 +192,19 @@ public class LogCollator {
      * Record an occurrence, retaining it when the retention limit allows
      *
      * @param entityId entity the occurrence relates to, may be null
+     * @param entitySubType subtype of the entity, may be null
      * @param detail further context, may be null
      * @param expandedDetail further context in expanded form, null to use the regular detail
      */
-    protected void increment(final String entityId, final String detail, final String expandedDetail) {
+    protected void increment(
+        final String entityId, final String entitySubType, final String detail, final String expandedDetail) {
       occurrences.increment();
       if (maxRetained == NO_RETENTION) {
         /* counting only, so do not pay for the retention bookkeeping on an occurrence that is never kept */
         return;
       }
       if (maxRetained == UNLIMITED_RETENTION || numRetained.getAndIncrement() < maxRetained) {
-        retainedOccurrences.add(new Occurrence(entityId, detail, expandedDetail));
+        retainedOccurrences.add(new Occurrence(entityId, entitySubType, detail, expandedDetail));
       }
     }
 
@@ -337,12 +363,29 @@ public class LogCollator {
    */
   public void increment(
       final String templateId, final String entityId, final String detail, final String expandedDetail) {
+    increment(templateId, entityId, null, detail, expandedDetail);
+  }
+
+  /**
+   * Record an occurrence of a condition for a given entity, counted within a subtype of that entity so occurrences can
+   * be broken down by it, with further context in both a form suited to a log line and an expanded form for consumers
+   * that list occurrences in full
+   *
+   * @param templateId short readable label identifying the condition
+   * @param entityId entity the occurrence relates to, may be null
+   * @param entitySubType subtype of the entity, may be null
+   * @param detail further context, may be null
+   * @param expandedDetail further context in expanded form, null to use the regular detail
+   */
+  public void increment(
+      final String templateId, final String entityId, final String entitySubType, final String detail,
+      final String expandedDetail) {
     if (StringUtils.isNullOrBlank(templateId)) {
       throw new IllegalArgumentException("template id is required to collate an occurrence");
     }
     templatesById.computeIfAbsent(
         templateId, id -> new CollatedTemplate(id, maxRetainedOccurrences)).increment(
-        entityId, detail, expandedDetail);
+        entityId, entitySubType, detail, expandedDetail);
   }
 
   /**

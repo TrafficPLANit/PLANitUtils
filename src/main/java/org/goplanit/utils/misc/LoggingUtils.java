@@ -31,10 +31,23 @@ public class LoggingUtils {
    * @return combined string
    */
   public static String countWithPercentage(long count, long total) {
+    return countWithPercentage(count, total, "total");
+  }
+
+  /**
+   * Create a count followed by its share of the given total, naming what that total is so a share is read against the
+   * population it was actually measured against
+   *
+   * @param count to report
+   * @param total the count is a share of
+   * @param totalLabel naming what the total holds
+   * @return created string, the count on its own when there is no total to divide by
+   */
+  public static String countWithPercentage(long count, long total, String totalLabel) {
     if (total <= 0) {
       return String.valueOf(count);
     }
-    return String.format("%d (%.1f%% of total)", count, (100.0 * count) / total);
+    return String.format("%d (%.2f%% of %s)", count, (100.0 * count) / total, totalLabel);
   }
   
   /**
