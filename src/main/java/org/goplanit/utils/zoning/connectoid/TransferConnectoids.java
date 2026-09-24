@@ -47,7 +47,7 @@ public interface TransferConnectoids extends Connectoids<TransferConnectoid> {
   /**
    * For a given physical network layers container that has a relation with these directed connectoids, index all
    * connectoids by a custom key on the layers they connect to. If a connectoid has access to multiple layers
-   * it will occur multiple times in the map
+   * it will occur multiple times in the map, once per layer, however many of its access link segments reside in each
    *
    * @param <L> type of the layer
    * @param <K> type of comparable
@@ -63,7 +63,7 @@ public interface TransferConnectoids extends Connectoids<TransferConnectoid> {
     for(var dirConnectoid : this){
       var layerOptions = dirConnectoid.getExplicitAccessLinkSegmentsStream().map(ls ->
               IterableUtils.asStream(networkLayers).filter(l -> l.getLinkSegments().containsKey(ls.getId())).
-                      findFirst()).filter(Optional::isPresent).map(Optional::get).collect(Collectors.toList());
+                      findFirst()).filter(Optional::isPresent).map(Optional::get).distinct().collect(Collectors.toList());
       if(layerOptions.isEmpty()){
         continue;
       }
