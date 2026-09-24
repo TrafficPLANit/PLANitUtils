@@ -2,6 +2,7 @@ package org.goplanit.utils.service.routed.modifier;
 
 import org.goplanit.utils.event.EventListener;
 import org.goplanit.utils.mode.Mode;
+import org.goplanit.utils.modifier.LoggableModifier;
 import org.goplanit.utils.network.layer.modifier.ServiceNetworkLayerModifier;
 import org.goplanit.utils.zoning.modifier.event.ZoningModifierEventProducer;
 
@@ -10,7 +11,7 @@ import java.util.List;
 /**
  * Modification utilities for a routed services layer that require complex changes to the underlying containers
  */
-public interface RoutedServicesLayerModifier extends RoutedServicesModifierEventProducer {
+public interface RoutedServicesLayerModifier extends RoutedServicesModifierEventProducer, LoggableModifier {
 
   /**
    * Remove all RoutedServicesByMode instances from the layer in case they no longer have any services  associated with them

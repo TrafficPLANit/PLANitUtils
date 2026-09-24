@@ -1,5 +1,6 @@
 package org.goplanit.utils.zoning.modifier;
 
+import org.goplanit.utils.modifier.LoggableModifier;
 import org.goplanit.utils.network.layers.ServiceNetworkLayers;
 import org.goplanit.utils.zoning.modifier.event.ZoningModifierEventProducer;
 
@@ -9,7 +10,7 @@ import org.goplanit.utils.zoning.modifier.event.ZoningModifierEventProducer;
  * @author markr
  *
  */
-public interface ZoningModifier extends ZoningModifierEventProducer{
+public interface ZoningModifier extends ZoningModifierEventProducer, LoggableModifier {
 
   /**
    * recreate all internal ids of all connectoids both od and transfer connectoids
