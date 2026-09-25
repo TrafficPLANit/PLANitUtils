@@ -18,7 +18,7 @@ public class EventType {
   private final String name;
   
   /** track s all event types */
-  private static final Set<EventType> eventTypes = new HashSet<EventType>();
+  private static final Set<EventType> eventTypes = new HashSet<>();
   
   /** Register event type
    * 

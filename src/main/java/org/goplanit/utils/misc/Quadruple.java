@@ -87,10 +87,14 @@ public class Quadruple<A, B, C, D> {
   public boolean equals(Object other) {
     if (other instanceof Quadruple) {
       @SuppressWarnings("rawtypes") Quadruple otherQ = (Quadruple) other;
-      return ((this.first == otherQ.first || (this.first != null && otherQ.first != null && this.first.equals(otherQ.first)))
-          && (this.second == otherQ.second || (this.second != null && otherQ.second != null && this.second.equals(otherQ.second)))
-          && (this.third == otherQ.third || (this.third != null && otherQ.third != null && this.third.equals(otherQ.third)))
-          && (this.fourth == otherQ.fourth || (this.fourth != null && otherQ.fourth != null && this.fourth.equals(otherQ.fourth))));
+      return ((this.first == otherQ.first ||
+              (this.first != null && otherQ.first != null && this.first.equals(otherQ.first)))
+          && (this.second == otherQ.second ||
+              (this.second != null && otherQ.second != null && this.second.equals(otherQ.second)))
+          && (this.third == otherQ.third ||
+              (this.third != null && otherQ.third != null && this.third.equals(otherQ.third)))
+          && (this.fourth == otherQ.fourth ||
+              (this.fourth != null && otherQ.fourth != null && this.fourth.equals(otherQ.fourth))));
     }
     return false;
   }

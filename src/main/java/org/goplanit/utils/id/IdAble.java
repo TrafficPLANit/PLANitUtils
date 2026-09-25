@@ -35,7 +35,8 @@ public interface IdAble extends Comparable<IdAble> {
 
   /**
    * An id entity should always support a deep copy, i.e., all "owned" members will be deep copied when a clone
-   * of this instance is created via this call. To be used with caution if not called by managed id container related code
+   * of this instance is created via this call. To be used with caution if not called by managed id container
+   * related code
    *
    * @return deep copy of entity
    */
@@ -58,7 +59,7 @@ public interface IdAble extends Comparable<IdAble> {
     }
     
     if(o != null) {
-      return Long.valueOf(this.getId()).equals(Long.valueOf(((IdAble)o).getId()));
+      return this.getId() == ((IdAble) o).getId();
     }
     
     return false;
@@ -72,7 +73,25 @@ public interface IdAble extends Comparable<IdAble> {
    */
   public default int idHashCode() {
     return Long.valueOf(this.getId()).hashCode();
-  }  
+  }
+
+  /**
+   * Generate a well-distributed, reproducible random seed based on this entity's ID.
+   * Uses the 64-bit finalizer avalanche function (fmix64) from MurmurHash3
+   * to eliminate sequential ID patterns and prevent pseudo-random correlation.
+   *
+   * @return a pseudo-random seed unique to this entity
+   * @see <a href="https://github.com/aappleby/smhasher">MurmurHash3 (SMHasher)</a>
+   */
+  public default long generateIdBasedRandomSeed() {
+    long id = getId();
+    id ^= id >>> 33;
+    id *= 0xff51afd7ed558ccdL;
+    id ^= id >>> 33;
+    id *= 0xc4ceb9fe1a85ec53L;
+    id ^= id >>> 33;
+    return id;
+  }
   
   /**
    * Compare based on id

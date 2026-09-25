@@ -37,6 +37,14 @@ public interface Zone extends ExternalIdAble, ManagedId {
    * @return property itself
    */
   public abstract Object getInputProperty(final String key);
+
+  /**
+   * set the centroid for this zone. It is assumed the centroid is correctly configured to be compatible
+   * with this zoneImpl
+   *
+   * @param centroid to set
+   */
+  public void setCentroid(Centroid centroid);
   
   /**
    * Returns the centroid of this zone
@@ -60,7 +68,8 @@ public interface Zone extends ExternalIdAble, ManagedId {
   /** Collect the geometry of this zone and allow it to return its internal centroid location in case it has no
    * geometry of its own by means of provided flag.
    *
-   * @param considerCentroid when false centroid geometry is ignored, when true it is returned in case no explicit geoemetry is set
+   * @param considerCentroid when false centroid geometry is ignored, when true it is returned in case no explicit
+   *                         geometry is set
    * @return geometry of the zone
    */
   public default Geometry getGeometry(boolean considerCentroid){
@@ -99,7 +108,7 @@ public interface Zone extends ExternalIdAble, ManagedId {
    * {@inheritDoc}
    */
   @Override
-  public default Class<Zone> getIdClass() {
+  public default Class<? extends Zone> getIdClass() {
     return ZONE_ID_CLASS;
   }
   
@@ -146,7 +155,8 @@ public interface Zone extends ExternalIdAble, ManagedId {
     }else if(hasCentroid() && getCentroid().hasPosition()) {
       return getCentroid().getPosition().getEnvelopeInternal();
     }else {
-      LOGGER.warning(String.format("zone (id:%s) has no valid geometry to collect envelope (bounding box) for",getXmlId()));
+      LOGGER.warning(String.format("zone (id:%s) has no valid geometry to collect envelope (bounding box) for",
+          getXmlId()));
     }
     return null;    
   }

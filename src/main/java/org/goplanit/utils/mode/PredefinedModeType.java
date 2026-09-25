@@ -3,11 +3,14 @@ package org.goplanit.utils.mode;
 import java.util.EnumSet;
 
 /**
- * While PLANit allows the user to come up with its own modes. It does suggest a number of predefined modes to use. This is especially useful to get started quickly or when one
- * wants to use the PLANit memory model to convert networks of one type to another with PLANit as the intermediary memory model, in which case some kind of mapping between known
- * modes is required.
- * 
- * When a custom mode is used, i.e., the mode factory is not used to create one of the defaults, the type of the mode is automatically set to CUSTOM
+ * While PLANit allows the user to come up with its own modes. It does suggest a number of predefined modes to use.
+ * This is especially useful to get started quickly or when one wants to use the PLANit memory model to convert
+ * networks of one type to another with PLANit as the intermediary memory model, in which case some kind of mapping
+ * between known modes is required.
+ * <p>
+ * When a custom mode is used, i.e., the mode factory is not used to create one of the defaults, the type of the mode
+ * is automatically set to CUSTOM
+ * </p>
  * 
  * @author markr
  *
@@ -19,7 +22,7 @@ public enum PredefinedModeType {
   CAR("car"),
   CAR_SHARE("car_share"),
   CAR_HIGH_OCCUPANCY("car_hov"),
-  BUS("bus"), 
+  BUS("bus"),
   PEDESTRIAN("pedestrian"),
   MOTOR_BIKE("motor_bike"),
   SUBWAY("subway"),
@@ -29,7 +32,10 @@ public enum PredefinedModeType {
   FERRY("ferry"),
   GOODS_VEHICLE("goods"),            /* non-articulated goods vehicle, up to 3.5 tonnes */
   HEAVY_GOODS_VEHICLE("hgv"),        /* non-articulated goods vehicle, over to 3.5 tonnes */
-  LARGE_HEAVY_GOODS_VEHICLE("lhgv"); /* articulated large truck */  
+  LARGE_HEAVY_GOODS_VEHICLE("lhgv"), /* articulated large truck */
+  TAXI("taxi"),                       /* non-shared payment taxi (likes) */
+  RIDE_SHARE("ride_share");           /* shared payment ride likes (uber, didi, etc.)
+
   
   /** string representation of predefined mode type */
   private final String value;
@@ -41,6 +47,10 @@ public enum PredefinedModeType {
     value = v;
   }
 
+  /**
+   * Collect string value
+   * @return value
+   */
   public final String value() {
     return value;
   }
@@ -80,6 +90,10 @@ public enum PredefinedModeType {
       return LARGE_HEAVY_GOODS_VEHICLE;
     }else if(FERRY.value().equals(predefinedModeTypeValue)) {
       return FERRY;
+    }else if(TAXI.value().equals(predefinedModeTypeValue)) {
+      return TAXI;
+    }else if(RIDE_SHARE.value().equals(predefinedModeTypeValue)) {
+      return RIDE_SHARE;
     }
     else {
       return CUSTOM;
@@ -93,8 +107,8 @@ public enum PredefinedModeType {
    */
   public static EnumSet<PredefinedModeType> getPredefinedModeTypesWithout(PredefinedModeType... excludedModeTypes) {
     EnumSet<PredefinedModeType> allPredefinedModeTypes = getPredefinedModeTypes();
-    for(int index=0; index< excludedModeTypes.length; ++index) {
-      allPredefinedModeTypes.remove(excludedModeTypes[index]);
+    for (PredefinedModeType excludedModeType : excludedModeTypes) {
+      allPredefinedModeTypes.remove(excludedModeType);
     }
     return allPredefinedModeTypes;
   }
@@ -104,7 +118,15 @@ public enum PredefinedModeType {
    * @return predefined mode types
    */
   public static EnumSet<PredefinedModeType> getPredefinedModeTypes() {
-    EnumSet<PredefinedModeType> allPredefinedModeTypes = EnumSet.allOf(PredefinedModeType.class);
-    return allPredefinedModeTypes;
-  }  
+    return EnumSet.allOf(PredefinedModeType.class);
+  }
+
+  /**
+   * pedestrian and bicycle are considered active modes
+   *
+   * @return true when active
+   */
+  public boolean isActiveModeType() {
+    return this.equals( PredefinedModeType.BICYCLE) || this.equals( PredefinedModeType.PEDESTRIAN);
+  }
 }

@@ -10,7 +10,7 @@ import java.util.Deque;
  * @author markr
  *
  */
-public interface ContainerisedDirectedPathFactory extends ManagedDirectedPathFactory{
+public interface ContainerisedDirectedPathFactory extends ManagedDirectedPathFactory<ManagedDirectedPath>{
 
   /**
    * Create new path

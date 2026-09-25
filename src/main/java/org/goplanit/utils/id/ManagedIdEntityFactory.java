@@ -12,8 +12,8 @@ package org.goplanit.utils.id;
 public interface ManagedIdEntityFactory<E extends ManagedId> {
 
   /**
-   * Each factory needs a token to allow all underlying factory methods to generated ids uniquely tied to the group token the entities 
-   * belong to
+   * Each factory needs a token to allow all underlying factory methods to generated ids uniquely tied to the
+   * group token the entities belong to
    * 
    * @param tokenId, contiguous id generation within this group of entity instances created with the factory methods
    */

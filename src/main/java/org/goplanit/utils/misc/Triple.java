@@ -57,8 +57,36 @@ public class Triple<A, B, C> {
    */
   public static <A,B,C> Triple<A, B, C> of(A valueA, B valueB, C valueC) {
     return new Triple<>(valueA, valueB, valueC);
-  }  
-  
+  }
+
+  /** Factory method
+   *
+   * @param <A> type of valueA
+   * @param <B> type of valueB
+   * @param <C> type of valueC
+   *
+   * @param valueAb first and second
+   * @param valueC third
+   * @return new triple
+   */
+  public static <A,B,C> Triple<A, B, C> of(Pair<A,B> valueAb, C valueC) {
+    return new Triple<>(valueAb.first(), valueAb.second(), valueC);
+  }
+
+  /** Factory method
+   *
+   * @param <A> type of valueA
+   * @param <B> type of valueB
+   * @param <C> type of valueC
+   *
+   * @param valueA first
+   * @param valueBc second and third
+   * @return new triple
+   */
+  public static <A,B,C> Triple<A, B, C> of(A valueA, Pair<B,C> valueBc) {
+    return new Triple<>(valueA, valueBc.first(), valueBc.second());
+  }
+
 
   /**
    * @see Object#hashCode()
@@ -79,9 +107,12 @@ public class Triple<A, B, C> {
     if (other instanceof Triple) {
       @SuppressWarnings("rawtypes") Triple otherPair = (Triple) other;
       return (
-              (this.first == otherPair.first || (this.first != null && otherPair.first != null && this.first.equals(otherPair.first))) &&
-                      (this.second == otherPair.second || (this.second != null && otherPair.second != null && this.second.equals(otherPair.second))) &&
-                      (this.third == otherPair.third || (this.third != null && otherPair.third != null && this.third.equals(otherPair.third)))
+              (this.first == otherPair.first ||
+              (this.first != null && otherPair.first != null && this.first.equals(otherPair.first))) &&
+              (this.second == otherPair.second ||
+                      (this.second != null && otherPair.second != null && this.second.equals(otherPair.second))) &&
+              (this.third == otherPair.third ||
+                      (this.third != null && otherPair.third != null && this.third.equals(otherPair.third)))
       );
     }
     return false;
@@ -217,5 +248,17 @@ public class Triple<A, B, C> {
    */
   public boolean allNull() {
     return !firstNotNull() && !secondNotNull() && !thirdNotNull();
+  }
+
+  public Pair<A,B> asPairFirstSecond() {
+    return Pair.of(first, second);
+  }
+
+  public Pair<B,C> asPairSecondThird() {
+    return Pair.of(second, third);
+  }
+
+  public Pair<A,C> asPairFirstThird() {
+    return Pair.of(first, third);
   }
 }

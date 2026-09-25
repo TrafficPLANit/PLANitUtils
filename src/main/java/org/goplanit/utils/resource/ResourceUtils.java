@@ -88,7 +88,8 @@ public class ResourceUtils {
      * there is little benefit in using the class loader, it is simply more likely to fail, so we use the class instead */
     InputStream inputStream = ResourceUtils.class.getResourceAsStream(resourceLocation);    
     if(inputStream == null) {
-      LOGGER.warning(String.format("Unable to create input stream for resource location %s", resourceLocation));  
+      LOGGER.warning(String.format("Unable to create input stream for resource location %s",
+          resourceLocation));
     }
     return inputStream;
   }
@@ -125,21 +126,22 @@ public class ResourceUtils {
   public static InputStream getResourceAsInputStream(final URI uri) {
     try {
       
-      /* we must convert the universal URI back to a local string that we know we can use to extract an input stream. This is more complicated than it 
-       * seems, since depending on whether or not we run within the IDE, externally, or are invoked by a third party process, both the URI and the context
-       * i.e. current working dir differ and in the end we only want a relative location to the root directory of this process for this to work properly
-       * So:
-       * 1) IDE: all local files relative to current working dir of the project --> 
-       *          current working dir can be used to create relative path and use file stream to parse as it is a regular file
-       * 2) RUNNING JAR IN SAME DIR --> 
-       *          current working dir is jar dir so can be used to create relative path, but files are within jar so cannot create file input stream (they are in jar file system, not default file system and therefore are
-       *          not considered a regular file in Java, so FileInputStream does not work, use class loader stream instead
-       * 3) RUNNING JAR from other dir -->
-       *          current working dir is NOT jar dir, create relative path by first finding jar URI and then relative against that instead, also use class loader stream
-       */
+      /* we must convert the universal URI back to a local string that we know we can use to extract an input stream.
+      This is more complicated than it seems, since depending on whether or not we run within the IDE, externally, or
+      are invoked by a third party process, both the URI and the context i.e. current working dir differ and in the
+      end we only want a relative location to the root directory of this process for this to work properly
+      So:
+      1) IDE: all local files relative to current working dir of the project -->
+               current working dir can be used to create relative path and use file stream to parse as it is a regular file
+      2) RUNNING JAR IN SAME DIR -->
+                current working dir is jar dir so can be used to create relative path, but files are within jar so cannot create file input stream (they are in jar file system, not default file system and therefore are
+                not considered a regular file in Java, so FileInputStream does not work, use class loader stream instead
+       3) RUNNING JAR from other dir -->
+                current working dir is NOT jar dir, create relative path by first finding jar URI and then relative against that instead, also use class loader stream
+      */
       URI relativeResourceUri = UriUtils.asRelativeUri(uri);      
         
-      /* depending on whether or not location is in a jar we create the input reader differently */
+      /* depending on whether location is in a jar we create the input reader differently */
       if(UriUtils.isInJar(uri)) {
         /* input stream */
         return getResourceAsStream(relativeResourceUri.toString()/*"/logging.properties"*/);

@@ -18,7 +18,8 @@ public class ServiceLegSegmentUtils {
    * @param serviceNetworkLayer to check against
    * @return true when mapped service network references exist and are valid, false otherwise
    */
-  public static boolean isMappedToServiceNetwork(ServiceLegSegment serviceLegSegment, ServiceNetworkLayer serviceNetworkLayer) {
+  public static boolean isMappedToServiceNetwork(
+          ServiceLegSegment serviceLegSegment, ServiceNetworkLayer serviceNetworkLayer) {
     return  serviceNetworkLayer.getLegSegments().hasServiceLegSegment(serviceLegSegment)
             &&
             serviceLegSegment.hasParent()

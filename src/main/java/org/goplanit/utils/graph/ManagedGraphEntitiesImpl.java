@@ -1,13 +1,8 @@
 package org.goplanit.utils.graph;
 
-import org.goplanit.utils.id.IdGenerator;
 import org.goplanit.utils.id.ManagedId;
-import org.goplanit.utils.id.ManagedIdEntities;
 import org.goplanit.utils.id.ManagedIdEntitiesImpl;
-import org.goplanit.utils.wrapper.LongMapWrapperImpl;
 
-import java.util.Map;
-import java.util.TreeMap;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
 
@@ -18,7 +13,8 @@ import java.util.function.Function;
  *
  * @param <E> type of graph entity and managed id entity
  */
-public abstract class ManagedGraphEntitiesImpl<E extends GraphEntity & ManagedId> extends ManagedIdEntitiesImpl<E> implements ManagedGraphEntities<E> {
+public abstract class ManagedGraphEntitiesImpl<E extends GraphEntity & ManagedId>
+        extends ManagedIdEntitiesImpl<E> implements ManagedGraphEntities<E> {
 
   /**
    * Constructor
@@ -27,7 +23,8 @@ public abstract class ManagedGraphEntitiesImpl<E extends GraphEntity & ManagedId
    * @param managedIdClass should reflect the class signature used for generating the managed id of this class when creating it via the factory
    * of this container
    */
-  protected ManagedGraphEntitiesImpl(final Function<E, Long> valueToKey, final Class<? extends ManagedId> managedIdClass) {
+  protected ManagedGraphEntitiesImpl(
+          final Function<E, Long> valueToKey, final Class<? extends ManagedId> managedIdClass) {
     super(valueToKey, managedIdClass);
   }
 
