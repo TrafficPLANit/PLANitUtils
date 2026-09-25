@@ -42,8 +42,8 @@ public interface GraphModifierEventProducer extends EventProducer{
   public abstract void removeListener(GraphModifierListener listener);   
   
   /**
-   * Remove all registered listeners
+   * Remove all registered listeners, apart from those internal to the owner of the producer
    */
-  public abstract void removeAllListeners();    
+  public abstract void removeAllNonInternalListeners();    
   
 }

@@ -46,6 +46,16 @@ public interface DirectedGraphModifier<V extends DirectedVertex, E extends Direc
   public abstract void removeEdgeSegment(ES edgeSegment);
 
   /**
+   * Remove an edge from the graph. When its edge segments are removed as well, this is done through
+   * {@link #removeEdgeSegment(EdgeSegment)} so each fires its own removal event. Otherwise the edge segments are left
+   * untouched, still registered and attached to the edge, for the caller to remove
+   *
+   * @param edge to remove
+   * @param removeEdgeSegments when true remove its edge segments as well, when false leave them untouched
+   */
+  public abstract void removeEdge(E edge, boolean removeEdgeSegments);
+
+  /**
    * Remove a movement by removing it from the graph. Any registered events
    * for movement removal will be triggered.No attached vertices, edges, or segments will be removed
    *

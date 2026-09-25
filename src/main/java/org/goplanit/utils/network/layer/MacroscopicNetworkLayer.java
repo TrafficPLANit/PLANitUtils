@@ -3,8 +3,10 @@ package org.goplanit.utils.network.layer;
 import org.goplanit.utils.graph.directed.BannedMovements;
 import org.goplanit.utils.mode.Mode;
 import org.goplanit.utils.network.layer.macroscopic.*;
+import org.goplanit.utils.network.layer.macroscopic.intersection.Intersections;
 import org.goplanit.utils.network.layer.physical.Node;
 import org.goplanit.utils.network.layer.physical.Nodes;
+import org.goplanit.utils.network.layer.modifier.MacroscopicNetworkLayerModifier;
 import org.goplanit.utils.network.layer.physical.UntypedPhysicalLayer;
 import org.goplanit.utils.network.layers.ConjugateMacroscopicNetworkLayerFactory;
 import org.goplanit.utils.network.virtual.ConjugateVirtualNetworkLayer;
@@ -53,11 +55,43 @@ public interface MacroscopicNetworkLayer extends UntypedPhysicalLayer<Node, Macr
   public abstract Nodes getNodes();
 
   /**
+   * {@inheritDoc}
+   */
+  @Override
+  public abstract MacroscopicNetworkLayerModifier getLayerModifier();
+
+  /**
    * Provide access to registered macroscopic link segment types used across all macroscopic link segments
    * 
    * @return link segment types container class
    */
   public abstract MacroscopicLinkSegmentTypes getLinkSegmentTypes();
+
+  /**
+   * Provide access to the intersections of this layer
+   *
+   * @return intersections container
+   */
+  public abstract Intersections getIntersections();
+
+  /**
+   * Verify if this layer has any intersections
+   *
+   * @return true when it has at least one intersection, false otherwise
+   */
+  public default boolean hasIntersections() {
+    return getIntersections() != null && !getIntersections().isEmpty();
+  }
+
+  /**
+   * Verify if the node is a member of a registered signalised intersection of this layer
+   *
+   * @param node to check
+   * @return true when signalised, false otherwise
+   */
+  public default boolean isSignalised(Node node) {
+    return getIntersections().isSignalised(node);
+  }
 
   /**
    * Convenience method to determine the maximum speed limit (km/h) across the layer for a given mode

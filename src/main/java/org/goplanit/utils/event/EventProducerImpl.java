@@ -27,6 +27,10 @@ public abstract class EventProducerImpl{
   
   /** The collection of interested listeners by event and priority */
   protected Map<EventType, Map<EventListenerPriority, List<EventListener>>> listeners;
+
+  /** listeners internal to the owner of this producer by event type, in order of registration; they receive each
+   * event before the other listeners and are not removed with them */
+  private final Map<EventType, List<EventListener>> internalListeners = new HashMap<>();
   
   /** Add a listener for one or more event types (collected from listener's known supported types) that
    * are presumably triggered by this producer
@@ -85,7 +89,24 @@ public abstract class EventProducerImpl{
               "by implementing hasKnownSupportedEventTypes() on listener");
     }
     addListener(listener, listener.getKnownSupportedEventTypes());
-  }     
+  }
+
+  /** Add a listener internal to the owner of this producer, for the event types it is known to support. It receives
+   * each of these events before the other listeners do, and stays registered when they are removed. Without known
+   * supported event types the listener is not added and a warning is issued
+   *
+   * @param listener to add
+   */
+  protected final synchronized void addInternalListener(final EventListener listener){
+    if(!listener.hasKnownSupportedEventTypes()) {
+      LOGGER.severe("IGNORED: unable to identify internal listener's supported event types, "
+          + "provide them by implementing getKnownSupportedEventTypes() on listener");
+      return;
+    }
+    for (EventType type : listener.getKnownSupportedEventTypes()) {
+      internalListeners.computeIfAbsent(type, t -> new ArrayList<>()).add(listener);
+    }
+  }
   
   /**
    *  Remove a listener for a given event type
@@ -154,7 +175,7 @@ public abstract class EventProducerImpl{
   protected abstract void fireEvent(final EventListener eventListener, final Event event);
 
   /**
-   * Transmit an event to all interested listeners.
+   * Transmit an event to all interested listeners, those internal to the owner of this producer first.
    * 
    * @param event the event fired
    */
@@ -165,7 +186,12 @@ public abstract class EventProducerImpl{
     if(event.getType()==null) {
       throw new IllegalArgumentException("event type cannot be null");
     }
-    
+
+    if (internalListeners.containsKey(event.getType())){
+      for (EventListener listener : new ArrayList<>(internalListeners.get(event.getType()))){
+        this.fireEvent(listener, event);
+      }
+    }
     if (this.listeners.containsKey(event.getType())){
       // copy containers while iterating in case removeListener() is called during this method processing
       Map<EventListenerPriority, List<EventListener>> listenersForEventType = this.listeners.get(event.getType());
@@ -187,29 +213,29 @@ public abstract class EventProducerImpl{
   }
 
   /**
-   * Remove all the listeners from this producer
+   * Remove all the listeners from this producer, apart from those internal to its owner
    */
-  public synchronized void removeAllListeners(){
+  public synchronized void removeAllNonInternalListeners(){
     this.listeners = null;
     this.listeners = new HashMap<>();
   }
 
   /**
-   * Verify if any listeners are available
-   * 
+   * Verify if any listeners, including internal ones, are available
+   *
    * @return true when present, false otherwise
    */
   public boolean hasListeners(){
-      return !this.listeners.isEmpty();
+      return !this.listeners.isEmpty() || !internalListeners.isEmpty();
   }
-  
-  /** Verify if one or more listeners are registered for given event type
-   * 
+
+  /** Verify if one or more listeners, including internal ones, are registered for given event type
+   *
    * @param eventType to verify
    * @return true when present, false otherwise
    */
   public boolean hasListener(EventType eventType) {
-    return this.listeners.containsKey(eventType);
+    return this.listeners.containsKey(eventType) || internalListeners.containsKey(eventType);
   }
 
   /** Determine the number of listeners for a given event type

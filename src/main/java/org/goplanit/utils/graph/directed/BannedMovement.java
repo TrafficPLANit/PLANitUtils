@@ -6,63 +6,37 @@ import java.io.Serializable;
 
 /**
  * A Banned movement comprises a combined and ordered traversal of two adjacent edge segments (from, to).
+ * <p>
+ * The setters are raw edits. Once a banned movement is registered in its container, change its segments only through
+ * {@link BannedMovements#update(BannedMovement, java.util.function.Consumer)}: a raw edit is not seen by the
+ * container's lookup by segment, which then misses it under its new segment and still returns it under its old one.
+ * </p>
  *
  * @author markr
  *
  */
-public interface BannedMovement extends Serializable, GraphEntity {
+public interface BannedMovement extends Movement, Serializable, GraphEntity {
   
   /** id class for generating ids */
   public static final Class<BannedMovement> BANNED_MOVEMENT_ID_CLASS = BannedMovement.class;
 
-  /** collect edge segment from, i.e., the incoming leg of the movement
-   *
-   * @return link segment from
-   */
-  public abstract EdgeSegment getSegmentFrom();
-  
-  /** verify if edge Segment from is present
-   * 
-   * @return true when present, false otherwise
-   */
-  public default boolean hasSegmentFrom() {
-    return getSegmentFrom() != null;
-  }
-
-  /** collect edge segment to, i.e., the outgoing leg of the movement
-   *
-   * @return edge segment to
-   */
-  public abstract EdgeSegment getSegmentTo();
-
-  /** verify if edge Segment to is present
-   *
-   * @return true when present, false otherwise
-   */
-  public default boolean hasSegmentTo() {
-    return getSegmentTo() != null;
-  }
-
   /**
-   * Set from segment
+   * Set from segment. A raw edit: on a registered banned movement, call it only within
+   * {@link BannedMovements#update(BannedMovement, java.util.function.Consumer)}, otherwise the container's lookup by
+   * segment goes stale
+   *
    * @param segment to set
    */
   public void setSegmentFrom(EdgeSegment segment);
 
   /**
-   * Set to segment
+   * Set to segment. A raw edit: on a registered banned movement, call it only within
+   * {@link BannedMovements#update(BannedMovement, java.util.function.Consumer)}, otherwise the container's lookup by
+   * segment goes stale
+   *
    * @param segment to set
    */
   public void setSegmentTo(EdgeSegment segment);
-
-  /**
-   * Get the vertex in the centre of the movement connecting the two edge segments
-   *
-   * @return centre-vertex
-   */
-  public default DirectedVertex getCentreVertex(){
-    return getSegmentFrom().getDownstreamVertex();
-  }
 
   /**
    * {@inheritDoc}

@@ -125,7 +125,8 @@ public interface UntypedDirectedGraphLayerModifier<
    * Remove an edge from the layer and any edge segments in the process
    *
    * <p>
-   *   Should fire #RemoveSubGraphEdgeEvent for the edge that is to be removed
+   *   Should fire #RemoveEdgeSegmentEvent for each of its edge segments and #RemoveEdgeEvent for the edge that is to be
+   *   removed
    * </p>
    *
    * @param edge to remove
@@ -133,10 +134,23 @@ public interface UntypedDirectedGraphLayerModifier<
   public void removeEdge(E edge);
 
   /**
+   * Remove an edge from the layer, choosing whether its edge segments are removed as well
+   *
+   * <p>
+   *   When true, identical to {@link #removeEdge(DirectedEdge)}. When false only #RemoveEdgeEvent fires and the
+   *   edge segments are left untouched, still registered and attached to the edge, for the caller to remove
+   * </p>
+   *
+   * @param edge to remove
+   * @param removeEdgeSegments when true remove its edge segments as well, when false leave them untouched
+   */
+  public void removeEdge(E edge, boolean removeEdgeSegments);
+
+  /**
    * Remove an edge segment by removing it from the graph and the edge it is connected to. Any registered events
    * for edge segment removal will be triggered.
    * <p>
-   *   Should fire #RemoveSubGraphEdgeSegmentEvent for the edge segment that is to be removed
+   *   Should fire #RemoveEdgeSegmentEvent for the edge segment that is to be removed
    * </p>
    *
    * @param edgeSegment to remove

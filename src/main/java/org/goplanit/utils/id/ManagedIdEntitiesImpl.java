@@ -60,11 +60,11 @@ public abstract class ManagedIdEntitiesImpl<E extends ManagedId> extends
 
     // super already did a shallow copy, so only needed in case of deep copy
     if(deepCopy){
-      clear();
+      super.clear();
       other.forEach(v ->
       {
         var copy = (E) v.deepClone();
-        this.register(copy);
+        super.register(copy);
         if(mapper!= null) mapper.accept(v, copy);
       });
     }
