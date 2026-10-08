@@ -50,4 +50,17 @@ public interface MacroscopicNetworkLayerModifier extends
    * @return number of intersections removed
    */
   public abstract int removeIncompleteIntersections(boolean withoutMemberNodes, boolean withoutApproaches);
+
+  /**
+   * Remove what no mode can use any more: link segments granting no mode access, links left without segments, nodes
+   * left without edges, intersections left without approaches, and link segment types granting no mode access. The
+   * removed intersections are stated by the result rather than logged one by one.
+   * <p>
+   * Meant to run once after every mode has had its access restricted to the subnetworks worth keeping, since only then
+   * is it settled what nothing can use
+   * </p>
+   *
+   * @return what was removed
+   */
+  public abstract ModeAccessCleanupModifierResult removeInfrastructureWithoutModeAccess();
 }
