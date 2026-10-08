@@ -1,6 +1,7 @@
 package org.goplanit.utils.network.layer.physical;
 
 import java.util.Collection;
+import java.util.function.Predicate;
 
 import org.goplanit.utils.graph.directed.DirectedEdge;
 import org.goplanit.utils.mode.Mode;
@@ -125,7 +126,7 @@ public interface Link extends DirectedEdge {
    * @return true when a segment allows the mode, false otherwise
    */
   public default boolean isAnyModeAllowedOnAnySegment(Collection<Mode> modes){
-    return modes.stream().anyMatch(this::isModeAllowedOnAnySegment);
+    return isAnyModeAllowedOnAnySegment(modes::contains);
   }
 
   /**
@@ -136,9 +137,20 @@ public interface Link extends DirectedEdge {
    * @return true when a segment allows the mode, false otherwise
    */
   public default boolean isModeAllowedOnAnySegment(Mode mode){
-    return (hasLinkSegmentBa() || hasLinkSegmentBa()) &&
+    return (hasLinkSegmentAb() || hasLinkSegmentBa()) &&
             ((hasLinkSegmentBa() && getLinkSegmentBa().isModeAllowed(mode)) ||
                 (hasLinkSegmentAb() && getLinkSegmentAb().isModeAllowed(mode)));
+  }
+
+  /**
+   * Verify if any mode meeting the condition is allowed on any registered segment
+   *
+   * @param modeCondition to check the allowed modes of each registered segment against
+   * @return true when a registered segment allows a mode meeting the condition, false otherwise
+   */
+  public default boolean isAnyModeAllowedOnAnySegment(Predicate<? super Mode> modeCondition){
+    return (hasLinkSegmentAb() && getLinkSegmentAb().isAnyModeAllowed(modeCondition)) ||
+        (hasLinkSegmentBa() && getLinkSegmentBa().isAnyModeAllowed(modeCondition));
   }
 
   /**
@@ -149,7 +161,7 @@ public interface Link extends DirectedEdge {
    * @return true both segments allow the mode, false otherwise
    */
   public default boolean isModeAllowedOnAllSegments(Mode mode){
-    return (hasLinkSegmentBa() || hasLinkSegmentBa()) &&
+    return (hasLinkSegmentAb() || hasLinkSegmentBa()) &&
             ((!hasLinkSegmentBa() || getLinkSegmentBa().isModeAllowed(mode)) &&
                 (!hasLinkSegmentAb() || getLinkSegmentAb().isModeAllowed(mode)));
   }

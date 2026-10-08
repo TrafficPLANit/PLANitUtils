@@ -10,6 +10,7 @@ import org.goplanit.utils.network.layer.macroscopic.MacroscopicLink;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.function.Predicate;
 
 /**
  * Interface for link segments (directional) part of link (non-directional).
@@ -92,7 +93,17 @@ public interface LinkSegment extends EdgeSegment {
    * @return true when present false otherwise
    */
   public default boolean isAnyModeAllowed(Collection<Mode> modes){
-    return modes.stream().anyMatch(this::isModeAllowed);
+    return isAnyModeAllowed(modes::contains);
+  }
+
+  /**
+   * Check if any mode meeting the condition is allowed
+   *
+   * @param modeCondition to check the allowed modes against
+   * @return true when an allowed mode meets the condition, false otherwise
+   */
+  public default boolean isAnyModeAllowed(Predicate<? super Mode> modeCondition){
+    return getAllowedModes().stream().anyMatch(modeCondition);
   }
 
   /**

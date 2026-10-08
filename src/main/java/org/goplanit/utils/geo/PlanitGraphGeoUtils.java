@@ -486,4 +486,27 @@ public class PlanitGraphGeoUtils {
         coordinates.toArray(new Coordinate[0]), PlanitJtsUtils.jtsGeometryFactory).getConvexHull();
   }
 
+  /**
+   * Distance along an edge segment's geometry from a position on it to the segment's downstream vertex, in the
+   * segment's direction of travel, measured without copying the geometry. The position is matched to the first
+   * coordinate of the geometry it equals, so the geometry is assumed not to pass the same coordinate twice, as a loop
+   * edge starting and ending at the same vertex would
+   *
+   * @param segment to measure along
+   * @param position a coordinate of the parent edge's geometry, e.g., one of its internal points or its upstream vertex
+   * @param geoUtils to measure with
+   * @return distance in metres
+   */
+  public static double getDistanceToDownstreamVertexInMetres(
+      EdgeSegment segment, Point position, PlanitJtsCrsUtils geoUtils) {
+    var geometry = segment.getParent().getGeometry();
+    var index = PlanitJtsUtils.findFirstCoordinatePosition(position.getCoordinate(), geometry, Precision.EPSILON_0);
+    if (index.isEmpty()) {
+      throw new PlanItRunTimeException("Position (%s) is not on the geometry of edge %s, unable to measure distance",
+          position.toString(), segment.getParent().getIdsAsString());
+    }
+    return geoUtils.getDistanceInMetres(
+        geometry, index.get(), segment.isDirectionAb() ? geometry.getNumPoints() - 1 : 0);
+  }
+
 }

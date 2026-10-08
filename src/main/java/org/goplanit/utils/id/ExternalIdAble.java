@@ -4,6 +4,7 @@ import org.goplanit.utils.exceptions.PlanItRunTimeException;
 import org.goplanit.utils.misc.CharacterUtils;
 import org.goplanit.utils.misc.StringUtils;
 
+import java.util.Arrays;
 import java.util.function.Function;
 
 /**
@@ -140,6 +141,25 @@ public interface ExternalIdAble extends IdAble {
     return getExternalId().split(String.valueOf(separator));
   }
 
+
+  /** verify if the provided string exists as external id, split by the default comma separator
+   *
+   * @param externalId to check for
+   * @return true if present, false otherwise
+   */
+  public default boolean containsExternalId(String externalId){
+    return containsExternalId(CharacterUtils.COMMA, externalId);
+  }
+
+  /** verify, given separator, if the provided string exists as external id
+   *
+   * @param separator to use
+   * @param externalId to check for
+   * @return true if present, false otherwise, including when there is no external id
+   */
+  public default boolean containsExternalId(char separator, String externalId){
+    return hasExternalId() && Arrays.asList(getSplitExternalId(separator)).contains(externalId);
+  }
 
   /**
    * append the external id with additional id if non-empty, separated with provided separator

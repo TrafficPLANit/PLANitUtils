@@ -12,6 +12,7 @@ import java.io.Serializable;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.function.Predicate;
 import java.util.logging.Logger;
 
 /**
@@ -233,6 +234,16 @@ public interface Vertex extends Serializable, GraphEntity {
    */
   public default int getNumberOfEdges() {
     return getEdges().size();
+  }
+
+  /**
+   * Number of edges connected to this vertex that meet the condition
+   *
+   * @param condition to count the edges by
+   * @return the number of edges connected to this vertex meeting the condition
+   */
+  public default int getNumberOfEdges(Predicate<? super Edge> condition) {
+    return (int) getEdges().stream().filter(condition).count();
   }
   
   /** replace one edge with the other

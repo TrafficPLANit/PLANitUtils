@@ -87,8 +87,10 @@ public interface ZoningModifier extends ZoningModifierEventProducer, LoggableMod
 
 
   /**
-   * Remove all directed connectoids for which no service nodes' physical nodes on any of the given layers match its access nodes, i.e., the
-   * directed connectoid has no routed services that visit it, and therefore they are not explicitly, but implicitly dangling and are removed
+   * Remove the entries of the stops served at all directed connectoids for which no service nodes' physical nodes on
+   * any of the given layers match its access nodes, i.e., no routed services visit it, so these stops are implicitly
+   * dangling there. Entries of other zones, giving travellers access to or egress from them, are kept, and a
+   * connectoid is only removed once no entry remains
    * <p>
    *   fire #RecreatedZoningEntitiesManagedIdsEvent upon completion with remaining connectoids
    * </p>

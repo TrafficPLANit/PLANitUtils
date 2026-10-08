@@ -319,7 +319,7 @@ public class PlanitJtsCrsUtils {
     double minDistanceMeters = Double.POSITIVE_INFINITY;
     LinearLocation closestLinearLocation = null;
     Coordinate[] polygonCoordinates = polygon.getExteriorRing().getCoordinates();
-    /* for each coordinate of the ring determine the distance, from all distances collect the smallest one */
+    /* for each edge of the ring determine the distance, from all distances collect the smallest one */
     Coordinate prevCoordinate = polygonCoordinates[0];
     for(int index = 1; index < polygonCoordinates.length ; ++index) {
       Coordinate currCoordinate = polygonCoordinates[index];
@@ -328,8 +328,12 @@ public class PlanitJtsCrsUtils {
       double distanceMeters = getDistanceInMetres(linearLocation.getCoordinate(lineString), referenceCoordinate);
       if(distanceMeters < minDistanceMeters) {
         minDistanceMeters = distanceMeters;
-        closestLinearLocation = linearLocation;
+        /* the location is on the edge alone, so express it on the ring by offsetting it with the index of that edge.
+         * The end of the edge comes as the start of a segment beyond it, which on the ring is the next corner */
+        closestLinearLocation =
+            new LinearLocation(index - 1 + linearLocation.getSegmentIndex(), linearLocation.getSegmentFraction());
       }
+      prevCoordinate = currCoordinate;
     }
     return closestLinearLocation;
   }   
@@ -408,13 +412,8 @@ public class PlanitJtsCrsUtils {
    * @return linearLocation found
    */  
   public Coordinate getClosestPojectedCoordinateOnPolygon(Coordinate reference, Polygon polygon){
-    /* collect linear location and from that reconstruct the line string to extract the projected coordinate from */
-    LinearLocation linearLocation = getClosestProjectedLinearLocationOnPolygon(reference, polygon);
-    int lineSegmentIndex = linearLocation.getSegmentIndex();
-    
-    return linearLocation.getCoordinate(
-        PlanitJtsUtils.createLineString(
-                polygon.getCoordinates()[lineSegmentIndex],polygon.getCoordinates()[lineSegmentIndex+1]));
+    /* the linear location is expressed on the exterior ring, from which the projected coordinate follows */
+    return getClosestProjectedLinearLocationOnPolygon(reference, polygon).getCoordinate(polygon.getExteriorRing());
   }  
     
   /** find the closest distance in meters from the point to the geometry.Here we project onto the geometry,
@@ -677,22 +676,35 @@ public class PlanitJtsCrsUtils {
    * @return length in km
    */
   public double getDistanceInKilometres(LineString geometry){
-    Coordinate[] coordinates = geometry.getCoordinates();
-    int numberOfCoords = coordinates.length;
-
+    int numberOfCoords = geometry.getNumPoints();
     if (numberOfCoords > 1) {
-
-      double computedLengthInMetres = 0;
-      Coordinate previousCoordinate = coordinates[0];
-      for (int index = 1; index < numberOfCoords; ++index) {
-        Coordinate currentCoordinate = coordinates[index];
-        computedLengthInMetres += getDistanceInMetres(previousCoordinate, currentCoordinate);
-        previousCoordinate = currentCoordinate;
-      }
-
-      return computedLengthInMetres / 1000.0;
+      return getDistanceInMetres(geometry, 0, numberOfCoords - 1) / 1000.0;
     }
     throw new PlanItRunTimeException("Unable to compute distance for less than two points");
+  }
+
+  /**
+   * Compute the length of the part of a line string between two of its coordinates, by traversing the coordinates in
+   * between and adding up their distances, without copying the line string
+   *
+   * @param geometry to measure along
+   * @param fromIndex index of the coordinate at one end of the part
+   * @param toIndex index of the coordinate at the other end of the part, before or after fromIndex
+   * @return length in metres
+   */
+  public double getDistanceInMetres(LineString geometry, int fromIndex, int toIndex){
+    Coordinate[] coordinates = geometry.getCoordinates();
+    int firstIndex = Math.min(fromIndex, toIndex);
+    int lastIndex = Math.max(fromIndex, toIndex);
+
+    double computedLengthInMetres = 0;
+    Coordinate previousCoordinate = coordinates[firstIndex];
+    for (int index = firstIndex + 1; index <= lastIndex; ++index) {
+      Coordinate currentCoordinate = coordinates[index];
+      computedLengthInMetres += getDistanceInMetres(previousCoordinate, currentCoordinate);
+      previousCoordinate = currentCoordinate;
+    }
+    return computedLengthInMetres;
   }
   
   /** extend the given line segment in one or two directions with a given distance in meters. One can also

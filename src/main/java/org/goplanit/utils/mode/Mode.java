@@ -3,8 +3,6 @@ package org.goplanit.utils.mode;
 import org.goplanit.utils.id.ExternalIdAble;
 import org.goplanit.utils.id.ManagedId;
 
-import java.util.Arrays;
-
 /**
  * Interface to represent a mode
  * 
@@ -81,6 +79,24 @@ public interface Mode extends ExternalIdAble, ManagedId {
     return getPhysicalFeatures()!=null;
   }
 
+  /** Verify if this mode is motorised and travels on road, e.g., car or bus, but not a pedestrian, bicycle or tram
+   *
+   * @return true when a motorised road mode, false otherwise, including when it has no physical features
+   */
+  public default boolean isMotorisedRoadMode() {
+    return hasPhysicalFeatures() &&
+        getPhysicalFeatures().getMotorisationType() == MotorisationModeType.MOTORISED &&
+        getPhysicalFeatures().getTrackType() == TrackModeType.ROAD;
+  }
+
+  /** Verify if this mode travels on rail, e.g., train, tram or light rail
+   *
+   * @return true when a rail mode, false otherwise, including when it has no physical features
+   */
+  public default boolean isRailMode() {
+    return hasPhysicalFeatures() && getPhysicalFeatures().getTrackType() == TrackModeType.RAIL;
+  }
+
   /** Verify if use features are available
    * @return true if available, false otherwise
    */
@@ -110,15 +126,5 @@ public interface Mode extends ExternalIdAble, ManagedId {
    */
   public default boolean hasName() {
     return getName()!=null && !getName().isBlank();
-  }
-
-  /** verify, given separator, if the provided string exists as external id
-   *
-   * @param separator to use
-   * @param externalId to check for
-   * @return true if present, false otherwise
-   */
-  public default boolean containsExternalId(char separator, String externalId){
-    return Arrays.asList(getSplitExternalId(separator)).contains(externalId);
   }
 }

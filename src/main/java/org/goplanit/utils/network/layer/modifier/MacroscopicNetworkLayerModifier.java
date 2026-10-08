@@ -38,12 +38,16 @@ public interface MacroscopicNetworkLayerModifier extends
   public abstract int removeIntersections(Collection<? extends Intersection> intersections);
 
   /**
-   * Remove every registered intersection without member nodes, each through {@link #removeIntersection(Intersection)}
-   * so its removal event fires. Intended after raw edits emptied a registered intersection; the lookups of the
-   * intersections are rebuilt afterwards, since raw edits are not seen by them. Intersections emptied by removing nodes
-   * through this modifier are already removed as part of that removal
+   * Remove every registered intersection that is incomplete in one of the selected ways, each through
+   * {@link #removeIntersection(Intersection)} so its removal event fires. The lookups of the intersections are rebuilt
+   * afterwards, since raw edits that left an intersection incomplete are not seen by them
    *
+   * @param withoutMemberNodes when true, remove intersections without member nodes, e.g. after raw edits emptied them.
+   *                           Intersections emptied by removing nodes through this modifier are already removed as part
+   *                           of that removal
+   * @param withoutApproaches when true, remove intersections without approaches, which control no traffic, e.g. once
+   *                          the segments that were their approaches are removed because no mode can use them any more
    * @return number of intersections removed
    */
-  public abstract int removeIntersectionsWithoutMemberNodes();
+  public abstract int removeIncompleteIntersections(boolean withoutMemberNodes, boolean withoutApproaches);
 }

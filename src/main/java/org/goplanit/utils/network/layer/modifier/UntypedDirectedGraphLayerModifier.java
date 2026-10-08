@@ -8,7 +8,6 @@ import org.goplanit.utils.graph.directed.EdgeSegment;
 import org.goplanit.utils.graph.modifier.event.GraphModifierEventProducer;
 import org.goplanit.utils.misc.Pair;
 import org.goplanit.utils.network.layer.UntypedDirectedGraphLayer;
-import org.goplanit.utils.graph.directed.BannedMovement;
 
 import java.util.*;
 import java.util.function.Predicate;
@@ -90,27 +89,6 @@ public interface UntypedDirectedGraphLayerModifier<
    */
   public abstract Map<Long, Pair<E,E>> breakAt(
       List<E> linksToBreak, V nodeToBreakAt, CoordinateReferenceSystem crs);
-
-  /**
-   * Break the passed in links by inserting the passed in node in between. After completion the original
-   * links remain as (NodeA,NodeToBreakAt), and new links as inserted for (NodeToBreakAt,NodeB).
-   * Underlying link segments (if any) are also updated accordingly in the same manner.
-   * we pass in indexed movements to speed up the updating of the touched movements (if any). If any
-   * banned movements exist on the broken edges layer, or many edges are to broken with successive calls,
-   * this should be the go to, to optimize performance compared to equivalent method without this index. It is assumed
-   * the passed on movements are the drop-in replacement for the layer's movements container
-   *
-   * @param linksToBreak  the links to break
-   * @param nodeToBreakAt the node to break at
-   * @param movementsByCentreVertex precompiled index for movements so they can be quickly updated
-   * @param crs           to use to recompute link lengths of broken links
-   * @return the broken links for each original link's internal id
-   */
-  public abstract Map<Long, Pair<E,E>> breakAt(
-      List<E> linksToBreak,
-      V nodeToBreakAt,
-      Map<? extends V, List<BannedMovement>> movementsByCentreVertex,
-      CoordinateReferenceSystem crs);
 
   /**
    * Recreate all managed id entities on the layer
