@@ -2,11 +2,7 @@ package org.goplanit.utils.functionalinterface;
 
 /**
  * Function Interface which can process three input objects and produce an output
- * 
- * Used in PlanItIO test cases.
- * 
- * There is no equivalent functional interface in the java.util.function library so we have created
- * this one.
+ * There is no equivalent functional interface in the java.util.function library yet
  * 
  * @author gman6028
  *

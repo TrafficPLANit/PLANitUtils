@@ -7,6 +7,7 @@ import org.goplanit.utils.graph.directed.DirectedVertex;
 import org.goplanit.utils.graph.directed.EdgeSegment;
 import org.goplanit.utils.id.IdGenerator;
 import org.goplanit.utils.id.IdGroupingToken;
+import org.goplanit.utils.misc.StringUtils;
 
 /**
  * Node is a vertex but not all vertices are nodes.
@@ -54,6 +55,14 @@ public interface Node extends DirectedVertex {
    * @return name of the node
    */
   public abstract String getName();
+
+  /** check if name of this node is set
+   *
+   * @return flag
+   */
+  public default boolean hasName(){
+    return !StringUtils.isNullOrBlank(getName());
+  }
   
   /** set the name of the node
    * 

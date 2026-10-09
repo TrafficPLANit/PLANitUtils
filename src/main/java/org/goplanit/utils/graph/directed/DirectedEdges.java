@@ -23,9 +23,10 @@ public interface DirectedEdges extends GraphEntities<DirectedEdge> {
    */
   @Override
   public default DirectedEdgeFactory getFactory(){
-    /** override to change return type signature on interface, implementation must still
+    /* override to change return type signature on interface, implementation must still
      * implement this method to provide access to an actual instance */
-    Logger.getLogger(DirectedEdges.class.getCanonicalName()).warning("getFactory not implemented yet for directed edges implementation");
+    Logger.getLogger(DirectedEdges.class.getCanonicalName()).warning(
+            "getFactory not implemented yet for directed edges implementation");
     return null;
   }
 

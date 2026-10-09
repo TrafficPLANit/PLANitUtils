@@ -6,6 +6,7 @@ import java.util.Map;
 import java.util.logging.Logger;
 
 import org.goplanit.utils.exceptions.PlanItException;
+import org.goplanit.utils.exceptions.PlanItRunTimeException;
 
 /**
  * This class parses program arguments and returns them as a map of file types
@@ -42,9 +43,8 @@ public class ArgumentParser {
    * 
    * @param args command-line arguments
    * @return Map of key value pairs
-   * @throws PlanItException thrown if an argument cannot be parsed
    */
-  protected static Map<String, String> convertArgsToMapDefaultStyle(final String[] args) throws PlanItException {
+  protected static Map<String, String> convertArgsToMapDefaultStyle(final String[] args) {
     Map<String, String> argsMap = new HashMap<String, String>();
     for (String arg : args) {
       boolean validKey = false;
@@ -52,7 +52,7 @@ public class ArgumentParser {
       validKey = validKey || updateMap("-", arg, argsMap);
       validKey = validKey || updateMap(":", arg, argsMap);
       if (!validKey) {
-        throw new PlanItException("Argument %s cannot be parsed into a program input", arg);
+        throw new PlanItRunTimeException("Argument %s cannot be parsed into a program input", arg);
       }
     }
     return argsMap;
@@ -64,9 +64,8 @@ public class ArgumentParser {
    * 
    * @param args command-line arguments
    * @return Map of key value pairs
-   * @throws PlanItException thrown if an argument cannot be parsed
    */
-  protected static Map<String, String> convertArgsToMapDoubleHyphenStyle(String[] args) throws PlanItException {
+  protected static Map<String, String> convertArgsToMapDoubleHyphenStyle(String[] args) {
     Map<String, String> argsMap = new HashMap<String, String>();
     boolean parseKey = true;
     String key = null;
@@ -75,7 +74,8 @@ public class ArgumentParser {
       
       /* finalise value-less key */
       if (!parseKey && trimmedArg.startsWith("--")) {
-        /* preceding key has no value, can happen, so simply provide no value for that key and parse this as next key */
+        /* preceding key has no value, can happen, so simply provide
+         no value for that key and parse this as next key */
         argsMap.put(key, "");
         parseKey = true;  
       }
@@ -83,7 +83,8 @@ public class ArgumentParser {
       /* parse key */
       if(parseKey) {
         if (!trimmedArg.startsWith("--")) {
-          throw new PlanItException("keys should start with \"--\" but found %s on %s", arg, Arrays.toString(args));
+          throw new PlanItRunTimeException(
+                  "keys should start with \"--\" but found %s on %s", arg, Arrays.toString(args));
         }
         key = trimmedArg.substring(2);
         parseKey = false;
@@ -103,10 +104,8 @@ public class ArgumentParser {
    * 
    * @param args command-line arguments
    * @return Map of file locations
-   * @throws PlanItException thrown if an argument cannot be parsed into a file type and file
-   *           location
    */
-  public static Map<String, String> convertArgsToMap(final String[] args) throws PlanItException {
+  public static Map<String, String> convertArgsToMap(final String[] args) {
     return convertArgsToMap(args, ArgumentStyle.DEFAULT);
   }
 
@@ -116,10 +115,8 @@ public class ArgumentParser {
    * @param args command-line arguments
    * @param style to apply
    * @return Map of key value pairs
-   * @throws PlanItException thrown if an argument cannot be parsed
    */
-  public static Map<String, String> convertArgsToMap(final String[] args, final ArgumentStyle style)
-      throws PlanItException {
+  public static Map<String, String> convertArgsToMap(final String[] args, final ArgumentStyle style) {
     switch (style) {
       case DEFAULT:
         return convertArgsToMapDefaultStyle(args);

@@ -31,6 +31,15 @@ public abstract class Builder<T> {
    * @throws PlanItException thrown if error
    */
   protected abstract Configurator<T> createConfigurator() throws PlanItException;
+
+  /**
+   * Set the configurator directly. Not recommended to use unless you know what you're doing
+   *
+   * @param configurator to set
+   */
+  protected void setConfigurator(Configurator<T> configurator){
+    this.configurator = configurator;
+  }
   
   /** 
    * collect the class to build
@@ -51,8 +60,8 @@ public abstract class Builder<T> {
     this.classToBuild = classToBuild;
   }
   
-  /** the configurator for this builder. It allows one to hide the builder aspect and expose (parts of) the user available configuration options
-   * via this object
+  /** the configurator for this builder. It allows one to hide the builder aspect and expose (parts of) the user
+   * available configuration options via this object
    *  
    * @return the configurator, null if no configurator is available nor could be created
    */

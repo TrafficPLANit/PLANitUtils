@@ -1,69 +1,42 @@
 package org.goplanit.utils.network.virtual;
 
 import org.goplanit.utils.graph.GraphEntityDeepCopyMapper;
+import org.goplanit.utils.graph.directed.DirectedVertex;
 import org.goplanit.utils.id.IdGroupingToken;
-import org.goplanit.utils.misc.CollectionUtils;
-import org.goplanit.utils.misc.IterableUtils;
-
-import java.util.logging.Logger;
+import org.goplanit.utils.id.ManagedIdDeepCopyMapper;
+import org.goplanit.utils.graph.directed.BannedMovement;
+import org.goplanit.utils.network.virtual.graph.ConnectoidDirectedEdge;
+import org.goplanit.utils.network.virtual.physical.ConnectoidSegment;
 
 /**
- * Model free virtual network interface which is part of the zoning and holds all the virtual infrastructure connecting the zones to the physical road network.
+ * Model free virtual network interface which is part of the zoning and holds all the virtual infrastructure connecting
+ * the zones to the physical road network.
  * 
  * @author markr
  */
-public interface VirtualNetwork {
-
-  public static final Logger LOGGER = Logger.getLogger(VirtualNetwork.class.getCanonicalName());
+public interface VirtualNetwork extends UntypedVirtualNetwork<VirtualNetworkLayer>{
 
   /**
-   * Access to connectoid segments
-   * 
-   * @return connectoidSegments
-   */
-  public abstract ConnectoidSegments getConnectoidSegments();
-
-  /**
-   * Access to connectoid edges
-   * 
-   * @return connectoidEdges
-   */
-  public abstract ConnectoidEdges getConnectoidEdges();
-
-  /**
-   * Access each centroid's vertex
-   *
-   * @return connectoidEdges
-   */
-  public abstract CentroidVertices getCentroidVertices();
-
-  /**
-   * free up memory by clearing contents for garbage collection
-   */
-  public abstract void clear();
-  
-  /**
-   * identical {@link #clear()} only now all underlying managed ids are also reset
-   */
-  public abstract void reset();   
-
-  /**
-   * Create a conjugate version of this virtual network, also known as the edge-to-vertex-dual representation, where all connectoidedges/edge segments become (dangling) conjugate
-   * vertices.
+   * Create a conjugate version of this virtual network, also known as the edge-to-vertex-dual representation, where
+   * all connectoidedges/edge segments become (dangling) conjugate vertices.
    * <p>
-   * It is recommended to first create the conjugate of this virtual network BEFORE creating conjugates of network layers. The latter takes a conjugate zoning as input such that it
-   * can connect the conjugate virtual nodes to the conjugate network layer where appropriate, otherwise these connections are ignored
+   * It is recommended to first create the conjugate of this virtual network BEFORE creating conjugates of network
+   * layers. The latter takes a conjugate zoning as input such that it can connect the conjugate virtual nodes to
+   * the conjugate network layer where appropriate, otherwise these connections are ignored
+   * </p>
    * 
-   * @param idToken to use for conjugate entity creation 
-   * @return conjugate version of this virtual network's edges/edgesgments
+   * @param idToken to use for conjugate entity creation
+   * @param resetManagedIdToken when true reset token for id generation, when false do not
+   * @return conjugate version of this virtual network
    */
-  public abstract ConjugateVirtualNetwork createConjugate(IdGroupingToken idToken);
+  public abstract ConjugateVirtualNetwork createConjugate(IdGroupingToken idToken, boolean resetManagedIdToken);
 
   /**
    * Perform shallow clone
    *
    * @return shallow copy
    */
+  @Override
   public abstract VirtualNetwork shallowClone();
 
   /**
@@ -71,6 +44,7 @@ public interface VirtualNetwork {
    *
    * @return deep copy
    */
+  @Override
   public abstract VirtualNetwork deepClone();
 
   /**
@@ -79,37 +53,15 @@ public interface VirtualNetwork {
    * @param connectoidEdgeMapper to use for tracking mapping between original and copied entity (may be null)
    * @param connectoidSegmentMapper to use for tracking mapping between original and copied entity (may be null)
    * @param centroidVertexMapper to use for tracking mapping between original and copied entity (may be null)
+   * @param movementMapper to use for tracking mapping between original and copied entity (may be null)
    * @return deep copy
    */
+  @Override
   public VirtualNetwork deepCloneWithMapping(
-      GraphEntityDeepCopyMapper<ConnectoidEdge> connectoidEdgeMapper,
-      GraphEntityDeepCopyMapper<ConnectoidSegment> connectoidSegmentMapper,
-      GraphEntityDeepCopyMapper<CentroidVertex> centroidVertexMapper);
+          GraphEntityDeepCopyMapper<? extends ConnectoidDirectedEdge> connectoidEdgeMapper,
+          GraphEntityDeepCopyMapper<? extends ConnectoidSegment> connectoidSegmentMapper,
+          GraphEntityDeepCopyMapper<? extends DirectedVertex> centroidVertexMapper,
+          ManagedIdDeepCopyMapper<BannedMovement> movementMapper);
 
-  /**
-   * Verify if entire network is empty
-   *
-   * @return true if network is empty, false otherwise
-   */
-  public default boolean isEmpty(){
-    return getCentroidVertices().isEmpty() && getConnectoidEdges().isEmpty() && getConnectoidSegments().isEmpty();
-  }
 
-  /**
-   * Verify if entire connectoid edges are empty
-   *
-   * @return true if empty, false otherwise
-   */
-  public default boolean hasConnectoidEdges(){
-    return !IterableUtils.nullOrEmpty(getConnectoidEdges());
-  }
-
-  /**
-   * Verify if entire connectoid segments are empty
-   *
-   * @return true if empty, false otherwise
-   */
-  public default boolean hasConnectoidSegments(){
-    return !IterableUtils.nullOrEmpty(getConnectoidSegments());
-  }
 }

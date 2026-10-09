@@ -1,8 +1,11 @@
 package org.goplanit.utils.network.layer.macroscopic;
 
+import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.goplanit.utils.id.ManagedIdEntities;
+import org.goplanit.utils.misc.CollectionUtils;
 import org.goplanit.utils.mode.Mode;
 
+import java.util.*;
 import java.util.function.BiConsumer;
 
 /**
@@ -48,6 +51,34 @@ public interface MacroscopicLinkSegmentTypes extends ManagedIdEntities<Macroscop
   }
 
   /**
+   * Construct a list of entries that are functionallu identical (if any), so excluding name, and id fields
+   * but considering all other fields with meaning
+   *
+   * @return list of functional duplicates, empty if none found
+   */
+  public default List<SortedSet<MacroscopicLinkSegmentType>> findFunctionalDuplicates(){
+    List<SortedSet<MacroscopicLinkSegmentType>> duplicates = new ArrayList<>(2);
+    Set<MacroscopicLinkSegmentType> skipSet = new HashSet<>();
+    for(var ls1 : this) {
+      skipSet.add(ls1);
+      SortedSet<MacroscopicLinkSegmentType> duplicatesForLs1 = null;
+      for(var ls2 : this) {
+        if(skipSet.contains(ls2)) continue;
+
+        if(ls1.isFunctionalEqual(ls2)){
+          duplicatesForLs1 = duplicates.stream().filter(e -> e.contains(ls1)).findFirst().orElseGet(TreeSet::new);
+          if(duplicatesForLs1.isEmpty()){
+            duplicates.add(duplicatesForLs1);
+          }
+          duplicatesForLs1.add(ls1);
+          duplicatesForLs1.add(ls2);
+        }
+      }
+    }
+    return duplicates;
+  }
+
+  /**
    * {@inheritDoc}
    */
   @Override
@@ -63,6 +94,7 @@ public interface MacroscopicLinkSegmentTypes extends ManagedIdEntities<Macroscop
    * {@inheritDoc}
    */
   @Override
-  public abstract MacroscopicLinkSegmentTypes deepCloneWithMapping(BiConsumer<MacroscopicLinkSegmentType, MacroscopicLinkSegmentType> mapper);
+  public abstract MacroscopicLinkSegmentTypes deepCloneWithMapping(
+          BiConsumer<MacroscopicLinkSegmentType, MacroscopicLinkSegmentType> mapper);
 
 }

@@ -3,8 +3,10 @@ package org.goplanit.utils.graph.directed;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.function.Consumer;
+import java.util.stream.Stream;
 
 import org.goplanit.utils.graph.Edge;
+import org.goplanit.utils.network.layer.physical.Node;
 
 /**
  * Directed Edge interface connecting two vertices in a directional fashion. Each edge has one or
@@ -32,8 +34,8 @@ public interface DirectedEdge extends Edge {
    * Register EdgeSegment.
    *
    * If there already exists an edgeSegment for that direction it is replaced and returned. If the edge segment
-   * has no parent edge, this edge is set. If there is a discrepancy between the edge segment's parent edge and this edge
-   * a warning is issued and the edge segment is not registered
+   * has no parent edge, this edge is set. If there is a discrepancy between the edge segment's parent edge and
+   * this edge a warning is issued and the edge segment is not registered
    *
    * @param edgeSegment the edgeSegment to be registered
    * @param directionAB direction of travel
@@ -47,18 +49,20 @@ public interface DirectedEdge extends Edge {
    * Register EdgeSegment.
    *
    * If there already exists an edgeSegment for that direction it is replaced and returned. If the edge segment
-   * has no parent edge, this edge is set. If there is a discrepancy between the edge segment's parent edge and this edge
-   * a warning is issued and the edge segment is not registered
+   * has no parent edge, this edge is set. If there is a discrepancy between the edge segment's parent
+   * edge and this edge a warning is issued and the edge segment is not registered
    *
    * @param edgeSegment the edgeSegment to be registered
    * @param directionAB direction of travel
    * @param force when true the provided edge segment is always set (even if null or inconsistent, without warning)
    * @return replaced egeSegment (if any)
    */
-  public abstract EdgeSegment registerEdgeSegment(final EdgeSegment edgeSegment, final boolean directionAB, final boolean force);
+  public abstract EdgeSegment registerEdgeSegment(
+      final EdgeSegment edgeSegment, final boolean directionAB, final boolean force);
   
   /**
-   * Remove edge segments from this edge. Be careful doing this as it because it might affect the contiguous ids if the edge segment is garbage collected
+   * Remove edge segments from this edge. Be careful doing this as it because it might affect the contiguous ids
+   * if the edge segment is garbage collected
    */
   public default void removeEdgeSegments() {
     removeEdgeSegmentAb();
@@ -66,13 +70,17 @@ public interface DirectedEdge extends Edge {
   }
 
   /**
-   * Remove edge segmentAb from this edge. Be careful doing this as it because it might affect the contiguous ids if the edge segment is garbage collected
+   * Remove edge segmentAb from this edge. Be careful doing this as it because it might affect the contiguous ids
+   * if the edge segment is garbage collected
+   *
    * @return removed edge segment
    */
   public abstract EdgeSegment removeEdgeSegmentAb();
   
   /**
-   * Remove edge segmentAb from this edge. Be careful doing this as it because it might affect the contiguous ids if the edge segment is garbage collected
+   * Remove edge segmentAb from this edge. Be careful doing this as it because it might affect the contiguous ids
+   * if the edge segment is garbage collected
+   *
    * @return removed edge segment
    */
   public abstract EdgeSegment removeEdgeSegmentBa();
@@ -151,7 +159,7 @@ public interface DirectedEdge extends Edge {
   public default Collection<? extends EdgeSegment> getEdgeSegments(){
     ArrayList<EdgeSegment> edgeSegments = null;
     if(hasEdgeSegmentAb() || hasEdgeSegmentBa()) {
-      edgeSegments = new ArrayList<EdgeSegment>(2);
+      edgeSegments = new ArrayList<>(2);
       if(hasEdgeSegmentAb()) {
         edgeSegments.add(getEdgeSegmentAb());
       }
@@ -163,11 +171,30 @@ public interface DirectedEdge extends Edge {
   }
 
   /**
+   * Stream segments
+   *
+   * @return stream
+   */
+  public default Stream<? extends EdgeSegment> streamEdgeSegments(){
+    if(hasEdgeSegmentAb() && hasEdgeSegmentBa()) {
+      return Stream.of(getEdgeSegmentAb(), getEdgeSegmentBa());
+    }
+    else if(hasEdgeSegmentAb()){
+      return Stream.of(getEdgeSegmentAb());
+    }else if(hasEdgeSegmentBa()){
+      return Stream.of(getEdgeSegmentBa());
+    }else{
+      return Stream.empty();
+    }
+  }
+
+  /**
    * Apply consumer to each edge segment of directed egde when present
    *
    * @param edgeSegmentConsumer to apply
    * @param <T> type of edge segment
    */
+  @SuppressWarnings("unchecked")
   default <T extends EdgeSegment> void forEachSegment(Consumer<T> edgeSegmentConsumer){
     if(hasEdgeSegmentAb()){
       edgeSegmentConsumer.accept( (T) getEdgeSegmentAb());
@@ -189,5 +216,35 @@ public interface DirectedEdge extends Edge {
     }
 
     return edgeSegment.isDirectionAb() ? removeEdgeSegmentAb() : removeEdgeSegmentBa();
+  }
+
+  /**
+   * Find the segment going towards the given vertex (if it is a vertex on the link)
+   * @param downstreamVertex to go towards
+   * @return segment in direction (if available), or null
+   */
+  public default EdgeSegment getSegmentUpstreamOf(DirectedVertex downstreamVertex){
+    if(isVertexA(downstreamVertex)){
+      return getEdgeSegmentBa();
+    }else if(isVertexB(downstreamVertex)){
+      return getEdgeSegmentAb();
+    }else{
+      return null;
+    }
+  }
+
+  /**
+   * Find the segment downstream of the given vertex (if it is a vertex on the link)
+   * @param upstreamVertex from segment to find
+   * @return segment in direction (if available), or null
+   */
+  public default  EdgeSegment getSegmentDownstreamFrom(DirectedVertex upstreamVertex){
+    if(isVertexA(upstreamVertex)){
+      return getEdgeSegmentAb();
+    }else if(isVertexB(upstreamVertex)){
+      return getEdgeSegmentBa();
+    }else{
+      return null;
+    }
   }
 }

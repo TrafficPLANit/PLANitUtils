@@ -26,6 +26,7 @@ public interface EdgeSegmentFactory extends GraphEntityFactory<EdgeSegment> {
    * @param registerOnVertexAndEdge option to register the new edge segment on the underlying edge and its vertices
    * @return the created edge segment
    */
-  public abstract EdgeSegment registerNew(final DirectedEdge parentEdge, final boolean directionAb, final boolean registerOnVertexAndEdge);
+  public abstract EdgeSegment registerNew(
+          final DirectedEdge parentEdge, final boolean directionAb, final boolean registerOnVertexAndEdge);
     
 }

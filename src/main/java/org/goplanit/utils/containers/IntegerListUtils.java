@@ -25,7 +25,8 @@ public class IntegerListUtils {
     final int expectedGapBetweenIndexAndIndexValue = intList.get(offsetIndex) - offsetIndex;
     return IntStream.range(offsetIndex, intList.size()).takeWhile( // take while no gap is found
             index -> intList.get(index) - index == expectedGapBetweenIndexAndIndexValue).map(
-            index -> intList.get(index)).boxed().collect(Collectors.toList()); // map indices in to be removed list to its values
+            // map indices in to be removed list to its values
+            intList::get).boxed().collect(Collectors.toList());
   }
 
   /**

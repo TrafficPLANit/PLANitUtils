@@ -1,7 +1,9 @@
 package org.goplanit.utils.graph.directed;
 
 import java.util.Collection;
+import java.util.concurrent.atomic.LongAdder;
 import java.util.function.Function;
+import java.util.stream.Stream;
 
 import org.goplanit.utils.graph.Vertex;
 import org.goplanit.utils.misc.IterableUtils;
@@ -15,18 +17,21 @@ import org.goplanit.utils.misc.IterableUtils;
 public interface DirectedVertex extends Vertex {
   
   /** Function collecting entry edge segments for vertex */
-  public static final Function<DirectedVertex, Iterable<? extends EdgeSegment>> getEntryEdgeSegments = v -> v.getEntryEdgeSegments();
+  public static final Function<DirectedVertex, Iterable<? extends EdgeSegment>> GET_ENTRY_EDGE_SEGMENTS =
+          DirectedVertex::getEntryEdgeSegments;
 
   /** Function collecting exit edge segments for vertex */
-  public static final Function<DirectedVertex, Iterable<? extends EdgeSegment>> getExitEdgeSegments = v -> v.getExitEdgeSegments();
+  public static final Function<DirectedVertex, Iterable<? extends EdgeSegment>> GET_EXIT_EDGE_SEGMENTS =
+          DirectedVertex::getExitEdgeSegments;
   
   /** Collect lambda function that collects either up or downstream edge segments
    * 
-   * @param entrySegments flag indicating if entry segments lambda to collect for a given vertex
+   * @param getEntrySegments flag indicating if entry segments lambda to collect for a given vertex
    * @return lambda function
    */
-  public static Function<DirectedVertex, Iterable<? extends EdgeSegment>> getEdgeSegmentsForVertexLambda(boolean entrySegments) {
-    return entrySegments ? getEntryEdgeSegments : getExitEdgeSegments;
+  public static Function<DirectedVertex, Iterable<? extends EdgeSegment>> getEdgeSegmentsForVertexLambda(
+      boolean getEntrySegments) {
+    return getEntrySegments ? GET_ENTRY_EDGE_SEGMENTS : GET_EXIT_EDGE_SEGMENTS;
   }
 
   /**
@@ -36,9 +41,7 @@ public interface DirectedVertex extends Vertex {
    */
   @Override
   public abstract Collection<? extends DirectedEdge> getEdges();
-  
 
-  
   /**
    * Collect the entry edge segments of this vertex (unmodifiable)
    * 
@@ -51,9 +54,46 @@ public interface DirectedVertex extends Vertex {
    * 
    * @return edgeSegments
    */
-  public Iterable<? extends EdgeSegment> getExitEdgeSegments();  
-  
+  public Iterable<? extends EdgeSegment> getExitEdgeSegments();
 
+  /**
+   * Provide a stream of all edge segments adjacent to this vertex
+   * @return stream of edge segments
+   */
+  public default Stream<? extends EdgeSegment> streamEdgeSegments(){
+    return Stream.concat(streamEntrySegments(),streamExitSegments());
+  }
+
+  /**
+   * Provide a stream of entry edge segments adjacent to this vertex
+   * @return stream of entry edge segments
+   */
+  public default Stream<? extends EdgeSegment> streamEntrySegments(){
+    return IterableUtils.asStream(getEntryEdgeSegments());
+  }
+
+  /**
+   * Provide a stream of entry edge segments adjacent to this vertex
+   * @return stream of entry edge segments
+   */
+  public default Stream<? extends EdgeSegment> streamExitSegments(){
+    return IterableUtils.asStream(getExitEdgeSegments());
+  }
+
+  /**
+   * Obtain an edge segment, no guarantee on which one, any attached one may be returned
+   *
+   * @return any edge segment, null if none attached
+   */
+  public default EdgeSegment getFirstEdgeSegment(){
+    if(hasEntryEdgeSegments()){
+      return getEntryEdgeSegments().iterator().next();
+    }
+    if(hasExitEdgeSegments()){
+      return getExitEdgeSegments().iterator().next();
+    }
+    return null;
+  }
   
   /** collect the first edge segment corresponding to the provided other vertex
    * 
@@ -115,7 +155,8 @@ public interface DirectedVertex extends Vertex {
   /**
    * Collect the number of entry edge segments of this vertex
    * <p>
-   * slow method because it requires iterating over the underlying iterable since it is not a collection we are obtain the count from
+   * slow method because it requires iterating over the underlying iterable since it is not a collection we are
+   * obtain the count from
    * 
    * @return number of entry edge segments
    */
@@ -126,12 +167,32 @@ public interface DirectedVertex extends Vertex {
   /**
    * Collect the number of exit edge segments of this vertex
    * <p>
-   * slow method because it requires iterating over the underlying iterable since it is not a collection we are obtain the count from
+   * slow method because it requires iterating over the underlying iterable since it is not a collection we are
+   * obtain the count from
    * 
    * @return number of exit edge segments
    */
   public default int getNumberOfExitEdgeSegments() {
     return (int) IterableUtils.sizeOfUsingLoop(getExitEdgeSegments());
   }
-  
+
+  public default EdgeSegment[] createEdgeSegmentsAsArray(boolean getEntrySegments){
+    var result = new EdgeSegment[getNumberOfExitEdgeSegments()];
+    LongAdder index = new LongAdder();
+    (getEntrySegments ? getEntryEdgeSegments() : getExitEdgeSegments()).forEach(
+            e -> {
+              result[index.intValue()] = e;
+              index.increment();
+            });
+    return result;
+  }
+
+  public default EdgeSegment[] createExitEdgeSegmentsArray(){
+    return createEdgeSegmentsAsArray(false);
+  }
+
+  public default EdgeSegment[] createEntryEdgeSegmentsArray(){
+    return createEdgeSegmentsAsArray(true);
+  }
+
 }

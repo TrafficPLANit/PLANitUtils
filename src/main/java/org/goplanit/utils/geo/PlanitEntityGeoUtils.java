@@ -38,8 +38,8 @@ public class PlanitEntityGeoUtils {
     return Double.POSITIVE_INFINITY;
   }
 
-  /** find the distance from the edge to the point. This method computes the actual distance between any location on any line segment of the edge
-   * and the reference node and it is therefore very precise.
+  /** find the distance from the edge to the point. This method computes the actual distance between any location
+   * on any line segment of the edge and the reference node and it is therefore very precise.
    *
    * @param coord used
    * @param edge to check against using its geometry
@@ -50,12 +50,14 @@ public class PlanitEntityGeoUtils {
     if(edge.hasGeometry()) {
       return geoUtils.getClosestDistanceInMeters(coord,edge.getGeometry());
     }else {
-      LOGGER.warning(String.format("Edge has no geographic information to determine closeness to reference location %s",coord));
+      LOGGER.warning(String.format("Edge has no geographic information to determine closeness to reference " +
+          "location %s",coord));
     }
     return Double.POSITIVE_INFINITY;
   }
 
-  /** identical to {@link #findPlanitEntityClosest(Coordinate, Collection, double, boolean, PlanitJtsCrsUtils)} but without a distance criteria
+  /** identical to {@link #findPlanitEntityClosest(Coordinate, Collection, double, boolean, PlanitJtsCrsUtils)}
+   * but without a distance criteria
    *
    * @param <T> type of the PLANit entity
    * @param coord reference location
@@ -69,10 +71,11 @@ public class PlanitEntityGeoUtils {
     return findPlanitEntityClosest(coord, planitEntities, Double.POSITIVE_INFINITY, suppressLogging, geoUtils);
   }
 
-  /** find the closest distance to the coordinate for some PLANit entity with a supported geometry from the provided collection.
-   * This method computes the actual distance between any location on any line segment of the (outer) boundary
-   * of the planit entities geometry (or its point location if no polygon/linestring is available) and the reference node and it is therefore very precise.
-   * A cap is placed on how far a zone is allowed to be to still be regarded as closest via maxDistanceMeters.
+  /** find the closest distance to the coordinate for some PLANit entity with a supported geometry from the provided
+   * collection. This method computes the actual distance between any location on any line segment of the (outer)
+   * boundary of the planit entities geometry (or its point location if no polygon/linestring is available) and the
+   * reference node and it is therefore very precise. A cap is placed on how far a zone is allowed to be to still
+   * be regarded as closest via maxDistanceMeters.
    *
    * @param <T> type of the PLANit entity
    * @param coord reference location
@@ -83,7 +86,12 @@ public class PlanitEntityGeoUtils {
    * @return planitEntity closest and distance in meters, null if none matches criteria
    */
   public static <T> Pair<T, Double> findPlanitEntityClosest(
-      Coordinate coord, Collection<? extends T> planitEntities, double maxDistanceMeters, boolean suppressLogging, PlanitJtsCrsUtils geoUtils)  {
+      Coordinate coord,
+      Collection<? extends T> planitEntities,
+      double maxDistanceMeters,
+      boolean suppressLogging,
+      PlanitJtsCrsUtils geoUtils)  {
+
     double minDistanceMeters = Double.POSITIVE_INFINITY;
     double distanceMeters = minDistanceMeters;
     T closestEntity = null;
@@ -96,7 +104,8 @@ public class PlanitEntityGeoUtils {
       }else if(entity instanceof Vertex) {
         distanceMeters = geoUtils.getDistanceInMetres(coord, ((Vertex) entity).getPosition().getCoordinate());
       }else {
-        if(!suppressLogging) LOGGER.warning(String.format("Unsupported PLANit entity to compute closest distance to %s",entity.getClass().getCanonicalName()));
+        if(!suppressLogging) LOGGER.warning(String.format("Unsupported PLANit entity to compute closest " +
+                "distance to %s",entity.getClass().getCanonicalName()));
       }
 
       if(distanceMeters < minDistanceMeters) {
@@ -113,16 +122,19 @@ public class PlanitEntityGeoUtils {
     return null;
   }
 
-  /** Extract the closest existing linear line segment based on the closest two coordinates on the link segment geometry in its intended direction to the reference geometry provided
+  /** Extract the closest existing linear line segment based on the closest two coordinates on the link segment
+   * geometry in its intended direction to the reference geometry provided
    *
    * @param referenceGeometry to find closest line segment to
    * @param linkSegment to extract line segment from
    * @param geoUtils for distance calculations
    * @return line segment if found
    */
-  public static LineSegment extractClosestLineSegmentToGeometryFromLinkSegment(Geometry referenceGeometry, LinkSegment linkSegment, PlanitJtsCrsUtils geoUtils) {
+  public static LineSegment extractClosestLineSegmentToGeometryFromLinkSegment(
+      Geometry referenceGeometry, LinkSegment linkSegment, PlanitJtsCrsUtils geoUtils) {
     LineString linkSegmentGeometry = linkSegment.getParent().getGeometry();
-    var closestLinearLoc = extractClosestProjectedLinearLocationToGeometryFromEdge(referenceGeometry, linkSegment.getParentLink(),geoUtils);
+    var closestLinearLoc =
+        extractClosestProjectedLinearLocationToGeometryFromEdge(referenceGeometry, linkSegment.getParent(),geoUtils);
     LineSegment lineSegment = closestLinearLoc.getSegment(linkSegmentGeometry);
     if(linkSegment.isDirectionAb()!=linkSegment.getParent().isGeometryInAbDirection()) {
       lineSegment.reverse();
@@ -130,7 +142,8 @@ public class PlanitEntityGeoUtils {
     return lineSegment;
   }
 
-  /** Find the linear location reflecting the closest projected location between the transfer zone and link geometries. For the transfer zone geometry we use existing coordinates
+  /** Find the linear location reflecting the closest projected location between the transfer zone and link geometries.
+   * For the transfer zone geometry we use existing coordinates
    * rather than projected ones
    *
    * @param referenceGeometry to use
@@ -138,7 +151,8 @@ public class PlanitEntityGeoUtils {
    * @param geoUtils to use
    * @return closest projected linear location on link geometry
    */
-  public static LinearLocation extractClosestProjectedLinearLocationToGeometryFromEdge(Geometry referenceGeometry, Edge accessEdge, PlanitJtsCrsUtils geoUtils) {
+  public static LinearLocation extractClosestProjectedLinearLocationToGeometryFromEdge(
+      Geometry referenceGeometry, Edge accessEdge, PlanitJtsCrsUtils geoUtils) {
 
     if(referenceGeometry == null){
       throw new PlanItRunTimeException("Geometry not allowed to be null");
@@ -146,9 +160,13 @@ public class PlanitEntityGeoUtils {
 
     LinearLocation projectedLinearLocationOnLink = null;
     if(referenceGeometry instanceof Point) {
-      projectedLinearLocationOnLink = geoUtils.getClosestProjectedLinearLocationOnGeometry(referenceGeometry.getCoordinate(),accessEdge.getGeometry());
+      projectedLinearLocationOnLink =
+          geoUtils.getClosestProjectedLinearLocationOnGeometry(
+                  referenceGeometry.getCoordinate(),accessEdge.getGeometry());
     }else{
-      projectedLinearLocationOnLink = geoUtils.getClosestGeometryExistingCoordinateToProjectedLinearLocationOnLineString(referenceGeometry,accessEdge.getGeometry());
+      projectedLinearLocationOnLink =
+          geoUtils.getClosestGeometryExistingCoordinateToProjectedLinearLocationOnLineString(
+                  referenceGeometry,accessEdge.getGeometry());
     }
     return projectedLinearLocationOnLink;
   }

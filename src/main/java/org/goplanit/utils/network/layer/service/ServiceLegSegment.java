@@ -68,7 +68,7 @@ public interface ServiceLegSegment extends EdgeSegment {
     if(getPhysicalParentSegments() == null || getPhysicalParentSegments().isEmpty()){
       return false;
     }
-    return getPhysicalParentSegments().stream().allMatch(ls -> ls.hasGeometry());
+    return getPhysicalParentSegments().stream().allMatch(EdgeSegment::hasGeometry);
   }
 
   /** Collect the links that make up this leg ordered and in direction from A to B

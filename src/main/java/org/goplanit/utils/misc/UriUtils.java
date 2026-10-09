@@ -5,6 +5,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.logging.Logger;
 
 /**
@@ -91,10 +92,11 @@ public class UriUtils {
     return uri;
 }
   
-  /** Specifically meant for URIs that have been made relative, e.g. no longer have a scheme (or are of type file), and therefore represent or provide a path.
-   * We only collect the path component, if absent, we remove the scheme and try again. If still not possible
-   * we return original uri. When path is found, we ensure that a "/" is included in the beginning to signal the uri location is to
-   * be found from the root of whatever is the root of this application
+  /** Specifically meant for URIs that have been made relative, e.g. no longer have a scheme (or are of type file), and
+   * therefore represent or provide a path. We only collect the path component, if absent, we remove the scheme and
+   * try again. If still not possible we return original uri. When path is found, we ensure that a "/" is included
+   * in the beginning to signal the uri location is to be found from the root of whatever is the root of this
+   * application
    * 
    * @param uri to extract from
    * @return URI as relative from root.
@@ -105,20 +107,52 @@ public class UriUtils {
       relativeToRoot = removeInitialScheme(relativeToRoot);
       return asRelativeUriFromRoot(relativeToRoot);
     }
-    return !relativeToRoot.toString().startsWith("/") ? URI.create("/"+relativeToRoot.toString()) : uri;
+    return !relativeToRoot.toString().startsWith("/") ? URI.create("/"+ relativeToRoot) : uri;
   }
   
-  /** create URI without its initial scheme (if any), if no scheme, return original uri
+  /** create URI without its initial scheme (if any), if no scheme, return original uri. When URI is a file
+   * remove any leading slashes except initial one (required for an URI to be valid).
+   * <p>
+   *   Use the {@link #asStringRemoveInitialScheme(URI)} if you want a string version where we no longer need to conform
+   *   to URI validity and will remove leading slash as well (on Windows)
+   * </p>
    * 
    * @param uri to check
    * @return true when path is present false otherwise
    */
   public static URI removeInitialScheme(URI uri) {
     if(hasScheme(uri)) {
-      return URI.create(uri.getSchemeSpecificPart().toString());
+      if(UriUtils.isRegularFile(uri)){
+        // for regular files treat differently because getSchemeSpecificPart() exists for generic URI processing, not
+        // for filesystem paths, it may leave too many slashes in, instead use Path directly
+        return URI.create(uri.getPath());
+      }else {
+        return URI.create(uri.getSchemeSpecificPart());
+      }
     }
     return uri;
-  }    
+  }
+
+  /** create URI without its initial scheme (if any), if no scheme, return original uri. When URI is a file
+   * remove any leading slashes depending on OS (for Windows remove).
+   *
+   * @param uri to check
+   * @return true when path is present false otherwise
+   */
+  public static String asStringRemoveInitialScheme(URI uri) {
+    if(hasScheme(uri)) {
+      if(UriUtils.isRegularFile(uri)){
+        // for regular files treat differently because getSchemeSpecificPart() exists for generic URI processing, not
+        // for filesystem paths, it may leave too many slashes in, instead use Path directly and then to avoid windows
+        // issue with leading slash convert to file and then string
+        return Paths.get(uri).toFile().toString();
+      }else {
+        return removeInitialScheme(uri).toString();
+      }
+    }
+    // no info to remove, provide regular string representation
+    return uri.toString();
+  }
 
   /** Check if scheme is present
    * 
@@ -174,8 +208,9 @@ public class UriUtils {
     return workingDirUri.relativize(uri);
   }
 
-  /** Extract relative URI based on provided URI, knowing that the uri points to a location within a jar. We relativise against the jar location
-   * stripping all but the internal location relative to the jar. If the uri is not pointing to a jar location, the original uri is returned
+  /** Extract relative URI based on provided URI, knowing that the uri points to a location within a jar. We relativise
+   * against the jar location stripping all but the internal location relative to the jar. If the uri is not pointing
+   * to a jar location, the original uri is returned
    * 
    * @param uri to relativise
    * @return created URI
@@ -187,20 +222,22 @@ public class UriUtils {
     
     /* extract location of jar */
     URI jarLocationURI = UriUtils.jarUriOfJarEntry(uri);                  
-    /* remove scheme, so that jar is treated as file, and the path can be collected which is used for relativisation, otherwise
-     * path is null */
+    /* remove scheme, so that jar is treated as file, and the path can be collected which is used for relativisation,
+    otherwise path is null */
     URI desiredUriWithoutScheme = UriUtils.removeInitialScheme(uri);
     URI jarLocationURIWithoutScheme = UriUtils.removeInitialScheme(jarLocationURI);           
     return jarLocationURIWithoutScheme.relativize(desiredUriWithoutScheme);
   }
 
-  /** Method that attempts to strip everything from the URI to make it a relative URI. This is useful if the URI points to a resource that should 
-   * be available within the application. Given that resources are to be streamed from a String, apply this method and convert to String afterward
-   * to let Java search for the resource. Often we cannot provide the (absolute) URI because it does not work in case it, for example, points to non 
-   * file like objects, or files contained within other file systems, such as jars. When providing the correct relative URI, Java can work around this
-   * whereas otherwise it cannot.
+  /** Method that attempts to strip everything from the URI to make it a relative URI. This is useful if the URI points
+   * to a resource that should be available within the application. Given that resources are to be streamed from a
+   * String, apply this method and convert to String afterward to let Java search for the resource. Often we cannot
+   * provide the (absolute) URI because it does not work in case it, for example, points to non-file like objects,
+   * or files contained within other file systems, such as jars. When providing the correct relative URI, Java can
+   * work around this whereas otherwise it cannot.
    * <p>
-   * We attempt three ways to make the URI relative: (i) relative against the current working directory, (ii) relative against the user.dir, (iii) relative
+   * We attempt three ways to make the URI relative: (i) relative against the current working directory,
+   * (ii) relative against the user.dir, (iii) relative
    * against the URI jar file (if applicable). If none succeed, the original URI is returned
    * 
    * @param uri to convert
@@ -217,7 +254,8 @@ public class UriUtils {
     }
     
     if(relativeResourceUri!=null && relativeResourceUri.getScheme()!=null) {        
-      /* scheme present, so relativisation did not succeed, try to use JVM working dir instead, which might be overridden compared to overall application dir that instantiated this Java run */
+      /* scheme present, so relativisation did not succeed, try to use JVM working dir instead, which might be
+      overridden compared to overall application dir that instantiated this Java run */
       URI relativeURIFromUserDir = UriUtils.asRelativeUriFromUserDir(uri);
       if(relativeURIFromUserDir!=null && relativeResourceUri.getScheme()==null) {
         /* success use this result */
@@ -226,12 +264,14 @@ public class UriUtils {
       }
     }      
     if(relativeResourceUri.getScheme()!=null && UriUtils.isInJar(uri)) {
-      /* again did not work, so likely we are running this jar from other dir and user.dir was not overridden or not to a common location for resource 
-       * last attempt is to see if resource is in a jar and when resources of this jar are available, we relativise against the jar location instead and hope
+      /* again did not work, so likely we are running this jar from other dir and user.dir was not overridden or not
+       * to a common location for resource last attempt is to see if resource is in a jar and when resources of this
+       * jar are available, we relativise against the jar location instead and hope
        * the resource can be located that way*/
       URI relativeURIFromJar = UriUtils.asRelativeUriFromJar(uri);
       if(relativeURIFromJar!=null) { 
-        /* make sure that we search from root of jar since relativisation removes shared initial "/" as well, which is not what we want */
+        /* make sure that we search from root of jar since relativisation removes shared initial "/" as well,
+         which is not what we want */
         relativeURIFromJar = UriUtils.asRelativeUriFromRoot(relativeURIFromJar);
         LOGGER.fine(relativeURIFromJar.toString());
         return relativeURIFromJar;
@@ -240,6 +280,29 @@ public class UriUtils {
     
     /* unable to relativise, so just return original uri */
     return uri;
-  }    
+  }
+
+  /**
+   * Create an URI while conscious it may be a Windows path which is not strictly a URI so needs different
+   * way of processing to avoid URISyntaxException
+   *
+   * @param validUriOrWindowsPath to construct URI from
+   * @return constructed URI
+   */
+  public static URI fromValidUriOrWindowsPath(String validUriOrWindowsPath){
+    try {
+      // Try as valid URI first
+      URI uri = new URI(validUriOrWindowsPath);
+      // If it has a scheme (http, file, etc.), treat as URI
+      if (uri.getScheme() != null) {
+        return uri;
+      }
+    } catch (Exception ignored) {
+    }
+
+    // Fallback: treat as file path (handles Windows backslashes)
+    Path path = Paths.get(validUriOrWindowsPath);
+    return path.toUri();
+  }
 
 }

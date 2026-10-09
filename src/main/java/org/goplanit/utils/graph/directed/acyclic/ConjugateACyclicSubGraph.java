@@ -1,5 +1,6 @@
 package org.goplanit.utils.graph.directed.acyclic;
 
+import org.goplanit.utils.graph.directed.ConjugateDirectedEdge;
 import org.goplanit.utils.graph.directed.ConjugateDirectedVertex;
 import org.goplanit.utils.graph.directed.ConjugateEdgeSegment;
 
@@ -14,7 +15,8 @@ import org.goplanit.utils.graph.directed.ConjugateEdgeSegment;
  * @author markr
  *
  */
-public interface ConjugateACyclicSubGraph extends UntypedACyclicSubGraph<ConjugateDirectedVertex, ConjugateEdgeSegment> {
+public interface ConjugateACyclicSubGraph extends
+    UntypedACyclicSubGraph<ConjugateDirectedVertex, ConjugateDirectedEdge, ConjugateEdgeSegment> {
 
   /**
    * {@inheritDoc}

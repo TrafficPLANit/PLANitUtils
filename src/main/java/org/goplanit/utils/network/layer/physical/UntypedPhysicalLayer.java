@@ -1,18 +1,18 @@
 package org.goplanit.utils.network.layer.physical;
 
+import org.apache.commons.collections4.map.MultiKeyMap;
 import org.goplanit.utils.graph.GraphEntities;
-import org.goplanit.utils.graph.GraphEntity;
-import org.goplanit.utils.id.ExternalIdAble;
+import org.goplanit.utils.graph.directed.BannedMovement;
+import org.goplanit.utils.graph.directed.BannedMovements;
 import org.goplanit.utils.network.layer.UntypedDirectedGraphLayer;
-
-import java.util.function.Consumer;
 
 /**
  * Physical topological Network consisting of nodes, links and link segments 
  *
  * @author markr
  */
-public interface UntypedPhysicalLayer<N extends Node, L extends Link, LS extends LinkSegment> extends UntypedDirectedGraphLayer<N, L, LS> {
+public interface UntypedPhysicalLayer<N extends Node, L extends Link, LS extends LinkSegment>
+        extends UntypedDirectedGraphLayer<N, L, LS> {
 
   /**
    * Collect the links
@@ -34,6 +34,22 @@ public interface UntypedPhysicalLayer<N extends Node, L extends Link, LS extends
    * @return the nodes
    */
   public abstract GraphEntities<N> getNodes();
+
+  /**
+   * Verify if movements have been generated and are non-empty
+   *
+   * @return true when present, false otherwise
+   */
+  public default boolean hasBannedMovements(){
+    return getBannedMovements()!= null && !getBannedMovements().isEmpty();
+  }
+
+  /**
+   * Access to movements container (which may be empty if no movements have been generated)
+   *
+   * @return movements container
+   */
+  public abstract BannedMovements getBannedMovements();
 
   /**
    * {@inheritDoc}
@@ -72,6 +88,26 @@ public interface UntypedPhysicalLayer<N extends Node, L extends Link, LS extends
    */
   public default long getNumberOfLinkSegments() {
     return getLinkSegments().size();
+  }
+
+  /**
+   * Number of banned movements
+   *
+   * @return number of banned movements
+   */
+  public default long getNumberOfBannedMovements(){
+    return getBannedMovements().size();
+  }
+
+  /**
+   * Create a (new) mapping from entry/exit segment combinations to their movement (if any)
+   *
+   * @return mapping that was created
+   */
+  public default MultiKeyMap<Object, BannedMovement> createEntryExitSegmentToMovementMapping(){
+    MultiKeyMap<Object, BannedMovement> entryExitSegment2MovementMap = new MultiKeyMap<>();
+    getBannedMovements().forEach(m -> entryExitSegment2MovementMap.put(m.getSegmentFrom(), m.getSegmentTo(), m));
+    return entryExitSegment2MovementMap;
   }
 
 }

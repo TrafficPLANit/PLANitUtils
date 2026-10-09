@@ -14,11 +14,11 @@ import java.util.function.BiConsumer;
  *
  */
 public interface ConjugateLinks extends ManagedGraphEntities<ConjugateLink> {
-  /* do not derive from ConjugateDirectedEdges<E> since we require to override the factory method return type. This is only
-   * allowed when the return type directly derives from the original return type. LinkFactory cannot
-   * derive from DirectedEdgeFactory since the signature of the factory methods differs. Hence, we must derive from
-   * the base interface instead which has an empty dummy factory return type which one can always overwrite and
-   * the LinkFactory is derived from */
+  /* do not derive from ConjugateDirectedEdges<E> since we require to override the factory method return type.
+  This is only allowed when the return type directly derives from the original return type. LinkFactory cannot
+  derive from DirectedEdgeFactory since the signature of the factory methods differs. Hence, we must derive from
+  the base interface instead which has an empty dummy factory return type which one can always overwrite and
+  the LinkFactory is derived from */
   
   /**
    * {@inheritDoc}

@@ -9,7 +9,7 @@ import java.util.Arrays;
 public class HashUtils {
 
   /** When you want to avoid using nested hash maps and do not need access to the keys themselves, use a combined hash key via this method, 
-   * so all can be stored in a single hash map which saves a lot of memory space. 
+   * so all can be stored in a single hash map which saves memory.
    * 
    * @param <T> type of the primitive keys
    * @param primitiveKeys to use

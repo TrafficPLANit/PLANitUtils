@@ -31,7 +31,8 @@ public interface RoutedServicesLayers extends ManagedIdEntities<RoutedServicesLa
    * {@inheritDoc}
    */
   @Override
-  public abstract RoutedServicesLayers deepCloneWithMapping(BiConsumer<RoutedServicesLayer, RoutedServicesLayer> mapper);
+  public abstract RoutedServicesLayers deepCloneWithMapping(
+      BiConsumer<RoutedServicesLayer, RoutedServicesLayer> mapper);
 
   /**
    * {@inheritDoc}
@@ -58,7 +59,8 @@ public interface RoutedServicesLayers extends ManagedIdEntities<RoutedServicesLa
   public default Map<Mode, RoutedServicesLayer> indexLayersByMode() {
     Map<Mode, RoutedServicesLayer> indexedByMode = new HashMap<>();
     forEach( rsLayer ->
-        rsLayer.getParentLayer().getSupportedModes().forEach( supportedMode -> indexedByMode.put(supportedMode, rsLayer)));
+        rsLayer.getParentLayer().getSupportedModes().forEach(
+            supportedMode -> indexedByMode.put(supportedMode, rsLayer)));
     return indexedByMode;
   }
 

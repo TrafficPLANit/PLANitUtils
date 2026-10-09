@@ -47,7 +47,9 @@ public class UrlUtils {
    * @return true when local, false otherwise
    */
   public static boolean isLocalFile(URL url) {
-    return isLocal(url) && new File(url.getFile()).isFile();
+    return isLocal(url) &&
+        new File(
+            StringUtils.removeInitialStringWhenPresent(url.getFile(), "/")).isFile();
   }
   
   /** Test if URL is a local file
@@ -78,41 +80,42 @@ public class UrlUtils {
     return host != null && !"".equals(host);
   }
 
-  /** Construct a URL based on a given a location either local or not
+  /** Construct a URL based on a given a location either local or not. If fails throw PLANit run time exception
    *
    * @param path to convert
    * @return URL representation
    */
   public static URL createFrom(String path) {
     try {
-      var result = new URL(path);
-      return result;
-    } catch (Exception e) {
+      return new URI(path).toURL();
+    } catch (Exception ignored) {
     }
 
     /* try again, now as local file or resource rather than web based */
+    URL result = null;
     try {
-      return createFromLocalPathOrResource(path);
+      result = createFromLocalPathOrResource(path);
     }catch (Exception e) {
-      throw new PlanItRunTimeException("Unable to extract URL from %s",path);
     }
+    return result;
   }
   
-  /** Construct a URL based on a given local file location
+  /** Construct a URL based on a given local (possibly relative) file location and include full path in the URL if
+   * found
    * 
    * @param path to convert
    * @return URL representation
    */
-  public static URL createFromLocalPath(String path) {
-    return createFromLocalPath(Paths.get(path));
+  public static URL createFromLocalAbsoluteOrRelativePath(String path) {
+    return createFromLocalAbsoluteOrRelativePath(Paths.get(path));
   }
   
-  /** Construct a URL based on a given (local) path
-   * 
+  /** Construct a URL based on a given local (possibly relative) file location and include full path in the URL if
+   * found
    * @param path to convert
    * @return URL representation
    */
-  public static URL createFromLocalPath(Path path) {
+  public static URL createFromLocalAbsoluteOrRelativePath(Path path) {
     try {
       return path.toUri().toURL();
     } catch (MalformedURLException e) {
@@ -121,14 +124,15 @@ public class UrlUtils {
     return null;
   }
 
-  /** Construct a URL based on a given (local) path
+  /** Construct a URL based on a given (local) path for a resource that should exist. If it does not exist
+   * this will fail
    *
    * @param path to convert
    * @return URL representation
    */
   public static URL createFromLocalPathOrResource(String path) {
     /* attempt to create as if it is a local file */
-    var asLocalFile = UrlUtils.createFromLocalPath(path);
+    var asLocalFile = UrlUtils.createFromLocalAbsoluteOrRelativePath(path);
     if(asLocalFile!= null && UrlUtils.isLocalFile(asLocalFile)){
       return asLocalFile;
     }
@@ -172,9 +176,11 @@ public class UrlUtils {
         String pathWithoutTrailingSlash = StringUtils.removeEndingStringWhenPresent(baseUri.getPath(), "/");
         String combinedRawPath = pathWithoutTrailingSlash + "/" + relPathToAdd;
 
-        return new URI(baseUri.getScheme(),baseUri.getAuthority(),combinedRawPath,baseUri.getQuery(),baseUri.getFragment()).toURL();
+        return new URI(baseUri.getScheme(),baseUri.getAuthority(),combinedRawPath,baseUri.getQuery(),
+                baseUri.getFragment()).toURL();
     } catch (Exception e) {
-      LOGGER.warning(String.format("Unable to append relativePath %s to base URL %s",relativePath != null ? relativePath : "", baseUrl!=null ? baseUrl.toString() : ""));
+      LOGGER.warning(String.format("Unable to append relativePath %s to base URL %s",
+              relativePath != null ? relativePath : "", baseUrl!=null ? baseUrl.toString() : ""));
     }
     return null;
   }

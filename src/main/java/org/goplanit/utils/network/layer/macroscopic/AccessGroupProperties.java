@@ -129,4 +129,16 @@ public interface AccessGroupProperties {
   public default boolean hasAccessModes(){
     return !getAccessModes().isEmpty();
   }
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public abstract int hashCode();
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public abstract boolean equals(Object other);
 }

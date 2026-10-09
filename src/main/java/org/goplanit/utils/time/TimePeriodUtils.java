@@ -1,5 +1,6 @@
 package org.goplanit.utils.time;
 
+import java.time.LocalTime;
 import java.util.Comparator;
 import java.util.logging.Logger;
 
@@ -84,6 +85,6 @@ public class TimePeriodUtils {
    */
   public static float convertSecondsToHours(int secondsFromMidnight) {
     return ((float) secondsFromMidnight) / 3600;
-  }  
+  }
 
 }
