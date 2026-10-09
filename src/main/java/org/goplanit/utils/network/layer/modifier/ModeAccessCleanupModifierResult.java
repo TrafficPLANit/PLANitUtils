@@ -1,5 +1,13 @@
 package org.goplanit.utils.network.layer.modifier;
 
+import java.util.List;
+
+import org.goplanit.utils.network.layer.macroscopic.MacroscopicLink;
+import org.goplanit.utils.network.layer.macroscopic.MacroscopicLinkSegment;
+import org.goplanit.utils.network.layer.macroscopic.MacroscopicLinkSegmentType;
+import org.goplanit.utils.network.layer.macroscopic.intersection.Intersection;
+import org.goplanit.utils.network.layer.physical.Node;
+
 /**
  * What removing the infrastructure no mode can use any more came to, see
  * {@link MacroscopicNetworkLayerModifier#removeInfrastructureWithoutModeAccess()}, as a value so the caller decides
@@ -9,83 +17,82 @@ package org.goplanit.utils.network.layer.modifier;
  */
 public class ModeAccessCleanupModifierResult {
 
-  /** number of link segments removed because no mode could use them */
-  private final int removedLinkSegments;
+  /** link segments removed because no mode could use them */
+  private final List<MacroscopicLinkSegment> removedLinkSegments;
 
-  /** number of links removed because they were left without any segment */
-  private final int removedLinks;
+  /** links removed because they were left without any segment */
+  private final List<MacroscopicLink> removedLinks;
 
-  /** number of nodes removed because they were left without any edge */
-  private final int removedNodes;
+  /** nodes removed because they were left without any edge */
+  private final List<Node> removedNodes;
 
-  /** number of link segment types removed because they granted no mode access */
-  private final int removedLinkSegmentTypes;
+  /** link segment types removed because they granted no mode access */
+  private final List<MacroscopicLinkSegmentType> removedLinkSegmentTypes;
 
-  /** number of intersections removed because they were left without approaches or member nodes */
-  private final int removedIntersections;
+  /** intersections removed because they were left without approaches or member nodes */
+  private final List<Intersection> removedIntersections;
 
   /**
    * Constructor
    *
-   * @param removedLinkSegments number of link segments removed because no mode could use them
-   * @param removedLinks number of links removed because they were left without any segment
-   * @param removedNodes number of nodes removed because they were left without any edge
-   * @param removedLinkSegmentTypes number of link segment types removed because they granted no mode access
-   * @param removedIntersections number of intersections removed because they were left without approaches or member
-   *                             nodes
+   * @param removedLinkSegments link segments removed because no mode could use them
+   * @param removedLinks links removed because they were left without any segment
+   * @param removedNodes nodes removed because they were left without any edge
+   * @param removedLinkSegmentTypes link segment types removed because they granted no mode access
+   * @param removedIntersections intersections removed because they were left without approaches or member nodes
    */
   public ModeAccessCleanupModifierResult(
-      int removedLinkSegments, int removedLinks, int removedNodes, int removedLinkSegmentTypes,
-      int removedIntersections) {
-    this.removedLinkSegments = removedLinkSegments;
-    this.removedLinks = removedLinks;
-    this.removedNodes = removedNodes;
-    this.removedLinkSegmentTypes = removedLinkSegmentTypes;
-    this.removedIntersections = removedIntersections;
+      List<MacroscopicLinkSegment> removedLinkSegments, List<MacroscopicLink> removedLinks, List<Node> removedNodes,
+      List<MacroscopicLinkSegmentType> removedLinkSegmentTypes, List<Intersection> removedIntersections) {
+    this.removedLinkSegments = List.copyOf(removedLinkSegments);
+    this.removedLinks = List.copyOf(removedLinks);
+    this.removedNodes = List.copyOf(removedNodes);
+    this.removedLinkSegmentTypes = List.copyOf(removedLinkSegmentTypes);
+    this.removedIntersections = List.copyOf(removedIntersections);
   }
 
   /**
-   * Number of link segments removed because no mode could use them
+   * Link segments removed because no mode could use them
    *
-   * @return count
+   * @return removed link segments, unmodifiable
    */
-  public int getRemovedLinkSegments() {
+  public List<MacroscopicLinkSegment> getRemovedLinkSegments() {
     return removedLinkSegments;
   }
 
   /**
-   * Number of links removed because they were left without any segment
+   * Links removed because they were left without any segment
    *
-   * @return count
+   * @return removed links, unmodifiable
    */
-  public int getRemovedLinks() {
+  public List<MacroscopicLink> getRemovedLinks() {
     return removedLinks;
   }
 
   /**
-   * Number of nodes removed because they were left without any edge
+   * Nodes removed because they were left without any edge
    *
-   * @return count
+   * @return removed nodes, unmodifiable
    */
-  public int getRemovedNodes() {
+  public List<Node> getRemovedNodes() {
     return removedNodes;
   }
 
   /**
-   * Number of link segment types removed because they granted no mode access
+   * Link segment types removed because they granted no mode access
    *
-   * @return count
+   * @return removed link segment types, unmodifiable
    */
-  public int getRemovedLinkSegmentTypes() {
+  public List<MacroscopicLinkSegmentType> getRemovedLinkSegmentTypes() {
     return removedLinkSegmentTypes;
   }
 
   /**
-   * Number of intersections removed because they were left without approaches or member nodes
+   * Intersections removed because they were left without approaches or member nodes
    *
-   * @return count
+   * @return removed intersections, unmodifiable
    */
-  public int getRemovedIntersections() {
+  public List<Intersection> getRemovedIntersections() {
     return removedIntersections;
   }
 
@@ -95,7 +102,8 @@ public class ModeAccessCleanupModifierResult {
    * @return true when nothing was removed
    */
   public boolean isEmpty() {
-    return removedLinkSegments == 0 && removedLinks == 0 && removedNodes == 0 && removedIntersections == 0;
+    return removedLinkSegments.isEmpty() && removedLinks.isEmpty() && removedNodes.isEmpty() &&
+        removedIntersections.isEmpty();
   }
 
   /**
@@ -106,6 +114,7 @@ public class ModeAccessCleanupModifierResult {
     return String.format(
         "removed %d link segments, %d links and %d nodes without any mode access (%d link segment types), and %d " +
         "intersections left without approaches or member nodes",
-        removedLinkSegments, removedLinks, removedNodes, removedLinkSegmentTypes, removedIntersections);
+        removedLinkSegments.size(), removedLinks.size(), removedNodes.size(), removedLinkSegmentTypes.size(),
+        removedIntersections.size());
   }
 }
