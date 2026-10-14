@@ -301,6 +301,16 @@ public class PlanitJtsUtils {
   }
 
   /**
+   * Create a multi point from the passed in points
+   *
+   * @param points source
+   * @return created multi point, empty when no points are passed in
+   */
+  public static MultiPoint createMultiPoint(Point... points){
+    return jtsGeometryFactory.createMultiPoint(points);
+  }
+
+  /**
    * Create an empty polygon geometry
    * 
    * @return polygon
@@ -634,7 +644,7 @@ public class PlanitJtsUtils {
     if(coordinateList!= null && coordinateList.size() >=2) {
       if(!isClosed2D(coordinateList)) {
         var closedList = new LinkedList<>(coordinateList);
-        closedList.addFirst(closedList.getLast().copy());
+        closedList.addLast(closedList.getFirst().copy());
         return closedList;
       }
       return coordinateList;
@@ -840,41 +850,42 @@ public class PlanitJtsUtils {
 
   /**
    * copy the coordinates in the line string starting at the given offset (included)
-   * 
+   *
    * @param offset   to start at
    * @param geometry to copy from
-   * @return coordinate array, when offset is out of bounds null is returned
+   * @return coordinate array, empty when offset is out of bounds
    */
   public static Coordinate[] copyCoordinatesFrom(int offset, LineString geometry){
     return copyCoordinatesFromUpToNotIncluding(offset, geometry.getNumPoints(), geometry);
   }
 
   /**
-   * copy the coordinates in the line string until the given location, the location is included
-   * 
+   * copy the coordinates in the line string up to the given position, which is not included
+   *
    * @param untilPoint to stop (not included)
    * @param geometry   to copy from
-   * @return coordinate array, when offset is out of bounds null is returned
+   * @return coordinate array, empty when untilPoint is out of bounds
    */
   public static Coordinate[] copyCoordinatesUpToNotIncluding(int untilPoint, LineString geometry){
     return copyCoordinatesFromUpToNotIncluding(0, untilPoint, geometry);
   }
 
   /**
-   * copy the coordinates in the line string from-to the given locations, the locations are included
-   * 
+   * copy the coordinates in the line string from the offset (included) up to the given position (not included)
+   *
    * @param offset     to start at (included)
    * @param untilPoint to end with (not included)
    * @param geometry   to copy from
-   * @return coordinate array, when offset is out of bounds empty coordinate array is returned
+   * @return coordinate array, empty when offset or untilPoint is out of bounds
    */
   public static Coordinate[] copyCoordinatesFromUpToNotIncluding(int offset, int untilPoint, LineString geometry){
     PlanItRunTimeException.throwIfNull(geometry, "Provided geometry to copy coordinates from is null");
 
     int numCoordinates = geometry.getNumPoints();
-    if (offset > untilPoint || untilPoint > numCoordinates) {
+    if (offset < 0 || offset > untilPoint || untilPoint > numCoordinates) {
       LOGGER.severe("unable to extract coordinates from line string, offset is " +
               "larger than final point, and/or final point exceeds number of coordinates in geometry");
+      return new Coordinate[0];
     }
 
     Coordinate[] coordinates = new Coordinate[untilPoint - offset];
@@ -930,30 +941,32 @@ public class PlanitJtsUtils {
   }
 
   /**
-   * Merge two line strings that are expected to have at least one point in common, in case any input is null or there is no overlap 
-   * between the two null is returned 
-   * 
-   * 
+   * Merge two line strings that are expected to have at least one point in common. When only one is given, a copy of
+   * it is returned. When neither is given, or the two have no point in common, null is returned
+   *
    * @param first line string
    * @param second line string
-   * @return merged line string, or null if failed or any input is null
+   * @return merged line string, a copy of the only one given, or null
    */
   public static LineString mergeLineStrings(LineString first, LineString second) {
-    if(first == null && second!=null) {
+    if(first == null && second == null) {
+      return null;
+    }else if(first == null) {
       return (LineString) second.copy();
-    }else if(first!=null && second==null){
+    }else if(second == null){
       return (LineString) first.copy();
     }
-  
+
     /* register */
     LineMerger lineMerger = new LineMerger();
     lineMerger.add(first);
     lineMerger.add(second);
-    /* merge and collect first result */
-    if(lineMerger.getMergedLineStrings()==null || lineMerger.getMergedLineStrings().isEmpty()) {
+    /* merge, without a point in common the two stay apart and there is no single merged line string */
+    var merged = lineMerger.getMergedLineStrings();
+    if(merged == null || merged.size() != 1) {
       return null;
     }
-    return (LineString) lineMerger.getMergedLineStrings().iterator().next();
+    return (LineString) merged.iterator().next();
   }
 
   /** Using the normalised sign of the determinant of line AB and AM we determine if coordM resides left of the line segment AB

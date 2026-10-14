@@ -1,7 +1,10 @@
 package org.goplanit.utils.misc;
 
 import java.nio.charset.Charset;
+import java.util.Collection;
+import java.util.function.Function;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 /**
  * Some simple string utilities
@@ -184,5 +187,19 @@ public class StringUtils {
 
     int end = Math.max(0, maxLength - suffix.length());
     return theString.substring(0, end) + suffix;
+  }
+
+  /**
+   * Turn each element into text, sort the texts, and join them with commas, e.g. "10,2,9". Texts are sorted as
+   * text, so "10" comes before "2". Every element must give a text, null is not allowed
+   *
+   * @param <E> type of element
+   * @param elements to join
+   * @param toText turning an element into its text
+   * @return the joined texts, empty when there are no elements
+   */
+  public static <E> String toSortedCommaSeparatedString(
+      Collection<? extends E> elements, Function<? super E, String> toText) {
+    return elements.stream().map(toText).sorted().collect(Collectors.joining(CharacterUtils.COMMA.toString()));
   }
 }

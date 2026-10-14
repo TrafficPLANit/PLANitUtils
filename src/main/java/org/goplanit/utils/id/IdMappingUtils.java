@@ -1,7 +1,9 @@
 package org.goplanit.utils.id;
 
 import org.goplanit.utils.exceptions.PlanItRunTimeException;
+import org.goplanit.utils.misc.StringUtils;
 
+import java.util.Collection;
 import java.util.function.Function;
 
 /**
@@ -64,5 +66,19 @@ public class IdMappingUtils {
       default:
         throw new PlanItRunTimeException("Unknown id mapping type found" + idMapper);
     }
+  }
+
+  /**
+   * Map each entity to its id of the given type, sort the ids as text, and join them with commas, see
+   * {@link StringUtils#toSortedCommaSeparatedString(Collection, Function)}. Every entity must have an id of that
+   * type, e.g. an external id when mapping external ids
+   *
+   * @param entities to map
+   * @param idMapper the type of id to use
+   * @return the joined ids, empty when there are no entities
+   */
+  public static String toSortedCommaSeparatedIds(
+      Collection<? extends ExternalIdAble> entities, final IdMapperType idMapper) {
+    return StringUtils.toSortedCommaSeparatedString(entities, getIdMappingFunction(idMapper));
   }
 }
