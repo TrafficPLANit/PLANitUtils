@@ -141,4 +141,25 @@ public class MacroscopicLinkSegmentUtils {
     }
     return continuations;
   }
+
+  /**
+   * Find the link segments a segment can be reached from before the node it leaves. They enter that node, meet the
+   * condition, and are not on the link it leaves along, so coming back along it is never a predecessor. For example,
+   * leaving a node where two roads merge, both roads behind are predecessors, but the opposite direction of the road
+   * left along is not.
+   *
+   * @param leaving segment leaving the node
+   * @param condition a predecessor must meet
+   * @return the predecessors, empty when there are none
+   */
+  public static List<MacroscopicLinkSegment> findPredecessors(
+      final MacroscopicLinkSegment leaving, final Predicate<? super MacroscopicLinkSegment> condition) {
+    var predecessors = new ArrayList<MacroscopicLinkSegment>(2);
+    for (MacroscopicLinkSegment entering : leaving.getUpstreamNode().<MacroscopicLinkSegment>getEntryLinkSegments()) {
+      if (entering.getParent() != leaving.getParent() && condition.test(entering)) {
+        predecessors.add(entering);
+      }
+    }
+    return predecessors;
+  }
 }
