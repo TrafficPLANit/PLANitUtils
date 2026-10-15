@@ -76,13 +76,6 @@ public interface NetworkLayer extends ExternalIdAble, ManagedId {
   public abstract Collection<Mode> getSupportedModes();
 
   /**
-   * Verify if a predefined mode is supported based on its type
-   * @param predefinedModeType to verify
-   * @return true, when supported, false otherwise
-   */
-  public abstract boolean supportsPredefinedMode(PredefinedModeType predefinedModeType);
-
-  /**
    * check if the layer is empty of any infrastructure
    * 
    * @return true when empty, false otherwise
@@ -114,7 +107,7 @@ public interface NetworkLayer extends ExternalIdAble, ManagedId {
   }
 
   /**
-   * Determine if mode is supported by this layer
+   * Determine if a predefined mode of the given type is supported by this layer
    *
    * @param modeType to verify
    * @return true when supporting, false otherwise
