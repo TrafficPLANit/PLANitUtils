@@ -120,8 +120,7 @@ public interface NetworkLayer extends ExternalIdAble, ManagedId {
    * @return true when supporting, false otherwise
    */
   public default boolean supports(PredefinedModeType modeType) {
-    return getSupportedModes().stream().anyMatch( m -> m.isPredefinedModeType() &&
-        m.getPredefinedModeType().equals(modeType));
+    return getSupportedModes().stream().anyMatch(m -> m.isPredefinedModeType(modeType));
   }
   
   /**

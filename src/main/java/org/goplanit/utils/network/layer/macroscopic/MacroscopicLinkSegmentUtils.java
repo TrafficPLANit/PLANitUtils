@@ -4,6 +4,8 @@ import org.goplanit.utils.graph.directed.EdgeSegment;
 import org.goplanit.utils.mode.Mode;
 import org.goplanit.utils.mode.TrackModeType;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.function.Predicate;
 
 /**
@@ -105,5 +107,38 @@ public class MacroscopicLinkSegmentUtils {
   public static Predicate<EdgeSegment> permitsMode(final Mode mode) {
     return edgeSegment -> edgeSegment instanceof MacroscopicLinkSegment &&
         ((MacroscopicLinkSegment) edgeSegment).isModeAllowed(mode);
+  }
+
+  /**
+   * Create a predicate selecting only those edge segments that are macroscopic link segments permitting at least one
+   * motorised road mode, such as a car or a bus, see {@link Mode#isMotorisedRoadMode()}. Shaped as a
+   * {@code Predicate<EdgeSegment>} for the same reason as {@link #permitsMode(Mode)}.
+   *
+   * @return predicate to use
+   */
+  public static Predicate<EdgeSegment> permitsMotorisedRoadMode() {
+    return edgeSegment -> edgeSegment instanceof MacroscopicLinkSegment &&
+        ((MacroscopicLinkSegment) edgeSegment).isAnyModeAllowed(Mode::isMotorisedRoadMode);
+  }
+
+  /**
+   * Find the link segments a segment continues on beyond the node it arrives at. They leave that node, meet the
+   * condition, and are not on the link arrived on, so going back is never a continuation. For example, arriving at a
+   * node where a road splits in two, both roads ahead are continuations, but the opposite direction of the road arrived
+   * along is not.
+   *
+   * @param arriving segment arriving at the node
+   * @param condition a continuation must meet
+   * @return the continuations, empty when there are none
+   */
+  public static List<MacroscopicLinkSegment> findContinuations(
+      final MacroscopicLinkSegment arriving, final Predicate<? super MacroscopicLinkSegment> condition) {
+    var continuations = new ArrayList<MacroscopicLinkSegment>(2);
+    for (MacroscopicLinkSegment leaving : arriving.getDownstreamNode().<MacroscopicLinkSegment>getExitLinkSegments()) {
+      if (leaving.getParent() != arriving.getParent() && condition.test(leaving)) {
+        continuations.add(leaving);
+      }
+    }
+    return continuations;
   }
 }

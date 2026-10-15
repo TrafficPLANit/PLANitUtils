@@ -111,7 +111,18 @@ public interface Mode extends ExternalIdAble, ManagedId {
   public default boolean isPredefinedModeType(){
     return false;
   }
-  
+
+  /**
+   * Verify if the mode is the given predefined mode type, e.g. the predefined bicycle mode. A custom mode is never one,
+   * also not when the custom type is given
+   *
+   * @param predefinedModeType to check against
+   * @return true when a predefined mode of the given type, false otherwise
+   */
+  public default boolean isPredefinedModeType(PredefinedModeType predefinedModeType){
+    return isPredefinedModeType() && getPredefinedModeType() == predefinedModeType;
+  }
+
   /**
    * collect the predefined mode type
    * 
