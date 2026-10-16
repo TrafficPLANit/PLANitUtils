@@ -132,4 +132,17 @@ public class ListUtils {
     list.clear();
     list.addAll(mapped);
   }
+
+  /**
+   * Verify if a list holds this very instance, compared by identity rather than with equals. Entities equal each other
+   * by id, and ids can be recreated in place, so a list of entities is searched by identity
+   *
+   * @param <T> type of entry
+   * @param list to look in
+   * @param entry to look for
+   * @return true when the list holds this instance, false otherwise
+   */
+  public static <T> boolean containsByIdentity(List<? extends T> list, T entry){
+    return list.stream().anyMatch(held -> held == entry);
+  }
 }

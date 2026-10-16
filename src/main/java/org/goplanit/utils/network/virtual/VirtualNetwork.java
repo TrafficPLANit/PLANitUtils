@@ -4,7 +4,7 @@ import org.goplanit.utils.graph.GraphEntityDeepCopyMapper;
 import org.goplanit.utils.graph.directed.DirectedVertex;
 import org.goplanit.utils.id.IdGroupingToken;
 import org.goplanit.utils.id.ManagedIdDeepCopyMapper;
-import org.goplanit.utils.graph.directed.BannedMovement;
+import org.goplanit.utils.graph.directed.BannedTurn;
 import org.goplanit.utils.network.virtual.graph.ConnectoidDirectedEdge;
 import org.goplanit.utils.network.virtual.physical.ConnectoidSegment;
 
@@ -53,7 +53,7 @@ public interface VirtualNetwork extends UntypedVirtualNetwork<VirtualNetworkLaye
    * @param connectoidEdgeMapper to use for tracking mapping between original and copied entity (may be null)
    * @param connectoidSegmentMapper to use for tracking mapping between original and copied entity (may be null)
    * @param centroidVertexMapper to use for tracking mapping between original and copied entity (may be null)
-   * @param movementMapper to use for tracking mapping between original and copied entity (may be null)
+   * @param bannedTurnMapper to use for tracking mapping between original and copied entity (may be null)
    * @return deep copy
    */
   @Override
@@ -61,7 +61,7 @@ public interface VirtualNetwork extends UntypedVirtualNetwork<VirtualNetworkLaye
           GraphEntityDeepCopyMapper<? extends ConnectoidDirectedEdge> connectoidEdgeMapper,
           GraphEntityDeepCopyMapper<? extends ConnectoidSegment> connectoidSegmentMapper,
           GraphEntityDeepCopyMapper<? extends DirectedVertex> centroidVertexMapper,
-          ManagedIdDeepCopyMapper<BannedMovement> movementMapper);
+          ManagedIdDeepCopyMapper<BannedTurn> bannedTurnMapper);
 
 
 }

@@ -5,7 +5,7 @@ import org.goplanit.utils.graph.directed.DirectedGraphUtils;
 import org.goplanit.utils.graph.directed.DirectedVertex;
 import org.goplanit.utils.graph.directed.EdgeSegment;
 import org.goplanit.utils.misc.Pair;
-import org.goplanit.utils.graph.directed.BannedMovements;
+import org.goplanit.utils.graph.directed.BannedTurns;
 
 import java.util.Map;
 import java.util.function.BiPredicate;
@@ -26,20 +26,20 @@ public interface UntypedDirectedGraph<V extends DirectedVertex, E extends Direct
   public abstract GraphEntities<ES> getEdgeSegments();
 
   /**
-   * Verify if movements have been generated and are non-empty
+   * Verify if there are any banned turns
    *
    * @return true when present, false otherwise
    */
-  public default boolean hasMovements(){
-    return !getMovements().isEmpty();
+  public default boolean hasBannedTurns(){
+    return !getBannedTurns().isEmpty();
   }
 
   /**
-   * Access to movements container (which may be empty if no movements have been generated)
+   * Access to the banned turns container, which may be empty
    *
-   * @return movements container
+   * @return banned turns container
    */
-  public abstract BannedMovements getMovements();
+  public abstract BannedTurns getBannedTurns();
     
   /** Verify if empty, empty when no nodes, edges, edge segments exist
    * 

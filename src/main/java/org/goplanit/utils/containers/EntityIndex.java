@@ -4,10 +4,9 @@ import java.util.List;
 import java.util.function.Consumer;
 
 /**
- * Index of entities by the keys they refer to, e.g. the link segments a banned movement starts or ends at, so the
- * entities referring to a key are found without going over all of them. An entity is indexed under the keys it refers
- * to at the moment it is indexed; a change to what it refers to is only seen when made through
- * {@link #update(Object, Consumer)}
+ * Index of entities by the keys they refer to, so the entities referring to a key are found without going over all of
+ * them. An entity is indexed under the keys it refers to at the moment it is indexed; a change to what it refers to is
+ * only seen when made through {@link #update(Object, Consumer)}
  *
  * @param <K> type of key
  * @param <E> type of entity

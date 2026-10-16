@@ -5,8 +5,8 @@ import org.goplanit.utils.graph.directed.DirectedVertex;
 import org.goplanit.utils.id.ManagedIdDeepCopyMapper;
 import org.goplanit.utils.id.ManagedIdEntities;
 import org.goplanit.utils.network.layer.UntypedDirectedGraphLayer;
-import org.goplanit.utils.graph.directed.BannedMovement;
-import org.goplanit.utils.graph.directed.BannedMovements;
+import org.goplanit.utils.graph.directed.BannedTurn;
+import org.goplanit.utils.graph.directed.BannedTurns;
 import org.goplanit.utils.network.virtual.graph.ConnectoidDirectedEdge;
 import org.goplanit.utils.network.virtual.physical.ConnectoidSegment;
 
@@ -42,11 +42,11 @@ public interface UntypedVirtualLayer<
   public abstract ManagedIdEntities<V> getVertices();
 
   /**
-   * Access each movement on virtual network.
+   * Access each banned turn on the virtual network.
    *
-   * @return movements
+   * @return banned turns
    */
-  public abstract BannedMovements getMovements();
+  public abstract BannedTurns getBannedTurns();
 
   /**
    * Recreate the ids for all registered entities with or without resetting, this includes child managed ids, i.e.,
@@ -60,7 +60,7 @@ public interface UntypedVirtualLayer<
     getConnectoidSegments().recreateIds(resetManagedIdClass);
     getConnectoidLinks().recreateIds(resetManagedIdClass);
     getVertices().recreateIds(resetManagedIdClass);
-    getMovements().recreateIds(resetManagedIdClass);
+    getBannedTurns().recreateIds(resetManagedIdClass);
   }
 
   /**
@@ -81,7 +81,7 @@ public interface UntypedVirtualLayer<
    * @param connectoidLinkMapper to use for tracking mapping between original and copied entity (may be null)
    * @param connectoidSegmentMapper to use for tracking mapping between original and copied entity (may be null)
    * @param vertexMapper to use for tracking mapping between original and copied entity (may be null)
-   * @param movementMapper to apply in case of deep copy to each original to copy combination
+   * @param bannedTurnMapper to apply in case of deep copy to each original to copy combination
    *                       (when provided, may be null)
    * @return deep copy
    */
@@ -89,7 +89,7 @@ public interface UntypedVirtualLayer<
           GraphEntityDeepCopyMapper<E> connectoidLinkMapper,
           GraphEntityDeepCopyMapper<ES> connectoidSegmentMapper,
           GraphEntityDeepCopyMapper<V> vertexMapper,
-          ManagedIdDeepCopyMapper<BannedMovement> movementMapper);
+          ManagedIdDeepCopyMapper<BannedTurn> bannedTurnMapper);
 
   /**
    * Clear the entire layer from vertices, edges, and segments
@@ -98,7 +98,7 @@ public interface UntypedVirtualLayer<
     getVertices().clear();
     getConnectoidLinks().clear();
     getConnectoidSegments().clear();
-    getMovements().clear();
+    getBannedTurns().clear();
   }
 
   public default boolean hasConnectoidLinks(){
@@ -109,8 +109,8 @@ public interface UntypedVirtualLayer<
     return getConnectoidSegments()!=null && !getConnectoidSegments().isEmpty();
   }
 
-  public default boolean hasMovements(){
-    return getMovements()!=null && !getMovements().isEmpty();
+  public default boolean hasBannedTurns(){
+    return getBannedTurns()!=null && !getBannedTurns().isEmpty();
   }
 
 }

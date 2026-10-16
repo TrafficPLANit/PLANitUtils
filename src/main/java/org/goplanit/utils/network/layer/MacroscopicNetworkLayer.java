@@ -1,6 +1,5 @@
 package org.goplanit.utils.network.layer;
 
-import org.goplanit.utils.graph.directed.BannedMovements;
 import org.goplanit.utils.mode.Mode;
 import org.goplanit.utils.network.layer.macroscopic.*;
 import org.goplanit.utils.network.layer.macroscopic.intersection.Intersections;
@@ -55,6 +54,14 @@ public interface MacroscopicNetworkLayer extends UntypedPhysicalLayer<Node, Macr
   public abstract Nodes getNodes();
 
   /**
+   * Collect the banned turns. Each one is a {@link MacroscopicBannedTurn}, which names the modes it bans
+   *
+   * @return the banned turns
+   */
+  @Override
+  public abstract MacroscopicBannedTurns getBannedTurns();
+
+  /**
    * {@inheritDoc}
    */
   @Override
@@ -73,6 +80,14 @@ public interface MacroscopicNetworkLayer extends UntypedPhysicalLayer<Node, Macr
    * @return intersections container
    */
   public abstract Intersections getIntersections();
+
+  /**
+   * Provide access to the spatial movements of this layer: those through its spatial intersections and its
+   * independent ones
+   *
+   * @return spatial movements container
+   */
+  public abstract SpatialMovements getSpatialMovements();
 
   /**
    * Verify if this layer has any intersections

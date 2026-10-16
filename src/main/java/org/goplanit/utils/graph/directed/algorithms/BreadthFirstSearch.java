@@ -5,7 +5,9 @@ import org.goplanit.utils.graph.directed.EdgeSegment;
 import org.goplanit.utils.misc.Pair;
 
 import java.util.ArrayDeque;
+import java.util.Collection;
 import java.util.Deque;
+import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.function.BiPredicate;
@@ -14,9 +16,10 @@ import java.util.function.Predicate;
 /**
  * Breadth-first search over a directed graph.
  * <p>
- * Single source and terminating, i.e. it explores outward from one vertex until a termination condition is met,
- * returning the back links that allow the path to be reconstructed. It answers "can I get there, and how", which
- * is a different question from the whole graph partitioning performed by
+ * Terminating, i.e. it explores outward from one vertex, or from several at once, until a termination condition is
+ * met, returning the back links that allow the path to be reconstructed. Each vertex is processed once, the first time
+ * it is reached, so lengths play no part; for the shortest connections see the shortest path algorithms. It answers
+ * "can I get there, and how", which is a different question from the whole graph partitioning performed by
  * {@link StronglyConnectedComponents}.
  * </p>
  * <p>
@@ -50,9 +53,35 @@ public class BreadthFirstSearch {
    * @param vertexSegmentTerminationCondition predicate for termination condition for successful search completion
    * @return found vertex (if any) based on termination and the back links for all processed vertices
    */
-  @SuppressWarnings("unchecked")
   public static <V extends DirectedVertex,ES extends EdgeSegment> Pair<V, Map<V, ES>> execute(
       V startVertex,
+      boolean invertDirection,
+      Predicate<ES> initialVertexSegmentInclusionCondition,
+      BiPredicate<ES, ES> vertexSegmentInclusionCondition,
+      BiPredicate<V,ES> vertexSegmentTerminationCondition){
+    return execute(List.of(startVertex), invertDirection, initialVertexSegmentInclusionCondition,
+        vertexSegmentInclusionCondition, vertexSegmentTerminationCondition);
+  }
+
+  /**
+   * Perform a breadth-first search from several starting vertices at once, as if each were where the search began:
+   * every start vertex is processed first, without a back link, and the search explores outward from all of them. The
+   * conditions are as for {@link #execute(DirectedVertex, boolean, Predicate, BiPredicate, BiPredicate)}, the initial
+   * condition applying to the edge segments of every start vertex
+   *
+   * @param <ES> edge segment type
+   * @param <V> directed vertex type
+   * @param startVertices to start search from
+   * @param invertDirection direction for searching, when true invert direction from downstream to upstream
+   * @param initialVertexSegmentInclusionCondition predicate for initial condition on edge segments to consider
+   * @param vertexSegmentInclusionCondition predicate for general condition on edge segments to consider
+   *                                        (prevEdgeSegment, currEdgeSegment)
+   * @param vertexSegmentTerminationCondition predicate for termination condition for successful search completion
+   * @return found vertex (if any) based on termination and the back links for all processed vertices
+   */
+  @SuppressWarnings("unchecked")
+  public static <V extends DirectedVertex,ES extends EdgeSegment> Pair<V, Map<V, ES>> execute(
+      Collection<V> startVertices,
       boolean invertDirection,
       Predicate<ES> initialVertexSegmentInclusionCondition,
       BiPredicate<ES, ES> vertexSegmentInclusionCondition,
@@ -67,12 +96,13 @@ public class BreadthFirstSearch {
         DirectedVertex.getEdgeSegmentsForVertexLambda(invertDirection);
     final var getNextVertex = EdgeSegment.getVertexForEdgeSegmentLambda(invertDirection);
 
-    /* start with eligible edge segments of reference vertex except alternative labelled segment */
-    processedVertices.put(startVertex, null);
-    var nextEdgeSegments = getNextEdgeSegments.apply(startVertex);
-    for (var nextSegment : nextEdgeSegments) {
-      if(initialVertexSegmentInclusionCondition.test((ES) nextSegment)){
-        openVertexQueue.add(Pair.of((V)getNextVertex.apply(nextSegment), (ES) nextSegment));
+    /* start with eligible edge segments of the start vertices */
+    startVertices.forEach(startVertex -> processedVertices.put(startVertex, null));
+    for (var startVertex : startVertices) {
+      for (var nextSegment : getNextEdgeSegments.apply(startVertex)) {
+        if(initialVertexSegmentInclusionCondition.test((ES) nextSegment)){
+          openVertexQueue.add(Pair.of((V)getNextVertex.apply(nextSegment), (ES) nextSegment));
+        }
       }
     }
 
@@ -90,8 +120,7 @@ public class BreadthFirstSearch {
       }
 
       /* breadth-first loop for unprocessed vertices */
-      nextEdgeSegments = getNextEdgeSegments.apply(currentVertex);
-      for (var nextSegment : nextEdgeSegments) {
+      for (var nextSegment : getNextEdgeSegments.apply(currentVertex)) {
         if (vertexSegmentInclusionCondition.test(current.second(), (ES) nextSegment)) {
           var nextVertex = (V) getNextVertex.apply(nextSegment);
           if (!processedVertices.containsKey(nextVertex)) {

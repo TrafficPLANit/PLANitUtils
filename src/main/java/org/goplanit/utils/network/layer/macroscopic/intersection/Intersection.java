@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.List;
 import java.util.Set;
 
+import org.goplanit.utils.containers.ListUtils;
 import org.goplanit.utils.graph.directed.DirectedVertex;
 import org.goplanit.utils.id.ExternalIdAble;
 import org.goplanit.utils.id.ManagedId;
@@ -11,8 +12,10 @@ import org.goplanit.utils.network.layer.macroscopic.MacroscopicLinkSegment;
 import org.goplanit.utils.network.layer.physical.Node;
 
 /**
- * An intersection groups one or more nodes of a layer that together form a junction or crossing, records how it is
- * controlled, and which link segments enter it (approaches) and lie inside it (internal segments).
+ * An intersection is a junction or crossing of a layer. It comes in two kinds: a {@link NonSpatialIntersection} is a
+ * point, its one node, while a {@link SpatialIntersection} covers an area, several nodes and the link segments between
+ * them. Both record how they are controlled, which kinds of intersection they are, and which link segments enter them
+ * (approaches). They share one id across both kinds, and each also has an id of its own kind.
  * <p>
  * The methods on an intersection are raw edits: they change only this intersection and fire no events. Once an
  * intersection is registered in its layer, changes that must keep the rest of the layer consistent are made through
@@ -56,25 +59,16 @@ public interface Intersection extends ExternalIdAble, ManagedId, Serializable {
    * @return true when a member node, false otherwise
    */
   public default boolean hasMemberNode(DirectedVertex vertex) {
-    return getMemberNodes().stream().anyMatch(node -> node == vertex);
+    return ListUtils.containsByIdentity(getMemberNodes(), vertex);
   }
-
-  /**
-   * Add a member node. Refused when the node is where an approach segment starts, since that segment would no longer
-   * enter the intersection.
-   *
-   * @param node to add
-   * @return true when added, false when already a member or refused
-   */
-  public abstract boolean addMemberNode(Node node);
 
   /**
    * Remove a member node
    *
    * @param node to remove
-   * @param removeDependentReferences when true, the approach segments ending at the node and the internal segments
-   *                                  touching it are removed as well; when false only the node is removed, leaving
-   *                                  those references to be removed by other changes
+   * @param removeDependentReferences when true, the approach segments ending at the node, and on a spatial
+   *                                  intersection the internal segments touching it, are removed as well; when false
+   *                                  only the node is removed, leaving those references to be removed by other changes
    * @return true when removed, false when not a member
    */
   public abstract boolean removeMemberNode(Node node, boolean removeDependentReferences);
@@ -110,7 +104,7 @@ public interface Intersection extends ExternalIdAble, ManagedId, Serializable {
 
   /**
    * Approach segments of this intersection: the link segments entering it. Every way out of the intersection is allowed
-   * from an approach segment unless a banned movement of the layer, starting from it, forbids it
+   * from an approach segment unless a banned turn of the layer, starting from it, forbids it
    *
    * @return unmodifiable list of approach segments
    */
@@ -142,36 +136,26 @@ public interface Intersection extends ExternalIdAble, ManagedId, Serializable {
   public abstract boolean removeApproachSegment(MacroscopicLinkSegment segment);
 
   /**
-   * Internal link segments of this intersection. A link segment between two member nodes is internal only when listed
-   * here.
+   * Verify if an approach segment has a signal of its own. It follows the control type of this intersection, unless it
+   * was set otherwise with {@link #setApproachSegmentHasOwnSignal(MacroscopicLinkSegment, boolean)}. For example, at a
+   * signalised intersection a driveway joining inside the junction has no signal of its own
    *
-   * @return unmodifiable list of internal segments
+   * @param approachSegment to check
+   * @return true when the approach segment has a signal of its own, false otherwise or when it is not an approach
+   * segment
    */
-  public abstract List<MacroscopicLinkSegment> getInternalSegments();
+  public abstract boolean hasOwnSignal(MacroscopicLinkSegment approachSegment);
 
   /**
-   * Internal segment with the given id
+   * Set whether an approach segment has a signal of its own. Only the approach segments that differ from the control
+   * type are stored, and changing the control type keeps whether each approach segment has a signal of its own.
+   * Removing the approach segment removes what was set for it
    *
-   * @param segmentId to look for
-   * @return internal segment, null when not internal
+   * @param approachSegment to set it for
+   * @param hasOwnSignal true when it has a signal of its own, false otherwise
+   * @return true when set, false when the segment is not an approach segment
    */
-  public abstract MacroscopicLinkSegment getInternalSegment(long segmentId);
-
-  /**
-   * Add an internal segment, which must start and end at member nodes
-   *
-   * @param segment to add
-   * @return true when added, false when refused or already internal
-   */
-  public abstract boolean addInternalSegment(MacroscopicLinkSegment segment);
-
-  /**
-   * Remove an internal segment
-   *
-   * @param segment to remove
-   * @return true when removed, false when not internal
-   */
-  public abstract boolean removeInternalSegment(MacroscopicLinkSegment segment);
+  public abstract boolean setApproachSegmentHasOwnSignal(MacroscopicLinkSegment approachSegment, boolean hasOwnSignal);
 
   /**
    * Verify if this intersection is signalised

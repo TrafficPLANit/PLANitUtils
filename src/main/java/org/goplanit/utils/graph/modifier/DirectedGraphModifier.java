@@ -34,7 +34,7 @@ public interface DirectedGraphModifier<V extends DirectedVertex, E extends Direc
 
   /**
    * Remove an edge segment by removing it from the graph and the edge it is connected to. Any registered events
-   * for edge segment removal will be triggered. No attached vertices, edges, or movements will be removed
+   * for edge segment removal will be triggered. No attached vertices, edges, or banned turns will be removed
    *
    * @param edgeSegment to remove
    */
@@ -51,12 +51,12 @@ public interface DirectedGraphModifier<V extends DirectedVertex, E extends Direc
   public abstract void removeEdge(E edge, boolean removeEdgeSegments);
 
   /**
-   * Remove a movement by removing it from the graph. Any registered events
-   * for movement removal will be triggered.No attached vertices, edges, or segments will be removed
+   * Remove a banned turn by removing it from the graph. Any registered events
+   * for banned turn removal will be triggered.No attached vertices, edges, or segments will be removed
    *
-   * @param movement to remove
+   * @param bannedTurn to remove
    */
-  public abstract void removeMovement(BannedMovement  movement);
+  public abstract void removeBannedTurn(BannedTurn bannedTurn);
 
   /**
    * Remove a directed subgraph

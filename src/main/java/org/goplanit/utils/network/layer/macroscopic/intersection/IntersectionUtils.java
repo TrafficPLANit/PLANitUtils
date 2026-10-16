@@ -5,8 +5,8 @@ import java.util.IdentityHashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.goplanit.utils.graph.directed.BannedMovement;
-import org.goplanit.utils.graph.directed.BannedMovements;
+import org.goplanit.utils.graph.directed.BannedTurn;
+import org.goplanit.utils.graph.directed.BannedTurns;
 import org.goplanit.utils.graph.directed.EdgeSegment;
 import org.goplanit.utils.network.layer.macroscopic.MacroscopicLinkSegment;
 import org.goplanit.utils.network.layer.physical.Node;
@@ -21,6 +21,18 @@ public class IntersectionUtils {
 
   /** static utility class, not to be instantiated */
   private IntersectionUtils() {
+  }
+
+  /**
+   * The internal segments of an intersection of either kind: those of a spatial intersection, none for a
+   * non-spatial one, which is a single node
+   *
+   * @param intersection to collect them of
+   * @return its internal segments, unmodifiable, empty for a non-spatial intersection
+   */
+  public static List<MacroscopicLinkSegment> getInternalSegmentsOf(Intersection intersection){
+    return intersection instanceof SpatialIntersection ?
+        ((SpatialIntersection) intersection).getInternalSegments() : List.of();
   }
 
   /**
@@ -42,17 +54,17 @@ public class IntersectionUtils {
   }
 
   /**
-   * Find the banned movements of each approach segment: the bans whose from segment it is. Turns at an intersection are
-   * restricted by the layer's banned movements only, so this is how the two are combined
+   * Find the banned turns of each approach segment: the bans whose from segment it is. Turns at an intersection are
+   * restricted by the layer's banned turns only, so this is how the two are combined
    *
    * @param intersections to find the approach segments of
-   * @param bannedMovements of the same layer
-   * @return banned movements per approach segment, by identity; approach segments without bans are absent
+   * @param bannedTurns of the same layer
+   * @return banned turns per approach segment, by identity; approach segments without bans are absent
    */
-  public static Map<MacroscopicLinkSegment, List<BannedMovement>> findBannedMovementsByApproachSegment(
-      Intersections intersections, BannedMovements bannedMovements){
-    var bansByFromSegment = groupBansByFromSegment(bannedMovements);
-    Map<MacroscopicLinkSegment, List<BannedMovement>> bansByApproachSegment = new IdentityHashMap<>();
+  public static Map<MacroscopicLinkSegment, List<BannedTurn>> findBannedTurnsByApproachSegment(
+      Intersections intersections, BannedTurns bannedTurns){
+    var bansByFromSegment = groupBansByFromSegment(bannedTurns);
+    Map<MacroscopicLinkSegment, List<BannedTurn>> bansByApproachSegment = new IdentityHashMap<>();
     for(var intersection : intersections){
       for(var approachSegment : intersection.getApproachSegments()){
         var bans = bansByFromSegment.get(approachSegment);
@@ -65,17 +77,17 @@ public class IntersectionUtils {
   }
 
   /**
-   * Find the banned movements of each intersection: the bans of all its approach segments, as in
-   * {@link #findBannedMovementsByApproachSegment(Intersections, BannedMovements)}
+   * Find the banned turns of each intersection: the bans of all its approach segments, as in
+   * {@link #findBannedTurnsByApproachSegment(Intersections, BannedTurns)}
    *
    * @param intersections to find the bans of
-   * @param bannedMovements of the same layer
-   * @return banned movements per intersection, by identity; intersections without bans are absent
+   * @param bannedTurns of the same layer
+   * @return banned turns per intersection, by identity; intersections without bans are absent
    */
-  public static Map<Intersection, List<BannedMovement>> findBannedMovementsByIntersection(
-      Intersections intersections, BannedMovements bannedMovements){
-    var bansByFromSegment = groupBansByFromSegment(bannedMovements);
-    Map<Intersection, List<BannedMovement>> bansByIntersection = new IdentityHashMap<>();
+  public static Map<Intersection, List<BannedTurn>> findBannedTurnsByIntersection(
+      Intersections intersections, BannedTurns bannedTurns){
+    var bansByFromSegment = groupBansByFromSegment(bannedTurns);
+    Map<Intersection, List<BannedTurn>> bansByIntersection = new IdentityHashMap<>();
     for(var intersection : intersections){
       for(var approachSegment : intersection.getApproachSegments()){
         var bans = bansByFromSegment.get(approachSegment);
@@ -88,14 +100,14 @@ public class IntersectionUtils {
   }
 
   /**
-   * Group banned movements by their from segment, by identity since segments hash by id and ids can be recreated
+   * Group banned turns by their from segment, by identity since segments hash by id and ids can be recreated
    *
-   * @param bannedMovements to group
-   * @return banned movements per from segment
+   * @param bannedTurns to group
+   * @return banned turns per from segment
    */
-  private static Map<EdgeSegment, List<BannedMovement>> groupBansByFromSegment(BannedMovements bannedMovements){
-    Map<EdgeSegment, List<BannedMovement>> bansByFromSegment = new IdentityHashMap<>();
-    for(var ban : bannedMovements){
+  private static Map<EdgeSegment, List<BannedTurn>> groupBansByFromSegment(BannedTurns bannedTurns){
+    Map<EdgeSegment, List<BannedTurn>> bansByFromSegment = new IdentityHashMap<>();
+    for(var ban : bannedTurns){
       if(ban.hasSegmentFrom()){
         bansByFromSegment.computeIfAbsent(ban.getSegmentFrom(), s -> new ArrayList<>(1)).add(ban);
       }

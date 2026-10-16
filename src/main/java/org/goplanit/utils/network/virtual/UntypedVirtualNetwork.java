@@ -4,7 +4,7 @@ import org.geotools.api.referencing.crs.CoordinateReferenceSystem;
 import org.goplanit.utils.graph.GraphEntityDeepCopyMapper;
 import org.goplanit.utils.graph.directed.DirectedVertex;
 import org.goplanit.utils.id.ManagedIdDeepCopyMapper;
-import org.goplanit.utils.graph.directed.BannedMovement;
+import org.goplanit.utils.graph.directed.BannedTurn;
 import org.goplanit.utils.network.virtual.graph.ConnectoidDirectedEdge;
 import org.goplanit.utils.network.virtual.physical.ConnectoidSegment;
 
@@ -90,7 +90,7 @@ public interface UntypedVirtualNetwork<L extends
    * @param connectoidEdgeMapper to use for tracking mapping between original and copied entity (may be null)
    * @param connectoidSegmentMapper to use for tracking mapping between original and copied entity (may be null)
    * @param connectoidVertexMapper to use for tracking mapping between original and copied entity (may be null)
-   * @param movementMapper to apply in case of deep copy to each original to copy combination
+   * @param bannedTurnMapper to apply in case of deep copy to each original to copy combination
    *                       (when provided, may be null)
    * @return deep copy
    */
@@ -98,5 +98,5 @@ public interface UntypedVirtualNetwork<L extends
           GraphEntityDeepCopyMapper<? extends ConnectoidDirectedEdge> connectoidEdgeMapper,
           GraphEntityDeepCopyMapper<? extends ConnectoidSegment> connectoidSegmentMapper,
           GraphEntityDeepCopyMapper<? extends DirectedVertex> connectoidVertexMapper,
-          ManagedIdDeepCopyMapper<BannedMovement> movementMapper);
+          ManagedIdDeepCopyMapper<BannedTurn> bannedTurnMapper);
 }
