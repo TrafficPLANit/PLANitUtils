@@ -1,6 +1,8 @@
 package org.goplanit.utils.network.layer.macroscopic;
 
 import org.goplanit.utils.graph.directed.EdgeSegment;
+import org.goplanit.utils.math.Precision;
+import org.goplanit.utils.network.layer.physical.NodeUtils;
 import org.goplanit.utils.mode.Mode;
 import org.goplanit.utils.mode.TrackModeType;
 
@@ -161,5 +163,52 @@ public class MacroscopicLinkSegmentUtils {
       }
     }
     return predecessors;
+  }
+
+  /**
+   * Find the link segments onward from a segment in a direction: its continuations with the traffic, see
+   * {@link #findContinuations}, or its predecessors against it, see {@link #findPredecessors}
+   *
+   * @param segment to go on from
+   * @param withTraffic true to follow the traffic, false to go back against it
+   * @param condition a segment onward must meet
+   * @return the segments onward, empty when there are none
+   */
+  public static List<MacroscopicLinkSegment> findOnward(final MacroscopicLinkSegment segment, boolean withTraffic,
+      final Predicate<? super MacroscopicLinkSegment> condition) {
+    return withTraffic ? findContinuations(segment, condition) : findPredecessors(segment, condition);
+  }
+
+  /**
+   * Follow segments meeting a condition from a segment, through nodes where they simply continue: one segment onward
+   * meets the condition, see {@link #findOnward}, and none comes back, other than on the link just followed. For
+   * example, a road followed through the shape nodes of a long bend, up to the junction it reaches
+   *
+   * @param segment to start along
+   * @param withTraffic true to follow the traffic, false to go back against it
+   * @param maximumDistanceMeters furthest to follow, the first segment included
+   * @param condition the segments followed must meet
+   * @return the last segment followed, ending (or starting, against the traffic) at the node where the segments stop
+   *         simply continuing; null when that node is not reached within the distance
+   */
+  public static MacroscopicLinkSegment followUntilItBranches(final MacroscopicLinkSegment segment,
+      boolean withTraffic, double maximumDistanceMeters, final Predicate<? super MacroscopicLinkSegment> condition) {
+    double meters = segment.getParent().getLengthMeters();
+    var current = segment;
+    while (meters <= maximumDistanceMeters + Precision.EPSILON_9) {
+      var node = withTraffic ? current.getDownstreamNode() : current.getUpstreamNode();
+      var currentLink = current.getParent();
+      var onward = findOnward(current, withTraffic, condition);
+      List<MacroscopicLinkSegment> back = withTraffic ?
+          NodeUtils.<MacroscopicLinkSegment>findEntryLinkSegments(node, condition) :
+          NodeUtils.<MacroscopicLinkSegment>findExitLinkSegments(node, condition);
+      back.removeIf(previous -> previous.getParent() == currentLink);
+      if (onward.size() != 1 || !back.isEmpty()) {
+        return current;
+      }
+      current = onward.get(0);
+      meters += current.getParent().getLengthMeters();
+    }
+    return null;
   }
 }

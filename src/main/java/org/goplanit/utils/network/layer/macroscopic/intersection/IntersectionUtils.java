@@ -1,9 +1,12 @@
 package org.goplanit.utils.network.layer.macroscopic.intersection;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.IdentityHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.goplanit.utils.graph.directed.BannedTurn;
 import org.goplanit.utils.graph.directed.BannedTurns;
@@ -33,6 +36,17 @@ public class IntersectionUtils {
   public static List<MacroscopicLinkSegment> getInternalSegmentsOf(Intersection intersection){
     return intersection instanceof SpatialIntersection ?
         ((SpatialIntersection) intersection).getInternalSegments() : List.of();
+  }
+
+  /**
+   * Collect the member nodes of the given intersections
+   *
+   * @param intersections to collect the member nodes of
+   * @return their member nodes, each once
+   */
+  public static Set<Node> collectMemberNodes(Collection<? extends Intersection> intersections){
+    return intersections.stream().flatMap(intersection -> intersection.getMemberNodes().stream())
+        .collect(Collectors.toSet());
   }
 
   /**

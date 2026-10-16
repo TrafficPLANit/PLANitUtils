@@ -3,8 +3,13 @@ package org.goplanit.utils.containers;
 import org.goplanit.utils.misc.Pair;
 import org.goplanit.utils.output.OutputUtils;
 
+import java.util.ArrayDeque;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -70,6 +75,82 @@ public class ListUtils {
       }
     }
     return permutations;
+  }
+
+  /**
+   * Find every way to divide the entries of a list into groups, each entry in exactly one group, e.g., [a,b] gives
+   * [[a],[b]] and [[a,b]]. Within a group the entries keep the order of the list. There are as many ways as the Bell
+   * number of the list's size, 115975 for ten entries, so this is meant for short lists
+   *
+   * @param <T> type of entry
+   * @param list to divide
+   * @return each way to divide it, as a list of groups
+   */
+  public static <T> List<List<List<T>>> findAllPartitions(List<T> list) {
+    var result = new ArrayList<List<List<T>>>();
+    if (list.isEmpty()) {
+      result.add(new ArrayList<>());
+      return result;
+    }
+    var first = list.get(0);
+    for (var rest : findAllPartitions(list.subList(1, list.size()))) {
+      var alone = new ArrayList<List<T>>();
+      alone.add(new ArrayList<>(List.of(first)));
+      rest.forEach(group -> alone.add(new ArrayList<>(group)));
+      result.add(alone);
+      for (int index = 0; index < rest.size(); ++index) {
+        var joined = new ArrayList<List<T>>();
+        for (int other = 0; other < rest.size(); ++other) {
+          var copy = new ArrayList<>(rest.get(other));
+          if (other == index) {
+            copy.add(0, first);
+          }
+          joined.add(copy);
+        }
+        result.add(joined);
+      }
+    }
+    return result;
+  }
+
+  /**
+   * Divide entries into disjoint sets, where entries joined by a pair, directly or through other entries, are in the
+   * same set, e.g., entries a, b, c and d with the pairs (a, b) and (b, c) give the sets {a, b, c} and {d}
+   *
+   * @param <T> type of entry
+   * @param entries to divide
+   * @param joinedPairs pairs of entries that belong in one set, each entry one of the entries
+   * @return the disjoint sets, in the order of their first entry, each in the order of the entries
+   */
+  public static <T> List<Set<T>> extractDisjointSets(List<T> entries, Collection<Pair<T, T>> joinedPairs) {
+    /* the entries each entry is joined to directly */
+    var joinedTo = new HashMap<T, List<T>>();
+    for (var pair : joinedPairs) {
+      joinedTo.computeIfAbsent(pair.first(), key -> new ArrayList<>()).add(pair.second());
+      joinedTo.computeIfAbsent(pair.second(), key -> new ArrayList<>()).add(pair.first());
+    }
+    /* each entry not yet in a set starts one, which every entry it reaches through the pairs belongs to */
+    var setOf = new HashMap<T, Set<T>>();
+    var disjointSets = new ArrayList<Set<T>>();
+    for (var entry : entries) {
+      if (setOf.containsKey(entry)) {
+        continue;
+      }
+      var set = new LinkedHashSet<T>();
+      disjointSets.add(set);
+      setOf.put(entry, set);
+      var pending = new ArrayDeque<>(List.of(entry));
+      while (!pending.isEmpty()) {
+        for (var joined : joinedTo.getOrDefault(pending.pop(), List.of())) {
+          if (setOf.putIfAbsent(joined, set) == null) {
+            pending.push(joined);
+          }
+        }
+      }
+    }
+    /* fill each set in the order of the entries */
+    entries.forEach(entry -> setOf.get(entry).add(entry));
+    return disjointSets;
   }
 
   /**

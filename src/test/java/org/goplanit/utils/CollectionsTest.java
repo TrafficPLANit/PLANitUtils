@@ -1,12 +1,14 @@
 package org.goplanit.utils;
 
 import org.goplanit.utils.containers.FourAryMinHeapOpenSet;
+import org.goplanit.utils.containers.ListUtils;
 import org.goplanit.utils.misc.Pair;
 import org.junit.jupiter.api.Test;
 
 import java.util.Comparator;
 import java.util.List;
 import java.util.PriorityQueue;
+import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -44,5 +46,21 @@ public class CollectionsTest {
     }
     assert(fourAryHeap.isEmpty());
 
+  }
+
+  /**
+   * Entries a to e with the pairs (b, d), (d, a) and (c, c) give the disjoint sets {a, b, d}, {c} and {e}: joined
+   * entries chain, an entry joined only to itself or to nothing is a set of its own, and the sets come in the order of
+   * their first entry, each in the order of the entries
+   */
+  @Test
+  public void extractDisjointSets() {
+    var entries = List.of("a", "b", "c", "d", "e");
+    var joinedPairs = List.of(Pair.of("b", "d"), Pair.of("d", "a"), Pair.of("c", "c"));
+
+    var disjointSets = ListUtils.extractDisjointSets(entries, joinedPairs);
+
+    assertEquals(List.of(List.of("a", "b", "d"), List.of("c"), List.of("e")),
+        disjointSets.stream().map(List::copyOf).collect(Collectors.toList()));
   }
 }

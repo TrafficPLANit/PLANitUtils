@@ -1,6 +1,8 @@
 package org.goplanit.utils.network.layer.macroscopic.intersection;
 
 import java.util.function.BiConsumer;
+import java.util.function.Predicate;
+import java.util.stream.Stream;
 
 import org.goplanit.utils.id.ManagedIdEntities;
 import org.goplanit.utils.network.layer.physical.Node;
@@ -37,6 +39,34 @@ public interface Intersections extends ManagedIdEntities<Intersection> {
   public default boolean isSignalised(Node node){
     var intersection = getByMemberNode(node);
     return intersection != null && intersection.isSignalised();
+  }
+
+  /**
+   * Stream the registered intersections that meet a condition, in the order of this container, which is by id
+   *
+   * @param condition to meet
+   * @return the intersections meeting the condition
+   */
+  public default Stream<Intersection> stream(Predicate<? super Intersection> condition) {
+    return stream().filter(condition);
+  }
+
+  /**
+   * Stream the registered spatial intersections, by id
+   *
+   * @return the spatial intersections
+   */
+  public default Stream<SpatialIntersection> streamSpatial() {
+    return stream(SpatialIntersection.class::isInstance).map(SpatialIntersection.class::cast);
+  }
+
+  /**
+   * Stream the registered non-spatial intersections, by id
+   *
+   * @return the non-spatial intersections
+   */
+  public default Stream<NonSpatialIntersection> streamNonSpatial() {
+    return stream(NonSpatialIntersection.class::isInstance).map(NonSpatialIntersection.class::cast);
   }
 
   /**

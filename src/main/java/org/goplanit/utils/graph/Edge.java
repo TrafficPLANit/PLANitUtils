@@ -47,6 +47,15 @@ public interface Edge extends Serializable, GraphEntity {
     return getVertexB() == vertex;
   }
 
+  /** The vertex at the other end of this edge from the given one, compared by identity
+   *
+   * @param vertex one of the vertices of this edge
+   * @return the vertex at the other end, null when the given vertex is neither of them
+   */
+  public default Vertex getOtherVertex(Vertex vertex) {
+    return getVertexA() == vertex ? getVertexB() : getVertexB() == vertex ? getVertexA() : null;
+  }
+
   /**
    * Collect the geometry of this edge, if not available null is returned
    * @return lineString
@@ -149,6 +158,15 @@ public interface Edge extends Serializable, GraphEntity {
    * @return length of this edge in km
    */
   public abstract double getLengthKm();
+
+  /**
+   * Return length of this edge in metres
+   *
+   * @return length of this edge in metres
+   */
+  public default double getLengthMeters() {
+    return getLengthKm() * 1000;
+  }
 
   /**
    * Available input property keys, if any

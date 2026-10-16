@@ -13,6 +13,13 @@ import org.goplanit.utils.network.layer.physical.Node;
  * or with a signal standing on them), its approaches and every movement through it. There is one movement for each
  * approach and exit its internal segments connect, banned or not, except the exit back along the approach's own link,
  * so a pair of approach and exit without a movement is one they do not connect.
+ * <p>
+ * A listed movement is not always one a mode can make. A movement can be banned for a mode explicitly, by a direct ban
+ * stored on the movement, see {@link SpatialMovement#hasDirectBan()}. It can also be banned implicitly, by a turn
+ * banned for the mode at a member node, or by an internal segment the mode has no access to, leaving the mode with no
+ * connection from the approach to the exit. An implicit ban is not stored, on the movement or on the intersection. It
+ * follows from the network inside the intersection as it is now.
+ * </p>
  *
  * @author markr
  */
@@ -90,7 +97,7 @@ public interface SpatialIntersection extends Intersection {
   public abstract boolean removeInternalSegment(MacroscopicLinkSegment segment);
 
   /**
-   * Internal segments with a signal standing on them, such as a stop line in a median. Each is also one of the internal
+   * Internal segments with a signal standing on them. Each is also one of the internal
    * segments; the other internal segments are plain
    *
    * @return unmodifiable list of internal segments with a signal

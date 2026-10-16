@@ -56,7 +56,19 @@ public interface Link extends DirectedEdge {
   @SuppressWarnings("unchecked")
   public default <N extends Node> N getNodeB() {
     return (N) getVertexB();
-  }  
+  }
+
+  /** The node at the other end of this link from the given one, compared by identity. Convenience method for
+   * readability
+   *
+   * @param <N> node type
+   * @param node one of the nodes of this link
+   * @return the node at the other end, null when the given node is neither of them
+   */
+  @SuppressWarnings("unchecked")
+  public default <N extends Node> N getOtherNode(Node node) {
+    return (N) getOtherVertex(node);
+  }
   
   /** collect edgeSegment as something extending LinkSegment which is to be expected for any link. Convenience method
    * for readability

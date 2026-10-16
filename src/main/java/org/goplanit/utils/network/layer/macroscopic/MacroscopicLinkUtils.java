@@ -1,7 +1,9 @@
 package org.goplanit.utils.network.layer.macroscopic;
 
 import org.goplanit.utils.graph.Edge;
+import org.goplanit.utils.mode.Mode;
 
+import java.util.Collection;
 import java.util.function.Predicate;
 
 /**
@@ -41,5 +43,18 @@ public class MacroscopicLinkUtils {
     var permitsMotorisedRoadMode = MacroscopicLinkSegmentUtils.permitsMotorisedRoadMode();
     return edge -> edge instanceof MacroscopicLink &&
         hasSegmentMatching((MacroscopicLink) edge, permitsMotorisedRoadMode);
+  }
+
+  /**
+   * Verify whether only the given modes use a link: each of its segments allows at least one mode, and only modes
+   * among the given ones
+   *
+   * @param link to verify
+   * @param modes the only modes that may use it
+   * @return true when used only by those modes, false otherwise
+   */
+  public static boolean isUsedOnlyByModes(final MacroscopicLink link, final Collection<Mode> modes) {
+    return link.getLinkSegments().stream().map(MacroscopicLinkSegment.class::cast).allMatch(segment ->
+        !segment.getAllowedModes().isEmpty() && modes.containsAll(segment.getAllowedModes()));
   }
 }

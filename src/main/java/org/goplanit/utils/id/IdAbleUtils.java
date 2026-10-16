@@ -1,5 +1,9 @@
 package org.goplanit.utils.id;
 
+import java.util.Collection;
+import java.util.List;
+import java.util.stream.Collectors;
+
 /**
  * Utilities for entities with an id
  *
@@ -26,5 +30,15 @@ public class IdAbleUtils {
       }
     }
     return null;
+  }
+
+  /**
+   * Collect the ids of the given entities, sorted, e.g., as a key that is the same whatever order the entities are in
+   *
+   * @param entities to collect the ids of
+   * @return their ids, sorted
+   */
+  public static List<Long> collectSortedIds(Collection<? extends IdAble> entities) {
+    return entities.stream().map(IdAble::getId).sorted().collect(Collectors.toList());
   }
 }

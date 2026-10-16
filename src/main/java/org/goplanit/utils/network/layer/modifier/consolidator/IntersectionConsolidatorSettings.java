@@ -1,15 +1,10 @@
-package org.goplanit.utils.network.layer.modifier;
+package org.goplanit.utils.network.layer.modifier.consolidator;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-
-import org.goplanit.utils.mode.Mode;
+import org.goplanit.utils.network.layer.modifier.MacroscopicNetworkLayerModifier;
 
 /**
  * Settings of intersection consolidation, see {@link MacroscopicNetworkLayerModifier}. Each value starts at its
- * default, and no mode is collapsed
+ * default
  *
  * @author markr
  */
@@ -61,11 +56,8 @@ public class IntersectionConsolidatorSettings {
   private double maximumDistanceSlipLaneCrossingToJunctionMeters =
       DEFAULT_MAXIMUM_DISTANCE_SLIP_LANE_CROSSING_TO_JUNCTION_METERS;
 
-  /** see {@link #setCollapsedModes(Collection)} */
-  private final List<Mode> collapsedModes = new ArrayList<>();
-
   /**
-   * Constructor, every value at its default and no mode collapsed
+   * Constructor, every value at its default
    */
   public IntersectionConsolidatorSettings() {
   }
@@ -84,7 +76,6 @@ public class IntersectionConsolidatorSettings {
     this.maximumDistanceReachedOnlyThroughIntersectionMeters =
         other.maximumDistanceReachedOnlyThroughIntersectionMeters;
     this.maximumDistanceSlipLaneCrossingToJunctionMeters = other.maximumDistanceSlipLaneCrossingToJunctionMeters;
-    this.collapsedModes.addAll(other.collapsedModes);
   }
 
   /**
@@ -218,24 +209,5 @@ public class IntersectionConsolidatorSettings {
   public void setMaximumDistanceSlipLaneCrossingToJunctionMeters(
       double maximumDistanceSlipLaneCrossingToJunctionMeters) {
     this.maximumDistanceSlipLaneCrossingToJunctionMeters = maximumDistanceSlipLaneCrossingToJunctionMeters;
-  }
-
-  /**
-   * The modes collapsed onto one node per intersection
-   *
-   * @return the modes, unmodifiable, empty for none
-   */
-  public List<Mode> getCollapsedModes() {
-    return Collections.unmodifiableList(collapsedModes);
-  }
-
-  /**
-   * Set the modes to collapse onto one node per intersection, replacing those set before
-   *
-   * @param collapsedModes the modes, empty for none
-   */
-  public void setCollapsedModes(Collection<Mode> collapsedModes) {
-    this.collapsedModes.clear();
-    this.collapsedModes.addAll(collapsedModes);
   }
 }

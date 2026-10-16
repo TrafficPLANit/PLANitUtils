@@ -486,6 +486,22 @@ public class PlanitGraphGeoUtils {
         coordinates.toArray(new Coordinate[0]), PlanitJtsUtils.jtsGeometryFactory).getConvexHull();
   }
 
+  /** Create the centroid of the positions of the given vertices
+   *
+   * @param <V> type of vertex
+   * @param vertices to create the centroid of, any vertex without a position is ignored
+   * @return the centroid, an empty point when no vertex carries a position
+   */
+  public static <V extends Vertex> Point createCentroid(Iterable<V> vertices) {
+    var positions = new ArrayList<Point>();
+    for (var vertex : vertices) {
+      if (vertex.hasPosition()) {
+        positions.add(vertex.getPosition());
+      }
+    }
+    return PlanitJtsUtils.createMultiPoint(positions.toArray(Point[]::new)).getCentroid();
+  }
+
   /**
    * Distance along an edge segment's geometry from a position on it to the segment's downstream vertex, in the
    * segment's direction of travel, measured without copying the geometry. The position is matched to the first

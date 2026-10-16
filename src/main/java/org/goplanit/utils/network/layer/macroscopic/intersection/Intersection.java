@@ -136,6 +136,17 @@ public interface Intersection extends ExternalIdAble, ManagedId, Serializable {
   public abstract boolean removeApproachSegment(MacroscopicLinkSegment segment);
 
   /**
+   * Verify if a link segment is an exit of this intersection: it starts at a member node and ends at a node that is not
+   * a member. Exits are not stored, they follow from the member nodes
+   *
+   * @param segment to verify
+   * @return true when an exit, false otherwise
+   */
+  public default boolean isExitSegment(MacroscopicLinkSegment segment) {
+    return hasMemberNode(segment.getUpstreamVertex()) && !hasMemberNode(segment.getDownstreamVertex());
+  }
+
+  /**
    * Verify if an approach segment has a signal of its own. It follows the control type of this intersection, unless it
    * was set otherwise with {@link #setApproachSegmentHasOwnSignal(MacroscopicLinkSegment, boolean)}. For example, at a
    * signalised intersection a driveway joining inside the junction has no signal of its own
