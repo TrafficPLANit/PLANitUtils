@@ -6,7 +6,7 @@
 	<parent>
     <groupId>org.goplanit.parentpom</groupId>
     <artifactId>planit-parentpom</artifactId>
-		<version>0.4.0</version>
+		<version>0.5.a1</version>
 	</parent>
 
 	<groupId>org.goplanit.utils</groupId>
@@ -32,7 +32,17 @@
 
 		<dependency>
 			<groupId>org.geotools</groupId>
-			<artifactId>gt-geometry</artifactId>
+			<artifactId>gt-main</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>org.geotools</groupId>
+			<artifactId>gt-referencing</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>org.geotools</groupId>
+			<artifactId>gt-api</artifactId>
 		</dependency>
 
 	    <!-- required to be able to construct CRS instances that are more exotic than WGS84 --> 
@@ -40,6 +50,22 @@
 	        <groupId>org.geotools</groupId>
 	        <artifactId>gt-epsg-hsql</artifactId>
 	    </dependency>
+
+		<!-- required for shape file datastore to be available for shape file parser -->
+		<dependency>
+			<groupId>org.geotools</groupId>
+			<artifactId>gt-shapefile</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>org.geotools</groupId>
+			<artifactId>gt-geopkg</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>org.jamel.dbf</groupId>
+			<artifactId>dbf-reader</artifactId>
+		</dependency>
 
 		<dependency>
 			<groupId>org.ojalgo</groupId>
@@ -92,6 +118,9 @@
 							<goal>jar</goal>
 						</goals>
 						<configuration>
+							<!-- avoid warnings on missing javadoc as static classes generate
+							hundreds of these due to auto-inject of default constructors without comment -->
+							<doclint>all,-missing</doclint>
 							<!--  place generated javadocs in /docs directory of root-->
 							<destDir>docs</destDir>
 							<includeDependencySources>false</includeDependencySources>

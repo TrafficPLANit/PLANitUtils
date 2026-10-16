@@ -19,7 +19,7 @@ public class TypeConversionUtil {
    * @return the parsed entry in type T
    */
   public static BigInteger toBigInteger(String longValue) {
-    return BigInteger.valueOf(Long.valueOf(longValue));    
+    return BigInteger.valueOf(Long.parseLong(longValue));
   }
   
   /** convert a string that can be interpreted as a long 
@@ -29,7 +29,7 @@ public class TypeConversionUtil {
    * @return the parsed entry in type T
    */
   public static BigDecimal longStringToBigDecimal(String longValue) {
-    return BigDecimal.valueOf(Long.valueOf(longValue));    
+    return BigDecimal.valueOf(Long.parseLong(longValue));
   }  
   
   /** convert a string that can be interpreted as a double 
@@ -39,6 +39,6 @@ public class TypeConversionUtil {
    * @return the parsed entry in type T
    */
   public static BigDecimal doubleStringToBigDecimal(String theDouble) {
-    return BigDecimal.valueOf(Double.valueOf(theDouble));    
+    return BigDecimal.valueOf(Double.parseDouble(theDouble));
   }   
 }

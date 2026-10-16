@@ -6,7 +6,11 @@ import java.util.Map;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
+import org.goplanit.utils.geo.GeometryIndexableContainer;
+import org.goplanit.utils.geo.GeometryIndexedContainer;
+import org.goplanit.utils.geo.GeometryIndexedContainerImpl;
 import org.goplanit.utils.id.IdAble;
+import org.goplanit.utils.misc.IterableUtils;
 import org.goplanit.utils.misc.Pair;
 import org.goplanit.utils.wrapper.LongMapWrapper;
 import org.goplanit.utils.wrapper.MapWrapper;
@@ -17,7 +21,8 @@ import org.goplanit.utils.wrapper.MapWrapper;
  *
  * @param <E> type of graph entity
  */
-public interface GraphEntities<E extends GraphEntity> extends LongMapWrapper<E>, Cloneable  {
+public interface GraphEntities<E extends GraphEntity>
+    extends LongMapWrapper<E>, Cloneable, GeometryIndexableContainer<E> {
 
   /**
    * find by XML id
@@ -40,6 +45,30 @@ public interface GraphEntities<E extends GraphEntity> extends LongMapWrapper<E>,
    * @return entity factory
    */
   public abstract GraphEntityFactory<E> getFactory();
+
+  /**
+   * Builds and returns a high-speed spatial index of the current snapshot of this container using references of the
+   * entities managed by this container. If container is empty return null
+   *
+   * @return spatial index for this container
+   */
+  @Override
+  public default GeometryIndexedContainer<E> createSpatialIndex(){
+    if(!isSpatiallyIndexable()){
+      return null;
+    }
+    var spatialIndex = new GeometryIndexedContainerImpl<E>();
+    spatialIndex.buildIndex(IterableUtils.toIterable(this.iterator()));
+    return spatialIndex;
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public default boolean isSpatiallyIndexable(){
+    return !isEmpty();
+  }
       
   /**
    * shallow clone implementation

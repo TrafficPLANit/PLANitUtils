@@ -12,6 +12,7 @@ public enum UseOfModeType {
   GOODS,
   PUBLIC,
   RIDE_SHARE,
-  HIGH_OCCUPANCY
-
+  TAXI,
+  EMERGENCY,
+  ACTIVE
 }

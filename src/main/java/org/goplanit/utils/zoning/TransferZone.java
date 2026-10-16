@@ -15,12 +15,19 @@ import java.util.Set;
 public interface TransferZone extends Zone {
   
   /** the class to use for the id generation */
-  public static final Class<TransferZone> TRANSFER_ZONE_ID_CLASS = TransferZone.class;  
-  
+  public static final Class<TransferZone> TRANSFER_ZONE_ID_CLASS = TransferZone.class;
+
   /**
    * default transfer zone type
    */
-  public static TransferZoneType DEFAULT_TYPE = TransferZoneType.NONE;  
+  public static TransferZoneType DEFAULT_TYPE = TransferZoneType.NONE;
+
+  /**
+   * Get the id class for id generation
+   */
+  public static Class<TransferZone> getTransferZoneIdClass() {
+    return TRANSFER_ZONE_ID_CLASS;
+  }
 
   /** In addition to a zone id across all zones of any derived type, each transfer zone also has a unique id
    * across the transfer zones specifically
@@ -71,7 +78,7 @@ public interface TransferZone extends Zone {
    * @param platformNames to add
    */
   public default void addTransferZonePlatformNames(Collection<String> platformNames){
-    platformNames.forEach( s -> addTransferZonePlatformName(s));
+    platformNames.forEach(this::addTransferZonePlatformName);
   }
 
   /** set the type of this transfer zone
@@ -133,11 +140,5 @@ public interface TransferZone extends Zone {
   @Override
   public abstract TransferZone deepClone();
   
-  /**
-   * {@inheritDoc}
-   */
-  public default Class<TransferZone> getTransferZoneIdClass() {
-    return TRANSFER_ZONE_ID_CLASS;
-  }
 
 }

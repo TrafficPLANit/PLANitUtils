@@ -9,7 +9,8 @@ import org.goplanit.utils.graph.UntypedDirectedGraph;
  * 
  * @author markr
  */
-public interface DirectedGraph<V extends DirectedVertex, E extends DirectedEdge, ES extends EdgeSegment> extends UntypedDirectedGraph<V,E,ES> {
+public interface DirectedGraph<V extends DirectedVertex, E extends DirectedEdge, ES extends EdgeSegment>
+        extends UntypedDirectedGraph<V,E,ES> {
 
     
 }

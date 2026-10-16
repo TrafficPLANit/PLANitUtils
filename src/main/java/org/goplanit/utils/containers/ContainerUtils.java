@@ -1,7 +1,5 @@
 package org.goplanit.utils.containers;
 
-import org.goplanit.utils.mode.Mode;
-
 import java.util.*;
 import java.util.function.Function;
 
@@ -9,6 +7,9 @@ import java.util.function.Function;
  * Utilities for containers
  */
 public class ContainerUtils {
+
+  /** Dummy not to be instantiated */
+  private ContainerUtils(){}
 
   /**
    * Given the colletion and mapping to unmodifiable version of the collection check if not null and then apply the wrapping
@@ -19,7 +20,8 @@ public class ContainerUtils {
    *
    * @param <T> type of collection
    */
-  public static <T extends Collection<?>> T wrapInUnmodifiableCollectionUnlessNull(T collection, Function<T,T> wrapInUnmodifiable) {
+  public static <T extends Collection<?>> T wrapInUnmodifiableCollectionUnlessNull(
+          T collection, Function<T,T> wrapInUnmodifiable) {
     if(collection == null){
       return null;
     }

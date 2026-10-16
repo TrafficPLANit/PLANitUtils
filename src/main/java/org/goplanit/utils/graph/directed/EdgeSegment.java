@@ -2,9 +2,10 @@ package org.goplanit.utils.graph.directed;
 
 import java.io.Serializable;
 import java.util.function.Function;
+import java.util.function.Predicate;
 
 import org.goplanit.utils.graph.GraphEntity;
-import org.goplanit.utils.network.layer.physical.LinkSegment;
+import org.locationtech.jts.geom.Geometry;
 
 /**
  * EdgeSegment represents an edge in a particular (single) direction. Each edge
@@ -21,10 +22,10 @@ public interface EdgeSegment extends Serializable, GraphEntity {
   public static final Class<EdgeSegment> EDGE_SEGMENT_ID_CLASS = EdgeSegment.class;
   
   /** Function collecting upstream vertex for edge segment */
-  public static final Function<EdgeSegment, DirectedVertex> getUpstreamVertex = e -> e.getUpstreamVertex();
+  public static final Function<EdgeSegment, DirectedVertex> getUpstreamVertex = EdgeSegment::getUpstreamVertex;
 
   /** Function collecting downstream vertex for edge segment */
-  public static final Function<EdgeSegment, DirectedVertex> getDownstreamVertex = e -> e.getDownstreamVertex();
+  public static final Function<EdgeSegment, DirectedVertex> getDownstreamVertex = EdgeSegment::getDownstreamVertex;
   
   /** Collect vertex of given edge segment lambda
    * 
@@ -72,6 +73,53 @@ public interface EdgeSegment extends Serializable, GraphEntity {
    */
   public default DirectedVertex getDownstreamVertex() {
     return isDirectionAb() ? getParent().getVertexB() : getParent().getVertexA();
+  }
+
+  /**
+   * Verify if downstream vertex matches given vertex
+   *
+   * @param vertex to check
+   * @return true if equal, false otherwise
+   */
+  public default boolean isDownstreamVertex(DirectedVertex vertex){
+    return getDownstreamVertex().equals(vertex);
+  }
+
+  /**
+   * Verify if downstream vertex matches given vertex
+   *
+   * @param vertex to check
+   * @return true if equal, false otherwise
+   */
+  public default boolean isUpstreamVertex(DirectedVertex vertex){
+    return getUpstreamVertex().equals(vertex);
+  }
+
+  /**
+   * Check if any of the provided vertices are the same as the one related to this segment
+   *
+   * @param vertices to check
+   * @return true if present, false otherwise
+   */
+  public default boolean hasAnyVertex(DirectedVertex... vertices){
+    for(var theVertex : vertices){
+      if(getUpstreamVertex().equals(theVertex) || getDownstreamVertex().equals(theVertex)){
+        return true;
+      }
+    }
+    return false;
+  }
+
+  /**
+   * Test if predicate yields true on any of the two vertices of the segment
+   *
+   * @param matcher to apply
+   * @return true when any vertex matches, false otherwise
+   */
+  public default boolean anyVertexMatches(Predicate<DirectedVertex> matcher) {
+    var parentEdge = getParent();
+    return (parentEdge.hasVertexA() && matcher.test(parentEdge.getVertexA())) ||
+            (parentEdge.hasVertexB() && matcher.test(parentEdge.getVertexB()));
   }
   
   /**
@@ -144,9 +192,9 @@ public interface EdgeSegment extends Serializable, GraphEntity {
     return false;
   }
   
-  /** verify if parent (edge) has a name
+  /** get parent (edge) name
    * 
-   * @return true when present, false otherwise
+   * @return name if present, null otherwise
    */
   public default String getParentName() {
     if(getParent()!=null) {
@@ -164,10 +212,20 @@ public interface EdgeSegment extends Serializable, GraphEntity {
   }
 
   /**
-   * Assuming geometry is present, if not false is returned, we verify if the geometry is provided in the direction of the
-   * segment or not
+   * Verify f opposite direction segment exists
    *
-   * @param allowSingleVertexWithoutGeometry when true, we assume that geometry of edge is ok to be not matching vertex on one end
+   * @return true when exists, false otherwise
+   */
+  public default boolean hasOppositeDirectionSegment(){
+    return getOppositeDirectionSegment()!=null;
+  }
+
+  /**
+   * Assuming geometry is present, if not false is returned, we verify if the geometry is provided in the
+   * direction of the segment or not
+   *
+   * @param allowSingleVertexWithoutGeometry when true, we assume that geometry of edge is ok to be not matching
+   *                                         vertex on one end
    * @return true when geometry direction coincides with segment direction, false otherwise
    */
   public default boolean isParentGeometryInSegmentDirection(boolean allowSingleVertexWithoutGeometry ){
@@ -178,8 +236,9 @@ public interface EdgeSegment extends Serializable, GraphEntity {
     return getParent().isGeometryInAbDirection(allowSingleVertexWithoutGeometry) == isDirectionAb();
   }
 
-  /** Verify if provided edge segment is adjacent to this edge segment taking direction into account, i.e., either an upstream
-   * segment is directly adjacent to this segment, or this segment connects to a directly adjcent downstream segment
+  /** Verify if provided edge segment is adjacent to this edge segment taking direction into account, i.e., either an
+   * upstream segment is directly adjacent to this segment, or this segment connects to a directly adjacent
+   * downstream segment
    *
    * @param other edge segment to verify adjacency
    * @param allowUTurn when true the opposite direction segment is considered adjacent, otherwise not
@@ -211,8 +270,19 @@ public interface EdgeSegment extends Serializable, GraphEntity {
    *
    * @return true when parent has geometry, false otherwise
    */
+  @Override
   public default boolean hasGeometry(){
     return getParent().hasGeometry();
+  }
+
+  /**
+   * Get geometry, delegates to parent (edge) and retrieves that geometry
+   *
+   * @return geometry of parent edge
+   */
+  @Override
+  public default Geometry getGeometry(){
+    return getParent().getGeometry();
   }
 
 }
