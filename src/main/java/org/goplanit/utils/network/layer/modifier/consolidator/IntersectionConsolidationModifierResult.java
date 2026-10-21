@@ -2,8 +2,10 @@ package org.goplanit.utils.network.layer.modifier.consolidator;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.EnumMap;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.goplanit.utils.misc.Pair;
@@ -111,17 +113,59 @@ public class IntersectionConsolidationModifierResult {
     }
   }
 
+  /** What consolidation did to an intersection that the result lists */
+  public enum IntersectionOutcome {
+
+    /** a crossing intersection that joined a junction along the road */
+    CROSSING_JOINED,
+
+    /** a crossing intersection that joined a junction from one of its slip lanes */
+    CROSSING_JOINED_FROM_SLIP_LANE,
+
+    /** a junction pulled into a consolidated intersection whose radius, plus the margin, it lies within, see
+     * {@link IntersectionConsolidatorSettings#setPullInMarginBeyondRadiusMeters(double)} */
+    JUNCTION_PULLED_IN_WITHIN_RADIUS,
+
+    /** a junction pulled into a consolidated intersection because the road of one of its approaches without a signal
+     * leads back to it, within the pull-in margin and a further allowance, so that approach is no longer one */
+    JUNCTION_PULLED_IN_TO_SALVAGE_APPROACH_WITHOUT_SIGNAL,
+
+    /** a signalised junction where fewer than half of the approaches that allow a motorised road mode have a signal of
+     * their own */
+    JUNCTION_WITH_FEW_LIT_ARMS
+  }
+
+  /** What consolidation did to an approach segment that the result lists */
+  public enum ApproachOutcome {
+
+    /** an approach segment that became an internal segment because it now starts at a member node. It became an
+     * internal segment with a signal when it has a signal of its own, as the caller told consolidation, and a plain
+     * one otherwise */
+    MADE_INTERNAL,
+
+    /** a segment that enters a signalised junction from a slip lane and allows a motorised road mode, made an approach
+     * without a signal of its own. A slip lane often has no signal of its own, so these are expected */
+    ADDED_WITHOUT_SIGNAL_ON_SLIP_LANE,
+
+    /** a segment that enters a signalised junction, not from a slip lane, and allows a motorised road mode, made an
+     * approach without a signal of its own. A road entering a signalised junction without a signal is unusual, so a
+     * signal may be missing from the source */
+    ADDED_WITHOUT_SIGNAL_NOT_ON_SLIP_LANE,
+
+    /** a segment that enters a signalised junction and allows a motorised road mode, made an approach with a signal: it
+     * continues the same road as an approach whose signal was tagged on the node it entered, and that node became a
+     * member node, so the signal now stands where the road enters the junction */
+    ADDED_WITH_SIGNAL_TAGGED_ON_NODE_AHEAD
+  }
+
   /** each intersection replaced, with the spatial intersection that replaced it */
   private final List<Pair<Intersection, SpatialIntersection>> replacedIntersections = new ArrayList<>();
 
-  /** intersection clusters with more parsed intersections than allowed, kept as they were */
-  private final List<List<Intersection>> intersectionClustersTooLargeToSubdivide = new ArrayList<>();
+  /** intersection clusters too large to try every subdivision, subdivided step by step instead */
+  private final List<List<Intersection>> intersectionClustersSubdividedStepByStep = new ArrayList<>();
 
   /** nodes that became member nodes without a signal of their own, each once */
   private final Set<Node> joinedNodes = new LinkedHashSet<>();
-
-  /** approach segments that became internal segments because they now start at a member node, each once */
-  private final Set<MacroscopicLinkSegment> approachSegmentsMadeInternal = new LinkedHashSet<>();
 
   /** internal links longer than the warning length, each once */
   private final Set<MacroscopicLink> internalLinksLongerThanWarningLength = new LinkedHashSet<>();
@@ -129,18 +173,13 @@ public class IntersectionConsolidationModifierResult {
   /** links made internal because road traffic only reaches them by driving through the intersection */
   private final List<LinkReachedOnlyThroughIntersection> linksReachedOnlyThroughIntersection = new ArrayList<>();
 
-  /** crossing intersections that joined a junction along the road */
-  private final List<Intersection> crossingsJoined = new ArrayList<>();
+  /** per outcome, the intersections it happened to, in the order they were recorded */
+  private final Map<IntersectionOutcome, List<Intersection>> intersectionsByOutcome =
+      new EnumMap<>(IntersectionOutcome.class);
 
-  /** crossing intersections that joined a junction from one of its slip lanes */
-  private final List<Intersection> crossingsJoinedFromSlipLane = new ArrayList<>();
-
-  /** segments that enter a signalised junction and allow a motorised road mode, but are not approaches: counted, not
-   * added, each once */
-  private final Set<MacroscopicLinkSegment> missingApproachSegments = new LinkedHashSet<>();
-
-  /** signalised junctions where fewer than half of the road approaches have a signal of their own */
-  private final List<Intersection> junctionsWithFewLitArms = new ArrayList<>();
+  /** per outcome, the approach segments it happened to, each once, in the order they were recorded */
+  private final Map<ApproachOutcome, Set<MacroscopicLinkSegment>> approachesByOutcome =
+      new EnumMap<>(ApproachOutcome.class);
 
   /** movements stored on the spatial intersections */
   private final List<SpatialMovement> storedSpatialMovements = new ArrayList<>();
@@ -162,12 +201,25 @@ public class IntersectionConsolidationModifierResult {
   }
 
   /**
-   * Record an intersection cluster kept as it was because it has more parsed intersections than allowed
+   * Record that a spatial intersection consolidation made is itself merged into another: the intersections it replaced
+   * are now replaced by the other one. It was never one of the layer's own intersections, so it is not listed itself,
+   * and each intersection replaced stays listed once
+   *
+   * @param madeByConsolidation the spatial intersection consolidation made, merged away
+   * @param mergedInto the spatial intersection it is merged into
+   */
+  public void reassignReplacedIntersections(SpatialIntersection madeByConsolidation, SpatialIntersection mergedInto) {
+    replacedIntersections.replaceAll(pair -> pair.second() == madeByConsolidation ? Pair.of(pair.first(), mergedInto)
+        : pair);
+  }
+
+  /**
+   * Record an intersection cluster too large to try every subdivision, subdivided step by step instead
    *
    * @param parsedIntersections of the cluster
    */
-  public void addIntersectionClusterTooLargeToSubdivide(List<Intersection> parsedIntersections) {
-    intersectionClustersTooLargeToSubdivide.add(List.copyOf(parsedIntersections));
+  public void addIntersectionClusterSubdividedStepByStep(List<Intersection> parsedIntersections) {
+    intersectionClustersSubdividedStepByStep.add(List.copyOf(parsedIntersections));
   }
 
   /**
@@ -180,12 +232,23 @@ public class IntersectionConsolidationModifierResult {
   }
 
   /**
-   * Record an approach segment that became an internal segment because it now starts at a member node
+   * Record an intersection something happened to
    *
-   * @param approachSegment made internal
+   * @param outcome what happened to it
+   * @param intersection it happened to
    */
-  public void addApproachSegmentMadeInternal(MacroscopicLinkSegment approachSegment) {
-    approachSegmentsMadeInternal.add(approachSegment);
+  public void addIntersection(IntersectionOutcome outcome, Intersection intersection) {
+    intersectionsByOutcome.computeIfAbsent(outcome, key -> new ArrayList<>()).add(intersection);
+  }
+
+  /**
+   * Record an approach segment something happened to, each segment once per outcome
+   *
+   * @param outcome what happened to it
+   * @param approachSegment it happened to
+   */
+  public void addApproach(ApproachOutcome outcome, MacroscopicLinkSegment approachSegment) {
+    approachesByOutcome.computeIfAbsent(outcome, key -> new LinkedHashSet<>()).add(approachSegment);
   }
 
   /**
@@ -207,42 +270,6 @@ public class IntersectionConsolidationModifierResult {
   }
 
   /**
-   * Record a crossing intersection that joined a junction along the road
-   *
-   * @param crossing joined
-   */
-  public void addCrossingJoined(Intersection crossing) {
-    crossingsJoined.add(crossing);
-  }
-
-  /**
-   * Record a crossing intersection that joined a junction from one of its slip lanes
-   *
-   * @param crossing joined
-   */
-  public void addCrossingJoinedFromSlipLane(Intersection crossing) {
-    crossingsJoinedFromSlipLane.add(crossing);
-  }
-
-  /**
-   * Record a segment that enters a signalised junction and allows a motorised road mode, but is not an approach
-   *
-   * @param segment missing as approach
-   */
-  public void addMissingApproachSegment(MacroscopicLinkSegment segment) {
-    missingApproachSegments.add(segment);
-  }
-
-  /**
-   * Record a signalised junction where fewer than half of the road approaches have a signal of their own
-   *
-   * @param junction with few lit arms
-   */
-  public void addJunctionWithFewLitArms(Intersection junction) {
-    junctionsWithFewLitArms.add(junction);
-  }
-
-  /**
    * Record a movement stored on a spatial intersection
    *
    * @param movement stored
@@ -252,8 +279,10 @@ public class IntersectionConsolidationModifierResult {
   }
 
   /**
-   * Each intersection replaced, with the spatial intersection that replaced it. Every intersection a spatial
-   * intersection is made from is replaced, so joining four gives four pairs
+   * Each of the layer's intersections replaced, once, with the spatial intersection that replaced it in the end. Every
+   * intersection a spatial intersection is made from is replaced, so joining four gives four pairs. When a spatial
+   * intersection consolidation made is merged into another, its pairs name the other one, see
+   * {@link #reassignReplacedIntersections(SpatialIntersection, SpatialIntersection)}
    *
    * @return pairs of replaced intersection and the spatial intersection replacing it, unmodifiable
    */
@@ -262,12 +291,13 @@ public class IntersectionConsolidationModifierResult {
   }
 
   /**
-   * Intersection clusters with more parsed intersections than allowed, kept as they were
+   * Intersection clusters too large to try every subdivision, subdivided step by step instead. The step by step search
+   * is not sure to find the best subdivision, so these are worth a look
    *
    * @return the parsed intersections of each such cluster, unmodifiable
    */
-  public List<List<Intersection>> getIntersectionClustersTooLargeToSubdivide() {
-    return Collections.unmodifiableList(intersectionClustersTooLargeToSubdivide);
+  public List<List<Intersection>> getIntersectionClustersSubdividedStepByStep() {
+    return Collections.unmodifiableList(intersectionClustersSubdividedStepByStep);
   }
 
   /**
@@ -280,14 +310,23 @@ public class IntersectionConsolidationModifierResult {
   }
 
   /**
-   * Approach segments that became internal segments because they now start at a member node. Each became an internal
-   * segment with a signal when a vehicle signal stands on it, as the caller told consolidation, and a plain one
-   * otherwise
+   * The intersections an outcome happened to
    *
-   * @return approach segments made internal, unmodifiable
+   * @param outcome what happened
+   * @return the intersections, in the order they were recorded, unmodifiable
    */
-  public List<MacroscopicLinkSegment> getApproachSegmentsMadeInternal() {
-    return List.copyOf(approachSegmentsMadeInternal);
+  public List<Intersection> getIntersections(IntersectionOutcome outcome) {
+    return Collections.unmodifiableList(intersectionsByOutcome.getOrDefault(outcome, List.of()));
+  }
+
+  /**
+   * The approach segments an outcome happened to
+   *
+   * @param outcome what happened
+   * @return the approach segments, in the order they were recorded, unmodifiable
+   */
+  public List<MacroscopicLinkSegment> getApproaches(ApproachOutcome outcome) {
+    return List.copyOf(approachesByOutcome.getOrDefault(outcome, Set.of()));
   }
 
   /**
@@ -309,44 +348,6 @@ public class IntersectionConsolidationModifierResult {
   }
 
   /**
-   * Crossing intersections that joined a junction along the road
-   *
-   * @return crossings joined, unmodifiable
-   */
-  public List<Intersection> getCrossingsJoined() {
-    return Collections.unmodifiableList(crossingsJoined);
-  }
-
-  /**
-   * Crossing intersections that joined a junction from one of its slip lanes
-   *
-   * @return crossings joined from a slip lane, unmodifiable
-   */
-  public List<Intersection> getCrossingsJoinedFromSlipLane() {
-    return Collections.unmodifiableList(crossingsJoinedFromSlipLane);
-  }
-
-  /**
-   * Segments that enter a signalised junction and allow a motorised road mode, but are not approaches. They are
-   * counted, not added as approaches
-   *
-   * @return missing approach segments, unmodifiable
-   */
-  public List<MacroscopicLinkSegment> getMissingApproachSegments() {
-    return List.copyOf(missingApproachSegments);
-  }
-
-  /**
-   * Signalised junctions where fewer than half of the approaches that allow a motorised road mode have a signal of
-   * their own
-   *
-   * @return junctions with few lit arms, unmodifiable
-   */
-  public List<Intersection> getJunctionsWithFewLitArms() {
-    return Collections.unmodifiableList(junctionsWithFewLitArms);
-  }
-
-  /**
    * Movements stored on the spatial intersections, each from an approach to an exit
    *
    * @return stored movements, unmodifiable
@@ -361,13 +362,20 @@ public class IntersectionConsolidationModifierResult {
   @Override
   public String toString() {
     return String.format(
-        "replaced %d intersections, joined %d nodes and %d crossings (%d from a slip lane), made %d approaches " +
-        "internal and %d links reached only through the intersection; %d intersection clusters too large to " +
-        "subdivide, %d internal links longer than the warning length, %d missing approaches, %d junctions with " +
-        "few lit arms; stored %d movements",
-        replacedIntersections.size(), joinedNodes.size(), crossingsJoined.size(), crossingsJoinedFromSlipLane.size(),
-        approachSegmentsMadeInternal.size(), linksReachedOnlyThroughIntersection.size(),
-        intersectionClustersTooLargeToSubdivide.size(), internalLinksLongerThanWarningLength.size(),
-        missingApproachSegments.size(), junctionsWithFewLitArms.size(), storedSpatialMovements.size());
+        "replaced %d intersections, pulled in %d junctions within a radius and %d to salvage approaches without a " +
+        "signal, joined %d nodes and %d crossings (%d " +
+        "from a slip lane), made %d approaches internal and %d links reached only through the intersection; %d " +
+        "intersection clusters subdivided step by step, %d internal links longer than the warning length, %d " +
+        "approaches added without a signal (%d not on a slip lane), %d junctions with few lit arms; stored %d movements",
+        replacedIntersections.size(), getIntersections(IntersectionOutcome.JUNCTION_PULLED_IN_WITHIN_RADIUS).size(),
+        getIntersections(IntersectionOutcome.JUNCTION_PULLED_IN_TO_SALVAGE_APPROACH_WITHOUT_SIGNAL).size(),
+        joinedNodes.size(), getIntersections(IntersectionOutcome.CROSSING_JOINED).size(),
+        getIntersections(IntersectionOutcome.CROSSING_JOINED_FROM_SLIP_LANE).size(),
+        getApproaches(ApproachOutcome.MADE_INTERNAL).size(), linksReachedOnlyThroughIntersection.size(),
+        intersectionClustersSubdividedStepByStep.size(), internalLinksLongerThanWarningLength.size(),
+        getApproaches(ApproachOutcome.ADDED_WITHOUT_SIGNAL_ON_SLIP_LANE).size() +
+            getApproaches(ApproachOutcome.ADDED_WITHOUT_SIGNAL_NOT_ON_SLIP_LANE).size(),
+        getApproaches(ApproachOutcome.ADDED_WITHOUT_SIGNAL_NOT_ON_SLIP_LANE).size(),
+        getIntersections(IntersectionOutcome.JUNCTION_WITH_FEW_LIT_ARMS).size(), storedSpatialMovements.size());
   }
 }

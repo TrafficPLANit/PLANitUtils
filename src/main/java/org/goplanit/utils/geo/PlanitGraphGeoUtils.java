@@ -268,27 +268,31 @@ public class PlanitGraphGeoUtils {
   }
    
 
-  /** Find the edge closest to the passed in geometry using a projection from any existing coordinate on the geometry to the geometry of the link.
-   * 
-   * @param geometry to find closest link for
+  /** Find the edge closest to a geometry, see
+   * {@link #findEdgesClosest(Geometry, Collection, double, PlanitJtsCrsUtils)}
+   *
+   * @param geometry to find the closest edge for: a point, line string or polygon
    * @param edges to check against
    * @param geoUtils used to compute distances
-   * @return closest edge found
-   */  
+   * @return closest edge found, null when the geometry or edges are missing, or the geometry is of another kind
+   */
   public static Edge findEdgeClosest(Geometry geometry, Collection<? extends Edge> edges, PlanitJtsCrsUtils geoUtils){
     Pair<? extends Edge,Set<? extends Edge>> result = findEdgesClosest(geometry, edges,0,geoUtils);
     return result!=null ? result.first() : null;   
   }
   
-  /** Find the edge closest to the passed in geometry as well as all other edges within the provided marging 
-   * using a projection from any existing coordinate on the geometry to the geometry of the link.
-   * 
-   * @param geometry to find closest link for
+  /** Find the edge closest to a geometry, and the other edges within a margin beyond its distance. Distances are
+   * measured from each existing coordinate of the geometry, of its ring for a polygon, to the geometry of each edge,
+   * see {@link #findEdgesWithinClosestDistanceDeltaToGeometry(Geometry, Collection, double, PlanitJtsCrsUtils)}. A
+   * single edge is the closest without measuring
+   *
+   * @param geometry to find the closest edges for: a point, line string or polygon
    * @param edges to check against
-   * @param marginToClosestMeters margin used to collect all edges within this margin from the closest edge
+   * @param marginToClosestMeters beyond the distance of the closest edge, within which the other edges are collected
    * @param geoUtils used to compute distances
-   * @return closest edge found and the edges within the given margin, null if none
-   */  
+   * @return the closest edge with the other edges within the margin, without them (null) when only one edge is given.
+   *         Null when the geometry or edges are missing, or the geometry is not a point, line string or polygon
+   */
   public static Pair<? extends Edge,Set<? extends Edge>> findEdgesClosest(
       Geometry geometry, Collection<? extends Edge> edges, double marginToClosestMeters, PlanitJtsCrsUtils geoUtils){
     if(geometry==null || edges==null || geoUtils==null) {
@@ -298,74 +302,18 @@ public class PlanitGraphGeoUtils {
     if(edges.size()==1) {
       return Pair.of(edges.iterator().next(),null);
     }
-    
-    if(geometry instanceof Point) {
-      return findEdgesClosestToPoint((Point)geometry, edges, marginToClosestMeters, geoUtils);
-    }else if(geometry instanceof LineString) {
-      return findEdgesClosestToLineString((LineString)geometry, edges, marginToClosestMeters, geoUtils);     
-    }
-    
-    return null;
-  }
 
-  /** Find the edge closest to the passed in line string using a projection from any existing coordinate on the
-   *  line string to the geometry of the link.
-   * 
-   * @param lineString to find closest link for
-   * @param edges to check against
-   * @param geoUtils used to compute distances
-   * @return closest edge found
-   */   
-  public static Edge findEdgeClosestToLineString(
-          LineString lineString, Collection<? extends Edge> edges, PlanitJtsCrsUtils geoUtils){
-    Pair<? extends Edge,Set<? extends Edge>> result =
-            findEdgesClosestToLineString(lineString, edges, 0, geoUtils);
-    return result.first();
-  }
-  
-  /** Find the edge closest to the passed in point using a projection from any existing coordinate on the geometry
-   * to the geometry of the link.
-   * 
-   * @param point to find closest link for
-   * @param edges to check against
-   * @param geoUtils used to compute distances
-   * @return closest edge found
-   */    
-  public static Edge findEdgeClosestToPoint(
-          Point point, Collection<? extends Edge> edges, PlanitJtsCrsUtils geoUtils){
-    Pair<? extends Edge,Set<? extends Edge>> result =
-            findEdgesClosestToPoint(point, edges, 0, geoUtils);
-    return result.first();
-  }
-    
-  
-  /** Find the edge closest to the passed in line string using a projection from any existing coordinate on the line string to the geometry of the link. All edges that are
-   * found within a small buffer distance of the closest distance are also retrieved
-   * 
-   * @param lineString to find closest link for
-   * @param edges to check against
-   * @param bufferDistanceMeters margin used to collect all edges with distance smaller or equal to buffer (distance to closest edge + this margin)
-   * @param geoUtils used to compute distances
-   * @return closest edge found and edges within margin
-   */   
-  public static Pair<? extends Edge,Set<? extends Edge>> findEdgesClosestToLineString(
-      LineString lineString, Collection<? extends Edge> edges, double bufferDistanceMeters, PlanitJtsCrsUtils geoUtils){
-    return findEdgesClosestToGeometry(lineString, edges, bufferDistanceMeters, geoUtils);   
-  }   
-  
-  /** Find the edge closest to the passed in point as well as all other edges within the given margin 
-   * using a projection from any existing coordinate on the geometry to the geometry of the link. All edges that are
-   * found within a small buffer distance of the closest distance are also retrieved
-   * 
-   * @param point to find closest link for
-   * @param edges to check against
-   * @param bufferDistanceMeters margin used to collect all edges with distance smaller or equal to buffer (distance to closest edge + this margin)
-   * @param geoUtils used to compute distances
-   * @return closest edge found and all other edges within the given margin
-   */    
-  public static Pair<? extends Edge,Set<? extends Edge>> findEdgesClosestToPoint(
-      Point point, Collection<? extends Edge> edges, double bufferDistanceMeters, PlanitJtsCrsUtils geoUtils){
-   return findEdgesClosestToGeometry(point, edges, bufferDistanceMeters, geoUtils); 
+    if(!(geometry instanceof Point || geometry instanceof LineString || geometry instanceof Polygon)) {
+      return null;
+    }
+
+    var result = findEdgesWithinClosestDistanceDeltaToGeometry(geometry, edges, marginToClosestMeters, geoUtils);
+
+    /* remove minimum entry as it is returned separately */
+    var minEntry = findMinimumValuePair(result);
+    result.remove(minEntry.first());
+
+    return Pair.of(minEntry.first(), new TreeSet<Edge>(result.keySet()));
   }
 
   /** Find the edges within the given buffer distance (around shortest distance found) to the passed in geometry using a projection from any existing coordinate on the geometry to the geometry of the link. All edges that are
@@ -401,28 +349,6 @@ public class PlanitGraphGeoUtils {
     return result;
   }
 
-  /** Find the edge closest to the passed in geometry as well as all other edges within the given margin 
-   * using a projection from any existing coordinate on the geometry to the geometry of the link. All edges that are
-   * found within a small buffer distance of the closest distance are also retrieved
-   * 
-   * @param geometry to find closest link for
-   * @param edges to check against
-   * @param bufferDistanceMeters margin used to collect all edges with distance smaller or equal to buffer (distance to closest edge + this margin)
-   * @param geoUtils used to compute distances
-   * @return closest edge found and all other edges within the given margin
-   */    
-  public static Pair<? extends Edge,Set<? extends Edge>> findEdgesClosestToGeometry(
-      Geometry geometry, Collection<? extends Edge> edges, double bufferDistanceMeters, PlanitJtsCrsUtils geoUtils){
-
-    var result = findEdgesWithinClosestDistanceDeltaToGeometry(geometry, edges, bufferDistanceMeters, geoUtils);
-
-    /* remove minimum entry as it is returned separately */
-    var minEntry = findMinimumValuePair(result);
-    result.remove(minEntry.first());
-
-    return Pair.of(minEntry.first(), new TreeSet<Edge>(result.keySet()));
-  }   
-
   /** Extract the JTS line segment from the edge segment that is closest to the reference geometry in its intended direction.
    * 
    * @param <T> edge segment type
@@ -453,6 +379,23 @@ public class PlanitGraphGeoUtils {
     }
     return lineSegment;        
   }  
+
+  /**
+   * Verify if a geometry lies left of an edge segment, as seen in the direction the segment runs, at the piece of its
+   * edge's geometry closest to the geometry, see {@link #extractClosestLineSegmentTo(Geometry, EdgeSegment,
+   * PlanitJtsCrsUtils)}. So what lies left of one direction of an edge lies right of the other. For example, a stop on
+   * the kerb of a road where traffic drives on the left lies left of the segment its vehicles stop on
+   *
+   * @param geometry to locate, see {@link PlanitJtsCrsUtils#isGeometryLeftOf(Geometry, Coordinate, Coordinate)} for
+   *                 a geometry that is not a point
+   * @param edgeSegment to locate it against
+   * @param geoUtils to use
+   * @return true when left of the edge segment, false otherwise
+   */
+  public static boolean isGeometryLeftOf(Geometry geometry, EdgeSegment edgeSegment, PlanitJtsCrsUtils geoUtils) {
+    var closestPiece = extractClosestLineSegmentTo(geometry, edgeSegment, geoUtils);
+    return geoUtils.isGeometryLeftOf(geometry, closestPiece.p0, closestPiece.p1);
+  }
   
   /** Verify if node is within maximum distance of provided bounding box
    * 
@@ -476,14 +419,25 @@ public class PlanitGraphGeoUtils {
    * @return the created hull, an empty geometry when no vertex carries a position
    */
   public static <V extends Vertex> Geometry createConvexHull(Iterable<V> vertices) {
-    var coordinates = new ArrayList<Coordinate>();
+    var coordinates = positionsOf(vertices).stream().map(Point::getCoordinate).toArray(Coordinate[]::new);
+    return new ConvexHull(coordinates, PlanitJtsUtils.jtsGeometryFactory).getConvexHull();
+  }
+
+  /**
+   * The positions of the given vertices
+   *
+   * @param <V> type of vertex
+   * @param vertices to take the positions of, any vertex without a position is left out
+   * @return the positions, in the order of the vertices
+   */
+  private static <V extends Vertex> List<Point> positionsOf(Iterable<V> vertices) {
+    var positions = new ArrayList<Point>();
     for (var vertex : vertices) {
       if (vertex.hasPosition()) {
-        coordinates.add(vertex.getPosition().getCoordinate());
+        positions.add(vertex.getPosition());
       }
     }
-    return new ConvexHull(
-        coordinates.toArray(new Coordinate[0]), PlanitJtsUtils.jtsGeometryFactory).getConvexHull();
+    return positions;
   }
 
   /** Create the centroid of the positions of the given vertices
@@ -493,13 +447,22 @@ public class PlanitGraphGeoUtils {
    * @return the centroid, an empty point when no vertex carries a position
    */
   public static <V extends Vertex> Point createCentroid(Iterable<V> vertices) {
-    var positions = new ArrayList<Point>();
-    for (var vertex : vertices) {
-      if (vertex.hasPosition()) {
-        positions.add(vertex.getPosition());
-      }
-    }
-    return PlanitJtsUtils.createMultiPoint(positions.toArray(Point[]::new)).getCentroid();
+    return PlanitJtsUtils.createMultiPoint(positionsOf(vertices).toArray(Point[]::new)).getCentroid();
+  }
+
+  /**
+   * Distance from a point to the furthest of the given vertices, in metres
+   *
+   * @param <V> type of vertex
+   * @param point to measure from
+   * @param vertices to measure to, any vertex without a position is ignored
+   * @param geoUtils to measure with
+   * @return distance in metres, zero when no vertex carries a position
+   */
+  public static <V extends Vertex> double getDistanceToFurthestVertexInMetres(
+      Point point, Iterable<V> vertices, PlanitJtsCrsUtils geoUtils) {
+    return positionsOf(vertices).stream().mapToDouble(position -> geoUtils.getDistanceInMetres(point, position))
+        .max().orElse(0);
   }
 
   /**

@@ -16,12 +16,17 @@ public class IntersectionConsolidatorSettingsTest {
    */
   @Test
   public void defaultValues() {
-    assertEquals(25, IntersectionConsolidatorSettings.DEFAULT_MAXIMUM_INTERNAL_LINK_LENGTH_METERS);
+    assertEquals(40, IntersectionConsolidatorSettings.DEFAULT_MAXIMUM_JOINING_REACH_METERS);
     assertEquals(0.05, IntersectionConsolidatorSettings.DEFAULT_MINIMUM_COVERAGE_GAIN_PER_MEMBER);
-    assertEquals(0.001, IntersectionConsolidatorSettings.DEFAULT_COVERAGE_TIE_MARGIN);
-    assertEquals(10, IntersectionConsolidatorSettings.DEFAULT_MAXIMUM_PARSED_INTERSECTIONS_PER_INTERSECTION_CLUSTER);
+    assertEquals(0.05, IntersectionConsolidatorSettings.DEFAULT_COVERAGE_TIE_MARGIN);
+    assertEquals(10, IntersectionConsolidatorSettings.DEFAULT_MAXIMUM_PARSED_INTERSECTIONS_TO_TRY_EVERY_SUBDIVISION);
+    assertEquals(3, IntersectionConsolidatorSettings.DEFAULT_SUBDIVISIONS_KEPT_PER_SEARCH_STEP);
+    assertEquals(30, IntersectionConsolidatorSettings.DEFAULT_PULL_IN_MARGIN_BEYOND_RADIUS_METERS);
+    assertEquals(80, IntersectionConsolidatorSettings.DEFAULT_MAXIMUM_PULL_IN_CONNECTION_LENGTH_METERS);
     assertEquals(100, IntersectionConsolidatorSettings.DEFAULT_INTERNAL_LINK_LENGTH_WARNING_METERS);
-    assertEquals(50, IntersectionConsolidatorSettings.DEFAULT_MAXIMUM_DISTANCE_REACHED_ONLY_THROUGH_INTERSECTION_METERS);
+    assertEquals(60, IntersectionConsolidatorSettings.DEFAULT_MAXIMUM_DISTANCE_REACHED_ONLY_THROUGH_INTERSECTION_METERS);
+    assertEquals(2,
+        IntersectionConsolidatorSettings.DEFAULT_MAXIMUM_DISTANCE_REACHED_ONLY_THROUGH_INTERSECTION_RADIUS_FACTOR);
     assertEquals(60, IntersectionConsolidatorSettings.DEFAULT_MAXIMUM_DISTANCE_SLIP_LANE_CROSSING_TO_JUNCTION_METERS);
   }
 }

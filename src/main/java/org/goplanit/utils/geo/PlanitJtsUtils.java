@@ -21,6 +21,7 @@ import org.goplanit.utils.misc.Pair;
 import org.locationtech.jts.algorithm.Angle;
 import org.locationtech.jts.algorithm.RobustDeterminant;
 import org.locationtech.jts.geom.*;
+import org.locationtech.jts.linearref.LengthIndexedLine;
 import org.locationtech.jts.linearref.LinearLocation;
 import org.locationtech.jts.linearref.LocationIndexedLine;
 import org.locationtech.jts.operation.linemerge.LineMerger;
@@ -432,6 +433,31 @@ public class PlanitJtsUtils {
         geometry.getGeometryType()));
 
     return null;
+  }
+
+  /**
+   * The centre of a geometry: a point itself, the point halfway along an open line, the centroid of the area a closed
+   * line encloses, the centre of a polygon as {@link #extractPolygonCentre(Geometry)} finds it, and the centroid of any
+   * other geometry
+   *
+   * @param geometry to find the centre of
+   * @return the centre, null when the geometry is null
+   */
+  public static Point extractCentre(Geometry geometry) {
+    if (geometry == null || geometry instanceof Point) {
+      return (Point) geometry;
+    }
+    if (geometry instanceof LineString) {
+      var line = (LineString) geometry;
+      if (line.isClosed() && line.getNumPoints() >= 4) {
+        return line.getFactory().createPolygon(line.getCoordinates()).getCentroid();
+      }
+      return line.getFactory().createPoint(new LengthIndexedLine(line).extractPoint(line.getLength() / 2));
+    }
+    if (geometry instanceof Polygon || geometry instanceof MultiPolygon) {
+      return extractPolygonCentre(geometry);
+    }
+    return geometry.getCentroid();
   }
 
   /**

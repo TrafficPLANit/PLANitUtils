@@ -101,29 +101,50 @@ public interface MacroscopicNetworkLayerModifier extends
       MacroscopicLink link, Node currentEndNode, Node newEndNode, CoordinateReferenceSystem crs);
 
   /**
-   * Consolidate the intersections of the layer: join the parsed intersections of one junction into one intersection,
-   * make internal the links reached only through it, let crossings join their junction, count missing approaches, and
-   * store the movements of each spatial intersection. Every change is made through this modifier, and every entity it
-   * removes is removed with a removal event.
+   * Consolidate the intersections of the layer. In order, it:
+   * <ul>
+   * <li>joins the parsed intersections of one junction into one intersection, and makes internal the links reached
+   * only through it;</li>
+   * <li>pulls in the junctions within its radius;</li>
+   * <li>lets crossings join their junction;</li>
+   * <li>joins the nodes it encloses;</li>
+   * <li>pulls in the junction that the road of a would-be approach without a signal leads back to;</li>
+   * <li>makes internal the links now reached only through each intersection that grew by pulling in a junction, and
+   * joins the nodes it now encloses;</li>
+   * <li>makes each road entering a signalised junction that is still not an approach an approach without a signal of
+   * its own;</li>
+   * <li>stores the movements of each spatial intersection.</li>
+   * </ul>
+   * Every change is made through this modifier, and every entity it removes is removed with a removal event.
    * <p>
-   * A parsed intersection is a registered intersection with the kind junction. Parsed intersections within the maximum
-   * internal link length of each other, along the road in either direction, form an intersection cluster. Every way to
-   * divide a cluster into cluster subsets is scored on how well the traffic entering each cluster subset can leave it
-   * in every direction the cluster offers, and each cluster subset of the best subdivision becomes one intersection
+   * A parsed intersection is a registered intersection with the kind junction. Parsed intersections within the joining
+   * reach of each other, along the road in either direction, form an intersection cluster. Ways to
+   * divide a cluster into cluster subsets are scored on how well the traffic entering each cluster subset can leave it
+   * in every direction the cluster offers: every way for a small cluster, a step by step search for a larger one. Each
+   * cluster subset of the best subdivision becomes one intersection.
+   * </p>
+   * <p>
+   * A segment that becomes internal becomes an internal segment with a signal when it has a signal of its own, or
+   * when it enters a signalised crossing on a link no motorised road mode uses, such as a footway or cycleway, which
+   * has a light of its own there. A road into a crossing does not, nor does a segment into a junction whose signal
+   * stands on its node: a junction often has such a signal on every one of its nodes, so it would count one real
+   * signal several times.
    * </p>
    *
    * @param crs of the layer's geometry, to measure directions and distances in
    * @param settings the reach, scoring values and warning lengths to use
-   * @param hasVehicleSignal true for a link segment with a vehicle signal standing on it, which the layer does not
-   *                         record. It is asked only for segments that become internal: one for which it is true
-   *                         becomes an internal segment with a signal. Pass {@code segment -> false} when the positions
-   *                         of signals are not known
+   * @param hasSignalOfItsOwn true for a link segment with a signal of its own, which the layer does not record: a
+   *                          vehicle signal standing on it, or a light for the footway or cycleway it is on where no
+   *                          road or rail passes, so no intersection holds it. It is asked for segments that become
+   *                          internal, to give them a signal, and for road segments into a junction, to tell whether a
+   *                          node lies in front of the junction. Pass {@code segment -> false} when the positions of
+   *                          signals are not known
    * @return what was done
    */
   public abstract IntersectionConsolidationModifierResult consolidateIntersections(
       CoordinateReferenceSystem crs,
       IntersectionConsolidatorSettings settings,
-      Predicate<MacroscopicLinkSegment> hasVehicleSignal);
+      Predicate<MacroscopicLinkSegment> hasSignalOfItsOwn);
 
   /**
    * Consolidate the intersections of the layer with the default settings, and no vehicle signals known to stand on
@@ -146,8 +167,9 @@ public interface MacroscopicNetworkLayerModifier extends
    * <li>links leaving it that only those modes use move their member node end to the centre node;</li>
    * <li>for each of the modes, a link joins the centre node to each member node where a kept road still allows the
    * mode, taking that road's link segment type, or a modified copy of it allowing only the mode;</li>
-   * <li>the bans of the modes, worked out from the stored movements, move onto the new turns where they hold exactly;
-   * </li>
+   * <li>the modes are banned on the new turns so each can make only what it could make while the intersection was
+   * spatial, worked out from the stored movements and, for a segment entering it that is not an approach, from what
+   * that segment could reach;</li>
    * <li>what no mode can use any more is removed, and a spatial intersection left with one member node becomes a
    * non-spatial intersection on it;</li>
    * <li>the banned turns on the internal segments left no longer name the modes.</li>

@@ -1,18 +1,39 @@
 package org.goplanit.utils;
 
+import org.goplanit.utils.containers.ContainerUtils;
 import org.goplanit.utils.containers.FourAryMinHeapOpenSet;
 import org.goplanit.utils.containers.ListUtils;
 import org.goplanit.utils.misc.Pair;
 import org.junit.jupiter.api.Test;
 
 import java.util.Comparator;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.PriorityQueue;
 import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 public class CollectionsTest {
+
+  /**
+   * A number goes once the number before it is gone, 1 excepted, so 5 goes in the first pass and 6, whose number before
+   * it was still there then, in the second
+   */
+  @Test
+  public void removeUntilNoneMatchesRepeatsPassesUntilNoneGoes() {
+    var numbers = new LinkedHashSet<>(List.of(1, 2, 3, 5, 6));
+
+    boolean removed = ContainerUtils.removeUntilNoneMatches(numbers, () -> {
+      var atStartOfPass = Set.copyOf(numbers);
+      return number -> number > 1 && !atStartOfPass.contains(number - 1);
+    });
+
+    assertTrue(removed);
+    assertEquals(Set.of(1, 2, 3), numbers);
+    assertFalse(ContainerUtils.removeUntilNoneMatches(numbers, () -> number -> number > 3));
+  }
   @Test
   public void FourAryMinHeapTest(){
     int numVertices = 10;

@@ -1,6 +1,7 @@
 package org.goplanit.utils.id;
 
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -40,5 +41,15 @@ public class IdAbleUtils {
    */
   public static List<Long> collectSortedIds(Collection<? extends IdAble> entities) {
     return entities.stream().map(IdAble::getId).sorted().collect(Collectors.toList());
+  }
+
+  /**
+   * An order of entities by their id, lowest first, e.g., to break ties the same way every time
+   *
+   * @param <T> type of entity
+   * @return the order
+   */
+  public static <T extends IdAble> Comparator<T> byId() {
+    return Comparator.comparingLong(IdAble::getId);
   }
 }

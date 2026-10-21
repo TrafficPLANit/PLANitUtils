@@ -2,13 +2,17 @@ package org.goplanit.utils.network.layer.macroscopic;
 
 import org.goplanit.utils.graph.directed.EdgeSegment;
 import org.goplanit.utils.math.Precision;
+import org.goplanit.utils.network.layer.physical.Node;
 import org.goplanit.utils.network.layer.physical.NodeUtils;
 import org.goplanit.utils.mode.Mode;
 import org.goplanit.utils.mode.TrackModeType;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.function.BiFunction;
 import java.util.function.Predicate;
+import java.util.function.UnaryOperator;
 
 /**
  * Utilities for macroscopic link segments
@@ -180,6 +184,20 @@ public class MacroscopicLinkSegmentUtils {
   }
 
   /**
+   * Find the only link segment onward from a segment in a direction, see {@link #findOnward}
+   *
+   * @param segment to go on from
+   * @param withTraffic true to follow the traffic, false to go back against it
+   * @param condition a segment onward must meet
+   * @return the only segment onward, null when there are several or none
+   */
+  public static MacroscopicLinkSegment findOnlySegmentOnward(final MacroscopicLinkSegment segment, boolean withTraffic,
+      final Predicate<? super MacroscopicLinkSegment> condition) {
+    var onward = findOnward(segment, withTraffic, condition);
+    return onward.size() == 1 ? onward.get(0) : null;
+  }
+
+  /**
    * Follow segments meeting a condition from a segment, through nodes where they simply continue: one segment onward
    * meets the condition, see {@link #findOnward}, and none comes back, other than on the link just followed. For
    * example, a road followed through the shape nodes of a long bend, up to the junction it reaches
@@ -193,21 +211,54 @@ public class MacroscopicLinkSegmentUtils {
    */
   public static MacroscopicLinkSegment followUntilItBranches(final MacroscopicLinkSegment segment,
       boolean withTraffic, double maximumDistanceMeters, final Predicate<? super MacroscopicLinkSegment> condition) {
-    double meters = segment.getParent().getLengthMeters();
-    var current = segment;
-    while (meters <= maximumDistanceMeters + Precision.EPSILON_9) {
-      var node = withTraffic ? current.getDownstreamNode() : current.getUpstreamNode();
-      var currentLink = current.getParent();
-      var onward = findOnward(current, withTraffic, condition);
-      List<MacroscopicLinkSegment> back = withTraffic ?
-          NodeUtils.<MacroscopicLinkSegment>findEntryLinkSegments(node, condition) :
-          NodeUtils.<MacroscopicLinkSegment>findExitLinkSegments(node, condition);
-      back.removeIf(previous -> previous.getParent() == currentLink);
-      if (onward.size() != 1 || !back.isEmpty()) {
-        return current;
+    return followSegmentsUntilAnswered(segment, withTraffic, segment.getParent().getLengthMeters(),
+        maximumDistanceMeters, (current, meters) -> {
+          var node = withTraffic ? current.getDownstreamNode() : current.getUpstreamNode();
+          List<MacroscopicLinkSegment> back = withTraffic ?
+              NodeUtils.<MacroscopicLinkSegment>findEntryLinkSegments(node, condition) :
+              NodeUtils.<MacroscopicLinkSegment>findExitLinkSegments(node, condition);
+          back.removeIf(previous -> previous.getParent() == current.getParent());
+          return findOnlySegmentOnward(current, withTraffic, condition) == null || !back.isEmpty() ? current : null;
+        }, current -> findOnlySegmentOnward(current, withTraffic, condition));
+  }
+
+  /**
+   * Follow segments from a segment one after the other, in a direction, until a rule gives an answer at a node reached.
+   * Each segment followed reaches a node: its downstream node with the traffic, its upstream node against it. At each,
+   * the rule is asked for an answer, and when it gives none, the next segment is asked for. It stops without an answer
+   * when there is no next segment, when the node reached lies beyond the distance, or when it gets back to a node
+   * already reached, as round a loop. For example, a road followed through the nodes where it simply continues, with
+   * the answer the junction it reaches
+   *
+   * @param <R> type of the answer
+   * @param start segment to start along
+   * @param withTraffic true to follow the traffic, false to go back against it
+   * @param metersToFirstNodeReached distance to the node the start segment reaches: its length, or less when starting
+   *                                 part way along it
+   * @param maximumDistanceMeters furthest a node reached may lie
+   * @param answerAt given a segment followed and the distance to the node it reaches, the answer, null to go on
+   * @param nextSegment given a segment followed without an answer, the segment to follow next, null when there is none
+   * @return the first answer given, null when none was
+   */
+  public static <R> R followSegmentsUntilAnswered(final MacroscopicLinkSegment start, boolean withTraffic,
+      double metersToFirstNodeReached, double maximumDistanceMeters,
+      final BiFunction<? super MacroscopicLinkSegment, Double, ? extends R> answerAt,
+      final UnaryOperator<MacroscopicLinkSegment> nextSegment) {
+    var nodesReached = new HashSet<Node>();
+    double meters = metersToFirstNodeReached;
+    var current = start;
+    while (current != null && meters <= maximumDistanceMeters + Precision.EPSILON_9) {
+      if (!nodesReached.add(withTraffic ? current.getDownstreamNode() : current.getUpstreamNode())) {
+        return null;
       }
-      current = onward.get(0);
-      meters += current.getParent().getLengthMeters();
+      R answer = answerAt.apply(current, meters);
+      if (answer != null) {
+        return answer;
+      }
+      current = nextSegment.apply(current);
+      if (current != null) {
+        meters += current.getParent().getLengthMeters();
+      }
     }
     return null;
   }

@@ -5,7 +5,6 @@ import org.goplanit.utils.graph.Edge;
 import org.goplanit.utils.graph.Vertex;
 import org.goplanit.utils.misc.Pair;
 import org.goplanit.utils.network.layer.macroscopic.MacroscopicLinkSegment;
-import org.goplanit.utils.network.layer.physical.LinkSegment;
 import org.goplanit.utils.zoning.TransferZone;
 import org.goplanit.utils.zoning.Zone;
 import org.locationtech.jts.geom.*;
@@ -120,26 +119,6 @@ public class PlanitEntityGeoUtils {
       return Pair.of(closestEntity, minDistanceMeters);
     }
     return null;
-  }
-
-  /** Extract the closest existing linear line segment based on the closest two coordinates on the link segment
-   * geometry in its intended direction to the reference geometry provided
-   *
-   * @param referenceGeometry to find closest line segment to
-   * @param linkSegment to extract line segment from
-   * @param geoUtils for distance calculations
-   * @return line segment if found
-   */
-  public static LineSegment extractClosestLineSegmentToGeometryFromLinkSegment(
-      Geometry referenceGeometry, LinkSegment linkSegment, PlanitJtsCrsUtils geoUtils) {
-    LineString linkSegmentGeometry = linkSegment.getParent().getGeometry();
-    var closestLinearLoc =
-        extractClosestProjectedLinearLocationToGeometryFromEdge(referenceGeometry, linkSegment.getParent(),geoUtils);
-    LineSegment lineSegment = closestLinearLoc.getSegment(linkSegmentGeometry);
-    if(linkSegment.isDirectionAb()!=linkSegment.getParent().isGeometryInAbDirection()) {
-      lineSegment.reverse();
-    }
-    return lineSegment;
   }
 
   /** Find the linear location reflecting the closest projected location between the transfer zone and link geometries.

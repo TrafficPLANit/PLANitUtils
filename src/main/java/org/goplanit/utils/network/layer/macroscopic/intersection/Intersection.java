@@ -178,6 +178,44 @@ public interface Intersection extends ExternalIdAble, ManagedId, Serializable {
   }
 
   /**
+   * Verify if this intersection has the kind junction, among any others
+   *
+   * @return true when it is a junction, false otherwise
+   */
+  public default boolean isJunction() {
+    return getTypes().contains(IntersectionType.JUNCTION);
+  }
+
+  /**
+   * Verify if this intersection is a signalised junction
+   *
+   * @return true when it is signalised and has the kind junction, false otherwise
+   */
+  public default boolean isSignalisedJunction() {
+    return isSignalised() && isJunction();
+  }
+
+  /**
+   * Verify if this intersection has the kind crossing and no other
+   *
+   * @return true when it is a crossing only, false otherwise
+   */
+  public default boolean isCrossingOnly() {
+    return getTypes().equals(Set.of(IntersectionType.CROSSING));
+  }
+
+  /**
+   * Verify if a link segment is one of the approach segments of this intersection, the very segment rather than one
+   * equal to it
+   *
+   * @param segment to verify
+   * @return true when it is an approach segment, false otherwise
+   */
+  public default boolean isApproachSegment(MacroscopicLinkSegment segment) {
+    return ListUtils.containsByIdentity(getApproachSegments(), segment);
+  }
+
+  /**
    * {@inheritDoc}
    */
   @Override

@@ -42,6 +42,17 @@ public interface Intersections extends ManagedIdEntities<Intersection> {
   }
 
   /**
+   * Verify if this container still holds the very intersection given, for example one held on to while others were
+   * merged away. Only the same instance counts, not another one with its id
+   *
+   * @param intersection to verify
+   * @return true when it is still registered here, false otherwise
+   */
+  public default boolean contains(Intersection intersection) {
+    return get(intersection.getId()) == intersection;
+  }
+
+  /**
    * Stream the registered intersections that meet a condition, in the order of this container, which is by id
    *
    * @param condition to meet

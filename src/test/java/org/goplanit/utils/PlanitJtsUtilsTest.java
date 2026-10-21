@@ -549,4 +549,27 @@ public class PlanitJtsUtilsTest {
     assertArrayEquals(new double[]{1, 2, 3, 4}, PlanitJtsUtils.convertToOrdinates(coordinates, false));
     assertArrayEquals(new double[]{2, 1, 4, 3}, PlanitJtsUtils.convertToOrdinates(coordinates, true));
   }
+
+  /**
+   * The centre of a geometry: a point is its own centre, an open line's is the point halfway along it, a closed line's
+   * is the centroid of the area it encloses, and a polygon's is its centroid
+   */
+  @Test
+  public void centreOfPointOpenLineClosedLineAndPolygon() {
+    var point = PlanitJtsUtils.createPoint(3, 4);
+    assertTrue(new Coordinate(3, 4).equals2D(PlanitJtsUtils.extractCentre(point).getCoordinate(), 1e-9));
+
+    /* an L shaped line 20 long: halfway along it is its corner, while its centroid lies off the line */
+    var line = PlanitJtsUtils.createLineString(new Coordinate(0, 0), new Coordinate(10, 0), new Coordinate(10, 10));
+    assertTrue(new Coordinate(10, 0).equals2D(PlanitJtsUtils.extractCentre(line).getCoordinate(), 1e-9));
+
+    /* a closed line around a 10 by 2 rectangle: the rectangle's centroid, not the point halfway along the outline */
+    var rectangle = new Coordinate[]{
+        new Coordinate(0, 0), new Coordinate(10, 0), new Coordinate(10, 2), new Coordinate(0, 2), new Coordinate(0, 0)};
+    var ring = PlanitJtsUtils.createLineString(rectangle);
+    assertTrue(new Coordinate(5, 1).equals2D(PlanitJtsUtils.extractCentre(ring).getCoordinate(), 1e-9));
+
+    var polygon = PlanitJtsUtils.createPolygon(rectangle);
+    assertTrue(new Coordinate(5, 1).equals2D(PlanitJtsUtils.extractCentre(polygon).getCoordinate(), 1e-9));
+  }
 }

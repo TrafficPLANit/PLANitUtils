@@ -6,6 +6,7 @@ import org.goplanit.utils.output.OutputUtils;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -111,6 +112,28 @@ public class ListUtils {
       }
     }
     return result;
+  }
+
+  /**
+   * Compare two lists entry by entry, as words are ordered in a dictionary: the first entries that differ decide, and
+   * when one list starts with all of the other, the shorter one comes first, e.g., [1,2] before [1,3] and [1] before
+   * [1,2]
+   *
+   * @param <T> type of entry
+   * @param first list to compare
+   * @param second list to compare it with
+   * @param entryOrder how two entries compare
+   * @return negative when the first comes first, positive when the second does, zero when they are equal
+   */
+  public static <T> int compareEntryByEntry(
+      List<? extends T> first, List<? extends T> second, Comparator<? super T> entryOrder) {
+    for (int index = 0; index < Math.min(first.size(), second.size()); ++index) {
+      int comparison = entryOrder.compare(first.get(index), second.get(index));
+      if (comparison != 0) {
+        return comparison;
+      }
+    }
+    return Integer.compare(first.size(), second.size());
   }
 
   /**

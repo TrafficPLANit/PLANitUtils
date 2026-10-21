@@ -6,6 +6,7 @@ import java.util.IdentityHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import org.goplanit.utils.graph.directed.BannedTurn;
@@ -13,6 +14,7 @@ import org.goplanit.utils.graph.directed.BannedTurns;
 import org.goplanit.utils.graph.directed.EdgeSegment;
 import org.goplanit.utils.network.layer.macroscopic.MacroscopicLinkSegment;
 import org.goplanit.utils.network.layer.physical.Node;
+import org.goplanit.utils.network.layer.physical.NodeUtils;
 
 /**
  * Utilities for intersections
@@ -36,6 +38,25 @@ public class IntersectionUtils {
   public static List<MacroscopicLinkSegment> getInternalSegmentsOf(Intersection intersection){
     return intersection instanceof SpatialIntersection ?
         ((SpatialIntersection) intersection).getInternalSegments() : List.of();
+  }
+
+  /**
+   * Find the link segments that enter an intersection from outside, ending at a member node and starting at a node that
+   * is not one, without being one of its approaches, and that meet a condition
+   *
+   * @param intersection to find them for
+   * @param condition to meet, such as allowing a motorised road mode
+   * @return the segments found, by member node in the order of the member nodes, empty when there are none
+   */
+  public static List<MacroscopicLinkSegment> findSegmentsEnteringFromOutsideThatAreNotApproaches(
+      Intersection intersection, Predicate<MacroscopicLinkSegment> condition) {
+    var entering = new ArrayList<MacroscopicLinkSegment>();
+    for (var memberNode : intersection.getMemberNodes()) {
+      entering.addAll(NodeUtils.<MacroscopicLinkSegment>findEntryLinkSegments(memberNode, segment ->
+          !intersection.hasMemberNode(segment.getUpstreamVertex()) && !intersection.isApproachSegment(segment) &&
+              condition.test(segment)));
+    }
+    return entering;
   }
 
   /**

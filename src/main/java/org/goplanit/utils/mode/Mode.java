@@ -97,6 +97,23 @@ public interface Mode extends ExternalIdAble, ManagedId {
     return hasPhysicalFeatures() && getPhysicalFeatures().getTrackType() == TrackModeType.RAIL;
   }
 
+  /** Verify if this mode is a motorised road mode or a rail mode, see {@link #isMotorisedRoadMode()} and
+   * {@link #isRailMode()}: the traffic a traffic signal controls
+   *
+   * @return true when either, false otherwise, including when it has no physical features
+   */
+  public default boolean isMotorisedRoadOrRailMode() {
+    return isMotorisedRoadMode() || isRailMode();
+  }
+
+  /** Verify if this mode is the predefined tram or light rail mode
+   *
+   * @return true when a tram or light rail mode, false otherwise, including for a custom mode
+   */
+  public default boolean isTramOrLightRailMode() {
+    return isPredefinedModeType(PredefinedModeType.TRAM) || isPredefinedModeType(PredefinedModeType.LIGHTRAIL);
+  }
+
   /** Verify if use features are available
    * @return true if available, false otherwise
    */
