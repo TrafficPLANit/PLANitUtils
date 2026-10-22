@@ -6,12 +6,14 @@ import org.goplanit.utils.output.OutputUtils;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.function.Function;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -174,6 +176,29 @@ public class ListUtils {
     /* fill each set in the order of the entries */
     entries.forEach(entry -> setOf.get(entry).add(entry));
     return disjointSets;
+  }
+
+  /**
+   * Filter entries in order, each judged together with the entries kept before it: an entry is kept when the entries
+   * kept so far and the entry itself meet the condition. So what is kept depends on the order. For example, entries
+   * 5, 4, 2 and 1 with the condition that their sum is at most 8 give 5, 2 and 1: 4 is left out, since 5 and 4 sum to
+   * 9
+   *
+   * @param <T> type of entry
+   * @param entries to filter, in the order to judge them
+   * @param keptMeetCondition true when the given entries, those kept so far followed by the one judged, may be kept
+   * @return the entries kept, in order
+   */
+  public static <T> List<T> filterEachTogetherWithThoseKept(
+      Collection<? extends T> entries, Predicate<List<T>> keptMeetCondition) {
+    var kept = new ArrayList<T>();
+    for (var entry : entries) {
+      kept.add(entry);
+      if (!keptMeetCondition.test(Collections.unmodifiableList(kept))) {
+        kept.remove(kept.size() - 1);
+      }
+    }
+    return kept;
   }
 
   /**

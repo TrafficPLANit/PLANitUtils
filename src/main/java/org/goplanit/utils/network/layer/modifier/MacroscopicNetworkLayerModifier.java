@@ -7,7 +7,6 @@ import java.util.function.Predicate;
 import org.geotools.api.referencing.crs.CoordinateReferenceSystem;
 import org.goplanit.utils.graph.directed.BannedTurn;
 import org.goplanit.utils.modifier.LoggableModifier;
-import org.goplanit.utils.mode.Mode;
 import org.goplanit.utils.network.layer.macroscopic.MacroscopicLink;
 import org.goplanit.utils.network.layer.macroscopic.MacroscopicLinkSegment;
 import org.goplanit.utils.network.layer.macroscopic.SpatialMovement;
@@ -15,6 +14,7 @@ import org.goplanit.utils.network.layer.macroscopic.intersection.Intersection;
 import org.goplanit.utils.network.layer.macroscopic.intersection.SpatialIntersection;
 import org.goplanit.utils.network.layer.macroscopic.intersection.modifier.event.IntersectionModifierEventProducer;
 import org.goplanit.utils.network.layer.modifier.consolidator.IntersectionCollapseModifierResult;
+import org.goplanit.utils.network.layer.modifier.consolidator.IntersectionCollapserSettings;
 import org.goplanit.utils.network.layer.modifier.consolidator.IntersectionConsolidationModifierResult;
 import org.goplanit.utils.network.layer.modifier.consolidator.IntersectionConsolidatorSettings;
 import org.goplanit.utils.network.layer.physical.Node;
@@ -117,6 +117,12 @@ public interface MacroscopicNetworkLayerModifier extends
    * </ul>
    * Every change is made through this modifier, and every entity it removes is removed with a removal event.
    * <p>
+   * The lists of nodes in the settings override the grouping. No step puts nodes of one list to keep apart into one
+   * intersection. Once the crossings have joined, the intersections holding the nodes of one list to join are joined
+   * into one, and the steps from the pull-ins to the crossings run again for it, before the roads entering become
+   * approaches and the movements are stored.
+   * </p>
+   * <p>
    * A parsed intersection is a registered intersection with the kind junction. Parsed intersections within the joining
    * reach of each other, along the road in either direction, form an intersection cluster. Ways to
    * divide a cluster into cluster subsets are scored on how well the traffic entering each cluster subset can leave it
@@ -159,8 +165,8 @@ public interface MacroscopicNetworkLayerModifier extends
   }
 
   /**
-   * Collapse spatial intersections onto one node each for the given modes, so for those modes each becomes in effect a
-   * non-spatial intersection on its centre node:
+   * Collapse spatial intersections onto one node each for the modes of the settings, so for those modes each becomes
+   * in effect a non-spatial intersection on its centre node:
    * <ul>
    * <li>a centre node is added at the centroid of its member nodes, as a member node;</li>
    * <li>its internal segments lose access for the modes;</li>
@@ -176,28 +182,34 @@ public interface MacroscopicNetworkLayerModifier extends
    * </ul>
    * The movements stay as they are. Every change is made through this modifier, and every entity it removes is removed
    * with a removal event. Nothing is done when no intersection or no mode is given.
+   * <p>
+   * A spatial intersection with a member node the settings exclude from collapse is left as it is, whatever its other
+   * member nodes. Each node excluded is listed in the result with what that did.
+   * </p>
    *
    * @param intersections the spatial intersections to collapse, each registered on the layer, else an exception is
    *                      thrown before anything changes
-   * @param modes to collapse onto the centre nodes
+   * @param settings the modes to collapse onto the centre nodes, and the nodes excluded from collapse
    * @param crs of the layer's geometry, to measure distances in
    * @return what was done
    */
   public abstract IntersectionCollapseModifierResult collapseIntersectionsToNonSpatialForModes(
-      Collection<? extends SpatialIntersection> intersections, Collection<Mode> modes, CoordinateReferenceSystem crs);
+      Collection<? extends SpatialIntersection> intersections, IntersectionCollapserSettings settings,
+      CoordinateReferenceSystem crs);
 
   /**
-   * Collapse one spatial intersection onto one node for the given modes, see
-   * {@link #collapseIntersectionsToNonSpatialForModes(Collection, Collection, CoordinateReferenceSystem)}. Collapsing
-   * several at once is preferred, since what no mode can use any more is removed once for all of them
+   * Collapse one spatial intersection onto one node for the modes of the settings, see
+   * {@link #collapseIntersectionsToNonSpatialForModes(Collection, IntersectionCollapserSettings,
+   * CoordinateReferenceSystem)}. Collapsing several at once is preferred, since what no mode can use any more is
+   * removed once for all of them
    *
    * @param intersection the spatial intersection to collapse
-   * @param modes to collapse onto its centre node
+   * @param settings the modes to collapse onto its centre node, and the nodes excluded from collapse
    * @param crs of the layer's geometry, to measure distances in
    * @return what was done
    */
   public default IntersectionCollapseModifierResult collapseIntersectionToNonSpatialForModes(
-      SpatialIntersection intersection, Collection<Mode> modes, CoordinateReferenceSystem crs) {
-    return collapseIntersectionsToNonSpatialForModes(List.of(intersection), modes, crs);
+      SpatialIntersection intersection, IntersectionCollapserSettings settings, CoordinateReferenceSystem crs) {
+    return collapseIntersectionsToNonSpatialForModes(List.of(intersection), settings, crs);
   }
 }

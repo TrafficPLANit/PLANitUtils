@@ -43,6 +43,10 @@ public class IntersectionCollapseModifierResult {
   /** each movement and collapsed mode whose ban no new turn could hold without banning a movement that was allowed */
   private final List<Pair<SpatialMovement, Mode>> collapsedModeBansNotHeld = new ArrayList<>();
 
+  /** the ids, as given, of the nodes excluded from collapse that no node of the layer has, each once, in the order
+   * they were recorded */
+  private final Set<String> excludedNodeIdsNotFound = new LinkedHashSet<>();
+
   /** what was removed for lack of mode access after collapsing, empty until collapse removes something */
   private ModeAccessCleanupModifierResult modeAccessCleanup =
       new ModeAccessCleanupModifierResult(List.of(), List.of(), List.of(), List.of(), List.of());
@@ -106,6 +110,15 @@ public class IntersectionCollapseModifierResult {
    */
   public void addCollapsedModeBanNotHeld(SpatialMovement movement, Mode mode) {
     collapsedModeBansNotHeld.add(Pair.of(movement, mode));
+  }
+
+  /**
+   * Record an id of a node excluded from collapse that no node of the layer has, each id once
+   *
+   * @param nodeId the id, as given
+   */
+  public void addExcludedNodeIdNotFound(String nodeId) {
+    excludedNodeIdsNotFound.add(nodeId);
   }
 
   /**
@@ -177,6 +190,15 @@ public class IntersectionCollapseModifierResult {
   }
 
   /**
+   * The ids, as given, of the nodes excluded from collapse that no node of the layer has
+   *
+   * @return the ids, in the order they were recorded, unmodifiable
+   */
+  public List<String> getExcludedNodeIdsNotFound() {
+    return List.copyOf(excludedNodeIdsNotFound);
+  }
+
+  /**
    * What was removed for lack of mode access after collapsing, such as the inner links no mode can use any more
    *
    * @return the mode access cleanup result
@@ -192,9 +214,10 @@ public class IntersectionCollapseModifierResult {
   public String toString() {
     return String.format(
         "moved %d links to and added %d links to centre nodes, removed %d bans, added or extended %d and reduced %d " +
-        "banned turns for collapsed modes, dropped %d bans of collapsed modes",
+        "banned turns for collapsed modes, dropped %d bans of collapsed modes, did not find %d nodes excluded from " +
+        "collapse",
         linksMovedToCentreNode.size(), linksAddedToCentreNode.size(), removedBannedTurns.size(),
         bannedTurnsAddedOrExtendedForCollapsedModes.size(), bannedTurnsThatLostCollapsedModes.size(),
-        collapsedModeBansNotHeld.size());
+        collapsedModeBansNotHeld.size(), excludedNodeIdsNotFound.size());
   }
 }

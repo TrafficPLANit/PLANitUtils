@@ -1,7 +1,9 @@
 package org.goplanit.utils.misc;
 
 import java.nio.charset.Charset;
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.List;
 import java.util.function.Function;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -201,5 +203,15 @@ public class StringUtils {
   public static <E> String toSortedCommaSeparatedString(
       Collection<? extends E> elements, Function<? super E, String> toText) {
     return elements.stream().map(toText).sorted().collect(Collectors.joining(CharacterUtils.COMMA.toString()));
+  }
+
+  /**
+   * Each value as a string, in order. For example, 12 and 40 give "12" and "40"
+   *
+   * @param values to convert
+   * @return the values as strings, in order
+   */
+  public static List<String> toStrings(long... values) {
+    return Arrays.stream(values).mapToObj(String::valueOf).collect(Collectors.toList());
   }
 }

@@ -184,6 +184,10 @@ public class IntersectionConsolidationModifierResult {
   /** movements stored on the spatial intersections */
   private final List<SpatialMovement> storedSpatialMovements = new ArrayList<>();
 
+  /** the ids, as listed, of the nodes listed in the settings to join or to keep apart that no node of the layer has,
+   * each once, in the order they were recorded */
+  private final Set<String> listedNodeIdsNotFound = new LinkedHashSet<>();
+
   /**
    * Constructor of an empty result, which consolidation fills as it makes each change
    */
@@ -279,6 +283,15 @@ public class IntersectionConsolidationModifierResult {
   }
 
   /**
+   * Record an id of a node listed in the settings to join or to keep apart that no node of the layer has, each id once
+   *
+   * @param nodeId the id, as listed
+   */
+  public void addListedNodeIdNotFound(String nodeId) {
+    listedNodeIdsNotFound.add(nodeId);
+  }
+
+  /**
    * Each of the layer's intersections replaced, once, with the spatial intersection that replaced it in the end. Every
    * intersection a spatial intersection is made from is replaced, so joining four gives four pairs. When a spatial
    * intersection consolidation made is merged into another, its pairs name the other one, see
@@ -357,6 +370,15 @@ public class IntersectionConsolidationModifierResult {
   }
 
   /**
+   * The ids, as listed, of the nodes listed in the settings to join or to keep apart that no node of the layer has
+   *
+   * @return the ids, in the order they were recorded, unmodifiable
+   */
+  public List<String> getListedNodeIdsNotFound() {
+    return List.copyOf(listedNodeIdsNotFound);
+  }
+
+  /**
    * {@inheritDoc}
    */
   @Override
@@ -366,7 +388,8 @@ public class IntersectionConsolidationModifierResult {
         "signal, joined %d nodes and %d crossings (%d " +
         "from a slip lane), made %d approaches internal and %d links reached only through the intersection; %d " +
         "intersection clusters subdivided step by step, %d internal links longer than the warning length, %d " +
-        "approaches added without a signal (%d not on a slip lane), %d junctions with few lit arms; stored %d movements",
+        "approaches added without a signal (%d not on a slip lane), %d junctions with few lit arms; stored %d " +
+        "movements, did not find %d nodes listed in the settings",
         replacedIntersections.size(), getIntersections(IntersectionOutcome.JUNCTION_PULLED_IN_WITHIN_RADIUS).size(),
         getIntersections(IntersectionOutcome.JUNCTION_PULLED_IN_TO_SALVAGE_APPROACH_WITHOUT_SIGNAL).size(),
         joinedNodes.size(), getIntersections(IntersectionOutcome.CROSSING_JOINED).size(),
@@ -376,6 +399,7 @@ public class IntersectionConsolidationModifierResult {
         getApproaches(ApproachOutcome.ADDED_WITHOUT_SIGNAL_ON_SLIP_LANE).size() +
             getApproaches(ApproachOutcome.ADDED_WITHOUT_SIGNAL_NOT_ON_SLIP_LANE).size(),
         getApproaches(ApproachOutcome.ADDED_WITHOUT_SIGNAL_NOT_ON_SLIP_LANE).size(),
-        getIntersections(IntersectionOutcome.JUNCTION_WITH_FEW_SIGNALISED_ARMS).size(), storedSpatialMovements.size());
+        getIntersections(IntersectionOutcome.JUNCTION_WITH_FEW_SIGNALISED_ARMS).size(), storedSpatialMovements.size(),
+        listedNodeIdsNotFound.size());
   }
 }

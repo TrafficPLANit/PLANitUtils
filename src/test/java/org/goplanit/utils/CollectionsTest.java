@@ -84,4 +84,16 @@ public class CollectionsTest {
     assertEquals(List.of(List.of("a", "b", "d"), List.of("c"), List.of("e")),
         disjointSets.stream().map(List::copyOf).collect(Collectors.toList()));
   }
+
+  /**
+   * Each number is kept when it and the numbers kept before it sum to at most 8. So 4 is left out after 5, while 2
+   * and 1 after it are still kept
+   */
+  @Test
+  public void filterEachTogetherWithThoseKeptJudgesEachWithThoseKeptBefore() {
+    var kept = ListUtils.filterEachTogetherWithThoseKept(List.of(5, 4, 2, 1),
+        numbers -> numbers.stream().mapToInt(Integer::intValue).sum() <= 8);
+
+    assertEquals(List.of(5, 2, 1), kept);
+  }
 }
