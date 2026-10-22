@@ -212,8 +212,8 @@ public class MacroscopicLinkSegmentUtils {
   public static MacroscopicLinkSegment followUntilItBranches(final MacroscopicLinkSegment segment,
       boolean inTrafficDirection, double maximumDistanceMeters,
       final Predicate<? super MacroscopicLinkSegment> condition) {
-    return followSegmentsUntilAnswered(segment, inTrafficDirection, segment.getParent().getLengthMeters(),
-        maximumDistanceMeters, (current, meters) -> {
+    return followOnlySegmentsOnwardUntilAnswered(segment, inTrafficDirection, segment.getParent().getLengthMeters(),
+        maximumDistanceMeters, condition, (current, meters) -> {
           var node = inTrafficDirection ? current.getDownstreamNode() : current.getUpstreamNode();
           List<MacroscopicLinkSegment> back = inTrafficDirection ?
               NodeUtils.<MacroscopicLinkSegment>findEntryLinkSegments(node, condition) :
@@ -221,7 +221,7 @@ public class MacroscopicLinkSegmentUtils {
           back.removeIf(previous -> previous.getParent() == current.getParent());
           return findOnlySegmentOnward(current, inTrafficDirection, condition) == null || !back.isEmpty() ?
               current : null;
-        }, current -> findOnlySegmentOnward(current, inTrafficDirection, condition));
+        });
   }
 
   /**
@@ -263,5 +263,29 @@ public class MacroscopicLinkSegmentUtils {
       }
     }
     return null;
+  }
+
+  /**
+   * Follow segments from a segment one after the other, in a direction, until a rule gives an answer at a node reached,
+   * see {@link #followSegmentsUntilAnswered(MacroscopicLinkSegment, boolean, double, double, BiFunction,
+   * UnaryOperator)}. The segment followed next is the only one onward that meets the condition, see
+   * {@link #findOnlySegmentOnward}, so it also stops where none or more than one does
+   *
+   * @param <R> type of the answer
+   * @param start segment to start along
+   * @param inTrafficDirection true to go in the traffic direction, false to go back against it
+   * @param metersToFirstNodeReached distance to the node the start segment reaches: its length, or less when starting
+   *                                 part way along it
+   * @param maximumDistanceMeters furthest a node reached may lie
+   * @param condition the segments followed after the start segment must meet
+   * @param answerAt given a segment followed and the distance to the node it reaches, the answer, null to go on
+   * @return the first answer given, null when none was
+   */
+  public static <R> R followOnlySegmentsOnwardUntilAnswered(final MacroscopicLinkSegment start,
+      boolean inTrafficDirection, double metersToFirstNodeReached, double maximumDistanceMeters,
+      final Predicate<? super MacroscopicLinkSegment> condition,
+      final BiFunction<? super MacroscopicLinkSegment, Double, ? extends R> answerAt) {
+    return followSegmentsUntilAnswered(start, inTrafficDirection, metersToFirstNodeReached, maximumDistanceMeters,
+        answerAt, current -> findOnlySegmentOnward(current, inTrafficDirection, condition));
   }
 }
