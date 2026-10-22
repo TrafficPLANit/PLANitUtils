@@ -170,30 +170,30 @@ public class MacroscopicLinkSegmentUtils {
   }
 
   /**
-   * Find the link segments onward from a segment in a direction: its continuations with the traffic, see
+   * Find the link segments onward from a segment in a direction: its continuations in the traffic direction, see
    * {@link #findContinuations}, or its predecessors against it, see {@link #findPredecessors}
    *
    * @param segment to go on from
-   * @param withTraffic true to follow the traffic, false to go back against it
+   * @param inTrafficDirection true to go in the traffic direction, false to go back against it
    * @param condition a segment onward must meet
    * @return the segments onward, empty when there are none
    */
-  public static List<MacroscopicLinkSegment> findOnward(final MacroscopicLinkSegment segment, boolean withTraffic,
-      final Predicate<? super MacroscopicLinkSegment> condition) {
-    return withTraffic ? findContinuations(segment, condition) : findPredecessors(segment, condition);
+  public static List<MacroscopicLinkSegment> findOnward(final MacroscopicLinkSegment segment,
+      boolean inTrafficDirection, final Predicate<? super MacroscopicLinkSegment> condition) {
+    return inTrafficDirection ? findContinuations(segment, condition) : findPredecessors(segment, condition);
   }
 
   /**
    * Find the only link segment onward from a segment in a direction, see {@link #findOnward}
    *
    * @param segment to go on from
-   * @param withTraffic true to follow the traffic, false to go back against it
+   * @param inTrafficDirection true to go in the traffic direction, false to go back against it
    * @param condition a segment onward must meet
    * @return the only segment onward, null when there are several or none
    */
-  public static MacroscopicLinkSegment findOnlySegmentOnward(final MacroscopicLinkSegment segment, boolean withTraffic,
-      final Predicate<? super MacroscopicLinkSegment> condition) {
-    var onward = findOnward(segment, withTraffic, condition);
+  public static MacroscopicLinkSegment findOnlySegmentOnward(final MacroscopicLinkSegment segment,
+      boolean inTrafficDirection, final Predicate<? super MacroscopicLinkSegment> condition) {
+    var onward = findOnward(segment, inTrafficDirection, condition);
     return onward.size() == 1 ? onward.get(0) : null;
   }
 
@@ -203,36 +203,38 @@ public class MacroscopicLinkSegmentUtils {
    * example, a road followed through the shape nodes of a long bend, up to the junction it reaches
    *
    * @param segment to start along
-   * @param withTraffic true to follow the traffic, false to go back against it
+   * @param inTrafficDirection true to go in the traffic direction, false to go back against it
    * @param maximumDistanceMeters furthest to follow, the first segment included
    * @param condition the segments followed must meet
-   * @return the last segment followed, ending (or starting, against the traffic) at the node where the segments stop
-   *         simply continuing; null when that node is not reached within the distance
+   * @return the last segment followed, ending (or starting, against the traffic direction) at the node where the
+   *         segments stop simply continuing; null when that node is not reached within the distance
    */
   public static MacroscopicLinkSegment followUntilItBranches(final MacroscopicLinkSegment segment,
-      boolean withTraffic, double maximumDistanceMeters, final Predicate<? super MacroscopicLinkSegment> condition) {
-    return followSegmentsUntilAnswered(segment, withTraffic, segment.getParent().getLengthMeters(),
+      boolean inTrafficDirection, double maximumDistanceMeters,
+      final Predicate<? super MacroscopicLinkSegment> condition) {
+    return followSegmentsUntilAnswered(segment, inTrafficDirection, segment.getParent().getLengthMeters(),
         maximumDistanceMeters, (current, meters) -> {
-          var node = withTraffic ? current.getDownstreamNode() : current.getUpstreamNode();
-          List<MacroscopicLinkSegment> back = withTraffic ?
+          var node = inTrafficDirection ? current.getDownstreamNode() : current.getUpstreamNode();
+          List<MacroscopicLinkSegment> back = inTrafficDirection ?
               NodeUtils.<MacroscopicLinkSegment>findEntryLinkSegments(node, condition) :
               NodeUtils.<MacroscopicLinkSegment>findExitLinkSegments(node, condition);
           back.removeIf(previous -> previous.getParent() == current.getParent());
-          return findOnlySegmentOnward(current, withTraffic, condition) == null || !back.isEmpty() ? current : null;
-        }, current -> findOnlySegmentOnward(current, withTraffic, condition));
+          return findOnlySegmentOnward(current, inTrafficDirection, condition) == null || !back.isEmpty() ?
+              current : null;
+        }, current -> findOnlySegmentOnward(current, inTrafficDirection, condition));
   }
 
   /**
    * Follow segments from a segment one after the other, in a direction, until a rule gives an answer at a node reached.
-   * Each segment followed reaches a node: its downstream node with the traffic, its upstream node against it. At each,
-   * the rule is asked for an answer, and when it gives none, the next segment is asked for. It stops without an answer
-   * when there is no next segment, when the node reached lies beyond the distance, or when it gets back to a node
-   * already reached, as round a loop. For example, a road followed through the nodes where it simply continues, with
-   * the answer the junction it reaches
+   * Each segment followed reaches a node: its downstream node in the traffic direction, its upstream node against it.
+   * At each, the rule is asked for an answer, and when it gives none, the next segment is asked for. It stops without
+   * an answer when there is no next segment, when the node reached lies beyond the distance, or when it gets back to a
+   * node already reached, as round a loop. For example, a road followed through the nodes where it simply continues,
+   * with the answer the junction it reaches
    *
    * @param <R> type of the answer
    * @param start segment to start along
-   * @param withTraffic true to follow the traffic, false to go back against it
+   * @param inTrafficDirection true to go in the traffic direction, false to go back against it
    * @param metersToFirstNodeReached distance to the node the start segment reaches: its length, or less when starting
    *                                 part way along it
    * @param maximumDistanceMeters furthest a node reached may lie
@@ -240,7 +242,7 @@ public class MacroscopicLinkSegmentUtils {
    * @param nextSegment given a segment followed without an answer, the segment to follow next, null when there is none
    * @return the first answer given, null when none was
    */
-  public static <R> R followSegmentsUntilAnswered(final MacroscopicLinkSegment start, boolean withTraffic,
+  public static <R> R followSegmentsUntilAnswered(final MacroscopicLinkSegment start, boolean inTrafficDirection,
       double metersToFirstNodeReached, double maximumDistanceMeters,
       final BiFunction<? super MacroscopicLinkSegment, Double, ? extends R> answerAt,
       final UnaryOperator<MacroscopicLinkSegment> nextSegment) {
@@ -248,7 +250,7 @@ public class MacroscopicLinkSegmentUtils {
     double meters = metersToFirstNodeReached;
     var current = start;
     while (current != null && meters <= maximumDistanceMeters + Precision.EPSILON_9) {
-      if (!nodesReached.add(withTraffic ? current.getDownstreamNode() : current.getUpstreamNode())) {
+      if (!nodesReached.add(inTrafficDirection ? current.getDownstreamNode() : current.getUpstreamNode())) {
         return null;
       }
       R answer = answerAt.apply(current, meters);

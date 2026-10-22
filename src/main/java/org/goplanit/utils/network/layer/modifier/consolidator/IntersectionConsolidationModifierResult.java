@@ -132,7 +132,7 @@ public class IntersectionConsolidationModifierResult {
 
     /** a signalised junction where fewer than half of the approaches that allow a motorised road mode have a signal of
      * their own */
-    JUNCTION_WITH_FEW_LIT_ARMS
+    JUNCTION_WITH_FEW_SIGNALISED_ARMS
   }
 
   /** What consolidation did to an approach segment that the result lists */
@@ -376,6 +376,6 @@ public class IntersectionConsolidationModifierResult {
         getApproaches(ApproachOutcome.ADDED_WITHOUT_SIGNAL_ON_SLIP_LANE).size() +
             getApproaches(ApproachOutcome.ADDED_WITHOUT_SIGNAL_NOT_ON_SLIP_LANE).size(),
         getApproaches(ApproachOutcome.ADDED_WITHOUT_SIGNAL_NOT_ON_SLIP_LANE).size(),
-        getIntersections(IntersectionOutcome.JUNCTION_WITH_FEW_LIT_ARMS).size(), storedSpatialMovements.size());
+        getIntersections(IntersectionOutcome.JUNCTION_WITH_FEW_SIGNALISED_ARMS).size(), storedSpatialMovements.size());
   }
 }

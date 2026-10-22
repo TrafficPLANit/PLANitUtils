@@ -4,6 +4,7 @@ import org.goplanit.utils.misc.LoggingUtils;
 import org.goplanit.utils.misc.Pair;
 
 import java.util.Collection;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 /**
@@ -68,5 +69,31 @@ public class ExternalIdAbleUtils {
 
     return LoggingUtils.surroundWithBrackets(notListedCount > 0 ?
         String.format("%s,... (%d more)", listedEntities, notListedCount) : listedEntities);
+  }
+
+  /**
+   * Verify if an optional mapping gives an id for the key, for example a waiting area the user nominated for a node
+   *
+   * @param <K> type of the key
+   * @param idMapping from key to id, may be null, may give null when the key is not mapped
+   * @param key to map
+   * @return true when the mapping exists and gives an id for the key, false otherwise
+   */
+  public static <K> boolean hasMappedId(Function<K, String> idMapping, K key) {
+    return idMapping != null && idMapping.apply(key) != null;
+  }
+
+  /**
+   * Verify if an optional mapping maps the key to the given id, for example whether the user nominated this access
+   * link for a waiting area
+   *
+   * @param <K> type of the key
+   * @param idMapping from key to id, may be null, may give null when the key is not mapped
+   * @param key to map
+   * @param id to compare with
+   * @return true when the mapping exists and maps the key to this id, false otherwise
+   */
+  public static <K> boolean isMappedToId(Function<K, String> idMapping, K key, String id) {
+    return hasMappedId(idMapping, key) && idMapping.apply(key).equals(id);
   }
 }
