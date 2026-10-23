@@ -55,23 +55,6 @@ public interface Intersections extends ManagedIdEntities<Intersection> {
   }
 
   /**
-   * The effective capacity factor of a link segment, see {@link IntersectionSegment#getEffectiveCapacityFactor()}: that
-   * of its approach, with or without a signal of its own, or of its internal segment with a signal, in the registered
-   * intersection it ends in. Any other segment gives 1, such as an exit, or a plain internal segment, whose saturation
-   * flow factor is only kept for when it gets a signal
-   *
-   * @param linkSegment to look up
-   * @return its effective capacity factor, 1 when it is no approach and no internal segment with a signal
-   */
-  public default double getEffectiveCapacityFactorOf(LinkSegment linkSegment){
-    var intersection = getByDownstreamNodeOf(linkSegment);
-    var intersectionSegment = intersection == null ? null : intersection.getApproachOrInternalSegment(linkSegment);
-    boolean holdsValues = intersectionSegment != null &&
-        (intersectionSegment.hasSignal() || intersection.isApproachSegment(linkSegment));
-    return holdsValues ? intersectionSegment.getEffectiveCapacityFactor() : 1;
-  }
-
-  /**
    * Verify if the node is a member of a registered signalised intersection
    *
    * @param node to verify

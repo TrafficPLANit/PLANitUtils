@@ -307,6 +307,46 @@ public interface Intersection extends ExternalIdAble, ManagedId, Serializable {
   }
 
   /**
+   * The kind of intersection segment a link segment is in this intersection, see {@link IntersectionSegmentKind}
+   *
+   * @param linkSegment to look up
+   * @return its kind, null when it is none of the segments of this intersection, such as an exit
+   */
+  public default IntersectionSegmentKind getIntersectionSegmentKindOf(LinkSegment linkSegment) {
+    var intersectionSegment = getApproachOrInternalSegment(linkSegment);
+    if (intersectionSegment == null) {
+      return null;
+    }
+    if (!isApproachSegment(linkSegment)) {
+      return intersectionSegment.hasSignal() ?
+          IntersectionSegmentKind.INTERNAL_SEGMENT_WITH_SIGNAL :
+          IntersectionSegmentKind.INTERNAL_SEGMENT_WITHOUT_SIGNAL;
+    }
+    if (!intersectionSegment.hasSignal()) {
+      return IntersectionSegmentKind.APPROACH_WITHOUT_SIGNAL;
+    }
+    return isJunction() ?
+        IntersectionSegmentKind.APPROACH_WITH_SIGNAL_AT_JUNCTION :
+        IntersectionSegmentKind.APPROACH_WITH_SIGNAL_AT_CROSSING_ONLY;
+  }
+
+  /**
+   * The effective capacity factor of a link segment in this intersection, see
+   * {@link IntersectionSegment#getEffectiveCapacityFactor()}: that of its approach, with or without a signal of its own,
+   * or of its internal segment with a signal. Any other segment gives 1, such as an exit, or a plain internal segment,
+   * whose saturation flow factor is only kept for when it gets a signal, see
+   * {@link IntersectionSegmentKind#holdsEffectiveCapacityFactor()}
+   *
+   * @param linkSegment to look up
+   * @return its effective capacity factor, 1 when it is no approach and no internal segment with a signal
+   */
+  public default double getEffectiveCapacityFactorOf(LinkSegment linkSegment) {
+    var kind = getIntersectionSegmentKindOf(linkSegment);
+    return kind != null && kind.holdsEffectiveCapacityFactor() ?
+        getApproachOrInternalSegment(linkSegment).getEffectiveCapacityFactor() : 1;
+  }
+
+  /**
    * {@inheritDoc}
    */
   @Override
