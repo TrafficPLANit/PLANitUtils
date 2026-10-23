@@ -1049,6 +1049,19 @@ public class PlanitJtsUtils {
   }
 
   /**
+   * Compute the minimum angle between the axes of the given two angles (0-360): 0 when they are the same or opposite,
+   * 90 when they are at right angles
+   *
+   * @param angleDegrees1 first angle in degrees
+   * @param angleDegrees2 second angle in degrees
+   * @return the found angle, from 0 to 90 degrees
+   */
+  public static double minDiffAxisAngleInDegrees(double angleDegrees1, double angleDegrees2) {
+    double minDiffAngleDegrees = minDiffAngleInDegrees(angleDegrees1, angleDegrees2);
+    return Math.min(minDiffAngleDegrees, 180 - minDiffAngleDegrees);
+  }
+
+  /**
    * Convert to doubles
    *
    * @param coordinates to convert

@@ -542,6 +542,16 @@ public class PlanitJtsUtilsTest {
     assertEquals(90, PlanitJtsUtils.minDiffAngleInDegrees(-45, 45), 1e-9);
   }
 
+  /** The smallest angle between the axes of two angles: 0 when the same or opposite, 90 at right angles */
+  @Test
+  public void minDiffAxisAngleInDegrees() {
+    assertEquals(20, PlanitJtsUtils.minDiffAxisAngleInDegrees(10, 350), 1e-9);
+    assertEquals(0, PlanitJtsUtils.minDiffAxisAngleInDegrees(0, 180), 1e-9);
+    assertEquals(5, PlanitJtsUtils.minDiffAxisAngleInDegrees(0, 185), 1e-9);
+    assertEquals(90, PlanitJtsUtils.minDiffAxisAngleInDegrees(-45, 45), 1e-9);
+    assertEquals(36, PlanitJtsUtils.minDiffAxisAngleInDegrees(180, 324), 1e-9);
+  }
+
   /** Coordinates as a flat array of ordinates, x then y, or y then x when reversed */
   @Test
   public void convertToOrdinates() {
