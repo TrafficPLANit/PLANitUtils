@@ -1,9 +1,11 @@
 package org.goplanit.utils.network.layer.macroscopic;
 
+import org.goplanit.utils.geo.PlanitJtsCrsUtils;
 import org.goplanit.utils.graph.Edge;
 import org.goplanit.utils.mode.Mode;
 import org.goplanit.utils.network.layer.physical.Link;
 import org.goplanit.utils.network.layer.physical.Node;
+import org.locationtech.jts.geom.Coordinate;
 
 import java.util.Collection;
 import java.util.function.Predicate;
@@ -123,5 +125,41 @@ public class MacroscopicLinkUtils {
       return true;
     }
     return one.getName() != null && !one.getName().isBlank() && one.getName().equals(other.getName());
+  }
+
+  /**
+   * The direction of travel along a link into one of its nodes, measured over the last stretch of the link before the
+   * node: from the farthest shape node within reach of the node, measured along the link, or from the nearest shape
+   * node when none lies within reach, or from the other node when the link has no shape nodes. For example, a road that
+   * curves but runs straight north over its last 20 m arrives heading north within a reach of 25 m
+   *
+   * @param link to measure along
+   * @param node one of the link's nodes, the one travelled into
+   * @param reachMeters how far back from the node, along the link, shape nodes are considered, 0 or more
+   * @param crsUtils to measure distances and directions with
+   * @return the compass bearing of the direction of travel into the node, in degrees from 0 to 360, 0 north
+   */
+  public static double getAzimuthArrivingAtNodeInDegrees(
+      final Link link, final Node node, double reachMeters, final PlanitJtsCrsUtils crsUtils) {
+    var otherNode = (Node) (link.getVertexA() == node ? link.getVertexB() : link.getVertexA());
+    Coordinate from = otherNode.getPosition().getCoordinate();
+    Coordinate to = node.getPosition().getCoordinate();
+    if (link.hasGeometry() && link.getGeometry().getNumPoints() > 2) {
+      var coordinates = link.getGeometry().getCoordinates();
+      boolean nodeAtGeometryEnd = (node == link.getVertexB()) == link.isGeometryInAbDirection();
+      int step = nodeAtGeometryEnd ? -1 : 1;
+      int nodeIndex = nodeAtGeometryEnd ? coordinates.length - 1 : 0;
+      to = coordinates[nodeIndex];
+      from = coordinates[nodeIndex + step];
+      double distanceMeters = crsUtils.getDistanceInMetres(to, from);
+      for (int shape = nodeIndex + 2 * step; shape > 0 && shape < coordinates.length - 1; shape += step) {
+        distanceMeters += crsUtils.getDistanceInMetres(coordinates[shape - step], coordinates[shape]);
+        if (distanceMeters > reachMeters) {
+          break;
+        }
+        from = coordinates[shape];
+      }
+    }
+    return crsUtils.getAzimuthInDegrees(from, to, true);
   }
 }

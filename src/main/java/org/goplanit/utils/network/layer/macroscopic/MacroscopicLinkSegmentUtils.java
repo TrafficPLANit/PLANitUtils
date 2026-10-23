@@ -1,5 +1,6 @@
 package org.goplanit.utils.network.layer.macroscopic;
 
+import org.goplanit.utils.geo.PlanitJtsCrsUtils;
 import org.goplanit.utils.graph.directed.EdgeSegment;
 import org.goplanit.utils.math.Precision;
 import org.goplanit.utils.network.layer.physical.Node;
@@ -287,5 +288,21 @@ public class MacroscopicLinkSegmentUtils {
       final BiFunction<? super MacroscopicLinkSegment, Double, ? extends R> answerAt) {
     return followSegmentsUntilAnswered(start, inTrafficDirection, metersToFirstNodeReached, maximumDistanceMeters,
         answerAt, current -> findOnlySegmentOnward(current, inTrafficDirection, condition));
+  }
+
+  /**
+   * The direction of travel along a link segment into its downstream node, over the last stretch before the node, see
+   * {@link MacroscopicLinkUtils#getAzimuthArrivingAtNodeInDegrees(org.goplanit.utils.network.layer.physical.Link, Node,
+   * double, PlanitJtsCrsUtils)}
+   *
+   * @param segment to measure along
+   * @param reachMeters how far back from its downstream node, along its link, shape nodes are considered, 0 or more
+   * @param crsUtils to measure distances and directions with
+   * @return the compass bearing of the direction of travel into its downstream node, in degrees from 0 to 360, 0 north
+   */
+  public static double getAzimuthArrivingAtDownstreamNodeInDegrees(
+      final MacroscopicLinkSegment segment, double reachMeters, final PlanitJtsCrsUtils crsUtils) {
+    return MacroscopicLinkUtils.getAzimuthArrivingAtNodeInDegrees(
+        segment.getParent(), (Node) segment.getDownstreamVertex(), reachMeters, crsUtils);
   }
 }

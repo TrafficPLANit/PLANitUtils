@@ -3,10 +3,12 @@ package org.goplanit.utils.network.layer.macroscopic.intersection;
 import java.io.Serializable;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.goplanit.utils.containers.ListUtils;
 import org.goplanit.utils.graph.directed.DirectedVertex;
 import org.goplanit.utils.id.ExternalIdAble;
+import org.goplanit.utils.id.IdAbleUtils;
 import org.goplanit.utils.id.ManagedId;
 import org.goplanit.utils.network.layer.macroscopic.MacroscopicLinkSegment;
 import org.goplanit.utils.network.layer.physical.Node;
@@ -15,7 +17,8 @@ import org.goplanit.utils.network.layer.physical.Node;
  * An intersection is a junction or crossing of a layer. It comes in two kinds: a {@link NonSpatialIntersection} is a
  * point, its one node, while a {@link SpatialIntersection} covers an area, several nodes and the link segments between
  * them. Both record how they are controlled, which kinds of intersection they are, and which link segments enter them
- * (approaches). They share one id across both kinds, and each also has an id of its own kind.
+ * (approaches), each with how much of its capacity can pass: its green ratio and saturation flow factor. They share one
+ * id across both kinds, and each also has an id of its own kind.
  * <p>
  * The methods on an intersection are raw edits: they change only this intersection and fire no events. Once an
  * intersection is registered in its layer, changes that must keep the rest of the layer consistent are made through
@@ -103,12 +106,57 @@ public interface Intersection extends ExternalIdAble, ManagedId, Serializable {
   public abstract boolean addType(IntersectionType type);
 
   /**
-   * Approach segments of this intersection: the link segments entering it. Every way out of the intersection is allowed
-   * from an approach segment unless a banned turn of the layer, starting from it, forbids it
+   * The approaches of this intersection: the link segments entering it, each a signal segment when it has a signal of
+   * its own and an unsignalised segment otherwise, with its values. Every way out of the intersection is allowed from
+   * an approach unless a banned turn of the layer, starting from its link segment, forbids it
    *
-   * @return unmodifiable list of approach segments
+   * @return unmodifiable list of approaches, in the order they were added
    */
-  public abstract List<MacroscopicLinkSegment> getApproachSegments();
+  public abstract List<IntersectionSegment> getApproaches();
+
+  /**
+   * The approach entering this intersection on a link segment, the very segment rather than one equal to it
+   *
+   * @param entrySegment the link segment the approach enters on
+   * @return the approach, null when the segment is not an approach segment
+   */
+  public abstract IntersectionSegment getApproach(MacroscopicLinkSegment entrySegment);
+
+  /**
+   * Add a new approach, without values, entering on a link segment that ends at a member node and starts at a node
+   * that is not a member, with a signal of its own or not, whatever the control type of the intersection. For example,
+   * at a signalised intersection a driveway joining inside the junction is added without a signal of its own
+   *
+   * @param entrySegment the link segment it enters on
+   * @param hasOwnSignal true to add an {@link IntersectionSignalSegment}, false to add an
+   *                     {@link IntersectionUnsignalisedSegment}
+   * @return the approach added, null when the segment is an approach segment already or does not enter the
+   * intersection
+   */
+  public abstract IntersectionSegment addNewApproach(MacroscopicLinkSegment entrySegment, boolean hasOwnSignal);
+
+  /**
+   * Add a new approach, without values, entering on a link segment, following the control type of the intersection:
+   * an {@link IntersectionSignalSegment} when the intersection is signalised, an
+   * {@link IntersectionUnsignalisedSegment} when it is not. To choose, see
+   * {@link #addNewApproach(MacroscopicLinkSegment, boolean)}
+   *
+   * @param entrySegment the link segment it enters on
+   * @return the approach added, null when the segment is an approach segment already or does not enter the
+   * intersection
+   */
+  public default IntersectionSegment addNewApproach(MacroscopicLinkSegment entrySegment) {
+    return addNewApproach(entrySegment, isSignalised());
+  }
+
+  /**
+   * Approach segments of this intersection: the link segments its approaches enter on, see {@link #getApproaches()}
+   *
+   * @return unmodifiable list of approach segments, in the order their approaches were added
+   */
+  public default List<MacroscopicLinkSegment> getApproachSegments() {
+    return getApproaches().stream().map(IntersectionSegment::getLinkSegment).collect(Collectors.toUnmodifiableList());
+  }
 
   /**
    * Approach segment with the given id
@@ -116,24 +164,46 @@ public interface Intersection extends ExternalIdAble, ManagedId, Serializable {
    * @param segmentId to look for
    * @return approach segment, null when no approach segment has this id
    */
-  public abstract MacroscopicLinkSegment getApproachSegment(long segmentId);
+  public default MacroscopicLinkSegment getApproachSegment(long segmentId) {
+    return IdAbleUtils.findById(getApproachSegments(), segmentId);
+  }
 
   /**
-   * Add an approach segment: a link segment that ends at a member node and starts at a node that is not a member
+   * Add a new approach, without values, for a link segment entering the intersection, following the control type of
+   * the intersection: an {@link IntersectionSignalSegment} when the intersection is signalised, an
+   * {@link IntersectionUnsignalisedSegment} when it is not. The same as
+   * {@link #addNewApproach(MacroscopicLinkSegment)}, telling only whether it was added
    *
    * @param segment to add
    * @return true when added, false when already an approach segment or refused because it does not enter the
    * intersection
    */
-  public abstract boolean addApproachSegment(MacroscopicLinkSegment segment);
+  public default boolean addNewApproachSegment(MacroscopicLinkSegment segment) {
+    return addNewApproach(segment) != null;
+  }
 
   /**
-   * Remove an approach segment
+   * Remove the approach entering on a link segment, with whether it has a signal of its own and its values. The
+   * intersection no longer holds that instance
    *
    * @param segment to remove
    * @return true when removed, false when not an approach segment
    */
   public abstract boolean removeApproachSegment(MacroscopicLinkSegment segment);
+
+  /**
+   * Let the approach entering on a link segment enter on another link segment instead, for example on the new link
+   * segment ending at the intersection once the approach's link is broken at a node upstream. It stays the same
+   * instance: only its link segment changes, so it keeps whether it has a signal of its own and its values without
+   * copying them
+   *
+   * @param approachSegment the link segment the approach enters on now
+   * @param entrySegment the link segment it is to enter on instead
+   * @return true when set, false when the first is not an approach segment or the second does not enter the
+   * intersection or is an approach segment already, leaving the intersection unchanged
+   */
+  public abstract boolean setEntrySegmentOnApproach(
+      MacroscopicLinkSegment approachSegment, MacroscopicLinkSegment entrySegment);
 
   /**
    * Verify if a link segment is an exit of this intersection: it starts at a member node and ends at a node that is not
@@ -147,26 +217,31 @@ public interface Intersection extends ExternalIdAble, ManagedId, Serializable {
   }
 
   /**
-   * Verify if an approach segment has a signal of its own. It follows the control type of this intersection, unless it
-   * was set otherwise with {@link #setApproachSegmentHasOwnSignal(MacroscopicLinkSegment, boolean)}. For example, at a
-   * signalised intersection a driveway joining inside the junction has no signal of its own
+   * Verify if an approach segment has a signal of its own: its approach is a signal segment. When added, an approach
+   * follows the control type of the intersection, and it keeps its signal when the control type changes. For example,
+   * at a signalised intersection a driveway joining inside the junction has no signal of its own
    *
    * @param approachSegment to check
    * @return true when the approach segment has a signal of its own, false otherwise or when it is not an approach
    * segment
    */
-  public abstract boolean hasOwnSignal(MacroscopicLinkSegment approachSegment);
+  public default boolean hasOwnSignal(MacroscopicLinkSegment approachSegment) {
+    var approach = getApproach(approachSegment);
+    return approach != null && approach.hasSignal();
+  }
 
   /**
-   * Set whether an approach segment has a signal of its own. Only the approach segments that differ from the control
-   * type are stored, and changing the control type keeps whether each approach segment has a signal of its own.
-   * Removing the approach segment removes what was set for it
+   * Swap the approach entering on a link segment for a signal segment, when it is to have a signal of its own, or for
+   * an unsignalised segment, when not. When it is of that kind already, it stays the same instance. Otherwise a new
+   * instance of the other kind takes its place in the list, for the same link segment and with its saturation flow
+   * factor copied; without a signal it has no green ratio. The old instance is no longer held by the intersection
    *
-   * @param approachSegment to set it for
-   * @param hasOwnSignal true when it has a signal of its own, false otherwise
-   * @return true when set, false when the segment is not an approach segment
+   * @param approachSegment the link segment the approach enters on
+   * @param hasOwnSignal true for a signal segment, false for an unsignalised segment
+   * @return the approach after the swap, null when the segment is not an approach segment
    */
-  public abstract boolean setApproachSegmentHasOwnSignal(MacroscopicLinkSegment approachSegment, boolean hasOwnSignal);
+  public abstract IntersectionSegment swapApproachToNewSignalOrUnsignalised(
+      MacroscopicLinkSegment approachSegment, boolean hasOwnSignal);
 
   /**
    * Verify if this intersection is signalised
@@ -212,7 +287,7 @@ public interface Intersection extends ExternalIdAble, ManagedId, Serializable {
    * @return true when it is an approach segment, false otherwise
    */
   public default boolean isApproachSegment(MacroscopicLinkSegment segment) {
-    return ListUtils.containsByIdentity(getApproachSegments(), segment);
+    return getApproach(segment) != null;
   }
 
   /**

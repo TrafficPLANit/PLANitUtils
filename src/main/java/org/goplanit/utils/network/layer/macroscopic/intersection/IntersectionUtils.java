@@ -135,6 +135,54 @@ public class IntersectionUtils {
   }
 
   /**
+   * Copy the values of one intersection segment instance to another, each with how it got its value: the saturation
+   * flow factor, and the green ratio when both are signal segments. A value not set on the first is left as it is on
+   * the second
+   *
+   * @param from the intersection segment to copy them from
+   * @param to the intersection segment to copy them to
+   */
+  public static void copyGreenRatioAndSaturationFlowFactor(IntersectionSegment from, IntersectionSegment to) {
+    if (from.getSaturationFlowFactorOrigin() != null) {
+      to.setSaturationFlowFactor(from.getSaturationFlowFactor(), from.getSaturationFlowFactorOrigin());
+    }
+    if (from instanceof IntersectionSignalSegment && to instanceof IntersectionSignalSegment) {
+      var fromSignal = (IntersectionSignalSegment) from;
+      if (fromSignal.getGreenRatioOrigin() != null) {
+        ((IntersectionSignalSegment) to).setGreenRatio(fromSignal.getGreenRatio(), fromSignal.getGreenRatioOrigin());
+      }
+    }
+  }
+
+  /**
+   * Add to an intersection a copy of an approach of another intersection: a new approach instance for the same link
+   * segment, with a signal of its own when the approach has one, and the approach's values copied to it. The approach
+   * given stays with its own intersection. For example when intersections are joined into one, or a spatial
+   * intersection is replaced by a non-spatial one
+   *
+   * @param to the intersection to add the copy to
+   * @param approach of another intersection, to copy
+   * @return the copy added, null when the intersection refuses its link segment as an approach segment
+   */
+  public static IntersectionSegment addCopyOfApproach(Intersection to, IntersectionSegment approach) {
+    var added = to.addNewApproach(approach.getLinkSegment(), approach.hasSignal());
+    if (added != null) {
+      copyGreenRatioAndSaturationFlowFactor(approach, added);
+    }
+    return added;
+  }
+
+  /**
+   * Verify a value can be a green ratio or a saturation flow factor: from 0 to 1, both included
+   *
+   * @param value to verify
+   * @return true when from 0 to 1, false otherwise, also when it is not a number
+   */
+  public static boolean isValidCapacityFactor(double value) {
+    return value >= 0 && value <= 1;
+  }
+
+  /**
    * Group banned turns by their from segment, by identity since segments hash by id and ids can be recreated
    *
    * @param bannedTurns to group

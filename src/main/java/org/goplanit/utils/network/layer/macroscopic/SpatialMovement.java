@@ -8,6 +8,7 @@ import org.goplanit.utils.graph.directed.Turn;
 import org.goplanit.utils.id.ExternalIdAble;
 import org.goplanit.utils.id.ManagedId;
 import org.goplanit.utils.mode.Mode;
+import org.goplanit.utils.network.layer.macroscopic.intersection.SpatialIntersection;
 
 /**
  * A movement from one link segment to another. It is either a movement through a spatial intersection, from one of
@@ -122,6 +123,55 @@ public interface SpatialMovement extends ExternalIdAble, ManagedId, Serializable
     return hasDirectBan() &&
         (getExplicitlyDirectlyBannedModes().isEmpty() || getExplicitlyDirectlyBannedModes().contains(mode));
   }
+
+  /**
+   * The green ratio of this movement, used in place of that of its approach, from 0 to 1. A value of 1 is used in place
+   * of the approach's too: a movement with 1 on an approach of 0.44 uses 1. See
+   * {@link SpatialIntersection#getGreenRatioUsedBy(SpatialMovement)}
+   *
+   * @return the green ratio, null when the movement uses that of its approach
+   */
+  public abstract Double getGreenRatio();
+
+  /**
+   * Set the green ratio of this movement, used in place of that of its approach. It is always set directly, no
+   * algorithm computes it
+   *
+   * @param greenRatio from 0 to 1
+   * @return true when set, false when the value is outside 0 to 1, leaving the movement unchanged
+   */
+  public abstract boolean setGreenRatio(double greenRatio);
+
+  /**
+   * Remove the green ratio of this movement, so it uses that of its approach again
+   *
+   * @return true when removed, false when none was set
+   */
+  public abstract boolean removeGreenRatio();
+
+  /**
+   * The saturation flow factor of this movement, used in place of that of its approach, from 0 to 1. A value of 1 is
+   * used in place of the approach's too
+   *
+   * @return the saturation flow factor, null when the movement uses that of its approach
+   */
+  public abstract Double getSaturationFlowFactor();
+
+  /**
+   * Set the saturation flow factor of this movement, used in place of that of its approach. It is always set directly,
+   * no algorithm computes it
+   *
+   * @param saturationFlowFactor from 0 to 1
+   * @return true when set, false when the value is outside 0 to 1, leaving the movement unchanged
+   */
+  public abstract boolean setSaturationFlowFactor(double saturationFlowFactor);
+
+  /**
+   * Remove the saturation flow factor of this movement, so it uses that of its approach again
+   *
+   * @return true when removed, false when none was set
+   */
+  public abstract boolean removeSaturationFlowFactor();
 
   /**
    * {@inheritDoc}
