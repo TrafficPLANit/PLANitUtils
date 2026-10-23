@@ -1,6 +1,7 @@
 package org.goplanit.utils.network.layer.macroscopic.intersection;
 
 import java.util.List;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 import org.goplanit.utils.id.IdAbleUtils;
@@ -30,6 +31,9 @@ import org.goplanit.utils.network.layer.physical.Node;
  * @author markr
  */
 public interface SpatialIntersection extends Intersection {
+
+  /** the logger */
+  public static final Logger LOGGER = Logger.getLogger(SpatialIntersection.class.getCanonicalName());
 
   /** id class for generating the ids of this kind */
   public static final Class<SpatialIntersection> SPATIAL_INTERSECTION_ID_CLASS = SpatialIntersection.class;
@@ -183,17 +187,37 @@ public interface SpatialIntersection extends Intersection {
   public abstract boolean removeMovement(SpatialMovement movement);
 
   /**
+   * Verify if a movement has a green ratio of its own below 1 while its approach has no signal of its own. That is
+   * likely a mistake, for example 0.3 on a turn at a priority junction, but it may be intended
+   *
+   * @param movement to verify, starting on one of the approaches
+   * @return true when its own green ratio is below 1 and its approach has no signal of its own, false otherwise
+   */
+  public default boolean isMovementGreenRatioBelowOneWithoutSignal(SpatialMovement movement) {
+    var own = movement.getGreenRatio();
+    return own != null && own < 1 && !hasOwnSignal(movement.getLinkSegmentFrom());
+  }
+
+  /**
    * The green ratio a movement uses: its own when it has one, otherwise that of its approach. For example, on an
-   * approach of 0.44 a right turn on a short arrow with its own 0.15 uses 0.15, and the other movements use 0.44
+   * approach of 0.44 a right turn on a short arrow with its own 0.15 uses 0.15, and the other movements use 0.44. Its
+   * own value is used even when below 1 on an approach without a signal of its own, with a warning, see
+   * {@link #isMovementGreenRatioBelowOneWithoutSignal(SpatialMovement)}
    *
    * @param movement to get it for, starting on one of the approaches
    * @return the green ratio it uses, 1 when it has none and its approach has no signal
    */
   public default double getGreenRatioUsedBy(SpatialMovement movement) {
     var own = movement.getGreenRatio();
+    if (own != null) {
+      if (isMovementGreenRatioBelowOneWithoutSignal(movement)) {
+        LOGGER.warning(String.format("Intersection %s uses green ratio %.2f of movement %s, while its approach has no " +
+            "signal", getIdsAsString(), own, movement.getIdsAsString()));
+      }
+      return own;
+    }
     var approach = getApproach(movement.getLinkSegmentFrom());
-    return own != null ? own :
-        approach instanceof IntersectionSignalSegment ? ((IntersectionSignalSegment) approach).getGreenRatio() : 1;
+    return approach instanceof IntersectionSignalSegment ? ((IntersectionSignalSegment) approach).getGreenRatio() : 1;
   }
 
   /**
@@ -207,6 +231,14 @@ public interface SpatialIntersection extends Intersection {
     var approach = getApproach(movement.getLinkSegmentFrom());
     return own != null ? own : approach != null ? approach.getSaturationFlowFactor() : 1;
   }
+
+  /**
+   * {@inheritDoc} Once the approach has no signal of its own, the movements starting on it lose their green ratios too,
+   * keeping their saturation flow factors
+   */
+  @Override
+  public abstract IntersectionSegment swapApproachToNewSignalOrUnsignalised(
+      MacroscopicLinkSegment approachSegment, boolean hasOwnSignal);
 
   /**
    * {@inheritDoc}

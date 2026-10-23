@@ -41,6 +41,20 @@ public class IntersectionUtils {
   }
 
   /**
+   * Verify if a link segment enters an intersection from outside without being one of its approaches: it ends at a
+   * member node and starts at a node that is not one. Such a segment can become an approach
+   *
+   * @param intersection to verify it for
+   * @param segment to verify
+   * @return true when it enters from outside and is not an approach, false otherwise
+   */
+  public static boolean isSegmentEnteringFromOutsideThatIsNotAnApproach(
+      Intersection intersection, MacroscopicLinkSegment segment) {
+    return intersection.hasMemberNode(segment.getDownstreamVertex())
+        && !intersection.hasMemberNode(segment.getUpstreamVertex()) && !intersection.isApproachSegment(segment);
+  }
+
+  /**
    * Find the link segments that enter an intersection from outside, ending at a member node and starting at a node that
    * is not one, without being one of its approaches, and that meet a condition
    *
@@ -53,8 +67,7 @@ public class IntersectionUtils {
     var entering = new ArrayList<MacroscopicLinkSegment>();
     for (var memberNode : intersection.getMemberNodes()) {
       entering.addAll(NodeUtils.<MacroscopicLinkSegment>findEntryLinkSegments(memberNode, segment ->
-          !intersection.hasMemberNode(segment.getUpstreamVertex()) && !intersection.isApproachSegment(segment) &&
-              condition.test(segment)));
+          isSegmentEnteringFromOutsideThatIsNotAnApproach(intersection, segment) && condition.test(segment)));
     }
     return entering;
   }
