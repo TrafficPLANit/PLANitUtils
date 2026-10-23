@@ -10,7 +10,7 @@ import org.goplanit.utils.graph.directed.DirectedVertex;
 import org.goplanit.utils.id.ExternalIdAble;
 import org.goplanit.utils.id.IdAbleUtils;
 import org.goplanit.utils.id.ManagedId;
-import org.goplanit.utils.network.layer.macroscopic.MacroscopicLinkSegment;
+import org.goplanit.utils.network.layer.physical.LinkSegment;
 import org.goplanit.utils.network.layer.physical.Node;
 
 /**
@@ -123,7 +123,18 @@ public interface Intersection extends ExternalIdAble, ManagedId, Serializable {
    * @return the approach object, an {@link IntersectionSignalSegment} or {@link IntersectionUnsignalisedSegment}, null
    * when the segment is not an approach segment
    */
-  public abstract IntersectionSegment getApproach(MacroscopicLinkSegment entrySegment);
+  public abstract IntersectionSegment getApproach(LinkSegment entrySegment);
+
+  /**
+   * The approach or internal segment object of this intersection for a link segment, with its signal and values. An
+   * intersection that is not spatial has only approaches
+   *
+   * @param linkSegment the link segment
+   * @return its approach object, else its internal segment object, null when it is neither
+   */
+  public default IntersectionSegment getApproachOrInternalSegment(LinkSegment linkSegment) {
+    return getApproach(linkSegment);
+  }
 
   /**
    * Create a new approach object, without values, for a link segment that ends at a member node and starts at a node
@@ -137,19 +148,19 @@ public interface Intersection extends ExternalIdAble, ManagedId, Serializable {
    * @return the new approach object, null when the segment is an approach segment already or does not enter the
    * intersection
    */
-  public abstract IntersectionSegment addNewApproach(MacroscopicLinkSegment entrySegment, boolean hasOwnSignal);
+  public abstract IntersectionSegment addNewApproach(LinkSegment entrySegment, boolean hasOwnSignal);
 
   /**
    * Create a new approach object, without values, for a link segment entering the intersection, and add it to this
    * intersection's approaches, following the control type of the intersection: an {@link IntersectionSignalSegment}
    * when the intersection is signalised, an {@link IntersectionUnsignalisedSegment} when it is not. To choose, see
-   * {@link #addNewApproach(MacroscopicLinkSegment, boolean)}
+   * {@link #addNewApproach(LinkSegment, boolean)}
    *
    * @param entrySegment the link segment it enters on
    * @return the new approach object, null when the segment is an approach segment already or does not enter the
    * intersection
    */
-  public default IntersectionSegment addNewApproach(MacroscopicLinkSegment entrySegment) {
+  public default IntersectionSegment addNewApproach(LinkSegment entrySegment) {
     return addNewApproach(entrySegment, isSignalised());
   }
 
@@ -158,7 +169,7 @@ public interface Intersection extends ExternalIdAble, ManagedId, Serializable {
    *
    * @return unmodifiable list of approach segments, in the order their approaches were added
    */
-  public default List<MacroscopicLinkSegment> getApproachSegments() {
+  public default List<LinkSegment> getApproachSegments() {
     return getApproaches().stream().map(IntersectionSegment::getLinkSegment).collect(Collectors.toUnmodifiableList());
   }
 
@@ -168,7 +179,7 @@ public interface Intersection extends ExternalIdAble, ManagedId, Serializable {
    * @param segmentId to look for
    * @return approach segment, null when no approach segment has this id
    */
-  public default MacroscopicLinkSegment getApproachSegment(long segmentId) {
+  public default LinkSegment getApproachSegment(long segmentId) {
     return IdAbleUtils.findById(getApproachSegments(), segmentId);
   }
 
@@ -176,13 +187,13 @@ public interface Intersection extends ExternalIdAble, ManagedId, Serializable {
    * Create a new approach object, without values, for a link segment entering the intersection, and add it to this
    * intersection's approaches, following the control type of the intersection: an {@link IntersectionSignalSegment}
    * when the intersection is signalised, an {@link IntersectionUnsignalisedSegment} when it is not. The same as
-   * {@link #addNewApproach(MacroscopicLinkSegment)}, telling only whether it was added
+   * {@link #addNewApproach(LinkSegment)}, telling only whether it was added
    *
    * @param segment to add
    * @return true when added, false when already an approach segment or refused because it does not enter the
    * intersection
    */
-  public default boolean addNewApproachSegment(MacroscopicLinkSegment segment) {
+  public default boolean addNewApproachSegment(LinkSegment segment) {
     return addNewApproach(segment) != null;
   }
 
@@ -193,7 +204,7 @@ public interface Intersection extends ExternalIdAble, ManagedId, Serializable {
    * @param segment to remove
    * @return true when removed, false when not an approach segment
    */
-  public abstract boolean removeApproachSegment(MacroscopicLinkSegment segment);
+  public abstract boolean removeApproachSegment(LinkSegment segment);
 
   /**
    * Let the approach entering on a link segment enter on another link segment instead, for example on the new link
@@ -206,16 +217,17 @@ public interface Intersection extends ExternalIdAble, ManagedId, Serializable {
    * intersection or is an approach segment already, leaving the intersection unchanged
    */
   public abstract boolean setEntrySegmentOnApproach(
-      MacroscopicLinkSegment approachSegment, MacroscopicLinkSegment entrySegment);
+      LinkSegment approachSegment, LinkSegment entrySegment);
 
   /**
-   * Verify if a link segment is an exit of this intersection: it starts at a member node and ends at a node that is not
-   * a member. Exits are not stored, they follow from the member nodes
+   * Verify if a link segment is an exit of this intersection: it starts at a member node and ends at a vertex that is
+   * not a member. For example a link segment of the layer leaving the intersection, or a connectoid segment leaving a
+   * member node towards the centroid of its zone. Exits are not stored, they follow from the member nodes
    *
    * @param segment to verify
    * @return true when an exit, false otherwise
    */
-  public default boolean isExitSegment(MacroscopicLinkSegment segment) {
+  public default boolean isExitSegment(LinkSegment segment) {
     return hasMemberNode(segment.getUpstreamVertex()) && !hasMemberNode(segment.getDownstreamVertex());
   }
 
@@ -228,7 +240,7 @@ public interface Intersection extends ExternalIdAble, ManagedId, Serializable {
    * @return true when the approach segment has a signal of its own, false otherwise or when it is not an approach
    * segment
    */
-  public default boolean hasOwnSignal(MacroscopicLinkSegment approachSegment) {
+  public default boolean hasOwnSignal(LinkSegment approachSegment) {
     var approach = getApproach(approachSegment);
     return approach != null && approach.hasSignal();
   }
@@ -245,7 +257,7 @@ public interface Intersection extends ExternalIdAble, ManagedId, Serializable {
    * @return the approach after the swap, null when the segment is not an approach segment
    */
   public abstract IntersectionSegment swapApproachToNewSignalOrUnsignalised(
-      MacroscopicLinkSegment approachSegment, boolean hasOwnSignal);
+      LinkSegment approachSegment, boolean hasOwnSignal);
 
   /**
    * Verify if this intersection is signalised
@@ -290,8 +302,8 @@ public interface Intersection extends ExternalIdAble, ManagedId, Serializable {
    * @param segment to verify
    * @return true when it is an approach segment, false otherwise
    */
-  public default boolean isApproachSegment(MacroscopicLinkSegment segment) {
-    return getApproach(segment) != null;
+  public default boolean isApproachSegment(LinkSegment segment) {
+    return ListUtils.containsByIdentity(getApproachSegments(), segment);
   }
 
   /**

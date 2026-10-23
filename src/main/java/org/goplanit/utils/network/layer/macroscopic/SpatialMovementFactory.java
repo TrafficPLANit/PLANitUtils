@@ -1,6 +1,7 @@
 package org.goplanit.utils.network.layer.macroscopic;
 
 import org.goplanit.utils.id.ManagedIdEntityFactory;
+import org.goplanit.utils.network.layer.physical.LinkSegment;
 
 /**
  * Factory to create spatial movements and register them on their container. A movement is created without a direct
@@ -18,7 +19,7 @@ public interface SpatialMovementFactory extends ManagedIdEntityFactory<SpatialMo
    * @param lengthKm from where the from segment ends to where the to segment starts
    * @return created movement
    */
-  public abstract SpatialMovement create(MacroscopicLinkSegment from, MacroscopicLinkSegment to, double lengthKm);
+  public abstract SpatialMovement create(LinkSegment from, LinkSegment to, double lengthKm);
 
   /**
    * Create a movement and register it
@@ -28,5 +29,5 @@ public interface SpatialMovementFactory extends ManagedIdEntityFactory<SpatialMo
    * @param lengthKm from where the from segment ends to where the to segment starts
    * @return created and registered movement
    */
-  public abstract SpatialMovement registerNew(MacroscopicLinkSegment from, MacroscopicLinkSegment to, double lengthKm);
+  public abstract SpatialMovement registerNew(LinkSegment from, LinkSegment to, double lengthKm);
 }

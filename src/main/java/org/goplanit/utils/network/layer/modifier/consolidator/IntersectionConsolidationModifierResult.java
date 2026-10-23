@@ -9,12 +9,12 @@ import java.util.Map;
 import java.util.Set;
 
 import org.goplanit.utils.misc.Pair;
-import org.goplanit.utils.network.layer.macroscopic.MacroscopicLink;
-import org.goplanit.utils.network.layer.macroscopic.MacroscopicLinkSegment;
 import org.goplanit.utils.network.layer.macroscopic.intersection.Intersection;
 import org.goplanit.utils.network.layer.macroscopic.SpatialMovement;
 import org.goplanit.utils.network.layer.macroscopic.intersection.SpatialIntersection;
 import org.goplanit.utils.network.layer.modifier.MacroscopicNetworkLayerModifier;
+import org.goplanit.utils.network.layer.physical.Link;
+import org.goplanit.utils.network.layer.physical.LinkSegment;
 import org.goplanit.utils.network.layer.physical.Node;
 
 /**
@@ -33,7 +33,7 @@ public class IntersectionConsolidationModifierResult {
   public static class LinkReachedOnlyThroughIntersection {
 
     /** the segment that entered the intersection from outside */
-    private final MacroscopicLinkSegment enteringSegment;
+    private final LinkSegment enteringSegment;
 
     /** the member nodes of the intersection that feed it */
     private final List<Node> feedingNodes;
@@ -42,7 +42,7 @@ public class IntersectionConsolidationModifierResult {
     private final double distanceMeters;
 
     /** the segments made internal: the entering segment and every segment traced back over */
-    private final List<MacroscopicLinkSegment> segmentsMadeInternal;
+    private final List<LinkSegment> segmentsMadeInternal;
 
     /** true when a vehicle signal stands on one of those segments, which then became internal segments with a signal */
     private final boolean withSignal;
@@ -57,8 +57,8 @@ public class IntersectionConsolidationModifierResult {
      * @param withSignal true when a vehicle signal stands on one of those segments
      */
     public LinkReachedOnlyThroughIntersection(
-        MacroscopicLinkSegment enteringSegment, List<Node> feedingNodes, double distanceMeters,
-        List<MacroscopicLinkSegment> segmentsMadeInternal, boolean withSignal) {
+        LinkSegment enteringSegment, List<Node> feedingNodes, double distanceMeters,
+        List<LinkSegment> segmentsMadeInternal, boolean withSignal) {
       this.enteringSegment = enteringSegment;
       this.feedingNodes = List.copyOf(feedingNodes);
       this.distanceMeters = distanceMeters;
@@ -71,7 +71,7 @@ public class IntersectionConsolidationModifierResult {
      *
      * @return entering segment
      */
-    public MacroscopicLinkSegment getEnteringSegment() {
+    public LinkSegment getEnteringSegment() {
       return enteringSegment;
     }
 
@@ -98,7 +98,7 @@ public class IntersectionConsolidationModifierResult {
      *
      * @return segments made internal, unmodifiable
      */
-    public List<MacroscopicLinkSegment> getSegmentsMadeInternal() {
+    public List<LinkSegment> getSegmentsMadeInternal() {
       return segmentsMadeInternal;
     }
 
@@ -168,7 +168,7 @@ public class IntersectionConsolidationModifierResult {
   private final Set<Node> joinedNodes = new LinkedHashSet<>();
 
   /** internal links longer than the warning length, each once */
-  private final Set<MacroscopicLink> internalLinksLongerThanWarningLength = new LinkedHashSet<>();
+  private final Set<Link> internalLinksLongerThanWarningLength = new LinkedHashSet<>();
 
   /** links made internal because road traffic only reaches them by driving through the intersection */
   private final List<LinkReachedOnlyThroughIntersection> linksReachedOnlyThroughIntersection = new ArrayList<>();
@@ -178,7 +178,7 @@ public class IntersectionConsolidationModifierResult {
       new EnumMap<>(IntersectionOutcome.class);
 
   /** per outcome, the approach segments it happened to, each once, in the order they were recorded */
-  private final Map<ApproachOutcome, Set<MacroscopicLinkSegment>> approachesByOutcome =
+  private final Map<ApproachOutcome, Set<LinkSegment>> approachesByOutcome =
       new EnumMap<>(ApproachOutcome.class);
 
   /** movements stored on the spatial intersections */
@@ -251,7 +251,7 @@ public class IntersectionConsolidationModifierResult {
    * @param outcome what happened to it
    * @param approachSegment it happened to
    */
-  public void addApproach(ApproachOutcome outcome, MacroscopicLinkSegment approachSegment) {
+  public void addApproach(ApproachOutcome outcome, LinkSegment approachSegment) {
     approachesByOutcome.computeIfAbsent(outcome, key -> new LinkedHashSet<>()).add(approachSegment);
   }
 
@@ -260,7 +260,7 @@ public class IntersectionConsolidationModifierResult {
    *
    * @param link longer than the warning length
    */
-  public void addInternalLinkLongerThanWarningLength(MacroscopicLink link) {
+  public void addInternalLinkLongerThanWarningLength(Link link) {
     internalLinksLongerThanWarningLength.add(link);
   }
 
@@ -338,7 +338,7 @@ public class IntersectionConsolidationModifierResult {
    * @param outcome what happened
    * @return the approach segments, in the order they were recorded, unmodifiable
    */
-  public List<MacroscopicLinkSegment> getApproaches(ApproachOutcome outcome) {
+  public List<LinkSegment> getApproaches(ApproachOutcome outcome) {
     return List.copyOf(approachesByOutcome.getOrDefault(outcome, Set.of()));
   }
 
@@ -347,7 +347,7 @@ public class IntersectionConsolidationModifierResult {
    *
    * @return internal links longer than the warning length, unmodifiable
    */
-  public List<MacroscopicLink> getInternalLinksLongerThanWarningLength() {
+  public List<Link> getInternalLinksLongerThanWarningLength() {
     return List.copyOf(internalLinksLongerThanWarningLength);
   }
 

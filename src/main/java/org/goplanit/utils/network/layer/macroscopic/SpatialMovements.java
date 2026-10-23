@@ -5,6 +5,7 @@ import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
 import org.goplanit.utils.id.ManagedIdEntities;
+import org.goplanit.utils.network.layer.physical.LinkSegment;
 
 /**
  * Container of the spatial movements of a layer, both those of its spatial intersections and its independent ones,
@@ -29,7 +30,7 @@ public interface SpatialMovements extends ManagedIdEntities<SpatialMovement> {
    * @param linkSegment to look up
    * @return movements with the link segment as from or to segment, empty when none
    */
-  public abstract List<SpatialMovement> getBySegment(MacroscopicLinkSegment linkSegment);
+  public abstract List<SpatialMovement> getBySegment(LinkSegment linkSegment);
 
   /**
    * Apply a change to the segments of a registered movement, keeping the lookup by segment in step with what it refers

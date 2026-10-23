@@ -9,8 +9,29 @@ package org.goplanit.utils.network.layer.macroscopic.intersection;
 public enum CapacityFactorOrigin {
 
   /** set directly, by the user or read from a file */
-  SET_DIRECTLY,
+  SET_DIRECTLY("set_directly"),
 
   /** computed by an algorithm */
-  COMPUTED;
+  COMPUTED("computed");
+
+  /** value as used in persistence, e.g. a GIS export */
+  private final String value;
+
+  /**
+   * Constructor
+   *
+   * @param value as used in persistence
+   */
+  private CapacityFactorOrigin(String value){
+    this.value = value;
+  }
+
+  /**
+   * Collect the value as used in persistence, e.g. a GIS export
+   *
+   * @return value
+   */
+  public String value() {
+    return value;
+  }
 }

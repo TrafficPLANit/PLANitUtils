@@ -17,6 +17,7 @@ import org.goplanit.utils.network.layer.modifier.consolidator.IntersectionCollap
 import org.goplanit.utils.network.layer.modifier.consolidator.IntersectionCollapserSettings;
 import org.goplanit.utils.network.layer.modifier.consolidator.IntersectionConsolidationModifierResult;
 import org.goplanit.utils.network.layer.modifier.consolidator.IntersectionConsolidatorSettings;
+import org.goplanit.utils.network.layer.physical.LinkSegment;
 import org.goplanit.utils.network.layer.physical.Node;
 
 /**
@@ -150,7 +151,7 @@ public interface MacroscopicNetworkLayerModifier extends
   public abstract IntersectionConsolidationModifierResult consolidateIntersections(
       CoordinateReferenceSystem crs,
       IntersectionConsolidatorSettings settings,
-      Predicate<MacroscopicLinkSegment> hasSignalOfItsOwn);
+      Predicate<LinkSegment> hasSignalOfItsOwn);
 
   /**
    * Consolidate the intersections of the layer with the default settings, and no vehicle signals known to stand on

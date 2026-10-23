@@ -7,8 +7,8 @@ import java.util.stream.Collectors;
 import org.goplanit.utils.id.IdAbleUtils;
 import org.goplanit.utils.id.IdGenerator;
 import org.goplanit.utils.id.IdGroupingToken;
-import org.goplanit.utils.network.layer.macroscopic.MacroscopicLinkSegment;
 import org.goplanit.utils.network.layer.macroscopic.SpatialMovement;
+import org.goplanit.utils.network.layer.physical.LinkSegment;
 import org.goplanit.utils.network.layer.physical.Node;
 
 /**
@@ -31,6 +31,21 @@ import org.goplanit.utils.network.layer.physical.Node;
  * @author markr
  */
 public interface SpatialIntersection extends Intersection {
+
+  /**
+   * The green ratio a movement uses, see {@link #getGreenRatioUsedBy(SpatialMovement)}, without its warning
+   *
+   * @param movement to get it for, starting on one of the approaches
+   * @return the green ratio it uses, 1 when it has none and its approach has no signal
+   */
+  private double findGreenRatioUsedBy(SpatialMovement movement) {
+    var own = movement.getGreenRatio();
+    if (own != null) {
+      return own;
+    }
+    var approach = getApproach(movement.getLinkSegmentFrom());
+    return approach instanceof IntersectionSignalSegment ? ((IntersectionSignalSegment) approach).getGreenRatio() : 1;
+  }
 
   /** the logger */
   public static final Logger LOGGER = Logger.getLogger(SpatialIntersection.class.getCanonicalName());
@@ -91,14 +106,23 @@ public interface SpatialIntersection extends Intersection {
    * @return the internal segment object, an {@link IntersectionSignalSegment} or
    * {@link IntersectionUnsignalisedSegment}, null when the link segment is not internal
    */
-  public abstract IntersectionSegment getIntersectionInternalSegment(MacroscopicLinkSegment segment);
+  public abstract IntersectionSegment getIntersectionInternalSegment(LinkSegment segment);
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public default IntersectionSegment getApproachOrInternalSegment(LinkSegment linkSegment) {
+    var approach = getApproach(linkSegment);
+    return approach != null ? approach : getIntersectionInternalSegment(linkSegment);
+  }
 
   /**
    * Internal link segments of this intersection, see {@link #getIntersectionInternalSegments()}
    *
    * @return unmodifiable list of internal segments
    */
-  public default List<MacroscopicLinkSegment> getInternalSegments() {
+  public default List<LinkSegment> getInternalSegments() {
     return getIntersectionInternalSegments().stream().map(IntersectionSegment::getLinkSegment)
         .collect(Collectors.toUnmodifiableList());
   }
@@ -109,7 +133,7 @@ public interface SpatialIntersection extends Intersection {
    * @param segmentId to look for
    * @return internal segment, null when not internal
    */
-  public default MacroscopicLinkSegment getInternalSegment(long segmentId) {
+  public default LinkSegment getInternalSegment(long segmentId) {
     return IdAbleUtils.findById(getInternalSegments(), segmentId);
   }
 
@@ -120,7 +144,7 @@ public interface SpatialIntersection extends Intersection {
    * @param segment to add
    * @return true when added, false when refused or already internal
    */
-  public abstract boolean addNewInternalSegment(MacroscopicLinkSegment segment);
+  public abstract boolean addNewInternalSegment(LinkSegment segment);
 
   /**
    * Remove an internal segment, with its signal and values
@@ -128,14 +152,14 @@ public interface SpatialIntersection extends Intersection {
    * @param segment to remove
    * @return true when removed, false when not internal
    */
-  public abstract boolean removeInternalSegment(MacroscopicLinkSegment segment);
+  public abstract boolean removeInternalSegment(LinkSegment segment);
 
   /**
    * Internal link segments with a signal standing on them; the other internal segments are plain
    *
    * @return unmodifiable list of internal segments with a signal
    */
-  public default List<MacroscopicLinkSegment> getInternalSegmentsWithSignal() {
+  public default List<LinkSegment> getInternalSegmentsWithSignal() {
     return getIntersectionInternalSegments().stream().filter(IntersectionSegment::hasSignal)
         .map(IntersectionSegment::getLinkSegment).collect(Collectors.toUnmodifiableList());
   }
@@ -150,7 +174,7 @@ public interface SpatialIntersection extends Intersection {
    * @param segment to add
    * @return true when added or given a signal, false when refused or when it already has a signal
    */
-  public abstract boolean addNewInternalSegmentWithSignal(MacroscopicLinkSegment segment);
+  public abstract boolean addNewInternalSegmentWithSignal(LinkSegment segment);
 
   /**
    * The movements through this intersection, each from an approach to an exit
@@ -208,16 +232,23 @@ public interface SpatialIntersection extends Intersection {
    * @return the green ratio it uses, 1 when it has none and its approach has no signal
    */
   public default double getGreenRatioUsedBy(SpatialMovement movement) {
-    var own = movement.getGreenRatio();
-    if (own != null) {
-      if (isMovementGreenRatioBelowOneWithoutSignal(movement)) {
-        LOGGER.warning(String.format("Intersection %s uses green ratio %.2f of movement %s, while its approach has no " +
-            "signal", getIdsAsString(), own, movement.getIdsAsString()));
-      }
-      return own;
+    if (isMovementGreenRatioBelowOneWithoutSignal(movement)) {
+      LOGGER.warning(String.format("Intersection %s uses green ratio %.2f of movement %s, while its approach has no " +
+          "signal", getIdsAsString(), movement.getGreenRatio(), movement.getIdsAsString()));
     }
-    var approach = getApproach(movement.getLinkSegmentFrom());
-    return approach instanceof IntersectionSignalSegment ? ((IntersectionSignalSegment) approach).getGreenRatio() : 1;
+    return findGreenRatioUsedBy(movement);
+  }
+
+  /**
+   * The effective capacity factor a movement uses: the green ratio it uses times the saturation flow factor it uses. It
+   * logs no warning of its own; the one for a green ratio below 1 on an approach without a signal is logged by
+   * {@link #getGreenRatioUsedBy(SpatialMovement)}
+   *
+   * @param movement to get it for, starting on one of the approaches
+   * @return the effective capacity factor it uses, 1 when neither it nor its approach has values
+   */
+  public default double getEffectiveCapacityFactorUsedBy(SpatialMovement movement) {
+    return findGreenRatioUsedBy(movement) * getSaturationFlowFactorUsedBy(movement);
   }
 
   /**
@@ -238,7 +269,7 @@ public interface SpatialIntersection extends Intersection {
    */
   @Override
   public abstract IntersectionSegment swapApproachToNewSignalOrUnsignalised(
-      MacroscopicLinkSegment approachSegment, boolean hasOwnSignal);
+      LinkSegment approachSegment, boolean hasOwnSignal);
 
   /**
    * {@inheritDoc}

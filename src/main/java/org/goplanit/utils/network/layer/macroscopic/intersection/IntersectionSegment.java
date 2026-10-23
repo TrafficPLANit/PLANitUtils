@@ -1,6 +1,6 @@
 package org.goplanit.utils.network.layer.macroscopic.intersection;
 
-import org.goplanit.utils.network.layer.macroscopic.MacroscopicLinkSegment;
+import org.goplanit.utils.network.layer.physical.LinkSegment;
 
 /**
  * A link segment of an intersection as the intersection holds it, an object of its own: an approach object for a link
@@ -25,7 +25,7 @@ public interface IntersectionSegment {
    *
    * @return the link segment
    */
-  public abstract MacroscopicLinkSegment getLinkSegment();
+  public abstract LinkSegment getLinkSegment();
 
   /**
    * Verify if a signal controls traffic on this link segment at the intersection

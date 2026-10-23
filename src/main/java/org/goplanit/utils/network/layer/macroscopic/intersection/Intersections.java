@@ -5,6 +5,8 @@ import java.util.function.Predicate;
 import java.util.stream.Stream;
 
 import org.goplanit.utils.id.ManagedIdEntities;
+import org.goplanit.utils.network.layer.macroscopic.SpatialMovement;
+import org.goplanit.utils.network.layer.physical.LinkSegment;
 import org.goplanit.utils.network.layer.physical.Node;
 
 /**
@@ -29,6 +31,28 @@ public interface Intersections extends ManagedIdEntities<Intersection> {
    * @return intersection, null when the node is a member of none
    */
   public abstract Intersection getByMemberNode(Node node);
+
+  /**
+   * Registered intersection a link segment ends in: the one its downstream node is a member of. For example the
+   * intersection an approach enters, or the one an internal segment lies in
+   *
+   * @param linkSegment to look up
+   * @return intersection, null when its downstream node is a member of none
+   */
+  public default Intersection getByDownstreamNodeOf(LinkSegment linkSegment){
+    return getByMemberNode(linkSegment.getDownstreamNode());
+  }
+
+  /**
+   * Registered spatial intersection a movement passes through: the one its from segment ends in
+   *
+   * @param movement to look up
+   * @return spatial intersection, null when its from segment ends in none or in one that is not spatial
+   */
+  public default SpatialIntersection getSpatialIntersectionOf(SpatialMovement movement){
+    var intersection = getByDownstreamNodeOf(movement.getLinkSegmentFrom());
+    return intersection instanceof SpatialIntersection ? (SpatialIntersection) intersection : null;
+  }
 
   /**
    * Verify if the node is a member of a registered signalised intersection

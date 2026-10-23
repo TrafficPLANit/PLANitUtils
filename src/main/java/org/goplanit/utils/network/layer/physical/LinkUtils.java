@@ -1,44 +1,43 @@
-package org.goplanit.utils.network.layer.macroscopic;
+package org.goplanit.utils.network.layer.physical;
 
 import org.goplanit.utils.geo.PlanitJtsCrsUtils;
 import org.goplanit.utils.graph.Edge;
 import org.goplanit.utils.mode.Mode;
-import org.goplanit.utils.network.layer.physical.Link;
-import org.goplanit.utils.network.layer.physical.Node;
 import org.locationtech.jts.geom.Coordinate;
 
 import java.util.Collection;
 import java.util.function.Predicate;
 
 /**
- * Utilities for macroscopic links
+ * Utilities for links
  *
  * @author markr
  *
  */
-public class MacroscopicLinkUtils {
+public class LinkUtils {
 
   /**
    * Verify whether a link has a segment, in either direction, that meets the condition. A link with a segment in one
    * direction only is checked on that segment.
    *
+   * @param <LS> type of the link's segments
    * @param link to verify
    * @param condition a segment must meet
    * @return true when the segment in at least one direction meets the condition, false otherwise
    */
-  public static boolean hasSegmentMatching(
-      final MacroscopicLink link, final Predicate<? super MacroscopicLinkSegment> condition) {
-    return (link.hasLinkSegmentAb() && condition.test(link.getLinkSegmentAb())) ||
-        (link.hasLinkSegmentBa() && condition.test(link.getLinkSegmentBa()));
+  @SuppressWarnings("unchecked")
+  public static <LS extends LinkSegment> boolean hasSegmentMatching(
+      final Link link, final Predicate<? super LS> condition) {
+    return (link.hasLinkSegmentAb() && condition.test((LS) link.getLinkSegmentAb())) ||
+        (link.hasLinkSegmentBa() && condition.test((LS) link.getLinkSegmentBa()));
   }
 
   /**
-   * Create a predicate selecting only those edges that are macroscopic links with a segment, in either direction,
-   * permitting at least one motorised road mode, such as a car or a bus, see
-   * {@link MacroscopicLinkSegmentUtils#permitsMotorisedRoadMode()}.
+   * Create a predicate selecting only those edges that are links with a segment, in either direction, permitting at
+   * least one motorised road mode, such as a car or a bus, see {@link LinkSegmentUtils#permitsMotorisedRoadMode()}.
    * <p>
    * Shaped as a {@code Predicate<Edge>} so it can be handed straight to a vertex, e.g. to count the links at a node
-   * that road traffic can use. Any edge that is not a macroscopic link is rejected.
+   * that road traffic can use. Any edge that is not a link is rejected.
    * </p>
    *
    * @return predicate to use
@@ -48,16 +47,15 @@ public class MacroscopicLinkUtils {
   }
 
   /**
-   * Create a predicate selecting only those edges that are macroscopic links with a segment, in either direction,
-   * allowing at least one mode that meets the condition. It is shaped as a {@code Predicate<Edge>} for the same reason
-   * as {@link #permitsMotorisedRoadModeOnAnySegment()}. Any edge that is not a macroscopic link is rejected.
+   * Create a predicate selecting only those edges that are links with a segment, in either direction, allowing at least
+   * one mode that meets the condition. It is shaped as a {@code Predicate<Edge>} for the same reason as
+   * {@link #permitsMotorisedRoadModeOnAnySegment()}. Any edge that is not a link is rejected.
    *
    * @param condition a mode allowed on a segment must meet
    * @return predicate to use
    */
   public static Predicate<Edge> permitsModeMatchingOnAnySegment(final Predicate<? super Mode> condition) {
-    return edge -> edge instanceof MacroscopicLink &&
-        hasSegmentMatching((MacroscopicLink) edge, segment -> segment.isAnyModeAllowed(condition));
+    return edge -> edge instanceof Link && ((Link) edge).isAnyModeAllowedOnAnySegment(condition);
   }
 
   /**
@@ -107,8 +105,8 @@ public class MacroscopicLinkUtils {
    * @param modes the only modes that may use it
    * @return true when used only by those modes, false otherwise
    */
-  public static boolean isUsedOnlyByModes(final MacroscopicLink link, final Collection<Mode> modes) {
-    return link.getLinkSegments().stream().map(MacroscopicLinkSegment.class::cast).allMatch(segment ->
+  public static boolean isUsedOnlyByModes(final Link link, final Collection<Mode> modes) {
+    return link.getLinkSegments().stream().allMatch(segment ->
         !segment.getAllowedModes().isEmpty() && modes.containsAll(segment.getAllowedModes()));
   }
 

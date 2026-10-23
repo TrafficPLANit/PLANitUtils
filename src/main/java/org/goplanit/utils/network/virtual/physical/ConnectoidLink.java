@@ -1,10 +1,7 @@
 package org.goplanit.utils.network.virtual.physical;
 
-import org.goplanit.utils.exceptions.PlanItRunTimeException;
 import org.goplanit.utils.graph.directed.EdgeSegment;
-import org.goplanit.utils.mode.Mode;
 import org.goplanit.utils.network.layer.physical.Link;
-import org.goplanit.utils.network.layer.physical.LinkSegment;
 import org.goplanit.utils.network.virtual.graph.ConnectoidDirectedEdge;
 
 import java.util.Collection;
@@ -65,20 +62,6 @@ public interface ConnectoidLink extends ConnectoidDirectedEdge, Link {
     return (Collection<? extends ConnectoidSegment>) Link.super.getEdgeSegments();
   }
 
-  @Override
-  public default boolean isModeAllowedOnAnySegment(Mode mode){
-    throw new PlanItRunTimeException("Connectoid links do not support modes explicitly yet");
-  }
-
-  @Override
-  public default boolean isModeAllowedOnAllSegments(Mode mode){
-    throw new PlanItRunTimeException("Connectoid links do not support modes explicitly yet");
-  }
-
-  @Override
-  public default LinkSegment getLinkSegmentIfLinkIsOneWayForMode(Mode mode) {
-    throw new PlanItRunTimeException("Connectoid links do not support modes explicitly yet");
-  }
 
   /**
    * {@inheritDoc}

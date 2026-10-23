@@ -9,6 +9,7 @@ import org.goplanit.utils.id.ExternalIdAble;
 import org.goplanit.utils.id.ManagedId;
 import org.goplanit.utils.mode.Mode;
 import org.goplanit.utils.network.layer.macroscopic.intersection.SpatialIntersection;
+import org.goplanit.utils.network.layer.physical.LinkSegment;
 
 /**
  * A movement from one link segment to another. It is either a movement through a spatial intersection, from one of
@@ -54,28 +55,28 @@ public interface SpatialMovement extends ExternalIdAble, ManagedId, Serializable
    *
    * @return from link segment
    */
-  public abstract MacroscopicLinkSegment getLinkSegmentFrom();
+  public abstract LinkSegment getLinkSegmentFrom();
 
   /**
    * The link segment the movement ends on, for a movement of an intersection one of its exits
    *
    * @return to link segment
    */
-  public abstract MacroscopicLinkSegment getLinkSegmentTo();
+  public abstract LinkSegment getLinkSegmentTo();
 
   /**
    * Set the link segment the movement starts on. A raw edit, see the class description
    *
    * @param linkSegment to set
    */
-  public abstract void setLinkSegmentFrom(MacroscopicLinkSegment linkSegment);
+  public abstract void setLinkSegmentFrom(LinkSegment linkSegment);
 
   /**
    * Set the link segment the movement ends on. A raw edit, see the class description
    *
    * @param linkSegment to set
    */
-  public abstract void setLinkSegmentTo(MacroscopicLinkSegment linkSegment);
+  public abstract void setLinkSegmentTo(LinkSegment linkSegment);
 
   /**
    * The length of the movement, from where its from segment ends to where its to segment starts

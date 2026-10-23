@@ -3,6 +3,7 @@ package org.goplanit.utils.network.layer.macroscopic.intersection;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.IdentityHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -12,7 +13,8 @@ import java.util.stream.Collectors;
 import org.goplanit.utils.graph.directed.BannedTurn;
 import org.goplanit.utils.graph.directed.BannedTurns;
 import org.goplanit.utils.graph.directed.EdgeSegment;
-import org.goplanit.utils.network.layer.macroscopic.MacroscopicLinkSegment;
+import org.goplanit.utils.network.layer.macroscopic.SpatialMovement;
+import org.goplanit.utils.network.layer.physical.LinkSegment;
 import org.goplanit.utils.network.layer.physical.Node;
 import org.goplanit.utils.network.layer.physical.NodeUtils;
 
@@ -35,21 +37,22 @@ public class IntersectionUtils {
    * @param intersection to collect them of
    * @return its internal segments, unmodifiable, empty for a non-spatial intersection
    */
-  public static List<MacroscopicLinkSegment> getInternalSegmentsOf(Intersection intersection){
+  public static List<LinkSegment> getInternalSegmentsOf(Intersection intersection){
     return intersection instanceof SpatialIntersection ?
         ((SpatialIntersection) intersection).getInternalSegments() : List.of();
   }
 
   /**
    * Verify if a link segment enters an intersection from outside without being one of its approaches: it ends at a
-   * member node and starts at a node that is not one. Such a segment can become an approach
+   * member node and starts at a node that is not one. Such a segment of the layer can become an approach; a
+   * connectoid segment of an integrated zoning entering a member node is in effect an approach without a signal
    *
    * @param intersection to verify it for
-   * @param segment to verify
+   * @param segment to verify, of the layer or a connectoid segment
    * @return true when it enters from outside and is not an approach, false otherwise
    */
   public static boolean isSegmentEnteringFromOutsideThatIsNotAnApproach(
-      Intersection intersection, MacroscopicLinkSegment segment) {
+      Intersection intersection, LinkSegment segment) {
     return intersection.hasMemberNode(segment.getDownstreamVertex())
         && !intersection.hasMemberNode(segment.getUpstreamVertex()) && !intersection.isApproachSegment(segment);
   }
@@ -58,15 +61,18 @@ public class IntersectionUtils {
    * Find the link segments that enter an intersection from outside, ending at a member node and starting at a node that
    * is not one, without being one of its approaches, and that meet a condition
    *
+   * @param <LS> type of link segment to find: {@link LinkSegment} for every segment at the member nodes, connectoid
+   *             segments of an integrated zoning included, or a link segment type of the layer when no zoning is
+   *             integrated, for example to make approaches of them
    * @param intersection to find them for
    * @param condition to meet, such as allowing a motorised road mode
    * @return the segments found, by member node in the order of the member nodes, empty when there are none
    */
-  public static List<MacroscopicLinkSegment> findSegmentsEnteringFromOutsideThatAreNotApproaches(
-      Intersection intersection, Predicate<MacroscopicLinkSegment> condition) {
-    var entering = new ArrayList<MacroscopicLinkSegment>();
+  public static <LS extends LinkSegment> List<LS> findSegmentsEnteringFromOutsideThatAreNotApproaches(
+      Intersection intersection, Predicate<? super LS> condition) {
+    var entering = new ArrayList<LS>();
     for (var memberNode : intersection.getMemberNodes()) {
-      entering.addAll(NodeUtils.<MacroscopicLinkSegment>findEntryLinkSegments(memberNode, segment ->
+      entering.addAll(NodeUtils.<LS>findEntryLinkSegments(memberNode, segment ->
           isSegmentEnteringFromOutsideThatIsNotAnApproach(intersection, segment) && condition.test(segment)));
     }
     return entering;
@@ -81,6 +87,40 @@ public class IntersectionUtils {
   public static Set<Node> collectMemberNodes(Collection<? extends Intersection> intersections){
     return intersections.stream().flatMap(intersection -> intersection.getMemberNodes().stream())
         .collect(Collectors.toSet());
+  }
+
+  /**
+   * Collect the approach and internal segments of the intersections, each once, intersections in the given order and
+   * segments in list order, approaches first
+   *
+   * @param intersections to collect the segments of
+   * @return collected segments
+   */
+  public static List<LinkSegment> collectApproachAndInternalSegments(
+      Iterable<? extends Intersection> intersections){
+    var segments = new LinkedHashSet<LinkSegment>();
+    for(var intersection : intersections){
+      segments.addAll(intersection.getApproachSegments());
+      segments.addAll(getInternalSegmentsOf(intersection));
+    }
+    return new ArrayList<>(segments);
+  }
+
+  /**
+   * Collect the movements of the spatial intersections, intersections in the given order and movements in list order
+   *
+   * @param intersections to collect the movements of, a non-spatial one has none
+   * @return collected movements
+   */
+  public static List<SpatialMovement> collectMovementsOfSpatialIntersections(
+      Iterable<? extends Intersection> intersections){
+    var movements = new ArrayList<SpatialMovement>();
+    for(var intersection : intersections){
+      if(intersection instanceof SpatialIntersection){
+        movements.addAll(((SpatialIntersection) intersection).getMovements());
+      }
+    }
+    return movements;
   }
 
   /**
@@ -109,10 +149,10 @@ public class IntersectionUtils {
    * @param bannedTurns of the same layer
    * @return banned turns per approach segment, by identity; approach segments without bans are absent
    */
-  public static Map<MacroscopicLinkSegment, List<BannedTurn>> findBannedTurnsByApproachSegment(
+  public static Map<LinkSegment, List<BannedTurn>> findBannedTurnsByApproachSegment(
       Intersections intersections, BannedTurns bannedTurns){
     var bansByFromSegment = groupBansByFromSegment(bannedTurns);
-    Map<MacroscopicLinkSegment, List<BannedTurn>> bansByApproachSegment = new IdentityHashMap<>();
+    Map<LinkSegment, List<BannedTurn>> bansByApproachSegment = new IdentityHashMap<>();
     for(var intersection : intersections){
       for(var approachSegment : intersection.getApproachSegments()){
         var bans = bansByFromSegment.get(approachSegment);
