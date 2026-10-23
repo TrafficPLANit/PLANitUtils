@@ -1,12 +1,15 @@
 package org.goplanit.utils.graph.directed;
 
+import org.goplanit.utils.graph.ConjugateEdge;
+
 /**
- * A conjugate directed subgraph interface for a given parent graph by registering conjugate edge segments on it (and therefore conjugate vertices and edges)
+ * A conjugate directed subgraph interface for a given parent graph
  * 
  * @author markr
  *
  */
-public interface ConjugateDirectedSubGraph extends DirectedSubGraph<ConjugateDirectedVertex,ConjugateEdgeSegment> {
+public interface ConjugateDirectedSubGraph extends
+    UntypedDirectedSubGraph<ConjugateDirectedVertex, ConjugateDirectedEdge, ConjugateEdgeSegment> {
   
   /**
    * {@inheritDoc}

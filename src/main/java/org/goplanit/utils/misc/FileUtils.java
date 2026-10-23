@@ -4,12 +4,15 @@ import java.io.*;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.file.Files;
-import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.Objects;
+import java.util.Scanner;
 import java.util.function.Consumer;
+import java.util.function.Function;
 import java.util.logging.Logger;
 
-import org.goplanit.utils.exceptions.PlanItException;
 import org.goplanit.utils.exceptions.PlanItRunTimeException;
+import org.goplanit.utils.resource.ResourceUtils;
 import org.xml.sax.InputSource;
 
 /**
@@ -35,11 +38,14 @@ public class FileUtils {
    * @return the extension, if it does not exist return empty string
    */
   public static String getExtension(File file) {
-    String fileName = file.getName();
+    return getExtension(file.getName());
+  }
+
+  public static String getExtension(String fileName) {
     if(fileName.lastIndexOf(DOT) != -1 && fileName.lastIndexOf(DOT) != 0) {
       return fileName.substring(fileName.lastIndexOf(DOT)+1);
     }else {
-      return "";      
+      return "";
     }
   }
   
@@ -50,12 +56,15 @@ public class FileUtils {
    * @return the list of files that match this extension in the dir
    */
   public static File[] getFilesWithExtensionFromDir(final String pathToDir, final String fileExtension){
-    PlanItRunTimeException.throwIf(StringUtils.isNullOrBlank(pathToDir),String.format("Path directory is null or blank when collecting files"));
-    PlanItRunTimeException.throwIf(StringUtils.isNullOrBlank(fileExtension),String.format("File extension to use is null or blank when collecting files from directory"));
+    PlanItRunTimeException.throwIf(StringUtils.isNullOrBlank(pathToDir),
+            "Path directory is null or blank when collecting files");
+    PlanItRunTimeException.throwIf(StringUtils.isNullOrBlank(fileExtension),
+            "File extension to use is null or blank when collecting files from directory");
     
     /* the dir */
     File directoryPath = new File(pathToDir);
-    PlanItRunTimeException.throwIf(!directoryPath.isDirectory(),String.format("%s is not a valid directory",directoryPath ));
+    PlanItRunTimeException.throwIf(!directoryPath.isDirectory(),
+            String.format("%s is not a valid directory",directoryPath ));
     
     /* the filter */
     FilenameFilter fileExtensionFilter = new FilenameFilter(){
@@ -98,9 +107,9 @@ public class FileUtils {
     if(callBack == null) {
       LOGGER.warning(String.format("No callback provided for any file in %s",pathToDir));
     }
-    File[] filesInDir = new File(pathToDir).listFiles();
-    for(int index=0;index<filesInDir.length;++index) {
-      callBack.accept(filesInDir[index]);
+    File[] filesInDir = Objects.requireNonNull(new File(pathToDir).listFiles());
+    for (File file : filesInDir) {
+      callBack.accept(file);
     } 
   }
 
@@ -115,11 +124,50 @@ public class FileUtils {
       try {
         return new File(url.toURI());
       }catch(URISyntaxException e) {
-        LOGGER.warning(String.format("Unable to convert URL %s to file",url.toString()));
+        LOGGER.warning(String.format("Unable to convert URL %s to file", url));
       }
     }
     
     return null;
+  }
+
+  /**
+   * Take file string from input and construct File from it
+   *
+   * @param inputFile to use
+   * @return file created
+   */
+  public static File resolveFileFromAbsoluteOrRelativeString(String inputFile) {
+    File theFile = null;
+
+    try {
+      theFile = new File(inputFile);
+      if (theFile.exists()) {
+        return theFile.getCanonicalFile();
+      }
+    }catch (Exception e){
+      // fall through
+    }
+
+    // try to load it as a classpath resource
+    URL resourceUrl = UrlUtils.createFromLocalPathOrResource(inputFile);
+    if (resourceUrl != null) {
+      try {
+        return new File(resourceUrl.toURI());
+      } catch (URISyntaxException e) {
+        // fallback below
+      }
+
+      try {
+        return new File(resourceUrl.getFile()).getCanonicalFile();
+      }catch(Exception e){
+        //File not constructed
+        throw new PlanItRunTimeException("File could not be created from: " + resourceUrl.getFile());
+      }
+    }else{
+      // file does not exist, but we can still create file instance
+      return theFile;
+    }
   }
   
   /** Delete a directory by providing a file that represents a directory. In which case
@@ -155,7 +203,9 @@ public class FileUtils {
    * @throws FileNotFoundException thrown if error
    * @throws UnsupportedEncodingException  thrown if error
    */
-  public static InputSource getFileContentAsInputSource(String filePath, String charSetEncoding) throws FileNotFoundException, UnsupportedEncodingException {
+  public static InputSource getFileContentAsInputSource(
+          String filePath, String charSetEncoding) throws FileNotFoundException, UnsupportedEncodingException {
+
     File file = new File(filePath);
     InputStream inputStream= new FileInputStream(file);
     Reader reader = new InputStreamReader(inputStream, charSetEncoding);
@@ -197,4 +247,65 @@ public class FileUtils {
     return parseFileContentAsString(filePath, "UTF8");
   }
 
+  /**
+   * Parse a file by means of a lambda function that is passed in. The wrappr method simply creates the
+   * Scanner resource and closes it after completion and takes care of any exceptions thrown during parsing
+   *
+   * @param fileToParse the file to parse using the scanner
+   * @param scannerConsumer functionality applied to the created scanner
+   */
+  public static void wrapFileScanner(File fileToParse, Consumer<Scanner> scannerConsumer){
+
+    // wrap
+    try (Scanner scanner = new Scanner(fileToParse)) {
+
+      // delegate
+      scannerConsumer.accept(scanner);
+
+    }catch (final Exception e) {
+      LOGGER.severe(e.getMessage());
+      e.printStackTrace();
+      throw new PlanItRunTimeException(String.format("Error when parsing file %s", fileToParse.toString()),e);
+    }
+  }
+
+  /**
+   * Parse a file by means of a lambda function that is passed in. The wrapper method creates the
+   * Scanner resource and closes it after completion and takes care of any exceptions thrown during parsing.
+   *
+   * @param <T> type of result
+   * @param fileToParse the file to parse using the scanner
+   * @param scannerWithResult functionality applied to the created scanner, return the result
+   * @return result
+   */
+  public static <T> T wrapFileScannerWithResult(File fileToParse, Function<Scanner, T> scannerWithResult){
+
+    // wrap
+    try (Scanner scanner = new Scanner(fileToParse)) {
+      // delegate
+      return scannerWithResult.apply(scanner);
+    }catch (final Exception e) {
+      LOGGER.severe(e.getMessage());
+      e.printStackTrace();
+      throw new PlanItRunTimeException(String.format("Error when parsing file %s", fileToParse.toString()),e);
+    }
+  }
+
+  /**
+   * Convenience method to create directories from provided string if they do not exist. In case
+   * of an IO exception a warning is issued and exception is caught
+   *
+   * @param outputDirectory to create if needed
+   * @return true if directory already existed of exists after creation, false otherwise
+   */
+  public static boolean createDirectoryFrom(String outputDirectory) {
+    try {
+      var outputDir = Paths.get(outputDirectory);
+      Files.createDirectories(outputDir);
+      return Files.exists(outputDir);
+    } catch (IOException e) {
+      LOGGER.warning("Unable to create directory" + outputDirectory);
+    }
+    return false;
+  }
 }

@@ -3,8 +3,6 @@ package org.goplanit.utils.mode;
 import org.goplanit.utils.id.ExternalIdAble;
 import org.goplanit.utils.id.ManagedId;
 
-import java.util.Arrays;
-
 /**
  * Interface to represent a mode
  * 
@@ -81,6 +79,41 @@ public interface Mode extends ExternalIdAble, ManagedId {
     return getPhysicalFeatures()!=null;
   }
 
+  /** Verify if this mode is motorised and travels on road, e.g., car or bus, but not a pedestrian, bicycle or tram
+   *
+   * @return true when a motorised road mode, false otherwise, including when it has no physical features
+   */
+  public default boolean isMotorisedRoadMode() {
+    return hasPhysicalFeatures() &&
+        getPhysicalFeatures().getMotorisationType() == MotorisationModeType.MOTORISED &&
+        getPhysicalFeatures().getTrackType() == TrackModeType.ROAD;
+  }
+
+  /** Verify if this mode travels on rail, e.g., train, tram or light rail
+   *
+   * @return true when a rail mode, false otherwise, including when it has no physical features
+   */
+  public default boolean isRailMode() {
+    return hasPhysicalFeatures() && getPhysicalFeatures().getTrackType() == TrackModeType.RAIL;
+  }
+
+  /** Verify if this mode is a motorised road mode or a rail mode, see {@link #isMotorisedRoadMode()} and
+   * {@link #isRailMode()}: the traffic a traffic signal controls
+   *
+   * @return true when either, false otherwise, including when it has no physical features
+   */
+  public default boolean isMotorisedRoadOrRailMode() {
+    return isMotorisedRoadMode() || isRailMode();
+  }
+
+  /** Verify if this mode is the predefined tram or light rail mode
+   *
+   * @return true when a tram or light rail mode, false otherwise, including for a custom mode
+   */
+  public default boolean isTramOrLightRailMode() {
+    return isPredefinedModeType(PredefinedModeType.TRAM) || isPredefinedModeType(PredefinedModeType.LIGHTRAIL);
+  }
+
   /** Verify if use features are available
    * @return true if available, false otherwise
    */
@@ -95,7 +128,18 @@ public interface Mode extends ExternalIdAble, ManagedId {
   public default boolean isPredefinedModeType(){
     return false;
   }
-  
+
+  /**
+   * Verify if the mode is the given predefined mode type, e.g. the predefined bicycle mode. A custom mode is never one,
+   * also not when the custom type is given
+   *
+   * @param predefinedModeType to check against
+   * @return true when a predefined mode of the given type, false otherwise
+   */
+  public default boolean isPredefinedModeType(PredefinedModeType predefinedModeType){
+    return isPredefinedModeType() && getPredefinedModeType() == predefinedModeType;
+  }
+
   /**
    * collect the predefined mode type
    * 
@@ -110,15 +154,5 @@ public interface Mode extends ExternalIdAble, ManagedId {
    */
   public default boolean hasName() {
     return getName()!=null && !getName().isBlank();
-  }
-
-  /** verify, given separator, if the provided string exists as external id
-   *
-   * @param separator to use
-   * @param externalId to check for
-   * @return true if present, false otherwise
-   */
-  public default boolean containsExternalId(char separator, String externalId){
-    return Arrays.stream(getSplitExternalId(separator)).anyMatch(e -> e.equals(separator));
   }
 }

@@ -18,7 +18,8 @@ public interface MacroscopicLinkSegmentTypeFactory extends ManagedIdEntityFactor
    * @param maximumDensityPcuPerKm maximum density of the link segment type
    * @return the link segment type
    */
-  public abstract MacroscopicLinkSegmentType registerNew(final String name, final double capacityPcuPerHour, final double maximumDensityPcuPerKm);
+  public abstract MacroscopicLinkSegmentType registerNew(
+          final String name, final double capacityPcuPerHour, final double maximumDensityPcuPerKm);
 
   /**
    * Create and register new macroscopic link segment type on network. Add default access for a single mode
@@ -29,10 +30,15 @@ public interface MacroscopicLinkSegmentTypeFactory extends ManagedIdEntityFactor
    * @param allowedMode the allowed mode
    * @return the link segment type
    */  
-  public abstract MacroscopicLinkSegmentType registerNew(final String name, final double capacityPcuPerHour, final double maximumDensityPcuPerKm, final Mode allowedMode);
+  public abstract MacroscopicLinkSegmentType registerNew(
+          final String name,
+          final double capacityPcuPerHour,
+          final double maximumDensityPcuPerKm,
+          final Mode allowedMode);
   
   /**
-   * Create and register new macroscopic link segment type on network without explicitly setting capacity, max density, nor access group properties.
+   * Create and register new macroscopic link segment type on network without explicitly setting capacity, max density,
+   * nor access group properties.
    *
    * @param name                   name of the link segment type
    * @return the link segment type
@@ -40,22 +46,26 @@ public interface MacroscopicLinkSegmentTypeFactory extends ManagedIdEntityFactor
   public abstract MacroscopicLinkSegmentType registerNew(final String name); 
   
   /**
-   * Create and register new macroscopic link segment type on network without explicitly setting capacity, nor access group properties.
+   * Create and register new macroscopic link segment type on network without explicitly setting capacity,
+   * nor access group properties.
    *
    * @param name                   name of the link segment type
    * @param capacityPcuPerHour     capacity of the link segment type
    * @return the link segment type
    */
-  public abstract MacroscopicLinkSegmentType registerNewWithCapacity(final String name, final double capacityPcuPerHour);
+  public abstract MacroscopicLinkSegmentType registerNewWithCapacity(
+          final String name, final double capacityPcuPerHour);
   
   /**
-   * Create and register new macroscopic link segment type on network without explicitly setting capacity, nor accessgroup properties.
+   * Create and register new macroscopic link segment type on network without explicitly setting capacity,
+   * nor accessgroup properties.
    *
    * @param name                   name of the link segment type
    * @param maximumDensityPcuPerKm maximum density of the link segment type
    * @return the link segment type
    */
-  public abstract MacroscopicLinkSegmentType registerNewWithMaxDensity(final String name, final double maximumDensityPcuPerKm);
+  public abstract MacroscopicLinkSegmentType registerNewWithMaxDensity(
+      final String name, final double maximumDensityPcuPerKm);
  
 
 }

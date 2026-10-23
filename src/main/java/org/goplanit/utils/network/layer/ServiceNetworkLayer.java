@@ -9,8 +9,9 @@ import org.goplanit.utils.network.layer.service.ServiceNode;
 import org.goplanit.utils.network.layer.service.ServiceNodes;
 
 /**
- * Service network layer consisting of service nodes, legs and leg segments on top of a parent network layer with physical entities. Service network layers
- * are used to define service legs between nodes offered by one or more routed services as a separate network layer. 
+ * Service network layer consisting of service nodes, legs and leg segments on top of a parent network layer with
+ * physical entities. Service network layers are used to define service legs between nodes offered by one or more
+ * routed services as a separate network layer.
  *
  * @author markr
  */
