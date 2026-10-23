@@ -3,10 +3,13 @@ package org.goplanit.utils.network.layer.macroscopic.intersection;
 import org.goplanit.utils.network.layer.macroscopic.MacroscopicLinkSegment;
 
 /**
- * A link segment of an intersection as the intersection holds it: an approach entering it, or an internal segment
- * lying inside it. It has a signal, see {@link IntersectionSignalSegment}, or not, see
- * {@link IntersectionUnsignalisedSegment}. Either can have a saturation flow factor, saying how much of the link
- * segment's capacity can discharge; one with a signal also a green ratio. A value not set is 1.
+ * A link segment of an intersection as the intersection holds it, an object of its own: an approach object for a link
+ * segment entering the intersection, or an internal segment object for one lying inside it. Which of the two it is
+ * follows from the list the intersection holds it in, see {@link Intersection#getApproaches()} and
+ * {@link SpatialIntersection#getIntersectionInternalSegments()}; there is no type of its own for either. Each object is
+ * an {@link IntersectionSignalSegment} when a signal controls its traffic, and an
+ * {@link IntersectionUnsignalisedSegment} when not. Either can have a saturation flow factor, saying how much of the
+ * link segment's capacity can discharge; one with a signal also a green ratio. A value not set is 1.
  * <p>
  * It belongs to its intersection and has no id of its own; the intersection finds it by its link segment. When its
  * signal changes, the intersection replaces it by a new instance of the other kind, so look it up again by its link
@@ -62,6 +65,21 @@ public interface IntersectionSegment {
    * @return true when removed, false when none was set
    */
   public abstract boolean removeSaturationFlowFactor();
+
+  /**
+   * Shallow clone this instance: a new object of the same kind, on the same link segment and with the same values
+   *
+   * @return shallow copy of this instance
+   */
+  public abstract IntersectionSegment shallowClone();
+
+  /**
+   * Deep clone this instance: a new object of the same kind, with the same values and on the same link segment, which
+   * it shares since it does not own it
+   *
+   * @return deep copy of this instance
+   */
+  public abstract IntersectionSegment deepClone();
 
   /**
    * The effective capacity factor: the share of the link segment's capacity that can pass, the saturation flow factor

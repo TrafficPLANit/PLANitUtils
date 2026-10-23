@@ -106,43 +106,47 @@ public interface Intersection extends ExternalIdAble, ManagedId, Serializable {
   public abstract boolean addType(IntersectionType type);
 
   /**
-   * The approaches of this intersection: the link segments entering it, each a signal segment when it has a signal of
-   * its own and an unsignalised segment otherwise, with its values. Every way out of the intersection is allowed from
-   * an approach unless a banned turn of the layer, starting from its link segment, forbids it
+   * The approach objects of this intersection, one for each link segment entering it: an
+   * {@link IntersectionSignalSegment} for an approach with a signal of its own, an
+   * {@link IntersectionUnsignalisedSegment} for one without, each with its values. Being in this list is what makes it
+   * an approach. Every way out of the intersection is allowed from an approach unless a banned turn of the layer,
+   * starting from its link segment, forbids it
    *
-   * @return unmodifiable list of approaches, in the order they were added
+   * @return unmodifiable list of approach objects, in the order they were added
    */
   public abstract List<IntersectionSegment> getApproaches();
 
   /**
-   * The approach entering this intersection on a link segment, the very segment rather than one equal to it
+   * The approach object entering this intersection on a link segment, the very segment rather than one equal to it
    *
    * @param entrySegment the link segment the approach enters on
-   * @return the approach, null when the segment is not an approach segment
+   * @return the approach object, an {@link IntersectionSignalSegment} or {@link IntersectionUnsignalisedSegment}, null
+   * when the segment is not an approach segment
    */
   public abstract IntersectionSegment getApproach(MacroscopicLinkSegment entrySegment);
 
   /**
-   * Add a new approach, without values, entering on a link segment that ends at a member node and starts at a node
-   * that is not a member, with a signal of its own or not, whatever the control type of the intersection. For example,
-   * at a signalised intersection a driveway joining inside the junction is added without a signal of its own
+   * Create a new approach object, without values, for a link segment that ends at a member node and starts at a node
+   * that is not a member, and add it to this intersection's approaches: an {@link IntersectionSignalSegment} or an
+   * {@link IntersectionUnsignalisedSegment} as chosen, whatever the control type of the intersection. For example, at
+   * a signalised intersection a driveway joining inside the junction is added without a signal of its own
    *
    * @param entrySegment the link segment it enters on
-   * @param hasOwnSignal true to add an {@link IntersectionSignalSegment}, false to add an
+   * @param hasOwnSignal true to create an {@link IntersectionSignalSegment}, false to create an
    *                     {@link IntersectionUnsignalisedSegment}
-   * @return the approach added, null when the segment is an approach segment already or does not enter the
+   * @return the new approach object, null when the segment is an approach segment already or does not enter the
    * intersection
    */
   public abstract IntersectionSegment addNewApproach(MacroscopicLinkSegment entrySegment, boolean hasOwnSignal);
 
   /**
-   * Add a new approach, without values, entering on a link segment, following the control type of the intersection:
-   * an {@link IntersectionSignalSegment} when the intersection is signalised, an
-   * {@link IntersectionUnsignalisedSegment} when it is not. To choose, see
+   * Create a new approach object, without values, for a link segment entering the intersection, and add it to this
+   * intersection's approaches, following the control type of the intersection: an {@link IntersectionSignalSegment}
+   * when the intersection is signalised, an {@link IntersectionUnsignalisedSegment} when it is not. To choose, see
    * {@link #addNewApproach(MacroscopicLinkSegment, boolean)}
    *
    * @param entrySegment the link segment it enters on
-   * @return the approach added, null when the segment is an approach segment already or does not enter the
+   * @return the new approach object, null when the segment is an approach segment already or does not enter the
    * intersection
    */
   public default IntersectionSegment addNewApproach(MacroscopicLinkSegment entrySegment) {
@@ -169,9 +173,9 @@ public interface Intersection extends ExternalIdAble, ManagedId, Serializable {
   }
 
   /**
-   * Add a new approach, without values, for a link segment entering the intersection, following the control type of
-   * the intersection: an {@link IntersectionSignalSegment} when the intersection is signalised, an
-   * {@link IntersectionUnsignalisedSegment} when it is not. The same as
+   * Create a new approach object, without values, for a link segment entering the intersection, and add it to this
+   * intersection's approaches, following the control type of the intersection: an {@link IntersectionSignalSegment}
+   * when the intersection is signalised, an {@link IntersectionUnsignalisedSegment} when it is not. The same as
    * {@link #addNewApproach(MacroscopicLinkSegment)}, telling only whether it was added
    *
    * @param segment to add
@@ -183,8 +187,8 @@ public interface Intersection extends ExternalIdAble, ManagedId, Serializable {
   }
 
   /**
-   * Remove the approach entering on a link segment, with whether it has a signal of its own and its values. The
-   * intersection no longer holds that instance
+   * Remove the approach object entering on a link segment from this intersection's approaches, with its signal and
+   * values
    *
    * @param segment to remove
    * @return true when removed, false when not an approach segment
@@ -194,8 +198,7 @@ public interface Intersection extends ExternalIdAble, ManagedId, Serializable {
   /**
    * Let the approach entering on a link segment enter on another link segment instead, for example on the new link
    * segment ending at the intersection once the approach's link is broken at a node upstream. It stays the same
-   * instance: only its link segment changes, so it keeps whether it has a signal of its own and its values without
-   * copying them
+   * approach object: only its link segment changes, so it keeps its signal and its values without copying them
    *
    * @param approachSegment the link segment the approach enters on now
    * @param entrySegment the link segment it is to enter on instead
@@ -231,10 +234,11 @@ public interface Intersection extends ExternalIdAble, ManagedId, Serializable {
   }
 
   /**
-   * Swap the approach entering on a link segment for a signal segment, when it is to have a signal of its own, or for
-   * an unsignalised segment, when not. When it is of that kind already, it stays the same instance. Otherwise a new
-   * instance of the other kind takes its place in the list, for the same link segment and with its saturation flow
-   * factor copied; without a signal it has no green ratio. The old instance is no longer held by the intersection
+   * Swap the approach object entering on a link segment for an {@link IntersectionSignalSegment}, when it is to have a
+   * signal of its own, or for an {@link IntersectionUnsignalisedSegment}, when not. When it is of that kind already, it
+   * stays the same object. Otherwise a new approach object of the other kind takes its place in this intersection's
+   * approaches, for the same link segment and with its saturation flow factor copied; without a signal it has no green
+   * ratio. The old object is no longer one of the approaches
    *
    * @param approachSegment the link segment the approach enters on
    * @param hasOwnSignal true for a signal segment, false for an unsignalised segment

@@ -71,19 +71,21 @@ public interface SpatialIntersection extends Intersection {
   public abstract boolean addMemberNode(Node node);
 
   /**
-   * The internal segments of this intersection: the link segments between two member nodes listed as internal, each a
-   * signal segment when a signal stands on it and an unsignalised segment when it is plain, with its values. A link
-   * segment between two member nodes is internal only when listed here
+   * The internal segment objects of this intersection, one for each link segment between two member nodes listed as
+   * internal: an {@link IntersectionSignalSegment} when a signal stands on it, an
+   * {@link IntersectionUnsignalisedSegment} when it is plain, each with its values. Being in this list is what makes it
+   * an internal segment; a link segment between two member nodes is internal only when listed here
    *
-   * @return unmodifiable list of internal segments, in the order they were added
+   * @return unmodifiable list of internal segment objects, in the order they were added
    */
   public abstract List<IntersectionSegment> getIntersectionInternalSegments();
 
   /**
-   * The internal segment of this intersection for a link segment, the very segment rather than one equal to it
+   * The internal segment object of this intersection for a link segment, the very segment rather than one equal to it
    *
    * @param segment the link segment
-   * @return the internal segment, null when the link segment is not internal
+   * @return the internal segment object, an {@link IntersectionSignalSegment} or
+   * {@link IntersectionUnsignalisedSegment}, null when the link segment is not internal
    */
   public abstract IntersectionSegment getIntersectionInternalSegment(MacroscopicLinkSegment segment);
 
@@ -108,8 +110,8 @@ public interface SpatialIntersection extends Intersection {
   }
 
   /**
-   * Add a new plain internal segment, an {@link IntersectionUnsignalisedSegment} without values, which must start and
-   * end at member nodes
+   * Create a new plain internal segment object, an {@link IntersectionUnsignalisedSegment} without values, and add it
+   * to this intersection's internal segments. Its link segment must start and end at member nodes
    *
    * @param segment to add
    * @return true when added, false when refused or already internal
@@ -135,9 +137,11 @@ public interface SpatialIntersection extends Intersection {
   }
 
   /**
-   * Add a new internal segment with a signal standing on it, or give an internal segment already listed a signal: a
-   * new signal segment instance then takes its place in the list, with its saturation flow factor copied, and the old
-   * instance is no longer held. Like any internal segment it must start and end at member nodes
+   * Create a new internal segment object with a signal standing on it, an {@link IntersectionSignalSegment}, and add
+   * it to this intersection's internal segments, or give an internal segment already listed a signal: a new
+   * {@link IntersectionSignalSegment} then takes its place in the list, with its saturation flow factor copied, and
+   * the old object is no longer one of the internal segments. Like any internal segment its link segment must start
+   * and end at member nodes
    *
    * @param segment to add
    * @return true when added or given a signal, false when refused or when it already has a signal
@@ -154,7 +158,7 @@ public interface SpatialIntersection extends Intersection {
   /**
    * The movements through this intersection starting on an approach
    *
-   * @param approach of this intersection
+   * @param approach object of this intersection
    * @return the movements starting on its link segment, in the order of {@link #getMovements()}
    */
   public default List<SpatialMovement> getMovementsFrom(IntersectionSegment approach) {

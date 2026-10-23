@@ -18,4 +18,16 @@ public interface IntersectionUnsignalisedSegment extends IntersectionSegment {
   public default boolean hasSignal() {
     return false;
   }
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public abstract IntersectionUnsignalisedSegment shallowClone();
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public abstract IntersectionUnsignalisedSegment deepClone();
 }

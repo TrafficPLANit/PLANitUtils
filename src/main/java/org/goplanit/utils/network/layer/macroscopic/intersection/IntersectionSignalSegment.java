@@ -51,6 +51,18 @@ public interface IntersectionSignalSegment extends IntersectionSegment {
   public abstract boolean removeGreenRatio();
 
   /**
+   * {@inheritDoc}
+   */
+  @Override
+  public abstract IntersectionSignalSegment shallowClone();
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public abstract IntersectionSignalSegment deepClone();
+
+  /**
    * The effective capacity factor: the green ratio times the saturation flow factor, the share of the link segment's
    * capacity that can pass. For example 0.418 for a green ratio of 0.44 and a saturation flow factor of 0.95
    *
