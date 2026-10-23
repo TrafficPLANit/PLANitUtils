@@ -44,12 +44,54 @@ public class EdgeSegmentUtils {
   }
 
   /**
-   * Create contiguous (deduplicated) geometry for list of edge segments into a single line string
+   * The geometry of an edge segment's parent edge, or a straight line between the edge's vertices in the segment's
+   * direction when the edge has no geometry of its own
+   *
+   * @param edgeSegment to take the geometry of, with a parent edge
+   * @return geometry found or created
+   */
+  public static LineString createOrGetParentGeometry(EdgeSegment edgeSegment) {
+    return edgeSegment.getParent().hasGeometry() ? edgeSegment.getParent().getGeometry() :
+        EdgeUtils.createLineStringFromVertexLocations(edgeSegment.getParent(), edgeSegment.isDirectionAb());
+  }
+
+  /**
+   * The geometry of an edge segment running in the segment's direction, from its upstream to its downstream vertex, see
+   * {@link #createOrGetParentGeometry}. The parent edge's own geometry is reversed only when it runs the other way; a
+   * created one already runs in the segment's direction
+   *
+   * @param edgeSegment to take the geometry of, with a parent edge
+   * @return geometry in the segment's direction, the parent edge's own geometry when it already runs that way
+   */
+  public static LineString createOrGetParentGeometryInSegmentDirection(EdgeSegment edgeSegment) {
+    var geometry = createOrGetParentGeometry(edgeSegment);
+    if (edgeSegment.hasGeometry() && !edgeSegment.isParentGeometryInSegmentDirection(true)) {
+      geometry = geometry.reverse();
+    }
+    return geometry;
+  }
+
+  /**
+   * Create contiguous (deduplicated) geometry for list of edge segments into a single line string, taking each parent
+   * edge's geometry as it is drawn, see {@link #createGeometryFrom(Iterator, boolean)}
    *
    * @param edgeSegmentIter to construct line string for
    * @return geometry created
    */
   public static LineString createGeometryFrom(Iterator<? extends EdgeSegment> edgeSegmentIter) {
+    return createGeometryFrom(edgeSegmentIter, false);
+  }
+
+  /**
+   * Create contiguous (deduplicated) geometry for list of edge segments into a single line string
+   *
+   * @param edgeSegmentIter to construct line string for
+   * @param inSegmentDirection true to turn each parent edge's geometry to run in its segment's direction, see
+   *                           {@link #createOrGetParentGeometryInSegmentDirection}, false to take it as it is drawn
+   * @return geometry created
+   */
+  public static LineString createGeometryFrom(
+      Iterator<? extends EdgeSegment> edgeSegmentIter, boolean inSegmentDirection) {
     if(edgeSegmentIter == null){
       return null;
     }
@@ -63,9 +105,7 @@ public class EdgeSegmentUtils {
         break;
       }
       LineString result =
-          es.getParent().hasGeometry() ?
-                  es.getParent().getGeometry() :
-                  EdgeUtils.createLineStringFromVertexLocations(es.getParent(), es.isDirectionAb());
+          inSegmentDirection ? createOrGetParentGeometryInSegmentDirection(es) : createOrGetParentGeometry(es);
       if(result == null){
         missingGeometries = true;
       }
@@ -89,7 +129,7 @@ public class EdgeSegmentUtils {
   }
 
   /**
-   * BAsed on edge segment construct an id string based on parent link id (configurable which) and the direction resulting
+   * Based on edge segment construct an id string based on parent link id (configurable which) and the direction resulting
    * in "link_id_mapping-direction" where direction is either BA or BA, e.g. 4-AB.
    *
    * @param edgeSegment to use
