@@ -84,9 +84,15 @@ public interface Mode extends ExternalIdAble, ManagedId {
    * @return true when a motorised road mode, false otherwise, including when it has no physical features
    */
   public default boolean isMotorisedRoadMode() {
-    return hasPhysicalFeatures() &&
-        getPhysicalFeatures().getMotorisationType() == MotorisationModeType.MOTORISED &&
-        getPhysicalFeatures().getTrackType() == TrackModeType.ROAD;
+    return isRoadMode() && getPhysicalFeatures().getMotorisationType() == MotorisationModeType.MOTORISED;
+  }
+
+  /** Verify if this mode travels on road, e.g., car, bus, bicycle or pedestrian, but not a tram or ferry
+   *
+   * @return true when a road mode, false otherwise, including when it has no physical features
+   */
+  public default boolean isRoadMode() {
+    return hasPhysicalFeatures() && getPhysicalFeatures().getTrackType() == TrackModeType.ROAD;
   }
 
   /** Verify if this mode travels on rail, e.g., train, tram or light rail

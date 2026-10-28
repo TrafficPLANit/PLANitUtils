@@ -59,17 +59,29 @@ public class LinkUtils {
   }
 
   /**
+   * Create a predicate selecting only those edges that are tram or light rail tracks. A track is a link a tram or light
+   * rail may use but no motorised road mode may use, see {@link Mode#isTramOrLightRailMode()}, so a road link a tram is
+   * allowed on is no track. It is shaped as a {@code Predicate<Edge>} for the same reason as
+   * {@link #permitsMotorisedRoadModeOnAnySegment()}. Any edge that is not a link is rejected.
+   *
+   * @return predicate to use
+   */
+  public static Predicate<Edge> isTramOrLightRailTrack() {
+    return permitsModeMatchingOnAnySegment(Mode::isTramOrLightRailMode)
+        .and(permitsMotorisedRoadModeOnAnySegment().negate());
+  }
+
+  /**
    * Verify whether a tram or light rail track meets a road at a node. A link a motorised road mode may use meets a
-   * track there. A track is a link a tram or light rail may use but no motorised road mode may use, see
-   * {@link Mode#isTramOrLightRailMode()}. A tram allowed on a road link itself is no track meeting the road
+   * track there, see {@link #isTramOrLightRailTrack()}. A tram allowed on a road link itself is no track meeting the
+   * road
    *
    * @param node to verify
    * @return true when a tram or light rail track meets a road there, false otherwise
    */
   public static boolean isWhereTramOrLightRailTrackMeetsRoad(final Node node) {
-    var road = permitsMotorisedRoadModeOnAnySegment();
-    var tramOrLightRailTrack = permitsModeMatchingOnAnySegment(Mode::isTramOrLightRailMode).and(road.negate());
-    return node.getNumberOfEdges(road) > 0 && node.getNumberOfEdges(tramOrLightRailTrack) > 0;
+    return node.getNumberOfEdges(permitsMotorisedRoadModeOnAnySegment()) > 0 &&
+        node.getNumberOfEdges(isTramOrLightRailTrack()) > 0;
   }
 
   /**

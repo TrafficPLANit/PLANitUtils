@@ -9,6 +9,7 @@ import org.goplanit.utils.graph.directed.BannedTurn;
 import org.goplanit.utils.modifier.LoggableModifier;
 import org.goplanit.utils.network.layer.macroscopic.MacroscopicLink;
 import org.goplanit.utils.network.layer.macroscopic.MacroscopicLinkSegment;
+import org.goplanit.utils.network.layer.macroscopic.MacroscopicLinkSegmentType;
 import org.goplanit.utils.network.layer.macroscopic.SpatialMovement;
 import org.goplanit.utils.network.layer.macroscopic.intersection.Intersection;
 import org.goplanit.utils.network.layer.macroscopic.intersection.SpatialIntersection;
@@ -17,6 +18,7 @@ import org.goplanit.utils.network.layer.modifier.consolidator.IntersectionCollap
 import org.goplanit.utils.network.layer.modifier.consolidator.IntersectionCollapserSettings;
 import org.goplanit.utils.network.layer.modifier.consolidator.IntersectionConsolidationModifierResult;
 import org.goplanit.utils.network.layer.modifier.consolidator.IntersectionConsolidatorSettings;
+import org.goplanit.utils.network.layer.modifier.event.LinkSegmentTypeModifierEventProducer;
 import org.goplanit.utils.network.layer.physical.LinkSegment;
 import org.goplanit.utils.network.layer.physical.Node;
 
@@ -29,7 +31,7 @@ import org.goplanit.utils.network.layer.physical.Node;
  */
 public interface MacroscopicNetworkLayerModifier extends
     UntypedDirectedGraphLayerModifier<Node, MacroscopicLink, MacroscopicLinkSegment>,
-    IntersectionModifierEventProducer, LoggableModifier {
+    IntersectionModifierEventProducer, LinkSegmentTypeModifierEventProducer, LoggableModifier {
 
   /**
    * Remove an intersection from the layer, firing a remove intersection event. The movements of a spatial
@@ -84,6 +86,17 @@ public interface MacroscopicNetworkLayerModifier extends
    * @return what was removed
    */
   public abstract ModeAccessCleanupModifierResult removeInfrastructureWithoutModeAccess();
+
+  /**
+   * Change the type of a link segment, and let the listeners know, so that what refers to the link segment can follow
+   * the access it gains or loses, such as connectoids using it as an access link segment. Nothing happens when the
+   * link segment already has the type
+   *
+   * @param linkSegment to change the type of
+   * @param linkSegmentType the link segment's new type
+   */
+  public abstract void changeLinkSegmentType(
+      MacroscopicLinkSegment linkSegment, MacroscopicLinkSegmentType linkSegmentType);
 
   /**
    * Move one end node of a link to another node. The link keeps its id, external id, segments and mode access. Its

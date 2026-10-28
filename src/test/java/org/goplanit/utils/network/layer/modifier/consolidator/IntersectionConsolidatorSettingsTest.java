@@ -33,6 +33,18 @@ public class IntersectionConsolidatorSettingsTest {
     assertEquals(2,
         IntersectionConsolidatorSettings.DEFAULT_MAXIMUM_DISTANCE_REACHED_ONLY_THROUGH_INTERSECTION_RADIUS_FACTOR);
     assertEquals(60, IntersectionConsolidatorSettings.DEFAULT_MAXIMUM_DISTANCE_SLIP_LANE_CROSSING_TO_JUNCTION_METERS);
+    assertEquals(30, IntersectionConsolidatorSettings.DEFAULT_MAXIMUM_DISTANCE_BETWEEN_CROSSINGS_SIDE_BY_SIDE_METERS);
+  }
+
+  /**
+   * A copy of the settings holds the distance between crossings side by side set before copying
+   */
+  @Test
+  public void distanceBetweenCrossingsSideBySideIsCopied() {
+    var settings = new IntersectionConsolidatorSettings();
+    settings.setMaximumDistanceBetweenCrossingsSideBySideMeters(12);
+    assertEquals(12,
+        new IntersectionConsolidatorSettings(settings).getMaximumDistanceBetweenCrossingsSideBySideMeters());
   }
 
   /**

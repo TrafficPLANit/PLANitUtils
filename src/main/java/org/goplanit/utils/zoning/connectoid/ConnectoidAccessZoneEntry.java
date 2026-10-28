@@ -74,6 +74,17 @@ public interface ConnectoidAccessZoneEntry{
    */
   public abstract void addExplicitAllowedMode(Mode allowedMode);
 
+  /** Remove an explicitly allowed mode. An entry allowing every mode has no explicitly allowed modes, so nothing is
+   * removed from it. The last explicitly allowed mode is not removed either, since an entry left without any would
+   * allow every mode. For example, removing bus from an entry allowing only bus leaves it as it is, and the caller
+   * removes the entry instead
+   *
+   * @param allowedMode to remove
+   * @return true when removed, false when the entry does not allow it explicitly (always so for an entry allowing
+   * every mode), or when it is the last explicitly allowed mode
+   */
+  public abstract boolean removeExplicitAllowedMode(Mode allowedMode);
+
   /** Verify if a mode is allowed access to the zone via this connectoid
    *
    * @param mode to verify if allowed

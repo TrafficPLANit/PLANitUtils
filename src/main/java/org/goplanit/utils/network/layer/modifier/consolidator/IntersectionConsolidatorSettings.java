@@ -35,6 +35,10 @@ public class IntersectionConsolidatorSettings {
     return nodeIds.stream().distinct().count() < 2;
   }
 
+  /** see {@link #setMaximumDistanceBetweenCrossingsSideBySideMeters(double)} */
+  private double maximumDistanceBetweenCrossingsSideBySideMeters =
+      DEFAULT_MAXIMUM_DISTANCE_BETWEEN_CROSSINGS_SIDE_BY_SIDE_METERS;
+
   /** default joining reach: within it along the road parsed intersections, crossings and nodes join one group, in
    * metres */
   public static final double DEFAULT_MAXIMUM_JOINING_REACH_METERS = 40;
@@ -72,6 +76,9 @@ public class IntersectionConsolidatorSettings {
 
   /** default reach from a crossing on a slip lane to a member node of its junction, in metres */
   public static final double DEFAULT_MAXIMUM_DISTANCE_SLIP_LANE_CROSSING_TO_JUNCTION_METERS = 60;
+
+  /** default distance along the road between two crossings side by side that join into one, in metres */
+  public static final double DEFAULT_MAXIMUM_DISTANCE_BETWEEN_CROSSINGS_SIDE_BY_SIDE_METERS = 30;
 
   /** see {@link #setMaximumJoiningReachMeters(double)} */
   private double maximumJoiningReachMeters = DEFAULT_MAXIMUM_JOINING_REACH_METERS;
@@ -141,6 +148,7 @@ public class IntersectionConsolidatorSettings {
     this.maximumDistanceReachedOnlyThroughIntersectionRadiusFactor =
         other.maximumDistanceReachedOnlyThroughIntersectionRadiusFactor;
     this.maximumDistanceSlipLaneCrossingToJunctionMeters = other.maximumDistanceSlipLaneCrossingToJunctionMeters;
+    this.maximumDistanceBetweenCrossingsSideBySideMeters = other.maximumDistanceBetweenCrossingsSideBySideMeters;
     other.nodeIdsToJoinIntoOneIntersection.forEach(list -> this.nodeIdsToJoinIntoOneIntersection.add(
         Pair.of(new LinkedHashSet<>(list.first()), list.second())));
     other.nodeIdsToKeepInSeparateIntersections.forEach(list -> this.nodeIdsToKeepInSeparateIntersections.add(
@@ -376,6 +384,28 @@ public class IntersectionConsolidatorSettings {
   public void setMaximumDistanceSlipLaneCrossingToJunctionMeters(
       double maximumDistanceSlipLaneCrossingToJunctionMeters) {
     this.maximumDistanceSlipLaneCrossingToJunctionMeters = maximumDistanceSlipLaneCrossingToJunctionMeters;
+  }
+
+  /**
+   * How far apart along the road two crossings side by side may be to join into one, see
+   * {@link #setMaximumDistanceBetweenCrossingsSideBySideMeters(double)}
+   *
+   * @return distance in metres
+   */
+  public double getMaximumDistanceBetweenCrossingsSideBySideMeters() {
+    return maximumDistanceBetweenCrossingsSideBySideMeters;
+  }
+
+  /**
+   * Set how far apart along the road two crossing intersections may be to join into one, such as a cycle crossing
+   * beside a foot crossing. Between them the road must simply continue, or pass other crossings, never a junction.
+   * Road traffic is then held once, at the road entering the first
+   *
+   * @param maximumDistanceBetweenCrossingsSideBySideMeters distance in metres
+   */
+  public void setMaximumDistanceBetweenCrossingsSideBySideMeters(
+      double maximumDistanceBetweenCrossingsSideBySideMeters) {
+    this.maximumDistanceBetweenCrossingsSideBySideMeters = maximumDistanceBetweenCrossingsSideBySideMeters;
   }
 
   /**

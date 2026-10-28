@@ -122,6 +122,10 @@ public class IntersectionConsolidationModifierResult {
     /** a crossing intersection that joined a junction from one of its slip lanes */
     CROSSING_JOINED_FROM_SLIP_LANE,
 
+    /** a crossing intersection that joined another crossing intersection side by side along the road, see
+     * {@link IntersectionConsolidatorSettings#setMaximumDistanceBetweenCrossingsSideBySideMeters(double)} */
+    CROSSING_JOINED_SIDE_BY_SIDE,
+
     /** a junction pulled into a consolidated intersection whose radius, plus the margin, it lies within, see
      * {@link IntersectionConsolidatorSettings#setPullInMarginBeyondRadiusMeters(double)} */
     JUNCTION_PULLED_IN_WITHIN_RADIUS,
@@ -385,8 +389,8 @@ public class IntersectionConsolidationModifierResult {
   public String toString() {
     return String.format(
         "replaced %d intersections, pulled in %d junctions within a radius and %d to salvage approaches without a " +
-        "signal, joined %d nodes and %d crossings (%d " +
-        "from a slip lane), made %d approaches internal and %d links reached only through the intersection; %d " +
+        "signal, joined %d nodes and %d crossings (%d from a slip lane), %d crossings side by side, made %d " +
+        "approaches internal and %d links reached only through the intersection; %d " +
         "intersection clusters subdivided step by step, %d internal links longer than the warning length, %d " +
         "approaches added without a signal (%d not on a slip lane), %d junctions with few lit arms; stored %d " +
         "movements, did not find %d nodes listed in the settings",
@@ -394,6 +398,7 @@ public class IntersectionConsolidationModifierResult {
         getIntersections(IntersectionOutcome.JUNCTION_PULLED_IN_TO_SALVAGE_APPROACH_WITHOUT_SIGNAL).size(),
         joinedNodes.size(), getIntersections(IntersectionOutcome.CROSSING_JOINED).size(),
         getIntersections(IntersectionOutcome.CROSSING_JOINED_FROM_SLIP_LANE).size(),
+        getIntersections(IntersectionOutcome.CROSSING_JOINED_SIDE_BY_SIDE).size(),
         getApproaches(ApproachOutcome.MADE_INTERNAL).size(), linksReachedOnlyThroughIntersection.size(),
         intersectionClustersSubdividedStepByStep.size(), internalLinksLongerThanWarningLength.size(),
         getApproaches(ApproachOutcome.ADDED_WITHOUT_SIGNAL_ON_SLIP_LANE).size() +
