@@ -39,6 +39,9 @@ public class IntersectionConsolidatorSettings {
   private double maximumDistanceBetweenCrossingsSideBySideMeters =
       DEFAULT_MAXIMUM_DISTANCE_BETWEEN_CROSSINGS_SIDE_BY_SIDE_METERS;
 
+  /** see {@link #setIncludeActiveModesInMovements(boolean)} */
+  private boolean includeActiveModesInMovements = DEFAULT_INCLUDE_ACTIVE_MODES_IN_MOVEMENTS;
+
   /** default joining reach: within it along the road parsed intersections, crossings and nodes join one group, in
    * metres */
   public static final double DEFAULT_MAXIMUM_JOINING_REACH_METERS = 40;
@@ -79,6 +82,9 @@ public class IntersectionConsolidatorSettings {
 
   /** default distance along the road between two crossings side by side that join into one, in metres */
   public static final double DEFAULT_MAXIMUM_DISTANCE_BETWEEN_CROSSINGS_SIDE_BY_SIDE_METERS = 30;
+
+  /** by default movements are for motorised road and rail modes only, the traffic a signal controls */
+  public static final boolean DEFAULT_INCLUDE_ACTIVE_MODES_IN_MOVEMENTS = false;
 
   /** see {@link #setMaximumJoiningReachMeters(double)} */
   private double maximumJoiningReachMeters = DEFAULT_MAXIMUM_JOINING_REACH_METERS;
@@ -149,6 +155,7 @@ public class IntersectionConsolidatorSettings {
         other.maximumDistanceReachedOnlyThroughIntersectionRadiusFactor;
     this.maximumDistanceSlipLaneCrossingToJunctionMeters = other.maximumDistanceSlipLaneCrossingToJunctionMeters;
     this.maximumDistanceBetweenCrossingsSideBySideMeters = other.maximumDistanceBetweenCrossingsSideBySideMeters;
+    this.includeActiveModesInMovements = other.includeActiveModesInMovements;
     other.nodeIdsToJoinIntoOneIntersection.forEach(list -> this.nodeIdsToJoinIntoOneIntersection.add(
         Pair.of(new LinkedHashSet<>(list.first()), list.second())));
     other.nodeIdsToKeepInSeparateIntersections.forEach(list -> this.nodeIdsToKeepInSeparateIntersections.add(
@@ -406,6 +413,28 @@ public class IntersectionConsolidatorSettings {
   public void setMaximumDistanceBetweenCrossingsSideBySideMeters(
       double maximumDistanceBetweenCrossingsSideBySideMeters) {
     this.maximumDistanceBetweenCrossingsSideBySideMeters = maximumDistanceBetweenCrossingsSideBySideMeters;
+  }
+
+  /**
+   * Whether movements are stored for active modes too, see {@link #setIncludeActiveModesInMovements(boolean)}
+   *
+   * @return true when for active modes too, false when for motorised road and rail modes only
+   */
+  public boolean isIncludeActiveModesInMovements() {
+    return includeActiveModesInMovements;
+  }
+
+  /**
+   * Set whether the movements of a consolidated intersection are stored for active modes too, such as pedestrians and
+   * bicycles. Without them, a movement exists only when a motorised road or rail mode can get from its approach over
+   * the internal segments onto its exit, the traffic a signal controls. With them, a movement also exists where only
+   * an active mode can, such as from a road approach onto a footway. Collapsing an intersection for an active mode
+   * needs them, since a collapsed mode keeps only the turns its movements give it
+   *
+   * @param includeActiveModesInMovements true for active modes too, false for motorised road and rail modes only
+   */
+  public void setIncludeActiveModesInMovements(boolean includeActiveModesInMovements) {
+    this.includeActiveModesInMovements = includeActiveModesInMovements;
   }
 
   /**

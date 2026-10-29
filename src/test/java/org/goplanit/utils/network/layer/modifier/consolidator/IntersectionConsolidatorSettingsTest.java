@@ -34,6 +34,17 @@ public class IntersectionConsolidatorSettingsTest {
         IntersectionConsolidatorSettings.DEFAULT_MAXIMUM_DISTANCE_REACHED_ONLY_THROUGH_INTERSECTION_RADIUS_FACTOR);
     assertEquals(60, IntersectionConsolidatorSettings.DEFAULT_MAXIMUM_DISTANCE_SLIP_LANE_CROSSING_TO_JUNCTION_METERS);
     assertEquals(30, IntersectionConsolidatorSettings.DEFAULT_MAXIMUM_DISTANCE_BETWEEN_CROSSINGS_SIDE_BY_SIDE_METERS);
+    assertFalse(new IntersectionConsolidatorSettings().isIncludeActiveModesInMovements());
+  }
+
+  /**
+   * A copy of the settings holds whether active modes are included in movements, as set before copying
+   */
+  @Test
+  public void includeActiveModesInMovementsIsCopied() {
+    var settings = new IntersectionConsolidatorSettings();
+    settings.setIncludeActiveModesInMovements(true);
+    assertTrue(new IntersectionConsolidatorSettings(settings).isIncludeActiveModesInMovements());
   }
 
   /**
