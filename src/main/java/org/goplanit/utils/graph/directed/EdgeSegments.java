@@ -21,7 +21,10 @@ public interface EdgeSegments extends GraphEntities<EdgeSegment> {
    * @param directionAB direction of travel
    * @throws PlanItException thrown if there is an error
    */
-  public abstract void register(final DirectedEdge parentEdge, final EdgeSegment edgeSegment, final boolean directionAB) throws PlanItException;
+  public abstract void register(
+          final DirectedEdge parentEdge,
+          final EdgeSegment edgeSegment,
+          final boolean directionAB) throws PlanItException;
       
   
   /**
@@ -33,7 +36,8 @@ public interface EdgeSegments extends GraphEntities<EdgeSegment> {
   public default EdgeSegmentFactory getFactory(){
     /** override to change return type signature on interface, implementation must still
      * implement this method to provide access to an actual instance */
-    Logger.getLogger(EdgeSegmentFactory.class.getCanonicalName()).warning("getFactory not implemented yet for edge segment implementation");
+    Logger.getLogger(EdgeSegmentFactory.class.getCanonicalName()).warning(
+            "getFactory not implemented yet for edge segment implementation");
     return null;
   }    
   

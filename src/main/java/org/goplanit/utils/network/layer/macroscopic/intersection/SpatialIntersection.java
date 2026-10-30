@@ -1,0 +1,285 @@
+package org.goplanit.utils.network.layer.macroscopic.intersection;
+
+import java.util.List;
+import java.util.logging.Logger;
+import java.util.stream.Collectors;
+
+import org.goplanit.utils.id.IdAbleUtils;
+import org.goplanit.utils.id.IdGenerator;
+import org.goplanit.utils.id.IdGroupingToken;
+import org.goplanit.utils.network.layer.macroscopic.SpatialMovement;
+import org.goplanit.utils.network.layer.physical.LinkSegment;
+import org.goplanit.utils.network.layer.physical.Node;
+
+/**
+ * An intersection that covers an area: several member nodes, the link segments between them (internal segments, plain
+ * or with a signal standing on them), its approaches and every movement through it. There is one movement for each
+ * approach and exit its internal segments connect, banned or not, except the exit back along the approach's own link,
+ * so a pair of approach and exit without a movement is one they do not connect.
+ * <p>
+ * Next to its approaches, its internal segments with a signal and its movements can have a green ratio and saturation
+ * flow factor. A movement's own value is used in place of its approach's, not multiplied with it.
+ * </p>
+ * <p>
+ * A listed movement is not always one a mode can make. A movement can be banned for a mode explicitly, by a direct ban
+ * stored on the movement, see {@link SpatialMovement#hasDirectBan()}. It can also be banned implicitly, by a turn
+ * banned for the mode at a member node, or by an internal segment the mode has no access to, leaving the mode with no
+ * connection from the approach to the exit. An implicit ban is not stored, on the movement or on the intersection. It
+ * follows from the network inside the intersection as it is now.
+ * </p>
+ *
+ * @author markr
+ */
+public interface SpatialIntersection extends Intersection {
+
+  /**
+   * The green ratio a movement uses, see {@link #getGreenRatioUsedBy(SpatialMovement)}, without its warning
+   *
+   * @param movement to get it for, starting on one of the approaches
+   * @return the green ratio it uses, 1 when it has none and its approach has no signal
+   */
+  private double findGreenRatioUsedBy(SpatialMovement movement) {
+    var own = movement.getGreenRatio();
+    if (own != null) {
+      return own;
+    }
+    var approach = getApproach(movement.getLinkSegmentFrom());
+    return approach instanceof IntersectionSignalSegment ? ((IntersectionSignalSegment) approach).getGreenRatio() : 1;
+  }
+
+  /** the logger */
+  public static final Logger LOGGER = Logger.getLogger(SpatialIntersection.class.getCanonicalName());
+
+  /** id class for generating the ids of this kind */
+  public static final Class<SpatialIntersection> SPATIAL_INTERSECTION_ID_CLASS = SpatialIntersection.class;
+
+  /**
+   * Class used to generate the ids of this kind via the id generator
+   *
+   * @return class type
+   */
+  public default Class<? extends SpatialIntersection> getSpatialIntersectionIdClass() {
+    return SPATIAL_INTERSECTION_ID_CLASS;
+  }
+
+  /**
+   * Generate an id of this kind
+   *
+   * @param tokenId contiguous id generation within this group for instances of this class
+   * @return the generated id
+   */
+  public default long generateSpatialIntersectionId(final IdGroupingToken tokenId) {
+    return IdGenerator.generateId(tokenId, getSpatialIntersectionIdClass());
+  }
+
+  /**
+   * The id of this intersection among the spatial intersections of its layer, next to its intersection id, which is
+   * unique over both kinds
+   *
+   * @return spatial intersection id
+   */
+  public abstract long getSpatialIntersectionId();
+
+  /**
+   * Add a member node. Refused when the node is where an approach segment starts, since that segment would no longer
+   * enter the intersection.
+   *
+   * @param node to add
+   * @return true when added, false when already a member or refused
+   */
+  public abstract boolean addMemberNode(Node node);
+
+  /**
+   * The internal segment objects of this intersection, one for each link segment between two member nodes listed as
+   * internal: an {@link IntersectionSignalSegment} when a signal stands on it, an
+   * {@link IntersectionUnsignalisedSegment} when it is plain, each with its values. Being in this list is what makes it
+   * an internal segment; a link segment between two member nodes is internal only when listed here
+   *
+   * @return unmodifiable list of internal segment objects, in the order they were added
+   */
+  public abstract List<IntersectionSegment> getIntersectionInternalSegments();
+
+  /**
+   * The internal segment object of this intersection for a link segment, the very segment rather than one equal to it
+   *
+   * @param segment the link segment
+   * @return the internal segment object, an {@link IntersectionSignalSegment} or
+   * {@link IntersectionUnsignalisedSegment}, null when the link segment is not internal
+   */
+  public abstract IntersectionSegment getIntersectionInternalSegment(LinkSegment segment);
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public default IntersectionSegment getApproachOrInternalSegment(LinkSegment linkSegment) {
+    var approach = getApproach(linkSegment);
+    return approach != null ? approach : getIntersectionInternalSegment(linkSegment);
+  }
+
+  /**
+   * Internal link segments of this intersection, see {@link #getIntersectionInternalSegments()}
+   *
+   * @return unmodifiable list of internal segments
+   */
+  public default List<LinkSegment> getInternalSegments() {
+    return getIntersectionInternalSegments().stream().map(IntersectionSegment::getLinkSegment)
+        .collect(Collectors.toUnmodifiableList());
+  }
+
+  /**
+   * Internal segment with the given id
+   *
+   * @param segmentId to look for
+   * @return internal segment, null when not internal
+   */
+  public default LinkSegment getInternalSegment(long segmentId) {
+    return IdAbleUtils.findById(getInternalSegments(), segmentId);
+  }
+
+  /**
+   * Create a new plain internal segment object, an {@link IntersectionUnsignalisedSegment} without values, and add it
+   * to this intersection's internal segments. Its link segment must start and end at member nodes
+   *
+   * @param segment to add
+   * @return true when added, false when refused or already internal
+   */
+  public abstract boolean addNewInternalSegment(LinkSegment segment);
+
+  /**
+   * Remove an internal segment, with its signal and values
+   *
+   * @param segment to remove
+   * @return true when removed, false when not internal
+   */
+  public abstract boolean removeInternalSegment(LinkSegment segment);
+
+  /**
+   * Internal link segments with a signal standing on them; the other internal segments are plain
+   *
+   * @return unmodifiable list of internal segments with a signal
+   */
+  public default List<LinkSegment> getInternalSegmentsWithSignal() {
+    return getIntersectionInternalSegments().stream().filter(IntersectionSegment::hasSignal)
+        .map(IntersectionSegment::getLinkSegment).collect(Collectors.toUnmodifiableList());
+  }
+
+  /**
+   * Create a new internal segment object with a signal standing on it, an {@link IntersectionSignalSegment}, and add
+   * it to this intersection's internal segments, or give an internal segment already listed a signal: a new
+   * {@link IntersectionSignalSegment} then takes its place in the list, with its saturation flow factor copied, and
+   * the old object is no longer one of the internal segments. Like any internal segment its link segment must start
+   * and end at member nodes
+   *
+   * @param segment to add
+   * @return true when added or given a signal, false when refused or when it already has a signal
+   */
+  public abstract boolean addNewInternalSegmentWithSignal(LinkSegment segment);
+
+  /**
+   * The movements through this intersection, each from an approach to an exit
+   *
+   * @return unmodifiable list of movements
+   */
+  public abstract List<SpatialMovement> getMovements();
+
+  /**
+   * The movements through this intersection starting on an approach
+   *
+   * @param approach object of this intersection
+   * @return the movements starting on its link segment, in the order of {@link #getMovements()}
+   */
+  public default List<SpatialMovement> getMovementsFrom(IntersectionSegment approach) {
+    return getMovements().stream().filter(movement -> movement.getLinkSegmentFrom() == approach.getLinkSegment())
+        .collect(Collectors.toUnmodifiableList());
+  }
+
+  /**
+   * Add a movement through this intersection, which must start on one of its approaches
+   *
+   * @param movement to add
+   * @return true when added, false when refused or already present
+   */
+  public abstract boolean addMovement(SpatialMovement movement);
+
+  /**
+   * Remove a movement through this intersection
+   *
+   * @param movement to remove
+   * @return true when removed, false when not present
+   */
+  public abstract boolean removeMovement(SpatialMovement movement);
+
+  /**
+   * Verify if a movement has a green ratio of its own below 1 while its approach has no signal of its own. That is
+   * likely a mistake, for example 0.3 on a turn at a priority junction, but it may be intended
+   *
+   * @param movement to verify, starting on one of the approaches
+   * @return true when its own green ratio is below 1 and its approach has no signal of its own, false otherwise
+   */
+  public default boolean isMovementGreenRatioBelowOneWithoutSignal(SpatialMovement movement) {
+    var own = movement.getGreenRatio();
+    return own != null && own < 1 && !hasOwnSignal(movement.getLinkSegmentFrom());
+  }
+
+  /**
+   * The green ratio a movement uses: its own when it has one, otherwise that of its approach. For example, on an
+   * approach of 0.44 a right turn on a short arrow with its own 0.15 uses 0.15, and the other movements use 0.44. Its
+   * own value is used even when below 1 on an approach without a signal of its own, with a warning, see
+   * {@link #isMovementGreenRatioBelowOneWithoutSignal(SpatialMovement)}
+   *
+   * @param movement to get it for, starting on one of the approaches
+   * @return the green ratio it uses, 1 when it has none and its approach has no signal
+   */
+  public default double getGreenRatioUsedBy(SpatialMovement movement) {
+    if (isMovementGreenRatioBelowOneWithoutSignal(movement)) {
+      LOGGER.warning(String.format("Intersection %s uses green ratio %.2f of movement %s, while its approach has no " +
+          "signal", getIdsAsString(), movement.getGreenRatio(), movement.getIdsAsString()));
+    }
+    return findGreenRatioUsedBy(movement);
+  }
+
+  /**
+   * The effective capacity factor a movement uses: the green ratio it uses times the saturation flow factor it uses. It
+   * logs no warning of its own; the one for a green ratio below 1 on an approach without a signal is logged by
+   * {@link #getGreenRatioUsedBy(SpatialMovement)}
+   *
+   * @param movement to get it for, starting on one of the approaches
+   * @return the effective capacity factor it uses, 1 when neither it nor its approach has values
+   */
+  public default double getEffectiveCapacityFactorUsedBy(SpatialMovement movement) {
+    return findGreenRatioUsedBy(movement) * getSaturationFlowFactorUsedBy(movement);
+  }
+
+  /**
+   * The saturation flow factor a movement uses: its own when it has one, otherwise that of its approach
+   *
+   * @param movement to get it for, starting on one of the approaches
+   * @return the saturation flow factor it uses, 1 when it has none and does not start on an approach
+   */
+  public default double getSaturationFlowFactorUsedBy(SpatialMovement movement) {
+    var own = movement.getSaturationFlowFactor();
+    var approach = getApproach(movement.getLinkSegmentFrom());
+    return own != null ? own : approach != null ? approach.getSaturationFlowFactor() : 1;
+  }
+
+  /**
+   * {@inheritDoc} Once the approach has no signal of its own, the movements starting on it lose their green ratios too,
+   * keeping their saturation flow factors
+   */
+  @Override
+  public abstract IntersectionSegment swapApproachToNewSignalOrUnsignalised(
+      LinkSegment approachSegment, boolean hasOwnSignal);
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public abstract SpatialIntersection shallowClone();
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public abstract SpatialIntersection deepClone();
+}

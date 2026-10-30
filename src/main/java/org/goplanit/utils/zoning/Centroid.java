@@ -1,17 +1,13 @@
 package org.goplanit.utils.zoning;
 
-import org.goplanit.utils.graph.directed.DirectedVertex;
-import org.goplanit.utils.id.IdGenerator;
-import org.goplanit.utils.id.IdGroupingToken;
 import org.goplanit.utils.id.ManagedId;
-import org.goplanit.utils.network.layer.macroscopic.MacroscopicLinkSegmentType;
-import org.goplanit.utils.network.virtual.ConnectoidSegment;
 import org.locationtech.jts.geom.Point;
 
 import java.io.Serializable;
 
 /**
- * A centroid is a singular spatial location in a zone that is deemed most representative if the zone's geometry were to be condensed into a single point
+ * A centroid is a singular spatial location in a zone that is deemed most representative if the zone's geometry
+ * were to be condensed into a single point
  *
  * @author markr
  *

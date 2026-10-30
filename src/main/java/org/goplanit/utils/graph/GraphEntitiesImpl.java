@@ -4,6 +4,8 @@ import java.util.TreeMap;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
 
+import org.goplanit.utils.geo.GeometryIndexedContainer;
+import org.goplanit.utils.geo.GeometryIndexedContainerImpl;
 import org.goplanit.utils.wrapper.LongMapWrapperImpl;
 
 /**
@@ -13,7 +15,8 @@ import org.goplanit.utils.wrapper.LongMapWrapperImpl;
  *
  * @param <E> type of graph entity
  */
-public abstract class GraphEntitiesImpl<E extends GraphEntity> extends LongMapWrapperImpl<E> implements GraphEntities<E> {
+public abstract class GraphEntitiesImpl<E extends GraphEntity> extends LongMapWrapperImpl<E>
+        implements GraphEntities<E> {
 
   /**
    * Constructor
