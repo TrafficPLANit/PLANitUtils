@@ -14,6 +14,9 @@ public enum IntersectionSegmentKind {
   /** an approach with a signal of its own at a crossing that is no junction: green unless pedestrians cross */
   APPROACH_WITH_SIGNAL_AT_CROSSING_ONLY(true),
 
+  /** an approach with a signal of its own at a ramp meter: green at a fixed ratio */
+  APPROACH_WITH_SIGNAL_AT_RAMP_METER(true),
+
   /** an approach without a signal of its own, whose traffic gives way, so with a saturation flow factor only */
   APPROACH_WITHOUT_SIGNAL(true),
 

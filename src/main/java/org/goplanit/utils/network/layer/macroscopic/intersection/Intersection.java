@@ -296,6 +296,15 @@ public interface Intersection extends ExternalIdAble, ManagedId, Serializable {
   }
 
   /**
+   * Verify if this intersection has the kind ramp meter and no other
+   *
+   * @return true when it is a ramp meter only, false otherwise
+   */
+  public default boolean isRampMeterOnly() {
+    return getTypes().equals(Set.of(IntersectionType.RAMP_METER));
+  }
+
+  /**
    * Verify if a link segment is one of the approach segments of this intersection, the very segment rather than one
    * equal to it
    *
@@ -325,8 +334,11 @@ public interface Intersection extends ExternalIdAble, ManagedId, Serializable {
     if (!intersectionSegment.hasSignal()) {
       return IntersectionSegmentKind.APPROACH_WITHOUT_SIGNAL;
     }
-    return isJunction() ?
-        IntersectionSegmentKind.APPROACH_WITH_SIGNAL_AT_JUNCTION :
+    if (isJunction()) {
+      return IntersectionSegmentKind.APPROACH_WITH_SIGNAL_AT_JUNCTION;
+    }
+    return isRampMeterOnly() ?
+        IntersectionSegmentKind.APPROACH_WITH_SIGNAL_AT_RAMP_METER :
         IntersectionSegmentKind.APPROACH_WITH_SIGNAL_AT_CROSSING_ONLY;
   }
 
