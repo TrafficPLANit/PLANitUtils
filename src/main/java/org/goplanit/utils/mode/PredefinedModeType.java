@@ -129,4 +129,38 @@ public enum PredefinedModeType {
   public boolean isActiveModeType() {
     return this.equals( PredefinedModeType.BICYCLE) || this.equals( PredefinedModeType.PEDESTRIAN);
   }
+
+  /**
+   * Who drives this mode type: one of the people travelling in it for the cars, the motorbike, the bicycle and the
+   * goods vehicles, someone else for a taxi, ride share or public transport, and nobody when walking. A predefined
+   * mode's usability features take it from here
+   *
+   * @return driver type, null for the custom type, as a custom mode says it in its own features
+   */
+  public DriverType getDriverType() {
+    switch (this) {
+      case CAR:
+      case CAR_SHARE:
+      case CAR_HIGH_OCCUPANCY:
+      case MOTOR_BIKE:
+      case BICYCLE:
+      case GOODS_VEHICLE:
+      case HEAVY_GOODS_VEHICLE:
+      case LARGE_HEAVY_GOODS_VEHICLE:
+        return DriverType.TRAVELLER;
+      case TAXI:
+      case RIDE_SHARE:
+      case BUS:
+      case TRAM:
+      case LIGHTRAIL:
+      case SUBWAY:
+      case TRAIN:
+      case FERRY:
+        return DriverType.OPERATOR;
+      case PEDESTRIAN:
+        return DriverType.NONE;
+      default:
+        return null;
+    }
+  }
 }

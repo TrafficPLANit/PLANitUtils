@@ -19,6 +19,9 @@ public class StringUtils {
   /** precompiled regex pattern to split a string based on encountering a non-alphanumeric character */
   public static final Pattern SPLIT_BY_NON_ALPHA_NUMERIC = Pattern.compile("[^a-zA-Z0-9]");
 
+  /** number of values {@link #toBracketedList} is given to list when a collection may be too large to list in full */
+  public static final int DEFAULT_MAX_LISTED_ENTRIES = 10;
+
   /**
    * Create string ot use in String.format of form "0numPadding%d"
    * @param numPadding to apply
@@ -203,6 +206,29 @@ public class StringUtils {
   public static <E> String toSortedCommaSeparatedString(
       Collection<? extends E> elements, Function<? super E, String> toText) {
     return elements.stream().map(toText).sorted().collect(Collectors.joining(CharacterUtils.COMMA.toString()));
+  }
+
+  /**
+   * List values in one bracketed string, at most the given number of them, stating how many were left out, e.g.
+   * "[4,9,... (12 more)]" when two of fourteen values are listed
+   *
+   * @param <T> type of the values
+   * @param values to list, when null or empty an empty list is returned
+   * @param maxEntries maximum number of values to list
+   * @param valueToString writes one listed value
+   * @return the listing
+   */
+  public static <T> String toBracketedList(
+      Collection<T> values, int maxEntries, Function<? super T, String> valueToString) {
+    if (CollectionUtils.nullOrEmpty(values)) {
+      return "[]";
+    }
+
+    var listed = values.stream().limit(maxEntries).map(valueToString)
+        .collect(Collectors.joining(CharacterUtils.COMMA.toString()));
+    int notListedCount = values.size() - Math.min(values.size(), maxEntries);
+
+    return "[" + (notListedCount > 0 ? String.format("%s,... (%d more)", listed, notListedCount) : listed) + "]";
   }
 
   /**

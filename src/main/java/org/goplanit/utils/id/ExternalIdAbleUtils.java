@@ -1,11 +1,10 @@
 package org.goplanit.utils.id;
 
-import org.goplanit.utils.misc.LoggingUtils;
 import org.goplanit.utils.misc.Pair;
+import org.goplanit.utils.misc.StringUtils;
 
 import java.util.Collection;
 import java.util.function.Function;
-import java.util.stream.Collectors;
 
 /**
  * Id utils for ExternableId instances
@@ -59,16 +58,7 @@ public class ExternalIdAbleUtils {
    * @return combined string of the ids of the listed entities
    */
   public static String toIdsAsString(Collection<? extends ExternalIdAble> entities, int maxEntries) {
-    if (entities == null || entities.isEmpty()) {
-      return LoggingUtils.surroundWithBrackets("");
-    }
-
-    var listedEntities = entities.stream().limit(maxEntries)
-        .map(e -> "(" + e.getIdsAsString() + ")").collect(Collectors.joining(","));
-    int notListedCount = entities.size() - Math.min(entities.size(), maxEntries);
-
-    return LoggingUtils.surroundWithBrackets(notListedCount > 0 ?
-        String.format("%s,... (%d more)", listedEntities, notListedCount) : listedEntities);
+    return StringUtils.toBracketedList(entities, maxEntries, e -> "(" + e.getIdsAsString() + ")");
   }
 
   /**

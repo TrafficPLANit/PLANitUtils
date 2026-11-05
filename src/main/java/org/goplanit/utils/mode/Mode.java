@@ -84,7 +84,15 @@ public interface Mode extends ExternalIdAble, ManagedId {
    * @return true when a motorised road mode, false otherwise, including when it has no physical features
    */
   public default boolean isMotorisedRoadMode() {
-    return isRoadMode() && getPhysicalFeatures().getMotorisationType() == MotorisationModeType.MOTORISED;
+    return isRoadMode() && isMotorisedMode();
+  }
+
+  /** Verify if this mode is motorised, e.g. car, bus or train, but not a pedestrian or bicycle
+   *
+   * @return true when motorised, false otherwise, including when it has no physical features
+   */
+  public default boolean isMotorisedMode() {
+    return hasPhysicalFeatures() && getPhysicalFeatures().getMotorisationType() == MotorisationModeType.MOTORISED;
   }
 
   /** Verify if this mode travels on road, e.g., car, bus, bicycle or pedestrian, but not a tram or ferry
@@ -125,6 +133,18 @@ public interface Mode extends ExternalIdAble, ManagedId {
    */
   public default boolean hasUseFeatures() {
     return getUseFeatures()!=null;
+  }
+
+  /** Verify if this mode is motorised and driven by one of the people travelling in it, e.g. a car or a motorbike,
+   * unlike a taxi, ride share or bus, whose driver is not one of them, an automated vehicle, which nobody drives, or a
+   * bicycle, which is not motorised. Who drives is the driver type of its usability features, see
+   * {@link UsabilityModeFeatures#getDriverType()}
+   *
+   * @return true when motorised and driven by one of the people travelling in it, false otherwise, including when its
+   * features or its driver type are not known
+   */
+  public default boolean isSelfDrivenMotorisedMode() {
+    return isMotorisedMode() && hasUseFeatures() && getUseFeatures().getDriverType() == DriverType.TRAVELLER;
   }
 
   /** check if the mode is one of the PLANit predefined mode types or not

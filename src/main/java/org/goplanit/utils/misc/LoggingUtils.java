@@ -12,7 +12,7 @@ import java.util.logging.Logger;
  * @author markr
  */
 public class LoggingUtils {
-  
+
   /** Surround string with brackets "[%s]"
    * 
    * @param message to surround with brackets
