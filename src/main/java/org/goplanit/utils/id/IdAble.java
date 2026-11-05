@@ -1,5 +1,7 @@
 package org.goplanit.utils.id;
 
+import org.goplanit.utils.misc.HashUtils;
+
 /**
  * A class implementing this interface signals that it is id-able
  * 
@@ -77,20 +79,13 @@ public interface IdAble extends Comparable<IdAble> {
 
   /**
    * Generate a well-distributed, reproducible random seed based on this entity's ID.
-   * Uses the 64-bit finalizer avalanche function (fmix64) from MurmurHash3
-   * to eliminate sequential ID patterns and prevent pseudo-random correlation.
+   * Uses the 64-bit finaliser of MurmurHash3, {@link HashUtils#mix64(long)}, to eliminate sequential ID patterns and
+   * prevent pseudo-random correlation.
    *
    * @return a pseudo-random seed unique to this entity
-   * @see <a href="https://github.com/aappleby/smhasher">MurmurHash3 (SMHasher)</a>
    */
   public default long generateIdBasedRandomSeed() {
-    long id = getId();
-    id ^= id >>> 33;
-    id *= 0xff51afd7ed558ccdL;
-    id ^= id >>> 33;
-    id *= 0xc4ceb9fe1a85ec53L;
-    id ^= id >>> 33;
-    return id;
+    return HashUtils.mix64(getId());
   }
   
   /**
