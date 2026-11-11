@@ -2,11 +2,13 @@ package org.goplanit.utils.zoning;
 
 import java.util.logging.Logger;
 
+import org.goplanit.utils.geo.PlanitJtsUtils;
 import org.goplanit.utils.id.ExternalIdAble;
 import org.goplanit.utils.id.ManagedId;
 import org.goplanit.utils.misc.StringUtils;
 import org.locationtech.jts.geom.Envelope;
 import org.locationtech.jts.geom.Geometry;
+import org.locationtech.jts.geom.Point;
 
 /**
  * Zone represent a geographical area with a centroid which in turn represent the
@@ -79,7 +81,19 @@ public interface Zone extends ExternalIdAble, ManagedId {
     }
     return geometry;
   }
-  
+
+  /**
+   * The centre of this zone's geometry, the middle of the area it covers, see
+   * {@link PlanitJtsUtils#extractCentre(Geometry)}. Only a zone without a geometry of its own takes its centroid's
+   * position instead. The centroid is not the centre: it is where the zone's traffic enters the network and can sit
+   * anywhere in the zone, while the centre follows from the zone's shape alone
+   *
+   * @return the centre, null when the zone has neither a geometry nor a centroid position
+   */
+  public default Point getGeometryCentreOrCentroidPosition() {
+    return PlanitJtsUtils.extractCentre(getGeometry(true));
+  }
+
   /** Name of the zone 
    * 
    * @param name of the zone

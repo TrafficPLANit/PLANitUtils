@@ -61,7 +61,28 @@ public interface ExternalIdAble extends IdAble {
         throw new PlanItRunTimeException(String.format("Unknown id mapping type %s found", idMappingType));
     }
   }
-    
+
+  /**
+   * Set the XML and external ids from the entity's id in its source: the external id is the source id, the XML id
+   * the source id when mapping by XML id, or the internal id when mapping by external id
+   *
+   * @param sourceId id of the entity in its source
+   * @param idMapperType which id the source id maps to, XML or EXTERNAL_ID
+   */
+  public default void setIdsFromSourceId(String sourceId, IdMapperType idMapperType){
+    switch (idMapperType) {
+      case XML:
+        setXmlId(sourceId);
+        break;
+      case EXTERNAL_ID:
+        setXmlId(getId());
+        break;
+      default:
+        throw new PlanItRunTimeException(String.format("Unsupported id mapping %s for a source id", idMapperType));
+    }
+    setExternalId(sourceId);
+  }
+
   /** get external id of the entity
    * @return external id
    */

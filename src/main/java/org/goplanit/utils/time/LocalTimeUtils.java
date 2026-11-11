@@ -9,6 +9,9 @@ import java.util.concurrent.TimeUnit;
  */
 public class LocalTimeUtils {
 
+  /** the time of each second of the day, made on first use, so the times of a demand share few objects */
+  private static final LocalTime[] TIME_BY_SECOND_OF_DAY = new LocalTime[(int) TimeUnit.DAYS.toSeconds(1)];
+
   // 86400 = total seconds i the day
   public static final long SECONDS_IN_DAY = TimeUnit.DAYS.toSeconds(1);
 
@@ -164,13 +167,20 @@ public class LocalTimeUtils {
 
   /**
    * Convert seconds from midnight to a LocalTime, wrapping around the day for values at or beyond 24 hours
-   * (e.g. 97200, i.e. 27:00, becomes 03:00) and for negative values.
+   * (e.g. 97200, i.e. 27:00, becomes 03:00) and for negative values. The same second of the day gives the same
+   * instance.
    *
    * @param secondsFromMidnight to convert, may exceed a day or be negative
    * @return corresponding LocalTime on a standard clock face
    */
   public static LocalTime ofSecondOfDayWrapped(long secondsFromMidnight) {
-    return LocalTime.ofSecondOfDay(Math.floorMod(secondsFromMidnight, SECONDS_IN_DAY));
+    int secondOfDay = (int) Math.floorMod(secondsFromMidnight, SECONDS_IN_DAY);
+    var time = TIME_BY_SECOND_OF_DAY[secondOfDay];
+    if (time == null) {
+      time = LocalTime.ofSecondOfDay(secondOfDay); // two threads may each make one, equal and immutable
+      TIME_BY_SECOND_OF_DAY[secondOfDay] = time;
+    }
+    return time;
   }
 
   /**

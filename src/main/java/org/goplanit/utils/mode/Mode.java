@@ -147,6 +147,14 @@ public interface Mode extends ExternalIdAble, ManagedId {
     return isMotorisedMode() && hasUseFeatures() && getUseFeatures().getDriverType() == DriverType.TRAVELLER;
   }
 
+  /** Verify if this mode is public transport: a mode whose use is public, such as a bus, a train or a ferry
+   *
+   * @return true when its use is public, false otherwise, including when its use features are not known
+   */
+  public default boolean isPublicTransportMode() {
+    return hasUseFeatures() && getUseFeatures().getUseOfType() == UseOfModeType.PUBLIC;
+  }
+
   /** check if the mode is one of the PLANit predefined mode types or not
    * 
    * @return true when predefined, false, when custom

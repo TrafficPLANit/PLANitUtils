@@ -20,4 +20,20 @@ public class StringUtilsTest {
     /* sorted as text, so 10 comes before 2 and 9 */
     assertEquals("10,2,9", StringUtils.toSortedCommaSeparatedString(List.of(9, 10, 2), Object::toString));
   }
+
+  /** Values of any type are turned into text in order, an enum's by their names, as whole numbers are */
+  @Test
+  public void toStrings() {
+    assertEquals(List.of("12", "40"), StringUtils.toStrings(12, 40));
+    assertEquals(List.of("DAYS", "HOURS"), StringUtils.toStrings(
+        new java.util.concurrent.TimeUnit[]{java.util.concurrent.TimeUnit.DAYS, java.util.concurrent.TimeUnit.HOURS}));
+    assertEquals(List.of(), StringUtils.toStrings(new Object[0]));
+  }
+
+  /** An enum constant's name read as a sentence: the first word capitalised, the rest in lower case, words apart */
+  @Test
+  public void toSentence() {
+    assertEquals("Half days", StringUtils.toSentence(java.time.temporal.ChronoUnit.HALF_DAYS));
+    assertEquals("Days", StringUtils.toSentence(java.util.concurrent.TimeUnit.DAYS));
+  }
 }

@@ -40,6 +40,16 @@ public interface TimePeriod extends ExternalIdAble, ManagedId {
   public abstract long getDurationSeconds();
 
   /**
+   * The end of this period in seconds since midnight, its start plus its duration, so past a day for a period that
+   * runs over midnight
+   *
+   * @return end time in seconds since midnight
+   */
+  public default long getEndTimeSeconds() {
+    return getStartTimeSeconds() + getDurationSeconds();
+  }
+
+  /**
    * Return the description
    * 
    * @return description of this TimePeriod

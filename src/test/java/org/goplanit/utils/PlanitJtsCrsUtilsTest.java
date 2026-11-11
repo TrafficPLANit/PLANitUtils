@@ -95,6 +95,37 @@ public class PlanitJtsCrsUtilsTest {
     assertThrows(PlanItRunTimeException.class, () -> projected.getDistanceInMetres(c(1, 1), (Coordinate) null));
   }
 
+  /** A box's width and height in metres are measured across its middle: those of the plane in a projected crs, and
+   * on the ellipsoid in a geographic one, where a degree of longitude is shorter than one of latitude near Sydney */
+  @Test
+  public void boxWidthAndHeightAreMeasuredAcrossItsMiddle() {
+    var box = new Envelope(2, 5, 1, 5);
+    assertEquals(3, projected.getWidthInMetres(box), PLANE_TOLERANCE);
+    assertEquals(4, projected.getHeightInMetres(box), PLANE_TOLERANCE);
+
+    var degree = new Envelope(151, 152, -34, -33);
+    assertEquals(110_913.399, geographic.getHeightInMetres(degree), GEODETIC_TOLERANCE);
+    assertEquals(geographic.getDistanceInMetres(c(151, -33.5), c(152, -33.5)), geographic.getWidthInMetres(degree),
+        GEODETIC_TOLERANCE);
+    assertTrue(geographic.getWidthInMetres(degree) < geographic.getHeightInMetres(degree));
+  }
+
+  /** A polygon's area in square metres: that of the plane in a projected crs, 100 for the square of 10 by 10; in a
+   * geographic crs scaled by its box's width and height in metres, so a square of a degree near Sydney is that width
+   * times that height; a line has no area */
+  @Test
+  public void areaInSquareMetres() {
+    assertEquals(100, projected.getAreaInSquareMetres(square()), PLANE_TOLERANCE);
+
+    var degreeSquare = PlanitJtsUtils.create2DPolygon(new Envelope(151, 152, -34, -33));
+    var degree = degreeSquare.getEnvelopeInternal();
+    assertEquals(geographic.getWidthInMetres(degree) * geographic.getHeightInMetres(degree),
+        geographic.getAreaInSquareMetres(degreeSquare), 1);
+
+    var line = new GeometryFactory().createLineString(new Coordinate[]{c(0, 0), c(10, 0)});
+    assertEquals(0, projected.getAreaInSquareMetres(line), PLANE_TOLERANCE);
+  }
+
   // ---------------------------------------------------------------------------------------------------------------
   // length along a line string
   // ---------------------------------------------------------------------------------------------------------------

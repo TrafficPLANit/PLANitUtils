@@ -2,8 +2,17 @@ package org.goplanit.utils.misc;
 
 import java.util.Arrays;
 
-/** Common location to provide some utilities for common hashing tasks
- * 
+/**
+ * Hashing helpers: combined hash codes for keys, and reproducible random seeds.
+ * <p>
+ * The seeds let a random draw depend only on what it is about: {@link #createCombinedSeed(long...)} of a fixed seed and
+ * the ids of the entities the draw concerns, such as a household and its zone. Adding or dropping one entity, or
+ * reading them in another order, then changes none of the other draws. With one random sequence used in turn instead,
+ * every draw after the change would shift, and two runs on almost the same input could no longer be compared entity by
+ * entity. {@link #mix64(long)} spreads ids that follow each other, such as 7 and 8, to seeds far apart, so neighbouring
+ * entities do not get related draws.
+ * </p>
+ *
  * @author markr
  */
 public class HashUtils {

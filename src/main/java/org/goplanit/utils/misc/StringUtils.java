@@ -238,6 +238,28 @@ public class StringUtils {
    * @return the values as strings, in order
    */
   public static List<String> toStrings(long... values) {
-    return Arrays.stream(values).mapToObj(String::valueOf).collect(Collectors.toList());
+    return toStrings(Arrays.stream(values).boxed().toArray());
+  }
+
+  /**
+   * Each value as a string, in order. For example, the values DAYS and HOURS of an enum give "DAYS" and "HOURS"
+   *
+   * @param values to convert, such as an enum's values()
+   * @return the values as strings, in order
+   */
+  public static List<String> toStrings(Object[] values) {
+    return Arrays.stream(values).map(String::valueOf).collect(Collectors.toList());
+  }
+
+  /**
+   * An enum constant's name read as a sentence, for a message: the words its underscores separate, the first
+   * capitalised and the rest in lower case. For example, PERSON_TRIPS_BY_MODE gives "Person trips by mode"
+   *
+   * @param constant to read
+   * @return the sentence
+   */
+  public static String toSentence(Enum<?> constant) {
+    var words = constant.name().replace('_', ' ').toLowerCase();
+    return words.isEmpty() ? words : Character.toUpperCase(words.charAt(0)) + words.substring(1);
   }
 }

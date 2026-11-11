@@ -520,6 +520,48 @@ public class PlanitJtsCrsUtils {
   }
 
   /**
+   * The width of a box in metres, measured from its west to its east side across its middle, so in a geographic crs
+   * it is the width halfway up rather than at its wider or narrower edge
+   *
+   * @param box in the crs registered on this class instance
+   * @return width in metres
+   */
+  public double getWidthInMetres(Envelope box){
+    var centre = box.centre();
+    return getDistanceInMetres(new Coordinate(box.getMinX(), centre.y), new Coordinate(box.getMaxX(), centre.y));
+  }
+
+  /**
+   * The height of a box in metres, measured from its south to its north side across its middle
+   *
+   * @param box in the crs registered on this class instance
+   * @return height in metres
+   */
+  public double getHeightInMetres(Envelope box){
+    var centre = box.centre();
+    return getDistanceInMetres(new Coordinate(centre.x, box.getMinY()), new Coordinate(centre.x, box.getMaxY()));
+  }
+
+  /**
+   * The area of a geometry in square metres: its area in the units of the crs, scaled by the width and height of its
+   * box in metres, which is exact in a projected crs and close for a small geometry in a geographic one; 0 for a
+   * geometry without area, such as a line or a point
+   *
+   * @param geometry in the crs registered on this class instance
+   * @return area in square metres
+   */
+  public double getAreaInSquareMetres(Geometry geometry){
+    if (geometry == null || geometry.getDimension() < 2) {
+      return 0;
+    }
+    var box = geometry.getEnvelopeInternal();
+    if (box.getWidth() <= 0 || box.getHeight() <= 0) {
+      return 0;
+    }
+    return geometry.getArea() * (getWidthInMetres(box) / box.getWidth()) * (getHeightInMetres(box) / box.getHeight());
+  }
+
+  /**
    * Compute the linear distance between two (JTS) coordinates assuming the positions are provided in the same crs
    * as registered on this class instance. The unit is not guaranteed to be in metres but it is guaranteed to be
    * linear even if the CRS is not

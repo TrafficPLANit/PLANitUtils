@@ -3,10 +3,15 @@ package org.goplanit.utils;
 import org.goplanit.utils.time.LocalTimeUtils;
 import org.junit.jupiter.api.Test;
 import java.time.LocalTime;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 
 public class LocalWrapAroundTimeUtilsTest {
+
+  /** 08:15:42 as seconds from midnight, a time LocalTime does not share by itself as it does whole hours */
+  private static final long SECONDS_OF_08_15_42 = 8 * 3600 + 15 * 60 + 42;
 
   // =========================================================================
   // 1. STANDARD DAY SHIFT CASES (NO WRAP-AROUND)
@@ -151,5 +156,19 @@ public class LocalWrapAroundTimeUtilsTest {
 
     assertTrue(LocalTimeUtils.isValidOrderForWrapAroundDayAnchors(refStart, refEnd, checkStart, checkEnd),
         "Equal start and end (11PM to 11PM) is ordered, the end does not precede the start");
+  }
+
+  // =========================================================================
+  // 3. SECONDS FROM MIDNIGHT TO A TIME OF DAY
+  // =========================================================================
+
+  @Test
+  public void testSameSecondOfDayGivesSameInstance() {
+    var time = LocalTimeUtils.ofSecondOfDayWrapped(SECONDS_OF_08_15_42);
+
+    assertEquals(LocalTime.of(8, 15, 42), time);
+    assertSame(time, LocalTimeUtils.ofSecondOfDayWrapped(SECONDS_OF_08_15_42));
+    assertSame(time, LocalTimeUtils.ofSecondOfDayWrapped(SECONDS_OF_08_15_42 + LocalTimeUtils.SECONDS_IN_DAY));
+    assertSame(time, LocalTimeUtils.ofSecondOfDayWrapped(SECONDS_OF_08_15_42 - LocalTimeUtils.SECONDS_IN_DAY));
   }
 }

@@ -3,7 +3,10 @@ package org.goplanit.utils.misc.binning;
 import org.goplanit.utils.exceptions.PlanItRunTimeException;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 /**
  * Builder for a {@link BinningConfiguration}, both freely bin by bin and via factory methods for the arrangements
@@ -21,6 +24,35 @@ import java.util.List;
  * @param <T> numeric type of the bounds
  */
 public class BinBuilder<T extends Number & Comparable<T>> {
+
+  /**
+   * Bins given the inclusive lower bound of each, each running up to the next bound, the last up to and including the
+   * given upper bound that stands for unbounded
+   *
+   * @param <T> numeric type of the bounds
+   * @param inclusiveLowerBounds lower bound of each bin in strictly increasing order
+   * @param unboundedUpperBound upper bound of the last bin, the type's maximum
+   * @return created configuration
+   */
+  private static <T extends Number & Comparable<T>> BinningConfiguration<T> ofInclusiveLowerBounds(
+      List<T> inclusiveLowerBounds, T unboundedUpperBound) {
+    PlanItRunTimeException.throwIf(inclusiveLowerBounds.isEmpty(),
+        "At least a single lower bound is required to construct bins");
+
+    var builder = BinBuilder.<T>create();
+    for (int index = 0; index < inclusiveLowerBounds.size(); ++index) {
+      final T lowerBound = inclusiveLowerBounds.get(index);
+      if (index == inclusiveLowerBounds.size() - 1) {
+        builder.addBin(lowerBound, unboundedUpperBound, true, true, ">=" + lowerBound);
+        break;
+      }
+      final T nextLowerBound = inclusiveLowerBounds.get(index + 1);
+      PlanItRunTimeException.throwIf(nextLowerBound.compareTo(lowerBound) <= 0,
+          "Bin lower bounds must be in strictly increasing order, found %s after %s", nextLowerBound, lowerBound);
+      builder.addBin(lowerBound, nextLowerBound, true, false, null);
+    }
+    return builder.build();
+  }
 
   /** bins collected so far, in the order they were added */
   protected final List<Bin<T>> bins = new ArrayList<>();
@@ -116,23 +148,27 @@ public class BinBuilder<T extends Number & Comparable<T>> {
    * @return created configuration
    */
   public static BinningConfiguration<Integer> ofInclusiveIntegerLowerBounds(int... inclusiveLowerBounds) {
-    PlanItRunTimeException.throwIf(inclusiveLowerBounds == null || inclusiveLowerBounds.length == 0,
-        "At least a single lower bound is required to construct integer bins");
+    return ofInclusiveLowerBounds(inclusiveLowerBounds == null ? List.of()
+        : Arrays.stream(inclusiveLowerBounds).boxed().collect(Collectors.toList()), Integer.MAX_VALUE);
+  }
 
-    var builder = BinBuilder.<Integer>create();
-    for (int index = 0; index < inclusiveLowerBounds.length; ++index) {
-      final int lowerBound = inclusiveLowerBounds[index];
-      if (index == inclusiveLowerBounds.length - 1) {
-        builder.addBin(lowerBound, Integer.MAX_VALUE, true, true, ">=" + lowerBound);
-        break;
-      }
-      final int nextLowerBound = inclusiveLowerBounds[index + 1];
-      PlanItRunTimeException.throwIf(nextLowerBound <= lowerBound,
-          "Integer bin lower bounds must be in strictly increasing order, found %d after %d",
-          nextLowerBound, lowerBound);
-      builder.addBin(lowerBound, nextLowerBound, true, false, null);
-    }
-    return builder.build();
+  /**
+   * Factory method for bins over real numbers given the inclusive lower bound of each, the last of which is
+   * unbounded, as {@link #ofInclusiveIntegerLowerBounds(int...)} makes them for whole numbers.
+   * <p>
+   * For example {@code ofInclusiveDoubleLowerBounds(0, 1, 2, 5)} yields bins labelled {@code [0.0,1.0)},
+   * {@code [1.0,2.0)}, {@code [2.0,5.0)} and {@code &gt;=5.0}, so a value of exactly 2 falls in the third. Bands of
+   * distance are the arrangement this is for: each band starts at a round number, and the last holds everything
+   * further.
+   * </p>
+   *
+   * @param inclusiveLowerBounds lower bound of each bin in strictly increasing order, inclusive, the last one opening
+   *          the unbounded bin
+   * @return created configuration
+   */
+  public static BinningConfiguration<Double> ofInclusiveDoubleLowerBounds(double... inclusiveLowerBounds) {
+    return ofInclusiveLowerBounds(inclusiveLowerBounds == null ? List.of()
+        : Arrays.stream(inclusiveLowerBounds).boxed().collect(Collectors.toList()), Double.MAX_VALUE);
   }
 
   /**
@@ -161,6 +197,34 @@ public class BinBuilder<T extends Number & Comparable<T>> {
       builder.addBin(binLowerBound, binUpperBound, true, last, null);
     }
     return builder.build();
+  }
+
+  /**
+   * Factory method for bins holding about equal numbers of the given values: each bin starts at the value its share
+   * of the values starts at, the quantiles, and the last is unbounded
+   * <p>
+   * For example the values 10, 20, 30, 40 and 50 in five bins give a bin starting at each, one value each, so incomes
+   * cut in their fifths. The values 0, 1, 1, 1 and 2 in two bins give bins from 0 and from 1: the second share starts
+   * at the third value, a 1, and the values equal to it stay with it, so that bin holds four. Equal values cannot be
+   * split over bins, which can leave fewer bins than asked for. A value below the smallest falls in no bin.
+   * </p>
+   *
+   * @param sortedValues to cut, at least one, in increasing order
+   * @param numberOfBins to cut them in, at least one
+   * @return created configuration
+   */
+  public static BinningConfiguration<Double> ofEqualCountDoubleBins(double[] sortedValues, int numberOfBins) {
+    PlanItRunTimeException.throwIf(sortedValues == null || sortedValues.length == 0,
+        "At least a single value is required to cut bins of equal counts");
+    PlanItRunTimeException.throwIf(numberOfBins < 1, "At least a single bin is required, found %d", numberOfBins);
+    for (int index = 1; index < sortedValues.length; ++index) {
+      PlanItRunTimeException.throwIf(sortedValues[index] < sortedValues[index - 1],
+          "Values to cut bins of equal counts from must be in increasing order, found %s after %s",
+          sortedValues[index], sortedValues[index - 1]);
+    }
+    return ofInclusiveDoubleLowerBounds(IntStream.range(0, numberOfBins)
+        .mapToDouble(bin -> sortedValues[(int) ((long) bin * sortedValues.length / numberOfBins)])
+        .distinct().toArray());
   }
 
   /**

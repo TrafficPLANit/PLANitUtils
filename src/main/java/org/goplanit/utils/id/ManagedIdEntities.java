@@ -109,14 +109,25 @@ public interface ManagedIdEntities<E extends ManagedId> extends LongMapWrapper<E
   }
 
   /**
-   * Convenience method to perform group by based on uncerlying streaming mechanisms
+   * Group the entities by the key the classifier gives, each group in the order of the container. An entity whose key
+   * is null is left out, such as a person without a household when grouping persons by household
+   * <p>
+   * {@link Collectors#groupingBy(Function)} throws on a null key, so the groups are collected here instead.
+   * </p>
    *
    * @param classifier for group by
    * @return map with key containing the classifier and value being a list of matched entities in the container
    * @param <K> classifier to apply
    */
   public default <K> Map<K, List<E>> groupBy(Function<? super E, ? extends K> classifier){
-    return this.stream().collect(Collectors.groupingBy(classifier));
+    var groups = new HashMap<K, List<E>>();
+    this.stream().forEach(entity -> {
+      K key = classifier.apply(entity);
+      if (key != null) {
+        groups.computeIfAbsent(key, newKey -> new ArrayList<>()).add(entity);
+      }
+    });
+    return groups;
   }
 
   /** Stream the container sorted by the given sort function
@@ -145,14 +156,14 @@ public interface ManagedIdEntities<E extends ManagedId> extends LongMapWrapper<E
 
   /**
    * Lay an index on the entities based on provided mapping function which is used to construct the index.
-   * It is assumed the index is not unique.
+   * It is assumed the index is not unique. An entity whose key is null is left out, see {@link #groupBy(Function)}
    *
    * @param mappingFunction to construct keys in resulting index map
    * @return map with key being the index and value containing original entities relating to it
    * @param <T> type of the index
    */
   public default <T> Map<T,List<E>> createGroupByIndex(Function<E, T> mappingFunction){
-    return this.stream().collect(Collectors.groupingBy(mappingFunction));
+    return groupBy(mappingFunction);
   }
 
   /**

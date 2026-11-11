@@ -56,13 +56,29 @@ public class ArrayUtils {
               "to, addTo failed");
       return destination;
     }
-    
+    return addTo(destination, 0, addToDestination, 0, 1, numberOfElements);
+  }
+
+  /**
+   * Add a multiple of part of a second array element-wise to part of the first array: from the given positions on,
+   * each value of the destination becomes itself plus the factor times the matching value of the second array
+   *
+   * @param destination the array to be updated
+   * @param destinationOffset position in the destination of the first value to update
+   * @param addToDestination array of values to be added to the destination array
+   * @param addToDestinationOffset position in addToDestination of the first value to add
+   * @param factor to multiply each added value with
+   * @param numberOfElements number of values to update
+   * @return destination array
+   */
+  public static double[] addTo(double[] destination, int destinationOffset, double[] addToDestination,
+      int addToDestinationOffset, double factor, int numberOfElements) {
     for (int index = 0; index < numberOfElements; ++index) {
-      destination[index] += addToDestination[index];
+      destination[destinationOffset + index] += factor * addToDestination[addToDestinationOffset + index];
     }
     return destination;
   }
-  
+
   /**
    * Add the values of a second array element-wise to the first array
    * 
@@ -77,12 +93,7 @@ public class ArrayUtils {
       LOGGER.warning("addToDestination array has less elements than destination array to add to, addTo failed");
       return destination;
     }
-    
-    int length = destination.length;
-    for (int index = 0; index < length; ++index) {
-      destination[index] += addToDestination[index];
-    }
-    return destination;
+    return addTo(destination, 0, addToDestination, 0, 1, destination.length);
   }
 
   /**
@@ -200,9 +211,24 @@ public class ArrayUtils {
    * @return the value of the dot product
    */
   public static double dotProduct(double[] d1, double[] d2, int numberOfElements) {
+    return dotProduct(d1, 0, d2, 0, numberOfElements);
+  }
+
+  /**
+   * Return the dot product of parts of two arrays, each from the given position on, e.g. a[o1]*b[o2] + a[o1+1]*b[o2+1]
+   * etc
+   *
+   * @param d1 first array in the dot product
+   * @param offset1 position in the first array of its first value to take
+   * @param d2 second array in the dot product
+   * @param offset2 position in the second array of its first value to take
+   * @param numberOfElements number of values to take from each array
+   * @return the value of the dot product
+   */
+  public static double dotProduct(double[] d1, int offset1, double[] d2, int offset2, int numberOfElements) {
     double sum = 0.0;
     for (int index = 0; index < numberOfElements; ++index) {
-      sum += d1[index] * d2[index];
+      sum += d1[offset1 + index] * d2[offset2 + index];
     }
     return sum;
   }

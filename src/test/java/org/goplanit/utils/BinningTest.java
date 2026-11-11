@@ -4,6 +4,7 @@ import org.goplanit.utils.exceptions.PlanItRunTimeException;
 import org.goplanit.utils.misc.binning.Bin;
 import org.goplanit.utils.misc.binning.BinBuilder;
 import org.goplanit.utils.misc.binning.BinnedCount;
+import org.goplanit.utils.misc.binning.BinnedSum;
 import org.goplanit.utils.misc.binning.BinningConfiguration;
 import org.junit.jupiter.api.Test;
 
@@ -178,6 +179,49 @@ public class BinningTest {
   }
 
   @Test
+  public void doubleLowerBoundsPutTheLastAtTheStartOfTheUnboundedBin() {
+    /* distance bands in km, the last open ended */
+    var configuration = BinBuilder.ofInclusiveDoubleLowerBounds(0, 1, 2, 5);
+
+    assertEquals(4, configuration.size());
+    assertEquals(0, configuration.binIndexOf(0.0));
+    assertEquals(0, configuration.binIndexOf(0.99));
+    assertEquals(1, configuration.binIndexOf(1.0));
+    assertEquals(2, configuration.binIndexOf(3.0));
+    assertEquals(3, configuration.binIndexOf(5.0));
+    assertEquals(3, configuration.binIndexOf(1000.0));
+    assertEquals(-1, configuration.binIndexOf(-0.5));
+
+    assertThrows(PlanItRunTimeException.class, () -> BinBuilder.ofInclusiveDoubleLowerBounds(0, 2, 2));
+    assertThrows(PlanItRunTimeException.class, () -> BinBuilder.ofInclusiveDoubleLowerBounds(0, 5, 2));
+    assertThrows(PlanItRunTimeException.class, BinBuilder::ofInclusiveDoubleLowerBounds);
+  }
+
+  @Test
+  public void equalCountBinsStartAtTheQuantilesAndKeepEqualValuesTogether() {
+    /* five incomes in fifths, one each */
+    var fifths = BinBuilder.ofEqualCountDoubleBins(new double[]{10, 20, 30, 40, 50}, 5);
+    assertEquals(5, fifths.size());
+    assertEquals(0, fifths.binIndexOf(10.0));
+    assertEquals(1, fifths.binIndexOf(29.0));
+    assertEquals(4, fifths.binIndexOf(50.0));
+    assertEquals(4, fifths.binIndexOf(1000.0));
+
+    /* the second half starts at the third value, a 1 whose equals stay with it in the second bin */
+    var halves = BinBuilder.ofEqualCountDoubleBins(new double[]{0, 1, 1, 1, 2}, 2);
+    assertEquals(2, halves.size());
+    assertEquals(0, halves.binIndexOf(0.0));
+    assertEquals(1, halves.binIndexOf(1.0));
+
+    /* equal values cannot be split, so fewer bins than asked for */
+    assertEquals(1, BinBuilder.ofEqualCountDoubleBins(new double[]{3, 3, 3}, 3).size());
+
+    assertThrows(PlanItRunTimeException.class, () -> BinBuilder.ofEqualCountDoubleBins(new double[]{2, 1}, 2));
+    assertThrows(PlanItRunTimeException.class, () -> BinBuilder.ofEqualCountDoubleBins(new double[]{}, 2));
+    assertThrows(PlanItRunTimeException.class, () -> BinBuilder.ofEqualCountDoubleBins(new double[]{1}, 0));
+  }
+
+  @Test
   public void integerUpperBoundsAreValidated() {
     /* not in increasing order */
     assertThrows(PlanItRunTimeException.class,
@@ -265,5 +309,33 @@ public class BinningTest {
     var all = counts.getCountsByLabel(false);
     assertEquals(List.of("1", "2-5", "6-20", ">=21"), List.copyOf(all.keySet()));
     assertEquals(0L, all.get("6-20").longValue());
+  }
+
+  @Test
+  public void weightsAreSummedPerBinWithOutOfRangeKeptApart() {
+    var configuration = BinBuilder.ofInclusiveIntegerUpperBounds(
+        1, 1, 5, 20, Integer.MAX_VALUE);
+    var sums = BinnedSum.of(configuration);
+    var counts = BinnedCount.of(configuration);
+
+    sums.add(1, 2.5);
+    sums.add(1, 0.5);
+    sums.add(4, 1);
+    /* outside the range, since the bins start at 1 */
+    sums.add(0, 0.25);
+    counts.increment(1);
+    counts.increment(4);
+
+    assertEquals(3.0, sums.getSum(0), 1e-12);
+    assertEquals(1.0, sums.getSum(1), 1e-12);
+    assertEquals(0.0, sums.getSum(2), 1e-12);
+    assertEquals(0.25, sums.getOutOfRangeSum(), 1e-12);
+    assertEquals(4.25, sums.getTotal(), 1e-12);
+    assertSame(configuration, sums.getConfiguration());
+
+    /* on the same bins a count and a sum fill the same bins */
+    for (int index = 0; index < configuration.size(); ++index) {
+      assertEquals(counts.getCount(index) > 0, sums.getSum(index) > 0);
+    }
   }
 }
