@@ -95,6 +95,15 @@ public interface Mode extends ExternalIdAble, ManagedId {
     return hasPhysicalFeatures() && getPhysicalFeatures().getMotorisationType() == MotorisationModeType.MOTORISED;
   }
 
+  /** Verify if this mode is active: a mode whose use is active, travelled under the traveller's own power, such as a
+   * pedestrian or a bicycle, as {@link PredefinedModeType#isActiveModeType()} says of the predefined types
+   *
+   * @return true when its use is active, false otherwise, including when it has no usability features
+   */
+  public default boolean isActiveMode() {
+    return hasUseFeatures() && getUseFeatures().getUseOfType() == UseOfModeType.ACTIVE;
+  }
+
   /** Verify if this mode travels on road, e.g., car, bus, bicycle or pedestrian, but not a tram or ferry
    *
    * @return true when a road mode, false otherwise, including when it has no physical features

@@ -18,7 +18,7 @@ public abstract class ManagedGraphEntitiesImpl<E extends GraphEntity & ManagedId
         extends ManagedIdEntitiesImpl<E> implements ManagedGraphEntities<E> {
 
   /**
-   * Constructor
+   * Constructor, keeping the entities in a {@link org.goplanit.utils.containers.LongKeyArrayMap}
    *
    * @param valueToKey the mapping from key to value of the graph entity
    * @param managedIdClass should reflect the class signature used for generating the managed id of this class when creating it via the factory
@@ -30,7 +30,7 @@ public abstract class ManagedGraphEntitiesImpl<E extends GraphEntity & ManagedId
   }
 
   /**
-   * Constructor. while not recommended it is allowed to create managed ids that do not rely on id generation of the class itself. It can be that they rely on child
+   * Constructor, keeping the entities in a {@link org.goplanit.utils.containers.LongKeyArrayMap}. while not recommended it is allowed to create managed ids that do not rely on id generation of the class itself. It can be that they rely on child
    * ids or synced ids of other internal referenced classes. In that case this constructor can be used directly. this however should generally be avoided.
    *
    * @param valueToKey the mapping from key to value of the graph entity

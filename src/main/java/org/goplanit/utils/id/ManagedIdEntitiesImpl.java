@@ -1,43 +1,50 @@
 package org.goplanit.utils.id;
 
 import java.util.Map;
-import java.util.TreeMap;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
 
+import org.goplanit.utils.containers.LongKeyArrayMap;
 import org.goplanit.utils.id.IdGenerator;
 import org.goplanit.utils.time.TimePeriod;
 import org.goplanit.utils.wrapper.LongMapWrapperImpl;
 
 /**
- * Base class for containers of managed id entities
- * 
+ * Base class for containers of managed id entities, keeping them by id in a {@link LongKeyArrayMap} unless a container
+ * gives a map of its own
+ * <p>
+ * A container holds its entities by their id, and ids are numbered in sequence within their group, so an array by id
+ * holds them in a fraction of the memory a TreeMap takes, and finds them faster, as a network or a demand of millions
+ * of entities needs. A container holding a few entities of a long id sequence it shares with others, such as the paths
+ * of one origin-destination pair, gives a TreeMap instead, as an array would not suit its keys.
+ * </p>
+ *
  * @author markr
  *
  * @param <E> type of managed id entity
  */
 public abstract class ManagedIdEntitiesImpl<E extends ManagedId> extends
         LongMapWrapperImpl<E> implements ManagedIdEntities<E> {
-  
+
   /** the class signature used for generating the managed id within the group defined by the token */
   protected final Class<? extends ManagedId> managedIdClass;
-  
+
   /**
-   * Constructor
-   * 
+   * Constructor, keeping the entities in a {@link LongKeyArrayMap}
+   *
    * @param valueToKey the mapping from key to value of the graph entity
    * @param managedIdClass should reflect the class signature used for generating the managed id of this class
    *                      when creating it via the factory
    * of this container
    */
   protected ManagedIdEntitiesImpl(final Function<E, Long> valueToKey, final Class<? extends ManagedId> managedIdClass) {
-    super(new TreeMap<>(), valueToKey);
+    super(new LongKeyArrayMap<>(), valueToKey);
     this.managedIdClass = managedIdClass;
   }
 
   /**
    * Constructor keeping the entities in the given map, so a container can choose how its entities are kept, e.g. a
-   * {@link org.goplanit.utils.containers.LongKeyArrayMap} for millions of entities
+   * TreeMap for a few entities of a long id sequence shared with other containers
    *
    * @param mapToWrap empty map to keep the entities in by their id
    * @param valueToKey the mapping from key to value of the graph entity
@@ -51,14 +58,15 @@ public abstract class ManagedIdEntitiesImpl<E extends ManagedId> extends
   }
 
   /**
-   * Constructor. while not recommended it is allowed to create managed ids that do not rely on id generation of
-   * the class itself. It can be that they rely on child ids or synced ids of other internal referenced classes.
-   * In that case this constructor can be used directly. this however should generally be avoided.
-   * 
+   * Constructor, keeping the entities in a {@link LongKeyArrayMap}. while not recommended it is allowed to create
+   * managed ids that do not rely on id generation of the class itself. It can be that they rely on child ids or
+   * synced ids of other internal referenced classes. In that case this constructor can be used directly. this however
+   * should generally be avoided.
+   *
    * @param valueToKey the mapping from key to value of the graph entity
    */
   protected ManagedIdEntitiesImpl(final Function<E, Long> valueToKey) {
-    super(new TreeMap<>(), valueToKey);
+    super(new LongKeyArrayMap<>(), valueToKey);
     this.managedIdClass = null;
   }
 
