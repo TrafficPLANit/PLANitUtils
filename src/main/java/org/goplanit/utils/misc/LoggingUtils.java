@@ -2,9 +2,11 @@ package org.goplanit.utils.misc;
 
 import org.goplanit.utils.time.TimePeriod;
 
+import java.util.Collection;
 import java.util.Objects;
 import java.util.function.Predicate;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 /**
  * some utilities for consistent logging message creation in PLANit
@@ -48,6 +50,20 @@ public class LoggingUtils {
       return String.valueOf(count);
     }
     return String.format("%d (%.2f%% of %s)", count, (100.0 * count) / total, totalLabel);
+  }
+
+  /**
+   * A message listing problems: a heading giving their number, then each problem on a line of its own. For example,
+   * "YAML has" and two problems give "YAML has 2 problem(s):" with the two problems on the lines after it, so an
+   * exception holding several problems shows them all at once
+   *
+   * @param subject what has the problems, with its verb, such as "YAML has"
+   * @param problems to list, each written by its toString, in order
+   * @return the message
+   */
+  public static String problemsMessage(String subject, Collection<?> problems) {
+    return String.format("%s %d problem(s):%n", subject, problems.size()) +
+        problems.stream().map(String::valueOf).collect(Collectors.joining(System.lineSeparator()));
   }
   
   /**

@@ -283,26 +283,50 @@ public class UriUtils {
   }
 
   /**
-   * Create an URI while conscious it may be a Windows path which is not strictly a URI so needs different
-   * way of processing to avoid URISyntaxException
+   * Same as {@link #fromUriOrPath(String, Path)}, reading a relative path against the working folder
    *
-   * @param validUriOrWindowsPath to construct URI from
-   * @return constructed URI
+   * @param uriOrPath a URI or a path
+   * @return the URI
    */
-  public static URI fromValidUriOrWindowsPath(String validUriOrWindowsPath){
-    try {
-      // Try as valid URI first
-      URI uri = new URI(validUriOrWindowsPath);
-      // If it has a scheme (http, file, etc.), treat as URI
-      if (uri.getScheme() != null) {
-        return uri;
-      }
-    } catch (Exception ignored) {
-    }
+  public static URI fromUriOrPath(String uriOrPath){
+    return fromUriOrPath(uriOrPath, Path.of("").toAbsolutePath());
+  }
 
-    // Fallback: treat as file path (handles Windows backslashes)
-    Path path = Paths.get(validUriOrWindowsPath);
-    return path.toUri();
+  /**
+   * A URI from text that is either a URI or a local path. Text with a scheme, such as {@code https:} or {@code file:},
+   * is taken as written. Any other text is a path of the file system the program runs on, read against the folder
+   * when it is relative. A path need not be a valid URI, so spaces and backslashes work. For example, against the
+   * folder {@code /home/me/config}:
+   * <pre>
+   * https://example.org/x.pbf   gives  https://example.org/x.pbf
+   * data/x.pbf                  gives  file:///home/me/config/data/x.pbf
+   * /srv/maps/x.pbf             gives  file:///srv/maps/x.pbf
+   * </pre>
+   * and on Windows, against {@code C:\config}, {@code data\x.pbf} gives {@code file:///C:/config/data/x.pbf} and
+   * {@code D:/maps/x.pbf} gives {@code file:///D:/maps/x.pbf}: no URI scheme has one letter, so {@code D:} is read
+   * as a drive.
+   * <p>
+   * The file need not exist. Useful when a file names a location relative to itself, so the file and what it names
+   * can be moved together.
+   * </p>
+   *
+   * @param uriOrPath a URI or a path
+   * @param folder to read a relative path against
+   * @return the URI
+   * @throws java.nio.file.InvalidPathException when the text has no scheme and cannot be a path
+   */
+  public static URI fromUriOrPath(String uriOrPath, Path folder) {
+    URI uri = null;
+    try {
+      uri = new URI(uriOrPath);
+    } catch (URISyntaxException e) {
+      // not a URI, such as a path with spaces or backslashes, so read as a path below
+    }
+    /* no URI scheme has one letter, so one is a drive, as in C:/data */
+    if (uri != null && hasScheme(uri) && uri.getScheme().length() > 1) {
+      return uri;
+    }
+    return FileUtils.resolveAgainstFolder(uriOrPath, folder).toUri();
   }
 
 }

@@ -131,6 +131,18 @@ public final class SparseIntRowMatrix {
   }
 
   /**
+   * Add the values of a row to a dense array, each at the position of its own column
+   *
+   * @param row finished, from 0
+   * @param target to add to, longer than the highest column given a value
+   */
+  public void addRowTo(int row, double[] target) {
+    for (int entry = rowStarts[row]; entry < rowStarts[row + 1]; ++entry) {
+      target[columns[entry]] += values[entry];
+    }
+  }
+
+  /**
    * Add the values of a row to a dense array, each at the position the mapping gives its column, so a caller reads
    * the columns it wants in the order it wants them
    *

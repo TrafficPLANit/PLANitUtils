@@ -10,6 +10,7 @@ import java.util.logging.Logger;
 
 import org.goplanit.utils.exceptions.PlanItException;
 import org.goplanit.utils.exceptions.PlanItRunTimeException;
+import org.goplanit.utils.reflection.ReflectionUtils;
 
 /**
  * 
@@ -89,34 +90,7 @@ public class Configurator<T> {
           Class<?> manuallyBoxedParameter = parameterTypes[i];
           if(parameterTypes[i].isPrimitive()) {
             // no auto-boxing, do it manually to check for match
-            switch (parameterTypes[i].getName()) {
-            case "double":
-              manuallyBoxedParameter = Double.class;
-              break;
-            case "int":
-              manuallyBoxedParameter = Integer.class;
-              break; 
-            case "byte":
-              manuallyBoxedParameter = Byte.class;
-              break; 
-            case "short":
-              manuallyBoxedParameter = Short.class;
-              break; 
-            case "long":
-              manuallyBoxedParameter = Long.class;
-              break; 
-            case "float":
-              manuallyBoxedParameter = Float.class;
-              break; 
-            case "char":
-              manuallyBoxedParameter = Character.class;
-              break;
-            case "boolean":
-              manuallyBoxedParameter = Boolean.class;
-              break; 
-            default:
-              break;
-            }
+            manuallyBoxedParameter = ReflectionUtils.getBoxedClass(parameterTypes[i]);
             // now try again
             if (!manuallyBoxedParameter.isAssignableFrom(parameters[i].getClass())) {
               parametersMatch = false;  
@@ -172,8 +146,8 @@ public class Configurator<T> {
     return delayedMethodCalls.containsKey(methodName);
   }
 
-  /** Collect the first parameter submitted with (last) registered delayed method call of given signature. If not available null is returned.
-   * Useful to mimic getters for a given setter on configurator derived class.
+  /** Collect the first parameter submitted with (last) registered delayed method call of given signature.
+   * If not available null is returned. Useful to mimic getters for a given setter on configurator derived class.
    * 
    * @param methodName that reflects the delayed call
    * @return first parameter of delay method name call
@@ -189,8 +163,8 @@ public class Configurator<T> {
     return null;
   }
 
-  /** Collect the first parameter submitted with (last) registered delayed method call of given signature. If not available null is returned.
-   * Useful to mimic getters for a given setter on configurator derived class.
+  /** Collect the first parameter submitted with (last) registered delayed method call of given signature.
+   * If not available null is returned. Useful to mimic getters for a given setter on configurator derived class.
    *
    * @param <U> type of parameter in method call
    * @param methodName that reflects the delayed call

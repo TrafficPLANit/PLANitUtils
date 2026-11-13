@@ -73,6 +73,11 @@
 		</dependency>
 
 		<dependency>
+			<groupId>org.snakeyaml</groupId>
+			<artifactId>snakeyaml-engine</artifactId>
+		</dependency>
+
+		<dependency>
 			<groupId>org.junit.jupiter</groupId>
 			<artifactId>junit-jupiter-engine</artifactId>
 			<!-- only used locally for testing so not an actual dependency for using the API -->

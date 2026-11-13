@@ -4,6 +4,7 @@ import java.io.*;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Objects;
 import java.util.Scanner;
@@ -168,6 +169,22 @@ public class FileUtils {
       // file does not exist, but we can still create file instance
       return theFile;
     }
+  }
+
+  /**
+   * A path given as text, read against a folder when it is relative, and normalised. An absolute path stays as it is.
+   * For example, against the folder {@code C:\config}, {@code data/x.pbf} gives {@code C:\config\data\x.pbf} and
+   * {@code D:\maps\x.pbf} stays {@code D:\maps\x.pbf}. Useful when a file names other files relative to itself, so
+   * the file and what it names can be moved together.
+   *
+   * @param path the text of the path
+   * @param folder to read a relative path against
+   * @return the path, normalised; the file need not exist
+   * @throws java.nio.file.InvalidPathException when the text cannot be a path, such as text holding a character no
+   *     path can hold
+   */
+  public static Path resolveAgainstFolder(String path, Path folder) {
+    return folder.resolve(path).normalize();
   }
   
   /** Delete a directory by providing a file that represents a directory. In which case

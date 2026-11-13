@@ -3,14 +3,18 @@ package org.goplanit.utils;
 import org.goplanit.utils.containers.ContainerUtils;
 import org.goplanit.utils.containers.FourAryMinHeapOpenSet;
 import org.goplanit.utils.containers.ListUtils;
+import org.goplanit.utils.exceptions.PlanItRunTimeException;
+import org.goplanit.utils.misc.CollectionUtils;
 import org.goplanit.utils.misc.Pair;
 import org.junit.jupiter.api.Test;
 
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.PriorityQueue;
+import java.util.TreeSet;
 import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -95,5 +99,24 @@ public class CollectionsTest {
         numbers -> numbers.stream().mapToInt(Integer::intValue).sum() <= 8);
 
     assertEquals(List.of(5, 2, 1), kept);
+  }
+
+  /** An array of a primitive type holds the values unboxed, and no values give an empty array */
+  @Test
+  public void toArrayOfComponentTypeTakesPrimitiveTypes() {
+    assertArrayEquals(new long[] {1, 2}, (long[]) CollectionUtils.toArray(List.of(1L, 2L), long.class));
+    assertEquals(0, ((String[]) CollectionUtils.toArray(List.of(), String.class)).length);
+  }
+
+  /** A list for a List or Collection, a set for a Set, both in the order of the values; no other kind */
+  @Test
+  public void toCollectionAssignableToMakesAListOrASet() {
+    assertEquals(ArrayList.class, CollectionUtils.toCollectionAssignableTo(List.of("a"), List.class).getClass());
+    assertEquals(ArrayList.class, CollectionUtils.toCollectionAssignableTo(List.of("a"), Iterable.class).getClass());
+    var set = CollectionUtils.toCollectionAssignableTo(List.of("b", "a", "b"), Set.class);
+    assertTrue(set instanceof Set);
+    assertEquals(List.of("b", "a"), new ArrayList<>(set));
+    assertThrows(PlanItRunTimeException.class,
+        () -> CollectionUtils.toCollectionAssignableTo(List.of("a"), TreeSet.class));
   }
 }

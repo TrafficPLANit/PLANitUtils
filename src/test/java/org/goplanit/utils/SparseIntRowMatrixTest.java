@@ -36,25 +36,27 @@ public class SparseIntRowMatrixTest {
     return matrix;
   }
 
-  /** Each row reads back its own values, a column's values added up; reading a row twice adds it twice */
+  /**
+   * Each row reads back its own values at their own columns, a column's values added up; reading a row twice adds it
+   * twice
+   */
   @Test
   public void testRowsFilledAndRead() {
     var matrix = createThreeRows();
     assertEquals(3, matrix.getNumberOfRows());
-    int[] sameColumn = IntStream.range(0, 6).toArray();
 
     var first = new double[6];
-    matrix.addRowTo(0, sameColumn, first);
+    matrix.addRowTo(0, first);
     assertArrayEquals(new double[]{0, 0, 7, 0, 0, 1}, first);
-    matrix.addRowTo(0, sameColumn, first);
+    matrix.addRowTo(0, first);
     assertArrayEquals(new double[]{0, 0, 14, 0, 0, 2}, first);
 
     var empty = new double[6];
-    matrix.addRowTo(1, sameColumn, empty);
+    matrix.addRowTo(1, empty);
     assertArrayEquals(new double[6], empty);
 
     var third = new double[6];
-    matrix.addRowTo(2, sameColumn, third);
+    matrix.addRowTo(2, third);
     assertArrayEquals(new double[]{2, 0, 0, 0, 0, 0}, third);
   }
 
@@ -92,9 +94,8 @@ public class SparseIntRowMatrixTest {
     assertEquals(IntStream.range(0, 3000).filter(row -> row % 3 == 2).asLongStream().sum(),
         matrix.getColumnTotal(1502));
 
-    int[] sameColumn = IntStream.range(0, 1503).toArray();
     var last = new double[1503];
-    matrix.addRowTo(2999, sameColumn, last);
+    matrix.addRowTo(2999, last);
     assertEquals(1, last[2999 % 7]);
     assertEquals(2999, last[1500 + 2999 % 3]);
   }
