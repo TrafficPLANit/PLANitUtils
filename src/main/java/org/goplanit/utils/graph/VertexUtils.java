@@ -18,7 +18,8 @@ public class VertexUtils {
    * @param edgeToEdgeMapping to use should contain original edge as currently used on vertex and then the value is the new edge to replace it
    * @param removeMissingMappings when true if there is no mapping, the edge is removed as adjacent to the vertex, otherwise they are left in-tact
    */
-  public static <V extends Vertex, E extends Edge> void updateVertexEdges(Iterable<V> vertices, Function<E,E> edgeToEdgeMapping, boolean removeMissingMappings) {
+  public static <V extends Vertex, E extends Edge> void updateVertexEdges(
+          Iterable<V> vertices, Function<E,E> edgeToEdgeMapping, boolean removeMissingMappings) {
     for(var vertex : vertices){
       var toBeAdded = new ArrayList<E>(vertex.getEdges().size());
       var toBeRemoved = new ArrayList<E>(vertex.getEdges().size());

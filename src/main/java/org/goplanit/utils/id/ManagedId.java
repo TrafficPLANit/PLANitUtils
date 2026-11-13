@@ -28,11 +28,14 @@ public interface ManagedId extends IdAble {
   public abstract Class<? extends IdAble> getIdClass();   
   
   /**
-   * Each class that has a managed id, should be able to reset any children that themselves are managedIdEntity containers. 
-   * This ensures that when resetting such a container any child containers are also reset
+   * Each class that has a managed id, should be able to reset any children that themselves are
+   * managedIdEntity containers. This ensures that when resetting such a container any child
+   * containers are also reset
+   * TODO: should have an option to reset/nt reset the underlying token, now token is always reset
    */
   public default void resetChildManagedIdEntities() {
-    // by default do nothing, yet if the entity contains ManagedIdEntities derived classes, it should reset those by overriding this method
+    // by default do nothing, yet if the entity contains ManagedIdEntities derived classes, it should reset those
+    // by overriding this method
   }
 
 }

@@ -3,8 +3,6 @@ package org.goplanit.utils.mode;
 import org.goplanit.utils.id.ExternalIdAble;
 import org.goplanit.utils.id.ManagedId;
 
-import java.util.Arrays;
-
 /**
  * Interface to represent a mode
  * 
@@ -81,11 +79,89 @@ public interface Mode extends ExternalIdAble, ManagedId {
     return getPhysicalFeatures()!=null;
   }
 
+  /** Verify if this mode is motorised and travels on road, e.g., car or bus, but not a pedestrian, bicycle or tram
+   *
+   * @return true when a motorised road mode, false otherwise, including when it has no physical features
+   */
+  public default boolean isMotorisedRoadMode() {
+    return isRoadMode() && isMotorisedMode();
+  }
+
+  /** Verify if this mode is motorised, e.g. car, bus or train, but not a pedestrian or bicycle
+   *
+   * @return true when motorised, false otherwise, including when it has no physical features
+   */
+  public default boolean isMotorisedMode() {
+    return hasPhysicalFeatures() && getPhysicalFeatures().getMotorisationType() == MotorisationModeType.MOTORISED;
+  }
+
+  /** Verify if this mode is active: a mode whose use is active, travelled under the traveller's own power, such as a
+   * pedestrian or a bicycle, as {@link PredefinedModeType#isActiveModeType()} says of the predefined types
+   *
+   * @return true when its use is active, false otherwise, including when it has no usability features
+   */
+  public default boolean isActiveMode() {
+    return hasUseFeatures() && getUseFeatures().getUseOfType() == UseOfModeType.ACTIVE;
+  }
+
+  /** Verify if this mode travels on road, e.g., car, bus, bicycle or pedestrian, but not a tram or ferry
+   *
+   * @return true when a road mode, false otherwise, including when it has no physical features
+   */
+  public default boolean isRoadMode() {
+    return hasPhysicalFeatures() && getPhysicalFeatures().getTrackType() == TrackModeType.ROAD;
+  }
+
+  /** Verify if this mode travels on rail, e.g., train, tram or light rail
+   *
+   * @return true when a rail mode, false otherwise, including when it has no physical features
+   */
+  public default boolean isRailMode() {
+    return hasPhysicalFeatures() && getPhysicalFeatures().getTrackType() == TrackModeType.RAIL;
+  }
+
+  /** Verify if this mode is a motorised road mode or a rail mode, see {@link #isMotorisedRoadMode()} and
+   * {@link #isRailMode()}: the traffic a traffic signal controls
+   *
+   * @return true when either, false otherwise, including when it has no physical features
+   */
+  public default boolean isMotorisedRoadOrRailMode() {
+    return isMotorisedRoadMode() || isRailMode();
+  }
+
+  /** Verify if this mode is the predefined tram or light rail mode
+   *
+   * @return true when a tram or light rail mode, false otherwise, including for a custom mode
+   */
+  public default boolean isTramOrLightRailMode() {
+    return isPredefinedModeType(PredefinedModeType.TRAM) || isPredefinedModeType(PredefinedModeType.LIGHTRAIL);
+  }
+
   /** Verify if use features are available
    * @return true if available, false otherwise
    */
   public default boolean hasUseFeatures() {
     return getUseFeatures()!=null;
+  }
+
+  /** Verify if this mode is motorised and driven by one of the people travelling in it, e.g. a car or a motorbike,
+   * unlike a taxi, ride share or bus, whose driver is not one of them, an automated vehicle, which nobody drives, or a
+   * bicycle, which is not motorised. Who drives is the driver type of its usability features, see
+   * {@link UsabilityModeFeatures#getDriverType()}
+   *
+   * @return true when motorised and driven by one of the people travelling in it, false otherwise, including when its
+   * features or its driver type are not known
+   */
+  public default boolean isSelfDrivenMotorisedMode() {
+    return isMotorisedMode() && hasUseFeatures() && getUseFeatures().getDriverType() == DriverType.TRAVELLER;
+  }
+
+  /** Verify if this mode is public transport: a mode whose use is public, such as a bus, a train or a ferry
+   *
+   * @return true when its use is public, false otherwise, including when its use features are not known
+   */
+  public default boolean isPublicTransportMode() {
+    return hasUseFeatures() && getUseFeatures().getUseOfType() == UseOfModeType.PUBLIC;
   }
 
   /** check if the mode is one of the PLANit predefined mode types or not
@@ -95,7 +171,18 @@ public interface Mode extends ExternalIdAble, ManagedId {
   public default boolean isPredefinedModeType(){
     return false;
   }
-  
+
+  /**
+   * Verify if the mode is the given predefined mode type, e.g. the predefined bicycle mode. A custom mode is never one,
+   * also not when the custom type is given
+   *
+   * @param predefinedModeType to check against
+   * @return true when a predefined mode of the given type, false otherwise
+   */
+  public default boolean isPredefinedModeType(PredefinedModeType predefinedModeType){
+    return isPredefinedModeType() && getPredefinedModeType() == predefinedModeType;
+  }
+
   /**
    * collect the predefined mode type
    * 
@@ -110,15 +197,5 @@ public interface Mode extends ExternalIdAble, ManagedId {
    */
   public default boolean hasName() {
     return getName()!=null && !getName().isBlank();
-  }
-
-  /** verify, given separator, if the provided string exists as external id
-   *
-   * @param separator to use
-   * @param externalId to check for
-   * @return true if present, false otherwise
-   */
-  public default boolean containsExternalId(char separator, String externalId){
-    return Arrays.stream(getSplitExternalId(separator)).anyMatch(e -> e.equals(separator));
   }
 }

@@ -2,6 +2,31 @@
 
 PLANitUtils release log.
 
+## 0.5.0
+
+**Enhancements**
+* [GENERAL] Added Path utilities
+* [GENERAL] Added Math utilities
+* [GENERAL] Added (OD) MultiPath support utilities
+* [GENERAL] Added functionality to CRS, JTS, and GIS utilities
+* [GENERAL] Added unit tests and run time tracker utils
+* [GENERAL] Added directed and acyclic graph utils
+* [GENERAL] Belgium added as country name
+* [GENERAL] Added support for conjugate (inverted) networks
+* [GENERAL] Added support for simple CSV parser utilities + unit test
+* #16 Support for bannedMovements
+
+**Changes**
+* [GENERAL] Moved IdMappers from PLANit core to here
+* [GENERAL] Updated VirtualNetwork structure
+* [GENERAL] Updated to more recent geotools version in line with PLANit core and PLANitGeoIO
+
+**Bug fixes**
+* [GENERAL] fix issue in ArrayUtils
+* [GENERAL] Added functionality to CRS, JTS, and GIS utilities
+* [GENERAL] fix issue in setting default critical speed for link segment type
+* [GENERAL] typo in south africa country name fixed
+
 ## 0.4.0
 
 **Enhancements**

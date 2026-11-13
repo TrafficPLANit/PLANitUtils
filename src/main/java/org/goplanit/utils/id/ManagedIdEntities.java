@@ -1,10 +1,12 @@
 package org.goplanit.utils.id;
 
+import org.goplanit.utils.arrays.ArrayUtils;
 import org.goplanit.utils.network.layer.macroscopic.MacroscopicLinkSegmentType;
 import org.goplanit.utils.network.layer.macroscopic.MacroscopicLinkSegmentTypes;
 import org.goplanit.utils.service.routed.RoutedTripSchedule;
 import org.goplanit.utils.wrapper.LongMapWrapper;
 
+import java.lang.reflect.Array;
 import java.util.*;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
@@ -30,12 +32,14 @@ public interface ManagedIdEntities<E extends ManagedId> extends LongMapWrapper<E
    * 
    * @return managedIdClass for instances this factory creates
    */
-  public abstract Class<? extends ManagedId> getManagedIdClass();  
+  public abstract Class<? extends ManagedId> getManagedIdClass();
       
   /**
-   * Recreate the ids for all registered entities with or without resetting, this includes child managed ids, i.e., nested magedidentities containers if so indicated
+   * Recreate the ids for all registered entities with or without resetting, this includes child managed ids, i.e.,
+   * nested managedIdentities containers if so indicated
    * 
-   * @param resetManagedIdClass when true we reset the managedId's counter to zero (via its id class) before recreating the ids, otherwise we simply recreate the managed id by
+   * @param resetManagedIdClass when true we reset the managedId's counter to zero (via its id class) before
+   *                            recreating the ids, otherwise we simply recreate the managed id by
    *                            starting with the next available id without resetting
    */
   public abstract void recreateIds(boolean resetManagedIdClass);
@@ -76,30 +80,54 @@ public interface ManagedIdEntities<E extends ManagedId> extends LongMapWrapper<E
    */
   public default void recreateIds() {
     recreateIds(true);
-  }  
-  
+  }
+
   /**
-   * When reset it called, it not only clears the entries, but also resets the managedids, such that when the container is reused
-   * the managed ids start from zero again. If any entries are
+   * When reset it called, it clears the entries, but also resets the managedids if requested, such that when the
+   * container is reused the managed ids start from zero again. If any entries are
    * managedEntities themselves or contain managed entities themselves, they are reset as well
+   *
+   * @param resetManagedIdToken when true rest token such that new entries will start from zero
    */
-  public default void reset() {
+  public default void reset(boolean resetManagedIdToken) {
     for(E entry : this) {
       entry.resetChildManagedIdEntities();
     }
     clear();
-    IdGenerator.reset(getFactory().getIdGroupingToken(), getManagedIdClass());     
+    if(resetManagedIdToken) {
+      IdGenerator.reset(getFactory().getIdGroupingToken(), getManagedIdClass());
+    }
   }
 
   /**
-   * Convenience method to perform group by based on uncerlying streaming mechanisms
+   * When reset it called, it not only clears the entries, but also resets the managedids, such that when the
+   * container is reused the managed ids start from zero again. If any entries are
+   * managedEntities themselves or contain managed entities themselves, they are reset as well
+   */
+  public default void reset() {
+    reset(true);
+  }
+
+  /**
+   * Group the entities by the key the classifier gives, each group in the order of the container. An entity whose key
+   * is null is left out, such as a person without a household when grouping persons by household
+   * <p>
+   * {@link Collectors#groupingBy(Function)} throws on a null key, so the groups are collected here instead.
+   * </p>
    *
    * @param classifier for group by
    * @return map with key containing the classifier and value being a list of matched entities in the container
    * @param <K> classifier to apply
    */
   public default <K> Map<K, List<E>> groupBy(Function<? super E, ? extends K> classifier){
-    return this.stream().collect(Collectors.groupingBy(classifier));
+    var groups = new HashMap<K, List<E>>();
+    this.stream().forEach(entity -> {
+      K key = classifier.apply(entity);
+      if (key != null) {
+        groups.computeIfAbsent(key, newKey -> new ArrayList<>()).add(entity);
+      }
+    });
+    return groups;
   }
 
   /** Stream the container sorted by the given sort function
@@ -109,7 +137,57 @@ public interface ManagedIdEntities<E extends ManagedId> extends LongMapWrapper<E
    * @param <T> the type to sort on which must be comparable
    * @param <F> the return type of the stream entries
    */
-  public default <T extends Comparable, F extends E> Stream<F> streamSortedBy(Function<? super E, T> sortFunction){
-    return this.stream().sorted(Comparator.comparing(e -> sortFunction.apply((F) e)));
+  @SuppressWarnings("unchecked")
+  public default <T extends Comparable<T>, F extends E> Stream<F> streamSortedBy(Function<? super E, T> sortFunction){
+    return (Stream<F>) this.stream().sorted(Comparator.comparing(sortFunction));
+  }
+
+  /**
+   * Lay an index on the entities based on provided mapping function which is used to construct the index.
+   * It is assumed the index is unique.
+   *
+   * @param mappingFunction to construct keys in resulting index map
+   * @return map with key being the index and value containing the original entity
+   * @param <T> type of the index
+   */
+  public default <T> Map<T,E> createIndex(Function<E,T> mappingFunction){
+    return this.stream().collect(Collectors.toMap(mappingFunction, Function.identity()));
+  }
+
+  /**
+   * Lay an index on the entities based on provided mapping function which is used to construct the index.
+   * It is assumed the index is not unique. An entity whose key is null is left out, see {@link #groupBy(Function)}
+   *
+   * @param mappingFunction to construct keys in resulting index map
+   * @return map with key being the index and value containing original entities relating to it
+   * @param <T> type of the index
+   */
+  public default <T> Map<T,List<E>> createGroupByIndex(Function<E, T> mappingFunction){
+    return groupBy(mappingFunction);
+  }
+
+  /**
+   * Create a raw array where each entity is indexed by its id. Explicitly construct of type E which is likely
+   * more specific than the managedIdClass identifier
+   *
+   * @param theClazz the specific class type
+   * @return id indexed raw array
+   */
+  public default E[] toIdIndexedArray(Class<E> theClazz){
+    E[] indexedArray = ArrayUtils.createGenericTypedArray(theClazz,size());
+    this.stream().forEach( e -> indexedArray[ (int) e.getId()] = e);
+    return indexedArray;
+  }
+
+  /**
+   * Create a raw array where each entity is indexed by its id. type is based on managedIdClass which is not know
+   * at runtime so defaults to a raw array of ManagedIds which may be cast by called if needed
+   *
+   * @return id indexed raw array
+   */
+  public default ManagedId[] toIdIndexedArray(){
+    ManagedId[] indexedArray = ArrayUtils.createGenericTypedArray(getManagedIdClass(),size());
+    this.stream().forEach( e -> indexedArray[ (int) e.getId()] = e);
+    return indexedArray;
   }
 }

@@ -1,5 +1,7 @@
 package org.goplanit.utils.id;
 
+import org.goplanit.utils.misc.HashUtils;
+
 /**
  * A class implementing this interface signals that it is id-able
  * 
@@ -35,7 +37,8 @@ public interface IdAble extends Comparable<IdAble> {
 
   /**
    * An id entity should always support a deep copy, i.e., all "owned" members will be deep copied when a clone
-   * of this instance is created via this call. To be used with caution if not called by managed id container related code
+   * of this instance is created via this call. To be used with caution if not called by managed id container
+   * related code
    *
    * @return deep copy of entity
    */
@@ -58,7 +61,7 @@ public interface IdAble extends Comparable<IdAble> {
     }
     
     if(o != null) {
-      return Long.valueOf(this.getId()).equals(Long.valueOf(((IdAble)o).getId()));
+      return this.getId() == ((IdAble) o).getId();
     }
     
     return false;
@@ -72,7 +75,18 @@ public interface IdAble extends Comparable<IdAble> {
    */
   public default int idHashCode() {
     return Long.valueOf(this.getId()).hashCode();
-  }  
+  }
+
+  /**
+   * Generate a well-distributed, reproducible random seed based on this entity's ID.
+   * Uses the 64-bit finaliser of MurmurHash3, {@link HashUtils#mix64(long)}, to eliminate sequential ID patterns and
+   * prevent pseudo-random correlation.
+   *
+   * @return a pseudo-random seed unique to this entity
+   */
+  public default long generateIdBasedRandomSeed() {
+    return HashUtils.mix64(getId());
+  }
   
   /**
    * Compare based on id

@@ -20,7 +20,9 @@ public interface ConjugateEdgeSegments extends GraphEntities<ConjugateEdgeSegmen
    * @param directionAB direction of travel
    * @throws PlanItException thrown if there is an error
    */
-  public abstract void register(final ConjugateDirectedEdge parentEdge, final ConjugateEdgeSegment edgeSegment, final boolean directionAB) throws PlanItException;
+  public abstract void register(
+          final ConjugateDirectedEdge parentEdge, final ConjugateEdgeSegment edgeSegment, final boolean directionAB)
+          throws PlanItException;
       
   
   /**
@@ -30,9 +32,10 @@ public interface ConjugateEdgeSegments extends GraphEntities<ConjugateEdgeSegmen
    */
   @Override
   public default ConjugateEdgeSegmentFactory getFactory(){
-    /** override to change return type signature on interface, implementation must still
+    /* override to change return type signature on interface, implementation must still
      * implement this method to provide access to an actual instance */
-    Logger.getLogger(ConjugateEdgeSegmentFactory.class.getCanonicalName()).warning("getFactory not implemented yet for conjugate edge segment implementation");
+    Logger.getLogger(ConjugateEdgeSegmentFactory.class.getCanonicalName()).warning(
+            "getFactory not implemented yet for conjugate edge segment implementation");
     return null;
   }    
   

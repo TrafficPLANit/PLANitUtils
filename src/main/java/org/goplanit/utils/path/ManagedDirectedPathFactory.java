@@ -10,7 +10,7 @@ import org.goplanit.utils.id.ManagedIdEntityFactory;
  * @author markr
  *
  */
-public interface ManagedDirectedPathFactory extends ManagedIdEntityFactory<ManagedDirectedPath>, DirectedPathFactory<ManagedDirectedPath>{
+public interface ManagedDirectedPathFactory<T extends ManagedDirectedPath> extends ManagedIdEntityFactory<T>, DirectedPathFactory<T>{
 
   /**
    * Create new path
@@ -18,7 +18,7 @@ public interface ManagedDirectedPathFactory extends ManagedIdEntityFactory<Manag
    * @return the created path
    */
   @Override
-  public abstract ManagedDirectedPath createNew();
+  public abstract T createNew();
   
   /**
    * Create new path 
@@ -27,6 +27,6 @@ public interface ManagedDirectedPathFactory extends ManagedIdEntityFactory<Manag
    * @return the created path
    */
   @Override
-  public abstract ManagedDirectedPath createNew(Deque<? extends EdgeSegment> edgeSegments);
+  public abstract T createNew(Deque<? extends EdgeSegment> edgeSegments);
 
 }

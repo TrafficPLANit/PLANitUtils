@@ -53,7 +53,8 @@ public interface RoutedTripSchedule extends RoutedTrip, Iterable<RelativeLegTimi
    * @param dwellTime        at the destination of the leg segment
    * @return the added timing
    */
-  public abstract RelativeLegTiming addRelativeLegSegmentTiming(final ServiceLegSegment parentLegSegment, final LocalTime duration, final LocalTime dwellTime);
+  public abstract RelativeLegTiming addRelativeLegSegmentTiming(
+          final ServiceLegSegment parentLegSegment, final LocalTime duration, final LocalTime dwellTime);
 
   /**
    * Collect a leg timing based on its index
@@ -168,7 +169,8 @@ public interface RoutedTripSchedule extends RoutedTrip, Iterable<RelativeLegTimi
       int indexToRemove = iter.next() - indexOffset;
       if(indexToRemove <= prevIndex  || indexToRemove < 0){
         throw new PlanItRunTimeException(
-                String.format("leg timing indices cannot contain duplicates and should be provided in valid ascending order (curr %d, prev %d"), indexToRemove, prevIndex);
+                String.format("leg timing indices cannot contain duplicates and should be provided in " +
+                        "valid ascending order (curr %d, prev %d"), indexToRemove, prevIndex);
       }
       removeLegTiming(indexToRemove);
       ++indexOffset; // each removed entry shifts remaining indices one to the left, account for that

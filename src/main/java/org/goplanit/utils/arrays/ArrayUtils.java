@@ -1,6 +1,9 @@
 package org.goplanit.utils.arrays;
 
+import org.goplanit.utils.id.ManagedId;
+
 import java.util.Arrays;
+import java.util.Optional;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.logging.Logger;
@@ -17,6 +20,26 @@ public class ArrayUtils {
   private static final Logger LOGGER = Logger.getLogger(ArrayUtils.class.getCanonicalName());
 
   /**
+   * Find first index of an object in the array if its is present using a simple sequential search
+   *
+   * @param array to check
+   * @param entry to find
+   * @return index found, empty optional if nto found
+   * @param <T> type of array entries
+   */
+  public static <T> Optional<Integer> findIndex(T[] array, T entry){
+    if(array == null){
+      return Optional.empty();
+    }
+    for(int index=0 ; index<array.length ; ++index){
+      if(array[index].equals(entry)){
+        return Optional.of(index);
+      }
+    }
+    return Optional.empty();
+  }
+
+  /**
    * Add the values of a second array element-wise to the first array
    * 
    * @param destination
@@ -25,18 +48,37 @@ public class ArrayUtils {
    *          array of values to be added to destination array
    * @param numberOfElements
    *          number of elements in array to be updated
+   * @return destination array
    */
-  public static void addTo(double[] destination, double[] addToDestination, int numberOfElements) {
+  public static double[] addTo(double[] destination, double[] addToDestination, int numberOfElements) {
     if(addToDestination.length < Math.min(numberOfElements,destination.length)) {
-      LOGGER.warning("addToDestination array has less elements than number of elements/destination array to add to, addTo failed");
-      return;
+      LOGGER.warning("addToDestination array has less elements than number of elements/destination array to add " +
+              "to, addTo failed");
+      return destination;
     }
-    
-    for (int index = 0; index < numberOfElements; ++index) {
-      destination[index] += addToDestination[index];
-    }
+    return addTo(destination, 0, addToDestination, 0, 1, numberOfElements);
   }
-  
+
+  /**
+   * Add a multiple of part of a second array element-wise to part of the first array: from the given positions on,
+   * each value of the destination becomes itself plus the factor times the matching value of the second array
+   *
+   * @param destination the array to be updated
+   * @param destinationOffset position in the destination of the first value to update
+   * @param addToDestination array of values to be added to the destination array
+   * @param addToDestinationOffset position in addToDestination of the first value to add
+   * @param factor to multiply each added value with
+   * @param numberOfElements number of values to update
+   * @return destination array
+   */
+  public static double[] addTo(double[] destination, int destinationOffset, double[] addToDestination,
+      int addToDestinationOffset, double factor, int numberOfElements) {
+    for (int index = 0; index < numberOfElements; ++index) {
+      destination[destinationOffset + index] += factor * addToDestination[addToDestinationOffset + index];
+    }
+    return destination;
+  }
+
   /**
    * Add the values of a second array element-wise to the first array
    * 
@@ -44,26 +86,45 @@ public class ArrayUtils {
    *          the array to be updated
    * @param addToDestination
    *          array of values to be added to destination array
+   * @return destination array
    */
-  public static void addTo(double[] destination, double[] addToDestination) {
+  public static double[] addTo(double[] destination, double[] addToDestination) {
     if(addToDestination.length < destination.length) {
       LOGGER.warning("addToDestination array has less elements than destination array to add to, addTo failed");
-      return;
+      return destination;
     }
-    
-    int length = destination.length;
+    return addTo(destination, 0, addToDestination, 0, 1, destination.length);
+  }
+
+  /**
+   * Add the values of a second array element-wise to the first array
+   *
+   * @param origin  the array to subtract from
+   * @param subtractFromOrigin array of values to be subtracted from origin array
+   * @param destination store result in this array
+   * @return destination array
+   */
+  public static double[] subtractFrom(double[] origin, double[] subtractFromOrigin, double[] destination) {
+    int length = subtractFromOrigin.length;
+    if(origin.length < destination.length || length < destination.length) {
+      LOGGER.warning("elements not compatible with subtractFrom operator");
+      return destination;
+    }
+
     for (int index = 0; index < length; ++index) {
-      destination[index] += addToDestination[index];
+      destination[index] = origin[index] - subtractFromOrigin[index];
     }
-  }  
-  
-  /** divide each entry in array by given diviser. When divisor is zero, all entries are set to divideByZeroResult
+    return destination;
+  }
+
+  /** Divide each entry in array by given diviser. When divisor is zero, all entries are set to divideByZeroResult
    * 
    * @param destination array to apply to
    * @param diviser to divide by
    * @param divideByZeroResult result if provided division value is zero
+   * @return destination array
    */
-  public static void divideBy(final double[] destination, double diviser, double divideByZeroResult) {
+  public static double[] divideBy(final double[] destination, double diviser, double divideByZeroResult) {
     if (diviser>0) {
       for (int index = 0; index < destination.length; ++index) {
         destination[index] /= diviser;
@@ -73,6 +134,7 @@ public class ArrayUtils {
         destination[index] = divideByZeroResult;
       }
     }
+    return destination;
   }
   
   /**
@@ -81,36 +143,43 @@ public class ArrayUtils {
    * @param destination the array to be updated
    * @param diviserArray to divide by these values
    * @param divideByZeroResult to use in case the diviser is zero
+   * @return destination array
    */
-  public static void divideBy(double[] destination, double[] diviserArray, double divideByZeroResult) {
+  public static double[] divideBy(double[] destination, double[] diviserArray, double divideByZeroResult) {
     if(diviserArray.length < destination.length) {
       LOGGER.warning("Diviser array has less elements than destination array to divide, divideBy failed");
-      return;
+      return destination;
     }    
     for (int index = 0; index < destination.length; ++index) {
       double divisor = diviserArray[index];
       destination[index] = divisor>0 ? destination[index]/diviserArray[index] : divideByZeroResult;
     }
+    return destination;
   }
 
   /** multiply each entry in array by given multiplicator.
    * 
-   * @param destination array to apply to
+   * @param origin array to apply to
    * @param multiplicator to multiply with
+   * @param createCopy when true returned result is copy and no in place changes are made
+   * @return destination array
    */
-  public static void multiplyBy(final double[] destination, double multiplicator) {
-    for (int index = 0; index < destination.length; ++index) {
+  public static double[] multiplyBy(final double[] origin, double multiplicator, boolean createCopy) {
+    double[] destination = createCopy ? Arrays.copyOf(origin, origin.length) : origin;
+    for (int index = 0; index < origin.length; ++index) {
       destination[index] *= multiplicator;
     }
+    return destination;
   }  
 
   /** divide each entry in array by the sum of the entries. When divisor is zero, all entries are set to divideByZeroResult
    * 
    * @param destination array to apply to
    * @param divideByZeroResult result if provided division value is zero
+   * @return destination array
    */
-  public static void divideBySum(double[] destination, int divideByZeroResult) {
-    divideBy(destination, sumOf(destination), divideByZeroResult);
+  public static double[] divideBySum(double[] destination, int divideByZeroResult) {
+    return divideBy(destination, sumOf(destination), divideByZeroResult);
   }
 
   /** sum of each entry in array
@@ -142,9 +211,24 @@ public class ArrayUtils {
    * @return the value of the dot product
    */
   public static double dotProduct(double[] d1, double[] d2, int numberOfElements) {
+    return dotProduct(d1, 0, d2, 0, numberOfElements);
+  }
+
+  /**
+   * Return the dot product of parts of two arrays, each from the given position on, e.g. a[o1]*b[o2] + a[o1+1]*b[o2+1]
+   * etc
+   *
+   * @param d1 first array in the dot product
+   * @param offset1 position in the first array of its first value to take
+   * @param d2 second array in the dot product
+   * @param offset2 position in the second array of its first value to take
+   * @param numberOfElements number of values to take from each array
+   * @return the value of the dot product
+   */
+  public static double dotProduct(double[] d1, int offset1, double[] d2, int offset2, int numberOfElements) {
     double sum = 0.0;
     for (int index = 0; index < numberOfElements; ++index) {
-      sum += d1[index] * d2[index];
+      sum += d1[offset1 + index] * d2[offset2 + index];
     }
     return sum;
   }
@@ -167,11 +251,16 @@ public class ArrayUtils {
    * @return maximum value
    */
   public static double getMaximum(double[] array) {
-    double max = Double.NEGATIVE_INFINITY;
-    for(double entry: array) {
-        max = Math.max(max, entry);
-    }
-    return max;
+    return array[findMaxValueIndex(array)];
+  }
+
+  /**
+   * find the minimum of an array of doubles
+   * @param array to check
+   * @return maximum value
+   */
+  public static double getMinimum(double[] array) {
+    return array[findMinValueIndex(array)];
   }
   
   /**
@@ -215,5 +304,100 @@ public class ArrayUtils {
     for(int index=0;index<length;++index) {
       consumer.accept(array[index]);
     }
-  }   
+  }
+
+  /**
+   * Simple wrapper around copy of raw array
+   * @param original to copy
+   * @return shallow copy
+   */
+    public static double[] shallowCopy(double[] original) {
+      return Arrays.copyOf(original, original.length);
+    }
+
+    /**
+     * Get index with the largest value
+     *
+     * @param array to check
+     * @return index of max value entry
+     */
+    public static int findMaxValueIndex(double[] array) {
+      int length = array.length;
+      double maxValue = -Double.MAX_VALUE;
+      int maxValueIndex = -1;
+      for(int index=0;index<length;++index) {
+        if(array[index] > maxValue){
+          maxValue = array[index];
+          maxValueIndex = index;
+        }
+      }
+      return maxValueIndex;
+    }
+
+  /**
+   * Get index with the smallest value
+   *
+   * @param array to check
+   * @return index of min value entry
+   */
+  public static int findMinValueIndex(double[] array) {
+    int length = array.length;
+    double minValue = Double.MAX_VALUE;
+    int minValueIndex = -1;
+    for(int index=0;index<length;++index) {
+      if(array[index] < minValue){
+        minValue = array[index];
+        minValueIndex = index;
+      }
+    }
+    return minValueIndex;
+  }
+
+  /**
+   * Modify array by taking log of each value
+   *
+   * @param array to apply Math.log to
+   */
+  public static void logOf(double[] array) {
+    for (int index = 0; index < array.length; ++index) {
+      array[index] = Math.log(array[index]);
+    }
+  }
+
+  /**
+   * Perform element wise multiplication
+   * @param array1 to use
+   * @param array2 to use
+   * @return result, null if problem found
+   */
+  public static double[] multiplyElementWise(double[] array1, double[] array2) {
+    if(array1 == null){
+      LOGGER.warning("Cannot perform element wise multiplication on null array(s)");
+      return null;
+    }
+
+    if(array1.length != array2.length){
+      LOGGER.warning("Cannot perform element wise multiplication on two arrays with different lengths");
+      return null;
+    }
+
+    double[] result = new double[array1.length];
+    for(int index = 0 ; index < array1.length ; ++index){
+      result[index] = array1[index] * array2[index];
+    }
+    return result;
+  }
+
+  /**
+   * Create a typed array based on generics using reflection to force correct runtime type
+   *
+   * @param clazz to extract generic type from
+   * @param size size of array
+   * @return created array of given size
+   * @param <T> type of array
+   */
+  @SuppressWarnings("unchecked")
+  public static <T> T[] createGenericTypedArray(Class<? extends T> clazz, int size) {
+    return (T[]) java.lang.reflect.Array.newInstance(clazz, size);
+  }
 }

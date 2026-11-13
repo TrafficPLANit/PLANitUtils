@@ -1,5 +1,7 @@
 package org.goplanit.utils.output;
 
+import org.locationtech.jts.geom.Geometry;
+
 /**
  * Utility Functions used during output
  * 
@@ -7,6 +9,11 @@ package org.goplanit.utils.output;
  *
  */
 public class OutputUtils {
+
+  /**
+   * Dummy constructor
+   */
+  private OutputUtils(){}
 
   /**
    * Formats an object (if a double, outputs value to 7 decimal places
@@ -21,7 +28,10 @@ public class OutputUtils {
     } else if (value instanceof Double) {
       double outDouble = (double) value;
       return String.format("%.7f", outDouble);
-    } else {
+    } else if (value instanceof Geometry) {
+      /* geometry needs conversion to string for it to be writeable */
+      return value.toString();
+    }else {
       return value;
     }
   }

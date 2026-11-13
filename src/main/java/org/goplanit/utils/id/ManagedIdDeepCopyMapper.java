@@ -9,4 +9,11 @@ import org.goplanit.utils.misc.DeepCopyMapper;
  */
 public class ManagedIdDeepCopyMapper<T extends ManagedId> extends DeepCopyMapper<T> {
 
+    /**
+     * Default constructor
+     */
+    public ManagedIdDeepCopyMapper(){
+        super();
+    }
+
 }

@@ -9,16 +9,19 @@ import java.util.Map;
 import java.util.logging.Logger;
 
 import org.goplanit.utils.exceptions.PlanItException;
+import org.goplanit.utils.exceptions.PlanItRunTimeException;
+import org.goplanit.utils.reflection.ReflectionUtils;
 
 /**
  * 
- * This is the base class for all configuration oriented proxy classes. Whenever we configure a traffic assignment component, or any other component with functionality that should
- * not be exposed to the user, while at the same time this user must be able to configure this class by setting one or more configuration options, we must use this class to provide
- * a convenient mapping mechanism that work for any such situation without having to manually implement all the configuration options that are already present on the class that
- * contains the functionality.
+ * This is the base class for all configuration oriented proxy classes. Whenever we configure a traffic assignment
+ * component, or any other component with functionality that should not be exposed to the user, while at the same time
+ * this user must be able to configure this class by setting one or more configuration options, we must use this class
+ * to provide a convenient mapping mechanism that work for any such situation without having to manually implement
+ * all the configuration options that are already present on the class that contains the functionality.
  * 
- * The aim of this configurator is to store all the function calls that should be delayed and deferred to the class that contains the actual functionality in a concise and general
- * way.
+ * The aim of this configurator is to store all the function calls that should be delayed and deferred to the class
+ * that contains the actual functionality in a concise and general way.
  * 
  * @author markr
  *
@@ -62,13 +65,14 @@ public class Configurator<T> {
    * @throws IllegalAccessException    thrown if error
    * @throws IllegalArgumentException  thrown if error
    * @throws InvocationTargetException thrown if error
-   * @throws PlanItException           thrown if instance or its class are unknown
    * @throws NoSuchMethodException     thrown if error
    * @throws SecurityException         thrown if error
    */
   protected void callVoidMethod(T instance, String methodName, Object... parameters)
-      throws IllegalAccessException, IllegalArgumentException, InvocationTargetException, PlanItException, NoSuchMethodException, SecurityException {
-    PlanItException.throwIf(instance == null, "The instance to configure by calling " + methodName + " is not available");
+      throws IllegalAccessException, IllegalArgumentException, InvocationTargetException,
+          NoSuchMethodException, SecurityException {
+    PlanItRunTimeException.throwIf(instance == null, "The instance to configure by calling " +
+            methodName + " is not available");
     
     // check if each parameter is assignable for the method at hand. first match we choose
     boolean matches = false;
@@ -86,34 +90,7 @@ public class Configurator<T> {
           Class<?> manuallyBoxedParameter = parameterTypes[i];
           if(parameterTypes[i].isPrimitive()) {
             // no auto-boxing, do it manually to check for match
-            switch (parameterTypes[i].getName()) {
-            case "double":
-              manuallyBoxedParameter = Double.class;
-              break;
-            case "int":
-              manuallyBoxedParameter = Integer.class;
-              break; 
-            case "byte":
-              manuallyBoxedParameter = Byte.class;
-              break; 
-            case "short":
-              manuallyBoxedParameter = Short.class;
-              break; 
-            case "long":
-              manuallyBoxedParameter = Long.class;
-              break; 
-            case "float":
-              manuallyBoxedParameter = Float.class;
-              break; 
-            case "char":
-              manuallyBoxedParameter = Character.class;
-              break;
-            case "boolean":
-              manuallyBoxedParameter = Boolean.class;
-              break; 
-            default:
-              break;
-            }
+            manuallyBoxedParameter = ReflectionUtils.getBoxedClass(parameterTypes[i]);
             // now try again
             if (!manuallyBoxedParameter.isAssignableFrom(parameters[i].getClass())) {
               parametersMatch = false;  
@@ -129,7 +106,7 @@ public class Configurator<T> {
         break;
       }
     } 
-    PlanItException.throwIf(!matches, String.format(
+    PlanItRunTimeException.throwIf(!matches, String.format(
         "unable to call registered method call %s no match found (or invalid argument list) on instance of type %s",
         methodName, instance.getClass().getCanonicalName()));
   }
@@ -143,14 +120,34 @@ public class Configurator<T> {
   protected void registerDelayedMethodCall(String methodName, Object... parameters) {
     List<Object[]> parametersPerCall = delayedMethodCalls.get(methodName);
     if(parametersPerCall == null) {
-      parametersPerCall = new ArrayList<Object[]>();
+      parametersPerCall = new ArrayList<>();
       delayedMethodCalls.put(methodName, parametersPerCall);  
     }
     parametersPerCall.add(parameters);    
   }
 
-  /** Collect the first parameter submitted with (last) registered delayed method call of given signature. If not available null is returned.
-   * Useful to mimic getters for a given setter on configurator derived class.
+  /**
+   * UnRegister all previously registered method calls to a method
+   *
+   * @param methodName the method name
+   * @return true when succeeded, false otherwise
+   */
+  protected boolean unregisterDelayedMethodCalls(String methodName) {
+    return delayedMethodCalls.remove(methodName) != null;
+  }
+
+  /**
+   * Verify whether delayed method call is registered
+   *
+   * @param methodName to verify
+   * @return true when present, false otherwise
+   */
+  protected boolean hasRegisteredDelayedMethodCall(String methodName){
+    return delayedMethodCalls.containsKey(methodName);
+  }
+
+  /** Collect the first parameter submitted with (last) registered delayed method call of given signature.
+   * If not available null is returned. Useful to mimic getters for a given setter on configurator derived class.
    * 
    * @param methodName that reflects the delayed call
    * @return first parameter of delay method name call
@@ -166,6 +163,17 @@ public class Configurator<T> {
     return null;
   }
 
+  /** Collect the first parameter submitted with (last) registered delayed method call of given signature.
+   * If not available null is returned. Useful to mimic getters for a given setter on configurator derived class.
+   *
+   * @param <U> type of parameter in method call
+   * @param methodName that reflects the delayed call
+   * @return first parameter of delay method name call
+   */
+  protected <U> U getTypedFirstParameterOfDelayedMethodCall(String methodName) {
+    return (U) getFirstParameterOfDelayedMethodCall(methodName);
+  }
+
   /**
    * Constructor
    * 
@@ -173,7 +181,7 @@ public class Configurator<T> {
    */
   public Configurator(Class<T> instanceType) {
     this.configuratorClassType = instanceType;
-    this.delayedMethodCalls = new HashMap<String, List<Object[]>>();
+    this.delayedMethodCalls = new HashMap<>();
   }
   
   /** collect the class type we are configuring for
@@ -187,9 +195,8 @@ public class Configurator<T> {
    * Configure the passed in instance with the registered method calls
    * 
    * @param toConfigureInstance the instance to configure
-   * @throws PlanItException thrown if error
    */
-  public void configure(T toConfigureInstance) throws PlanItException {
+  public void configure(T toConfigureInstance){
     /* cycle through unique method calls */
     for (Map.Entry<String, List<Object[]>> methodCall : delayedMethodCalls.entrySet()) {
       try {
@@ -197,9 +204,12 @@ public class Configurator<T> {
         for(Object[] parametersOfCall : methodCall.getValue()) {
           callVoidMethod(toConfigureInstance, methodCall.getKey(), parametersOfCall);
         }
-      } catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException | NoSuchMethodException | SecurityException e) {
+      } catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException | NoSuchMethodException
+               | SecurityException e) {
         LOGGER.severe(e.getMessage());
-        throw new PlanItException("could not call configurator delayed method call to " + methodCall.getKey() + " on class " + toConfigureInstance.getClass().getCanonicalName());
+        throw new PlanItRunTimeException(
+                "Could not call configurator delayed method call to %s on class %s",
+                methodCall.getKey(), toConfigureInstance.getClass().getCanonicalName());
       }
     }
   }

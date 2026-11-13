@@ -1,7 +1,5 @@
 package org.goplanit.utils.misc;
 
-import org.goplanit.utils.network.virtual.ConnectoidEdges;
-
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -125,9 +123,6 @@ public class IterableUtils {
       return true;
     }
     var iter = iterable.iterator();
-    if(iter == null){
-      return true;
-    }
-    return !iter.hasNext();
+      return !iter.hasNext();
   }
 }

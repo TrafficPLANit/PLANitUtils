@@ -22,4 +22,15 @@ public interface UntypedDirectedGraphLayers<L extends UntypedDirectedGraphLayer<
    */
   @Override
   public abstract UntypedDirectedGraphLayers<L> deepClone();
+
+  /**
+   * uses layer modifier instead of plain recreation in isolation to allow for interactions between users indexing
+   * by id
+   */
+  @Override
+  public default void recreateIds() {
+    for (var layer : this) {
+      layer.getLayerModifier().recreateManagedIdEntities();
+    }
+  }
 }

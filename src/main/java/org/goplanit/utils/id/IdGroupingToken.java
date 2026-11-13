@@ -31,7 +31,7 @@ public final class IdGroupingToken {
    * 
    * @param description of the grouping id, when null empty string is used
    */
-  protected IdGroupingToken(String description) {
+  IdGroupingToken(String description) {
     if(description==null) {
       description = "";
     }

@@ -2,6 +2,7 @@ package org.goplanit.utils.network.layers;
 
 import org.goplanit.utils.id.ManagedIdEntityFactory;
 import org.goplanit.utils.mode.Mode;
+import org.goplanit.utils.mode.Modes;
 import org.goplanit.utils.network.layer.MacroscopicNetworkLayer;
 
 /** Factory interface for creating macroscopic network layers
@@ -22,6 +23,14 @@ public interface MacroscopicNetworkLayerFactory extends ManagedIdEntityFactory<M
    * @param supportedModes to use 
    * @return created instance
    */
-  public abstract MacroscopicNetworkLayer registerNew(Mode... supportedModes);   
-  
+  public abstract MacroscopicNetworkLayer registerNew(Mode... supportedModes);
+
+  /**
+   * Create a new macroscopic network layer instance
+   *
+   * @param modes to use
+   * @return created layer
+   */
+  public abstract MacroscopicNetworkLayer registerNew(Modes modes);
+
 }

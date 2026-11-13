@@ -31,9 +31,17 @@ public interface MapWrapper<K, V> extends Iterable<V> {
   public static <KK,VV> VV firstMatch(MapWrapper<KK,VV> mapWrapper, Predicate<VV> valuePredicate) {
     return mapWrapper.stream().filter(valuePredicate).findFirst().orElse(null);
   }
-  
+
   /**
-   * Register on the internal container (no null keys allowed which will trigger a warning and the value not to be registered)
+   * Get the mapping function used
+   *
+   * @return mapping function
+   */
+  Function<V, K> getValueToKey();
+
+  /**
+   * Register on the internal container (no null keys allowed which will trigger a warning and the
+   * value not to be registered)
    * 
    * @param value to register
    * @return old value if any
@@ -54,7 +62,7 @@ public interface MapWrapper<K, V> extends Iterable<V> {
    * @param toBeRemoved the to be removed entries
    */
   public default void removeAll(Collection<V> toBeRemoved){
-    toBeRemoved.forEach(e -> remove(e));
+    toBeRemoved.forEach(this::remove);
   }
 
   /**
@@ -153,7 +161,7 @@ public interface MapWrapper<K, V> extends Iterable<V> {
    * @param iterable to add elements of
    */
   public default void addAll(Iterable<? extends V> iterable) {
-    iterable.forEach( v -> register(v));
+    iterable.forEach(this::register);
   }
   
   /** apply provided consumer to each element in values as long as that element is registered on this wrapper
@@ -194,6 +202,7 @@ public interface MapWrapper<K, V> extends Iterable<V> {
    * @param comparingFunction to apply to sorted stream
    * @return stream of all entries (values) ordered by given comparing function
    */
+  @SuppressWarnings("unchecked")
   public default <M extends Comparable> Stream<V> streamSorted(Function<V,M> comparingFunction){
     return stream().sorted(Comparator.comparing(comparingFunction));
   }

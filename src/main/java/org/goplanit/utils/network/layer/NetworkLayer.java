@@ -8,8 +8,9 @@ import org.goplanit.utils.mode.Mode;
 import org.goplanit.utils.mode.PredefinedModeType;
 
 /**
- * A network layer represents the infrastructure suited for a number of modes. This can be in the form of a physical network or by some other (more aggregate)
- * representation. The combination of infrastructure layers can be used to construct an intermodal network. Each layer supports one or more modes
+ * A network layer represents the infrastructure suited for a number of modes. This can be in the form of a
+ * physical network or by some other (more aggregate) representation. The combination of infrastructure layers can
+ * be used to construct an intermodal network. Each layer supports one or more modes
  * 
  * @author markr
  *
@@ -34,13 +35,15 @@ public interface NetworkLayer extends ExternalIdAble, ManagedId {
   public abstract NetworkLayer shallowClone();
 
   /**
-   * A network layer deep clone is expected to update interdependencies between "owned" deep cloned entities where possible
+   * A network layer deep clone is expected to update interdependencies between "owned" deep cloned entities
+   * where possible
    */
   @Override
   public abstract NetworkLayer deepClone();
   
   /**
-   * create a string that can be used to prefix log statements for this layer to - in a unified way - identify this statement came from a particular layer
+   * create a string that can be used to prefix log statements for this layer to - in a unified way -
+   * identify this statement came from a particular layer
    * 
    * @param layer to use
    * @return String "[layer: xmlID ]"
@@ -71,13 +74,6 @@ public interface NetworkLayer extends ExternalIdAble, ManagedId {
    * @return the supported modes for at least some part of the available infrastructure
    */
   public abstract Collection<Mode> getSupportedModes();
-
-  /**
-   * Verify if a predefined mode is supported based on its type
-   * @param predefinedModeType to verify
-   * @return true, when supported, false otherwise
-   */
-  public abstract boolean supportsPredefinedMode(PredefinedModeType predefinedModeType);
 
   /**
    * check if the layer is empty of any infrastructure
@@ -111,13 +107,13 @@ public interface NetworkLayer extends ExternalIdAble, ManagedId {
   }
 
   /**
-   * Determine if mode is supported by this layer
+   * Determine if a predefined mode of the given type is supported by this layer
    *
    * @param modeType to verify
    * @return true when supporting, false otherwise
    */
   public default boolean supports(PredefinedModeType modeType) {
-    return getSupportedModes().stream().anyMatch( m -> m.isPredefinedModeType() && m.getPredefinedModeType().equals(modeType));
+    return getSupportedModes().stream().anyMatch(m -> m.isPredefinedModeType(modeType));
   }
   
   /**
@@ -139,8 +135,17 @@ public interface NetworkLayer extends ExternalIdAble, ManagedId {
   }
 
   /**
-   * Reset the layer
+   * Reset the layer indlucing resetting the managed id token
    */
-  public abstract void reset();    
+  public default void reset(){
+    reset(true);
+  }
+
+  /**
+   * Reset the layer
+   *
+   * @param resetManagedIds  when true reset all managed ids of this layer as well
+   */
+  public abstract void reset(boolean resetManagedIds);
 
 }

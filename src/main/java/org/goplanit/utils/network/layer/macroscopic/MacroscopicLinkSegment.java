@@ -1,11 +1,6 @@
 package org.goplanit.utils.network.layer.macroscopic;
 
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Set;
-
 import org.goplanit.utils.mode.Mode;
-import org.goplanit.utils.network.layer.physical.Link;
 import org.goplanit.utils.network.layer.physical.LinkSegment;
 import org.goplanit.utils.network.layer.physical.Node;
 import org.goplanit.utils.pcu.PcuCapacitated;
@@ -82,22 +77,8 @@ public interface MacroscopicLinkSegment extends LinkSegment, PcuCapacitated {
    * {@inheritDoc}
    */
   @Override
-  public abstract Node getUpstreamVertex();
+  public abstract MacroscopicLink getParent();
 
-  /**
-   * {@inheritDoc}
-   */
-  @Override
-  public abstract Node getDownstreamVertex();
-
-  /**
-   * {@inheritDoc}
-   */
-  @Override
-  public default MacroscopicLink getParentLink() {
-    return (MacroscopicLink) LinkSegment.super.getParentLink();
-  }
-  
     
   /**
    * {@inheritDoc}
@@ -126,4 +107,5 @@ public interface MacroscopicLinkSegment extends LinkSegment, PcuCapacitated {
    */
   @Override
   public abstract MacroscopicLinkSegment deepClone();
+
 }

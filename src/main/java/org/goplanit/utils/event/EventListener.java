@@ -16,8 +16,8 @@ public interface EventListener extends java.util.EventListener{
     return getKnownSupportedEventTypes()!=null;
   }
 
-  /** Collect explicitly supported event types that are known. When not defined the user has to explicitly provide them upon registering
-   * the listener on an event producer, otherwise they can be extracted from here
+  /** Collect explicitly supported event types that are known. When not defined the user has to explicitly
+   * provide them upon registering the listener on an event producer, otherwise they can be extracted from here
    * 
    * @return the supported event types
    */

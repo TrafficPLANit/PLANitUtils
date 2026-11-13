@@ -1,5 +1,6 @@
 package org.goplanit.utils.graph;
 
+import org.goplanit.utils.geo.GeometryEnabled;
 import org.goplanit.utils.graph.directed.EdgeSegment;
 import org.goplanit.utils.id.ExternalIdAble;
 import org.goplanit.utils.id.ManagedId;
@@ -11,7 +12,7 @@ import org.goplanit.utils.id.ManagedId;
  * @author markr
  *
  */
-public interface GraphEntity extends ExternalIdAble, ManagedId {
+public interface GraphEntity extends ExternalIdAble, ManagedId, GeometryEnabled {
 
   /**
    * {@inheritDoc}

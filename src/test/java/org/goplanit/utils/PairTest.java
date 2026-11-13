@@ -25,8 +25,9 @@ public class PairTest {
     assertEquals(ComparablePair.of(1,2).compareTo(ComparablePair.of(null,1)), 1);
     assertEquals(ComparablePair.of(1,2).compareTo(ComparablePair.of(1,null)), 1);
 
-    assertEquals(ComparablePair.of(null,2).compareTo(ComparablePair.of(1,2)), -1);
-    assertEquals(ComparablePair.of(1,null).compareTo(ComparablePair.of(1,2)), -1);
+    var compPair12 = ComparablePair.of(1,2);
+    assertEquals(ComparablePair.of((Integer)null,2).compareTo(compPair12), -1);
+    assertEquals(ComparablePair.of(1,(Integer) null).compareTo(compPair12), -1);
 
     assertEquals(ComparablePair.of(1,null).compareTo(ComparablePair.of(1,null)), 0);
     assertEquals(ComparablePair.of(null,null).compareTo(ComparablePair.of(null,null)), 0);

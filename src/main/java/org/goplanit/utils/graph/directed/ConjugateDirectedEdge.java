@@ -1,9 +1,10 @@
 package org.goplanit.utils.graph.directed;
 
-import java.util.Collection;
-
+import org.goplanit.utils.graph.ConjugateEdge;
 import org.goplanit.utils.graph.EdgeUtils;
 import org.goplanit.utils.misc.Pair;
+
+import java.util.Collection;
 
 /**
  * Directed Edge interface connecting two vertices in a directional fashion. Each edge has one or
@@ -13,7 +14,7 @@ import org.goplanit.utils.misc.Pair;
  * @author markr
  *
  */
-public interface ConjugateDirectedEdge extends DirectedEdge {
+public interface ConjugateDirectedEdge extends DirectedEdge, ConjugateEdge {
 
   /**
    * {@inheritDoc}
@@ -31,7 +32,8 @@ public interface ConjugateDirectedEdge extends DirectedEdge {
    * {@inheritDoc}
    */  
   @Override
-  public abstract ConjugateEdgeSegment registerEdgeSegment(final EdgeSegment edgeSegment, final boolean directionAB, final boolean force);
+  public abstract ConjugateEdgeSegment registerEdgeSegment(
+      final EdgeSegment edgeSegment, final boolean directionAB, final boolean force);
   
   /**
    * {@inheritDoc}
@@ -88,32 +90,19 @@ public interface ConjugateDirectedEdge extends DirectedEdge {
   }
   
   /* NEW methods */
-  
-  /** Conjugate edge represents two adjacent edges in original form (potential turn movement).
-   *  
-   * @return directed original adjacent edge pair
-   */
-  public abstract Pair<? extends DirectedEdge,? extends DirectedEdge> getOriginalAdjacentEdges(); 
-  
+
   /** Collect original pair of edge segments that this conjugate in given direction makes up for
    * @param directionAb conjugate direction to use
    * @return pair of original edge segments (can be partially empty/null if combination does not exist)
    */
-  public default Pair<? extends EdgeSegment, ? extends EdgeSegment> getOriginalAdjacentEdgeSegments(boolean directionAb){    
-    DirectedEdge startEdge = directionAb ? getVertexA().getOriginalEdge() : getVertexB().getOriginalEdge();
-    DirectedEdge endEdge = directionAb ? getVertexB().getOriginalEdge() : getVertexA().getOriginalEdge();
-    var sharedVertex = EdgeUtils.getSharedVertex(startEdge, endEdge);
-  
-    EdgeSegment startEdgeSegment = null;
-    EdgeSegment endEdgeSegment = null;
-    if(startEdge!=null) {
-      startEdgeSegment = startEdge.isVertexA(sharedVertex) ? startEdge.getEdgeSegmentBa() : startEdge.getEdgeSegmentAb();
-    }
-    if(endEdge != null) {
-      endEdgeSegment = endEdge.isVertexA(sharedVertex) ? startEdge.getEdgeSegmentAb() : startEdge.getEdgeSegmentBa();
-    }
-  
-    return Pair.of(startEdgeSegment, endEdgeSegment);
+  public default Pair<? extends EdgeSegment, ? extends EdgeSegment>
+  getOriginalAdjacentEdgeSegments(boolean directionAb){
+    // since conjugate nodes are currently directly tied to original edge segments, collecting direction is trivial
+    var originalStart =
+            directionAb ? getVertexA().getOriginalEdgeSegment() : getVertexB().getOriginalEdgeSegment();
+    var originalEnd =
+            directionAb ? getVertexB().getOriginalEdgeSegment() : getVertexA().getOriginalEdgeSegment();
+    return Pair.of(originalStart, originalEnd);
   }
-  
+
 }
