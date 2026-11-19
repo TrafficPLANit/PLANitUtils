@@ -7,6 +7,7 @@ import org.goplanit.utils.id.IdMappingUtils;
 import org.locationtech.jts.geom.LineString;
 
 import java.util.*;
+import java.util.function.BiPredicate;
 import java.util.function.Function;
 import java.util.logging.Logger;
 
@@ -139,5 +140,36 @@ public class EdgeSegmentUtils {
   public static String createParentLinkDerivedId(final EdgeSegment edgeSegment, IdMapperType idMapperType) {
     var linkId =  IdMappingUtils.getIdMappingFunction(idMapperType).apply(edgeSegment.getParent());
     return String.format("%s-%s",linkId, (edgeSegment.isDirectionAb() ? "AB" : "BA"));
+  }
+
+  /**
+   * Find the edge segments one allowed turn away from an edge segment: downstream, those leaving the vertex it ends at
+   * that a traveller may turn onto from it; upstream, those entering the vertex it starts at from which a traveller may
+   * turn onto it. Turning back onto the other direction of the same edge is offered to the condition like any other
+   * turn. Every edge segment at that vertex is offered, whatever its kind, so a condition written for a narrower kind
+   * than the vertex holds, such as link segments at a vertex that also holds connectoid segments, checks the kind
+   * first
+   *
+   * @param <ES> type of edge segment
+   * @param segment to start from
+   * @param upstream when true find the edge segments upstream, when false downstream
+   * @param canTurn true when a traveller may turn from the first edge segment onto the second
+   * @return the edge segments one allowed turn away, empty when the edge segment has no vertex at that end
+   */
+  @SuppressWarnings("unchecked")
+  public static <ES extends EdgeSegment> List<ES> findEdgeSegmentsOneAllowedTurnAway(
+      final ES segment, final boolean upstream, final BiPredicate<? super ES, ? super ES> canTurn) {
+    final List<ES> found = new ArrayList<>();
+    final var vertex = EdgeSegment.getVertexForEdgeSegmentLambda(upstream).apply(segment);
+    if (vertex == null) {
+      return found;
+    }
+    for (var candidate : DirectedVertex.getEdgeSegmentsForVertexLambda(upstream).apply(vertex)) {
+      final var other = (ES) candidate;
+      if (upstream ? canTurn.test(other, segment) : canTurn.test(segment, other)) {
+        found.add(other);
+      }
+    }
+    return found;
   }
 }

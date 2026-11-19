@@ -99,20 +99,21 @@ public interface MacroscopicNetworkLayerModifier extends
       MacroscopicLinkSegment linkSegment, MacroscopicLinkSegmentType linkSegmentType);
 
   /**
-   * Move one end node of a link to another node. The link keeps its id, external id, segments and mode access. Its
-   * geometry keeps every point and runs on in a straight line to the new node, and its length follows; a link without
-   * geometry is taken to run straight between its nodes. Approaches and
-   * exits on the link now end or start at the new node. Bans whose segments no longer meet are removed, each with its
-   * removal event
+   * Move the end at a node of each given link to another node, in one call. Each link keeps its id, external id,
+   * segments and mode access. Its geometry keeps every point and runs on in a straight line to the new node, and its
+   * length follows; a link without geometry is taken to run straight between its nodes. Approaches and exits on the
+   * links now end or start at the new node. The move fires one event, naming the links and both nodes, so what refers to
+   * the node over several of them, such as a transfer connectoid, follows them as a whole. Bans whose segments no longer
+   * meet are removed, each with its removal event
    *
-   * @param link to move an end node of
-   * @param currentEndNode the end node to move, node A or node B of the link
-   * @param newEndNode the node to move it to
-   * @param crs of the layer's geometry, to measure the new length in
+   * @param links to move the end of, each with the current end node as node A or node B
+   * @param currentEndNode the end node to move away from
+   * @param newEndNode the node to move the ends to
+   * @param crs of the layer's geometry, to measure the new lengths in
    * @return the bans removed because their segments no longer meet
    */
-  public abstract List<BannedTurn> moveLinkEndNode(
-      MacroscopicLink link, Node currentEndNode, Node newEndNode, CoordinateReferenceSystem crs);
+  public abstract List<BannedTurn> moveLinkEndsAtNode(Collection<? extends MacroscopicLink> links,
+      Node currentEndNode, Node newEndNode, CoordinateReferenceSystem crs);
 
   /**
    * Consolidate the intersections of the layer. In order, it:

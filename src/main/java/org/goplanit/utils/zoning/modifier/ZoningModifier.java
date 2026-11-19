@@ -1,7 +1,14 @@
 package org.goplanit.utils.zoning.modifier;
 
+import org.goplanit.utils.graph.directed.EdgeSegment;
+import org.goplanit.utils.mode.Mode;
 import org.goplanit.utils.modifier.LoggableModifier;
 import org.goplanit.utils.network.layers.ServiceNetworkLayers;
+import org.goplanit.utils.zoning.Zone;
+import org.goplanit.utils.zoning.connectoid.Connectoid;
+import org.goplanit.utils.zoning.connectoid.ConnectoidAccessZoneEntry;
+import org.goplanit.utils.zoning.connectoid.DirectedConnectoidAccessZoneEntry;
+import org.goplanit.utils.zoning.connectoid.ZoneConnectoidType;
 import org.goplanit.utils.zoning.modifier.event.ZoningModifierEventProducer;
 
 /**
@@ -100,6 +107,51 @@ public interface ZoningModifier extends ZoningModifierEventProducer, LoggableMod
    */
   public abstract void removeUnusedTransferConnectoids(
           ServiceNetworkLayers serviceNetworkLayers, boolean recreateManagedConnectoidIds);
+
+  /**
+   * Remove a connectoid from the zoning, firing a remove connectoid event. Its access zone entries stay on it, so the
+   * event shows what it served
+   *
+   * @param connectoid to remove
+   * @return true when removed, false when the zoning does not hold it
+   */
+  public abstract boolean removeConnectoid(Connectoid connectoid);
+
+  /**
+   * Remove an access zone entry from a connectoid, firing a remove access zone entry event. The connectoid stays, even
+   * when left without entries
+   *
+   * @param connectoid to remove the entry from
+   * @param accessZone of the entry
+   * @param type of the entry
+   * @return the entry removed, null when the connectoid has no such entry
+   */
+  public abstract ConnectoidAccessZoneEntry removeAccessZoneEntry(
+      Connectoid connectoid, Zone accessZone, ZoneConnectoidType type);
+
+  /**
+   * Remove an access link segment from an access zone entry of a connectoid, firing a remove access link segment event.
+   * The entry stays, even when left without access link segments
+   *
+   * @param connectoid the entry belongs to
+   * @param entry to remove the access link segment from
+   * @param accessLinkSegment to remove
+   * @return true when removed, false when the entry does not hold it
+   */
+  public abstract boolean removeAccessLinkSegment(
+      Connectoid connectoid, DirectedConnectoidAccessZoneEntry entry, EdgeSegment accessLinkSegment);
+
+  /**
+   * Remove an explicitly allowed mode from an access zone entry of a connectoid, firing a remove allowed mode event.
+   * As {@link ConnectoidAccessZoneEntry#removeExplicitAllowedMode(Mode)}, the last explicitly allowed mode is not
+   * removed, since an entry without any would allow every mode
+   *
+   * @param connectoid the entry belongs to
+   * @param entry to remove the mode from
+   * @param mode to remove
+   * @return true when removed, false when the entry does not allow it explicitly or it is its last
+   */
+  public abstract boolean removeExplicitAllowedMode(Connectoid connectoid, ConnectoidAccessZoneEntry entry, Mode mode);
 
   /**
    * Recreate all managed id entities owned by this zoning. Virtual network ids are not part of this as they

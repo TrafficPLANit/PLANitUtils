@@ -40,4 +40,19 @@ public interface LinkSegmentTypeModifierEventProducer extends EventProducer {
    *  @param listener to remove
    */
   public abstract void removeListener(final LinkSegmentTypeModifierListener listener);
+
+  /**
+   * Register a listener internal to the owner of the producer for all its supported event types: it hears each event
+   * before the other listeners and stays registered when they are removed
+   *
+   * @param listener to register
+   */
+  public abstract void addInternalListener(final LinkSegmentTypeModifierListener listener);
+
+  /**
+   * Remove a listener internal to the owner of the producer, for all event types it is registered for
+   *
+   * @param listener to remove
+   */
+  public abstract void removeInternalListener(final LinkSegmentTypeModifierListener listener);
 }

@@ -148,10 +148,11 @@ public interface Connectoid extends ExternalIdAble, ManagedId, Iterable<Connecto
    *
    * @param accessZone to verify
    * @param type type specifier
-   * @return entry
+   * @return entry, null when the connectoid has none for the zone and type
    */
   public default ConnectoidAccessZoneEntry getAccessZoneEntry(Zone accessZone, ZoneConnectoidType type){
-    return getAccessZoneEntriesByType().get(accessZone.getId()).get(type);
+    var entriesByType = getAccessZoneEntriesByType().get(accessZone.getId());
+    return entriesByType == null ? null : entriesByType.get(type);
   }
 
   /** Check if zone is registered as access zone
@@ -198,12 +199,12 @@ public interface Connectoid extends ExternalIdAble, ManagedId, Iterable<Connecto
         e.values().stream()).filter( e -> e.getType().equals(type)).findFirst();
   }
   
-  /** the number of accessible zones registered
-   * 
-   * @return number of accessible zones
+  /** the number of access zone entries, across all zones and types
+   *
+   * @return number of access zone entries
    */
   public default int getNumberOfAccessZoneEntries(){
-    return getAccessZoneEntriesByType().size();
+    return getAccessZoneEntriesByType().values().stream().mapToInt(Map::size).sum();
   }
 
   /**

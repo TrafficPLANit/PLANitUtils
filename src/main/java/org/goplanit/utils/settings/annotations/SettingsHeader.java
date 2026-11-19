@@ -24,6 +24,19 @@ import java.lang.annotation.Target;
  * renaming a key cannot express, such as a key split in two, so text of an older version is refused rather than read
  * wrongly.
  * </p>
+ * <p>
+ * When the class giving the header fills no section itself, the keys it declares sit at the root of the files, next to
+ * the header, and apply to the settings of every section, since the classes of the sections all extend it. With
+ * </p>
+ * <pre>
+ * &#64;SettingsWrite(key = "retainTags", level = SettingsKeyLevel.STANDARD, description = "Keep the input tags")
+ * public void setRetainTags(boolean retainTags)
+ * </pre>
+ * <p>
+ * on {@code ExampleReaderSettings}, the line {@code retainTags: true} under the header calls it on the settings of
+ * every section, instead of being written once inside each section. The loader, {@code SettingsYamlLoader}, shows the
+ * whole example.
+ * </p>
  *
  * @author markr
  */

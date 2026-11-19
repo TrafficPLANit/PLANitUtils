@@ -3,6 +3,8 @@ package org.goplanit.utils.reflection;
 import java.lang.invoke.MethodType;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.lang.reflect.TypeVariable;
@@ -318,5 +320,25 @@ public class ReflectionUtils {
    */
   public static Class<?> getBoxedClass(Class<?> type) {
     return MethodType.methodType(type).wrap().returnType();
+  }
+
+  /**
+   * Call a method through reflection, for code that finds the method at run time and takes any failure of the call
+   * for a mistake in the code, such as calling a getter found through its annotation
+   *
+   * @param method to call
+   * @param owner to call it on, null for a static method
+   * @param arguments to call it with
+   * @return what the method returns, null for a void method
+   * @throws PlanItRunTimeException naming the method, when it cannot be called or fails
+   */
+  public static Object invoke(Method method, Object owner, Object... arguments) {
+    try {
+      return method.invoke(owner, arguments);
+    } catch (InvocationTargetException e) {
+      throw new PlanItRunTimeException("%s failed", e.getCause(), method);
+    } catch (IllegalAccessException e) {
+      throw new PlanItRunTimeException("%s cannot be called", e, method);
+    }
   }
 }

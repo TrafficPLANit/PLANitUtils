@@ -13,7 +13,8 @@
  * <li>{@link SettingsSection} on a getter of nested settings, which become a section, or on a settings class, naming
  * the section it fills at the root of a file;</li>
  * <li>{@link SettingsHeader} on a settings class filling a section at the root, or on a class it extends, giving the
- * first line of the file;</li>
+ * first line of the file. When that class fills no section itself, the keys it declares sit at the root of the file
+ * and apply to every section, such as {@code retainTags: true} under the header;</li>
  * <li>{@link SettingsRootValue} on every parameter of the one constructor taking values at the root of a file, such
  * as a country, which only a constructor can set;</li>
  * <li>{@link CoveredBySettingsKey} on a method that writes the same state as a key in other words, such as a form

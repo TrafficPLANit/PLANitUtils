@@ -21,6 +21,8 @@ import org.goplanit.utils.misc.Pair;
 import org.locationtech.jts.algorithm.Angle;
 import org.locationtech.jts.algorithm.RobustDeterminant;
 import org.locationtech.jts.geom.*;
+import org.locationtech.jts.io.ParseException;
+import org.locationtech.jts.io.WKTReader;
 import org.locationtech.jts.linearref.LengthIndexedLine;
 import org.locationtech.jts.linearref.LinearLocation;
 import org.locationtech.jts.linearref.LocationIndexedLine;
@@ -349,6 +351,28 @@ public class PlanitJtsUtils {
    */
   public static Polygon createPolygon(Coordinate[] coords) {
     return jtsGeometryFactory.createPolygon(jtsGeometryFactory.createLinearRing(coords));
+  }
+
+  /**
+   * Create a polygon from its WKT, the standard text form of a geometry that JTS reads and writes, such as
+   * {@code POLYGON ((1 1, 4 1, 4 3, 1 3, 1 1))}. JTS writes a polygon as WKT itself, through its {@code toText()}
+   *
+   * @param wkt of the polygon
+   * @return created polygon
+   * @throws IllegalArgumentException when the text is not WKT, or is the WKT of another geometry than a polygon
+   */
+  public static Polygon createPolygonFromWkt(String wkt) {
+    Geometry geometry;
+    try {
+      geometry = new WKTReader(jtsGeometryFactory).read(wkt);
+    } catch (ParseException e) {
+      throw new IllegalArgumentException(String.format("Not the WKT of a polygon: %s", wkt), e);
+    }
+    if (!(geometry instanceof Polygon)) {
+      throw new IllegalArgumentException(
+          String.format("WKT of a %s, not of a polygon: %s", geometry.getGeometryType(), wkt));
+    }
+    return (Polygon) geometry;
   }
 
   /**

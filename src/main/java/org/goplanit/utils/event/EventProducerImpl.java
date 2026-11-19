@@ -107,6 +107,21 @@ public abstract class EventProducerImpl{
       internalListeners.computeIfAbsent(type, t -> new ArrayList<>()).add(listener);
     }
   }
+
+  /**
+   * Remove a listener internal to the owner of this producer, for all event types it is registered for
+   *
+   * @param listener to remove
+   * @return true when removed from one or more event types, false otherwise
+   */
+  protected final synchronized boolean removeInternalListener(final EventListener listener) {
+    boolean removed = false;
+    for (var listenersOfType : internalListeners.values()) {
+      removed = listenersOfType.removeIf(registered -> registered == listener) || removed;
+    }
+    internalListeners.values().removeIf(List::isEmpty);
+    return removed;
+  }
   
   /**
    *  Remove a listener for a given event type

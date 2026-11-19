@@ -1,6 +1,7 @@
 package org.goplanit.utils.misc;
 
 import java.nio.charset.Charset;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
@@ -261,5 +262,33 @@ public class StringUtils {
   public static String toSentence(Enum<?> constant) {
     var words = constant.name().replace('_', ' ').toLowerCase();
     return words.isEmpty() ? words : Character.toUpperCase(words.charAt(0)) + words.substring(1);
+  }
+
+  /**
+   * Text broken into lines no longer than the given length, each break made at the last space that fits, the space
+   * itself dropped. A word longer than a line stays whole on a line of its own, and the line breaks of the text are
+   * kept. For example, "one two three" with a length of 7 gives "one two" and "three"
+   *
+   * @param text to break into lines
+   * @param maxLineLength longest a line may be
+   * @return the lines, in order; one empty line for empty text
+   */
+  public static List<String> wrapLineAtSpaces(String text, int maxLineLength) {
+    var lines = new ArrayList<String>();
+    for (var rest : text.split("\\R", -1)) {
+      while (rest.length() > maxLineLength) {
+        int breakAt = rest.lastIndexOf(' ', maxLineLength);
+        if (breakAt <= 0) {
+          breakAt = rest.indexOf(' ', maxLineLength);
+          if (breakAt < 0) {
+            break;
+          }
+        }
+        lines.add(rest.substring(0, breakAt));
+        rest = rest.substring(breakAt + 1);
+      }
+      lines.add(rest);
+    }
+    return lines;
   }
 }

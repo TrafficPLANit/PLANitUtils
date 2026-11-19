@@ -2,19 +2,24 @@ package org.goplanit.utils;
 
 import org.goplanit.utils.exceptions.PlanItRunTimeException;
 import org.goplanit.utils.settings.SettingsSchema;
+import org.goplanit.utils.settings.SettingsValueConverter;
 import org.goplanit.utils.settings.annotations.SettingsHeader;
 import org.goplanit.utils.settings.annotations.SettingsKeyLevel;
 import org.goplanit.utils.settings.annotations.SettingsSection;
+import org.goplanit.utils.yaml.SimpleYamlReader;
 import org.junit.jupiter.api.Test;
+
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Tests of {@link SettingsSchema}: the section of settings found from their class, the header from a class they
- * extend, and the classes a schema refuses because it could not tell their section or header
+ * extend, the converter of a type, and the classes a schema refuses because it could not tell their section or header
  *
  * @author markr
  */
@@ -26,12 +31,12 @@ public class SettingsSchemaTest {
   }
 
   /** Settings of the section network */
-  @SettingsSection(key = "network", level = SettingsKeyLevel.STANDARD)
+  @SettingsSection(key = "network", level = SettingsKeyLevel.STANDARD, description = "Settings of the network")
   public static class TestNetworkSettings extends TestBaseSettings {
   }
 
   /** Settings of the section zoning */
-  @SettingsSection(key = "zoning", level = SettingsKeyLevel.COMMON)
+  @SettingsSection(key = "zoning", level = SettingsKeyLevel.COMMON, description = "Settings of the zoning")
   public static class TestZoningSettings extends TestBaseSettings {
   }
 
@@ -40,12 +45,12 @@ public class SettingsSchemaTest {
   }
 
   /** A subclass of the network settings naming a section of its own, which a schema with both cannot tell apart */
-  @SettingsSection(key = "cityNetwork", level = SettingsKeyLevel.RARE)
+  @SettingsSection(key = "cityNetwork", level = SettingsKeyLevel.RARE, description = "Settings of the city's network")
   public static class TestOwnSectionCityNetworkSettings extends TestNetworkSettings {
   }
 
   /** Settings naming the section network as well */
-  @SettingsSection(key = "network", level = SettingsKeyLevel.RARE)
+  @SettingsSection(key = "network", level = SettingsKeyLevel.RARE, description = "Settings of the network, named again")
   public static class TestSecondNetworkSettings extends TestBaseSettings {
   }
 
@@ -54,14 +59,50 @@ public class SettingsSchemaTest {
   }
 
   /** Settings naming a section, without a header */
-  @SettingsSection(key = "other", level = SettingsKeyLevel.RARE)
+  @SettingsSection(key = "other", level = SettingsKeyLevel.RARE, description = "Settings of another section")
   public static class TestNoHeaderSettings {
   }
 
   /** Settings naming a section, with another header */
   @SettingsHeader(key = "planitOtherSettings", version = 1)
-  @SettingsSection(key = "other", level = SettingsKeyLevel.RARE)
+  @SettingsSection(key = "other", level = SettingsKeyLevel.RARE, description = "Settings of another section")
   public static class TestOtherHeaderSettings {
+  }
+
+  /** A code, the value a converter of a schema makes */
+  public static final class TestCode {
+
+    /** the code as text */
+    private final String text;
+
+    /** @param text the code as text */
+    public TestCode(String text) {
+      this.text = text;
+    }
+
+    /** @return the code as text */
+    public String getText() {
+      return text;
+    }
+  }
+
+  /** Converter of a code written as text */
+  public static final class TestCodeConverter implements SettingsValueConverter<TestCode> {
+
+    @Override
+    public Class<TestCode> getValueType() {
+      return TestCode.class;
+    }
+
+    @Override
+    public TestCode fromPlainValue(Object plainValue) {
+      return new TestCode(SimpleYamlReader.asText(plainValue));
+    }
+
+    @Override
+    public Object toPlainValue(TestCode code) {
+      return code.getText();
+    }
   }
 
   /** A section is found from its class or a subclass, and the header from a class the settings extend */
@@ -90,5 +131,17 @@ public class SettingsSchemaTest {
         () -> new SettingsSchema(TestNetworkSettings.class, TestOwnSectionCityNetworkSettings.class));
     assertThrows(PlanItRunTimeException.class,
         () -> new SettingsSchema(TestNetworkSettings.class, TestSecondNetworkSettings.class));
+  }
+
+  /** A converter is found by the type it makes, none for another type; two converters of one type are refused */
+  @Test
+  public void converterFoundByItsType() {
+    var converter = new TestCodeConverter();
+    var schema = new SettingsSchema(List.of(converter), TestNetworkSettings.class);
+
+    assertSame(converter, schema.findConverter(TestCode.class));
+    assertNull(schema.findConverter(String.class));
+    assertThrows(PlanItRunTimeException.class,
+        () -> new SettingsSchema(List.of(converter, new TestCodeConverter()), TestNetworkSettings.class));
   }
 }

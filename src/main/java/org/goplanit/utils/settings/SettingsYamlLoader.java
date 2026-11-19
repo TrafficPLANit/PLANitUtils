@@ -26,14 +26,15 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Set;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * Fills settings from YAML settings files and text, by calling the methods of the settings that carry a
@@ -77,6 +78,41 @@ import java.util.stream.Collectors;
  * their constructors as before.
  * </p>
  * <p>
+ * Keys can also sit at the root of the sources, next to the header, when the settings of several sections share
+ * them. They are the keys of the class giving the header, as long as that class fills no section itself. For example,
+ * with
+ * </p>
+ * <pre>
+ * &#64;SettingsHeader(key = "planitExampleSettings", version = 1)
+ * public abstract class ExampleReaderSettings {
+ *   &#64;SettingsWrite(key = "retainTags", level = SettingsKeyLevel.STANDARD, description = "Keep the input tags")
+ *   public void setRetainTags(boolean retainTags)
+ * }
+ *
+ * &#64;SettingsSection(key = "network", level = SettingsKeyLevel.STANDARD,
+ *     description = "The settings of the network")
+ * public class ExampleNetworkSettings extends ExampleReaderSettings
+ *
+ * &#64;SettingsSection(key = "transport", level = SettingsKeyLevel.STANDARD,
+ *     description = "The settings of the transport")
+ * public class ExampleTransportSettings extends ExampleReaderSettings
+ * </pre>
+ * <p>
+ * the source
+ * </p>
+ * <pre>
+ * planitExampleSettings: 1
+ * retainTags: true
+ * network:
+ *   maximumSpeed: 80
+ * </pre>
+ * <p>
+ * calls {@code setRetainTags(true)} on the network settings and on the transport settings alike, as both inherit the
+ * key, so settings holding both sections get it from one line. Inside {@code network}, {@code retainTags} is no key. A
+ * value of a type that is neither a plain value nor a small section, such as an area that comes in several forms, is
+ * made by the converter of its type registered on the schema ({@link SettingsValueConverter}).
+ * </p>
+ * <p>
  * The loader knows no settings class, so any settings can be filled from files by annotating their methods, and they
  * stay ordinary objects, made and changed in code as before. It finds the method of a key through its annotation, and
  * learns what to turn the text into from the types the method declares, which Java keeps in its signature:
@@ -86,8 +122,12 @@ import java.util.stream.Collectors;
  * </p>
  * <p>
  * Sources apply in order, each calling methods as code would, so a later source wins for a replacing key and adds to
- * an adding key ({@link SettingsKeyEffect}). Within a section, a whole list key applies first, then its {@code -}
- * form, then its {@code +} form; other keys apply in the order of the source. Loading is strict: every source is
+ * an adding key ({@link SettingsKeyEffect}). Within a source the keys apply in the order written, so a later key wins
+ * as a later call does in code, with three fixed points: the values at the root a constructor takes come first; the
+ * forms of one list stay together where the first of them is written, the whole list, then its {@code -} form, then
+ * its {@code +} form; and sections come after the keys beside them, those at the root in the order of the schema and
+ * nested ones by level and then by name, so the more general settings always apply before the more particular ones
+ * below them. Loading is strict: every source is
  * checked, every problem is kept with its source and the path of its key, and all are thrown together once every
  * source is done, so a user fixes every mistake in one go. Reading the YAML is left to {@link SimpleYamlReader}, which
  * gives every value as text and refuses tags, so {@code NO} is never read as false and no Java object is ever made
@@ -107,18 +147,6 @@ public final class SettingsYamlLoader {
   /** end of the header key of any format */
   private static final String HEADER_KEY_END = "Settings";
 
-  /** suffix of a key that removes entries */
-  private static final String REMOVE_SUFFIX = "-";
-
-  /** suffix of a key that adds entries */
-  private static final String ADD_SUFFIX = "+";
-
-  /** field of an override entry holding its value */
-  private static final String OVERRIDE_VALUE = "value";
-
-  /** field of an override entry holding its reason */
-  private static final String OVERRIDE_REASON = "reason";
-
   /** what each kind of value the reader gives is, for problems */
   private static final Map<Class<?>, String> VALUE_DESCRIPTIONS =
       Map.of(String.class, "a single value", List.class, "a list", Map.class, "keys with values");
@@ -127,13 +155,32 @@ public final class SettingsYamlLoader {
   private static final Object FAILED = new Object();
 
   /**
-   * The rank of a key within its section: a whole list first, then removals, then additions
+   * The keys of a section in the order they apply: its settings keys in the order of the source, the forms of one
+   * list kept together where the first of them is written, whole list, then minus, then plus; then its nested
+   * sections, by level and then by name, whatever the order of the source
+   * <p>
+   * Applying in the order written lets a later key win, as a later call does in code. Nested sections come last, in
+   * the order settings are written out in, so the more general settings of a section always apply before the more
+   * particular ones below it: a way type registered for the whole network, for example, before the highway types
+   * listed in the highway section
+   * </p>
    *
-   * @param key to rank
-   * @return 0 for a plain key, 1 for one ending in {@code -}, 2 for one ending in {@code +}
+   * @param entries of the section
+   * @param index of the settings keys of the settings it fills
+   * @return the keys of the entries, in the order they apply
    */
-  private static int suffixRank(String key) {
-    return key.endsWith(REMOVE_SUFFIX) ? 1 : (key.endsWith(ADD_SUFFIX) ? 2 : 0);
+  private static List<String> orderOfApplying(Map<String, Object> entries, SettingsKeyIndex index) {
+    var firstPositionOfList = new HashMap<String, Integer>();
+    var position = 0;
+    for (var key : entries.keySet()) {
+      firstPositionOfList.putIfAbsent(SettingsKeyIndex.listKeyOf(key), position++);
+    }
+    var keys = entries.keySet().stream().filter(key -> index.findSectionGetter(key) == null)
+        .sorted(Comparator.comparingInt((String key) -> firstPositionOfList.get(SettingsKeyIndex.listKeyOf(key)))
+            .thenComparingInt(SettingsKeyIndex::applyingOrderOfListForm));
+    var sections = entries.keySet().stream().filter(key -> index.findSectionGetter(key) != null)
+        .sorted(index.byLevelThenName());
+    return Stream.concat(keys, sections).collect(Collectors.toList());
   }
 
   /**
@@ -148,7 +195,8 @@ public final class SettingsYamlLoader {
       return false;
     }
     var keys = SimpleYamlReader.asMap(value).keySet();
-    return keys.contains(OVERRIDE_VALUE) && Set.of(OVERRIDE_VALUE, OVERRIDE_REASON).containsAll(keys);
+    return keys.contains(UserOverride.VALUE_FIELD) &&
+        Set.of(UserOverride.VALUE_FIELD, UserOverride.REASON_FIELD).containsAll(keys);
   }
 
   /**
@@ -202,54 +250,6 @@ public final class SettingsYamlLoader {
       }
     }
     return found;
-  }
-
-  /**
-   * Make settings of a class: with its constructor taking values at the root of the sources when the sources give
-   * them all, otherwise with its constructor taking nothing
-   *
-   * @param <T> type of the settings
-   * @param settingsClass to make
-   * @param rootValueKeys keys at the root its constructor takes, empty when it takes none
-   * @return the settings
-   */
-  private <T> T construct(Class<T> settingsClass, List<String> rootValueKeys) {
-    var values = rootValueKeys.stream().map(this::findRootText).toArray();
-    var allGiven = values.length > 0 && Arrays.stream(values).allMatch(Objects::nonNull);
-    return ReflectionUtils.createTypedInstance(settingsClass.getName(), allGiven ? values : new Object[0]);
-  }
-
-  /**
-   * The settings filling each section of the schema: the settings themselves when their class names a section,
-   * otherwise what their getters give, found by the class each gives
-   *
-   * @param settings made
-   * @return the settings of each section, by its key
-   * @throws PlanItRunTimeException when the settings fill no section and give none, or give one twice
-   */
-  private Map<String, Object> sectionsOf(Object settings) {
-    var ownKey = schema.findSectionKeyOf(settings.getClass());
-    if (ownKey != null) {
-      return Map.of(ownKey, settings);
-    }
-    var sections = new LinkedHashMap<String, Object>();
-    for (var getter : settings.getClass().getMethods()) {
-      var key = getter.getParameterCount() == 0 && !getter.isBridge() ?
-          schema.findSectionKeyOf(getter.getReturnType()) : null;
-      if (key == null) {
-        continue;
-      }
-      PlanItRunTimeException.throwIf(sections.containsKey(key), "%s gives section %s twice",
-          settings.getClass().getName(), key);
-      try {
-        sections.put(key, getter.invoke(settings));
-      } catch (ReflectiveOperationException e) {
-        throw new PlanItRunTimeException("Section %s cannot be had from %s", e, key, getter);
-      }
-    }
-    PlanItRunTimeException.throwIf(sections.isEmpty(), "%s fill no section of the schema and give none",
-        settings.getClass().getName());
-    return sections;
   }
 
   /**
@@ -323,8 +323,9 @@ public final class SettingsYamlLoader {
   }
 
   /**
-   * Apply the root of a source: each section to its settings, recording keys outside the schema and sections the
-   * settings made do not take
+   * Apply the root of a source: each key at the root to the settings of every section, in the order of the source,
+   * then each section to its settings, in the order of the schema, recording keys outside the schema and sections
+   * the settings made do not take
    *
    * @param source the root is of
    * @param root values of the source
@@ -335,24 +336,80 @@ public final class SettingsYamlLoader {
       List<String> rootValueKeys) {
     for (var entry : root.entrySet()) {
       var key = entry.getKey();
-      if (key.equals(schema.getHeader().key())) {
+      if (key.equals(schema.getHeader().key()) || schema.isSectionKey(key)) {
         continue;
       }
       if (rootValueKeys.contains(key)) {
         isKindOf(entry.getValue(), String.class, key, source);
-      } else if (settingsBySectionKey.containsKey(key)) {
-        applySection(entry.getValue(), settingsBySectionKey.get(key), key, source);
-      } else if (schema.isSectionKey(key)) {
-        addProblem(SettingsProblemKind.UNKNOWN_KEY, source, key, "A section these settings do not take");
       } else {
-        addProblem(SettingsProblemKind.UNKNOWN_KEY, source, key, "No such key");
+        applyRootKey(key, entry.getValue(), settingsBySectionKey, source);
+      }
+    }
+    for (var key : schema.getSectionKeys()) {
+      if (!root.containsKey(key)) {
+        continue;
+      }
+      if (settingsBySectionKey.containsKey(key)) {
+        applySection(root.get(key), settingsBySectionKey.get(key), key, source);
+      } else {
+        addProblem(SettingsProblemKind.UNKNOWN_KEY, source, key, "A section these settings do not take");
       }
     }
   }
 
   /**
-   * Apply a section to its settings: a whole list key first, then removals, then additions, other keys in the order
-   * of the source
+   * Apply a key at the root of a source to the settings of every section, the value converted for each so no two
+   * share it, and a value refused recorded once rather than once for each section
+   *
+   * @param key at the root
+   * @param value of the key
+   * @param settingsBySectionKey the settings each root section fills
+   * @param source it is in
+   */
+  private void applyRootKey(String key, Object value, Map<String, Object> settingsBySectionKey, SettingsSource source) {
+    var anySettings = settingsBySectionKey.values().iterator().next();
+    var write = findWrite(SettingsKeyIndex.of(anySettings.getClass()), key, true, key, source);
+    if (write == null) {
+      addProblem(SettingsProblemKind.UNKNOWN_KEY, source, key, "No such key");
+      return;
+    }
+    var problemCount = problems.size();
+    for (var settings : settingsBySectionKey.values()) {
+      applyWrite(write, value, settings, key, source);
+      if (problems.size() > problemCount) {
+        return;
+      }
+    }
+  }
+
+  /**
+   * The method writing a key at the root or in a section, found by its name or by a former name, which is warned about
+   *
+   * @param index of the settings keys of the settings
+   * @param key as given in the source
+   * @param atRoot true for a key at the root of the source, false for one in a section
+   * @param keyPath of the key
+   * @param source it is in
+   * @return the method, null when the settings have no such key there
+   */
+  private Method findWrite(SettingsKeyIndex index, String key, boolean atRoot, String keyPath, SettingsSource source) {
+    var write = index.findWrite(key);
+    var former = write == null ? index.findFormerWrite(key) : null;
+    var found = write != null ? write : former;
+    if (found == null || index.isRootWrite(found) != atRoot) {
+      return null;
+    }
+    if (former != null) {
+      var warning = new SettingsProblem(SettingsProblemKind.FORMER_KEY_USED, source.getDescription(), keyPath,
+          "Applied under its current name " + former.getAnnotation(SettingsWrite.class).key());
+      warnings.add(warning);
+      LOGGER.warning(warning.toString());
+    }
+    return found;
+  }
+
+  /**
+   * Apply a section to its settings, its keys in the order of {@link #orderOfApplying(Map, SettingsKeyIndex)}
    *
    * @param value of the section
    * @param settings it fills
@@ -366,8 +423,7 @@ public final class SettingsYamlLoader {
     var index = SettingsKeyIndex.of(settings.getClass());
     var entries = SimpleYamlReader.asMap(value);
     checkAddedAndRemoved(entries, path, source);
-    entries.entrySet().stream().sorted(Comparator.comparingInt(entry -> suffixRank(entry.getKey())))
-        .forEach(entry -> applyEntry(entry.getKey(), entry.getValue(), settings, index, path, source));
+    orderOfApplying(entries, index).forEach(key -> applyEntry(key, entries.get(key), settings, index, path, source));
   }
 
   /**
@@ -381,8 +437,8 @@ public final class SettingsYamlLoader {
   private void checkAddedAndRemoved(Map<String, Object> entries, String path, SettingsSource source) {
     for (var entry : entries.entrySet()) {
       var key = entry.getKey();
-      var removed = key.endsWith(ADD_SUFFIX) ?
-          entries.get(key.substring(0, key.length() - ADD_SUFFIX.length()) + REMOVE_SUFFIX) : null;
+      var removed = key.endsWith(SettingsKeyIndex.ADD_SUFFIX) ?
+          entries.get(SettingsKeyIndex.listKeyOf(key) + SettingsKeyIndex.REMOVE_SUFFIX) : null;
       if (!(removed instanceof List) || !(entry.getValue() instanceof List)) {
         continue;
       }
@@ -419,16 +475,10 @@ public final class SettingsYamlLoader {
       }
       return;
     }
-    var write = index.findWrite(key);
-    if (write == null && index.findFormerWrite(key) != null) {
-      write = index.findFormerWrite(key);
-      var warning = new SettingsProblem(SettingsProblemKind.FORMER_KEY_USED, source.getDescription(), keyPath,
-          "Applied under its current name " + write.getAnnotation(SettingsWrite.class).key());
-      warnings.add(warning);
-      LOGGER.warning(warning.toString());
-    }
+    var write = findWrite(index, key, false, keyPath, source);
     if (write == null) {
-      addProblem(SettingsProblemKind.UNKNOWN_KEY, source, keyPath, "No such key");
+      addProblem(SettingsProblemKind.UNKNOWN_KEY, source, keyPath,
+          index.findWrite(key) != null ? "A key of the root, not of this section" : "No such key");
       return;
     }
     applyWrite(write, value, settings, keyPath, source);
@@ -474,7 +524,7 @@ public final class SettingsYamlLoader {
   }
 
   /**
-   * A value as a type a method declares
+   * A value as a type a method declares, made by the converter of the type when the schema has one
    *
    * @param value as the reader gives it
    * @param type declared, which can have type arguments
@@ -484,6 +534,15 @@ public final class SettingsYamlLoader {
    */
   private Object convert(Object value, Type type, String keyPath, SettingsSource source) {
     var rawClass = ReflectionUtils.getRawClass(type);
+    var converter = schema.findConverter(rawClass);
+    if (converter != null) {
+      try {
+        return converter.fromPlainValue(value);
+      } catch (IllegalArgumentException e) {
+        addProblem(SettingsProblemKind.VALUE_REFUSED, source, keyPath, e.getMessage());
+        return FAILED;
+      }
+    }
     if (rawClass == UserOverride.class) {
       return convertOverride(value, ReflectionUtils.getTypeArgument(type, 0), keyPath, source);
     }
@@ -523,13 +582,13 @@ public final class SettingsYamlLoader {
       return overrideValue == FAILED ? FAILED : UserOverride.of(overrideValue);
     }
     var fields = SimpleYamlReader.asMap(value);
-    var reason = fields.get(OVERRIDE_REASON);
+    var reason = fields.get(UserOverride.REASON_FIELD);
     if (reason != null &&
-        !isKindOf(reason, String.class, SimpleYamlReader.keyPathOf(keyPath, OVERRIDE_REASON), source)) {
+        !isKindOf(reason, String.class, SimpleYamlReader.keyPathOf(keyPath, UserOverride.REASON_FIELD), source)) {
       return FAILED;
     }
-    var overrideValue = convert(fields.get(OVERRIDE_VALUE), valueType,
-        SimpleYamlReader.keyPathOf(keyPath, OVERRIDE_VALUE), source);
+    var overrideValue = convert(fields.get(UserOverride.VALUE_FIELD), valueType,
+        SimpleYamlReader.keyPathOf(keyPath, UserOverride.VALUE_FIELD), source);
     return overrideValue == FAILED ? FAILED : UserOverride.of(overrideValue, SimpleYamlReader.asText(reason));
   }
 
@@ -613,7 +672,7 @@ public final class SettingsYamlLoader {
    */
   private Object convertText(String text, Class<?> type, String keyPath, SettingsSource source) {
     try {
-      return TypeConversionUtil.fromText(text, type, source.getBaseFolder());
+      return TypeConversionUtil.fromString(text, type, source.getBaseFolder());
     } catch (IllegalArgumentException e) {
       if (type.isEnum()) {
         addProblem(SettingsProblemKind.UNKNOWN_ENUM_VALUE, source, keyPath,
@@ -675,9 +734,10 @@ public final class SettingsYamlLoader {
    * @throws SettingsProblemsException holding every problem found, when there is any
    */
   public <T> T create(Class<T> settingsClass) {
-    var rootValueKeys = SettingsKeyIndex.of(settingsClass).getRootValueKeys();
-    var settings = construct(settingsClass, rootValueKeys);
-    var settingsBySectionKey = sectionsOf(settings);
+    var index = SettingsKeyIndex.of(settingsClass);
+    var rootValueKeys = index.getRootValueKeys();
+    var settings = settingsClass.cast(index.createSettings(this::findRootText));
+    var settingsBySectionKey = schema.getSectionSettingsOf(settings);
     parsedSources.forEach(parsed -> applyRoot(parsed.first(), parsed.second(), settingsBySectionKey, rootValueKeys));
     if (!problems.isEmpty()) {
       throw new SettingsProblemsException(problems);

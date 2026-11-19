@@ -100,8 +100,8 @@ public interface MapWrapper<K, V> extends Iterable<V> {
    */
   public abstract boolean isEmpty();
   
-  /** Check if value is already present
-   * 
+  /** Check if this value itself is registered, under its key; another value with the same key does not count
+   *
    * @param value to verify
    * @return true if present, false otherwise
    */

@@ -3,6 +3,7 @@ package org.goplanit.utils.graph.modifier;
 import org.goplanit.utils.graph.directed.*;
 import org.goplanit.utils.graph.modifier.event.DirectedGraphModifierEventProducer;
 
+import java.util.Collection;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
@@ -49,6 +50,17 @@ public interface DirectedGraphModifier<V extends DirectedVertex, E extends Direc
    * @param removeEdgeSegments when true remove its edge segments as well, when false leave them untouched
    */
   public abstract void removeEdge(E edge, boolean removeEdgeSegments);
+
+  /**
+   * Move the end at a vertex of each given edge to another vertex, in one call. Each edge keeps its segments, which then
+   * start or end at the new vertex. The move fires one event once the edges have moved, naming them and both vertices,
+   * so what refers to the vertex over several of them can follow them as a whole
+   *
+   * @param edges to move the end of, each with the current end vertex as one of its vertices
+   * @param currentEndVertex the end vertex to move away from
+   * @param newEndVertex the vertex to move the ends to
+   */
+  public abstract void moveEdgeEndsAtVertex(Collection<? extends E> edges, V currentEndVertex, V newEndVertex);
 
   /**
    * Remove a banned turn by removing it from the graph. Any registered events

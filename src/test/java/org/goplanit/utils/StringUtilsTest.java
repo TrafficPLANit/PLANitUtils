@@ -36,4 +36,14 @@ public class StringUtilsTest {
     assertEquals("Half days", StringUtils.toSentence(java.time.temporal.ChronoUnit.HALF_DAYS));
     assertEquals("Days", StringUtils.toSentence(java.util.concurrent.TimeUnit.DAYS));
   }
+
+  /** Text is broken at the last space that keeps a line within the length; a longer word stays whole; breaks are kept */
+  @Test
+  public void wrapLineAtSpaces() {
+    assertEquals(List.of("one two", "three"), StringUtils.wrapLineAtSpaces("one two three", 7));
+    assertEquals(List.of("short"), StringUtils.wrapLineAtSpaces("short", 10));
+    assertEquals(List.of("a", "unbreakable", "b"), StringUtils.wrapLineAtSpaces("a unbreakable b", 5));
+    assertEquals(List.of("first", "second line"), StringUtils.wrapLineAtSpaces("first\nsecond line", 20));
+    assertEquals(List.of(""), StringUtils.wrapLineAtSpaces("", 10));
+  }
 }

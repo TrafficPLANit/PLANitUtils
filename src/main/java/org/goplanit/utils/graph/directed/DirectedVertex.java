@@ -1,8 +1,10 @@
 package org.goplanit.utils.graph.directed;
 
 import java.util.Collection;
+import java.util.Objects;
 import java.util.concurrent.atomic.LongAdder;
 import java.util.function.Function;
+import java.util.function.Predicate;
 import java.util.stream.Stream;
 
 import org.goplanit.utils.graph.Vertex;
@@ -32,6 +34,25 @@ public interface DirectedVertex extends Vertex {
   public static Function<DirectedVertex, Iterable<? extends EdgeSegment>> getEdgeSegmentsForVertexLambda(
       boolean getEntrySegments) {
     return getEntrySegments ? GET_ENTRY_EDGE_SEGMENTS : GET_EXIT_EDGE_SEGMENTS;
+  }
+
+  /**
+   * Collect lambda function that collects the vertices one step away from a vertex along the edge segments meeting a
+   * condition: downstream, at the end of its exit segments, or upstream, at the start of its entry segments
+   *
+   * @param <V> type of vertex
+   * @param eligibleSegment condition an edge segment must meet to be followed
+   * @param upstream when true step upstream along entry segments, when false downstream along exit segments
+   * @return lambda function, leaving out an edge segment without a vertex at the far end
+   */
+  @SuppressWarnings("unchecked")
+  public static <V extends DirectedVertex> Function<V, Iterable<V>> getAdjacentVerticesForVertexLambda(
+      Predicate<? super EdgeSegment> eligibleSegment, boolean upstream) {
+    final var edgeSegments = getEdgeSegmentsForVertexLambda(upstream);
+    final var adjacentVertex = EdgeSegment.getVertexForEdgeSegmentLambda(upstream);
+    return vertex -> () -> IterableUtils.asStream(edgeSegments.apply(vertex))
+        .filter(eligibleSegment::test).map(segment -> (V) adjacentVertex.apply(segment)).filter(Objects::nonNull)
+        .iterator();
   }
 
   /**

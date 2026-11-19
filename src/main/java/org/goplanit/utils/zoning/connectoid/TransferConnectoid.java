@@ -1,11 +1,16 @@
 package org.goplanit.utils.zoning.connectoid;
 
 import org.goplanit.utils.graph.directed.EdgeSegment;
+import org.goplanit.utils.mode.Mode;
 import org.goplanit.utils.network.layer.physical.LinkSegment;
 import org.goplanit.utils.zoning.Zone;
 
+import java.util.Collection;
+import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 /**
@@ -21,7 +26,17 @@ import java.util.stream.Stream;
  *
  */
 public interface TransferConnectoid extends Connectoid{
-  
+
+  /**
+   * The access zone entries of this connectoid that are directed, across all zones and types
+   *
+   * @return the directed entries
+   */
+  private Stream<DirectedConnectoidAccessZoneEntry> streamDirectedAccessZoneEntries() {
+    return getAccessZoneEntriesByType().values().stream().flatMap(e -> e.values().stream())
+        .filter(e -> e instanceof DirectedConnectoidAccessZoneEntry).map(e -> (DirectedConnectoidAccessZoneEntry) e);
+  }
+
   /** the class to use for the additional directed connectoid id generation */
   public static final Class<TransferConnectoid> TRANSFER_CONNECTOID_ID_CLASS = TransferConnectoid.class;
 
@@ -82,10 +97,76 @@ public interface TransferConnectoid extends Connectoid{
    */
   public default Stream<? extends EdgeSegment> getExplicitAccessLinkSegmentsStream(
       Predicate<DirectedConnectoidAccessZoneEntry> entriesFilter){
-    return getAccessZoneEntriesByType().values().stream().flatMap(e-> e.values().stream()).
-        filter(e -> e instanceof DirectedConnectoidAccessZoneEntry).map(
-            e -> ((DirectedConnectoidAccessZoneEntry)e)).filter(entriesFilter).flatMap(
-                e -> e.getAccessLinkSegments().stream()).distinct();
+    return streamDirectedAccessZoneEntries().filter(entriesFilter).flatMap(
+        e -> e.getAccessLinkSegments().stream()).distinct();
+  }
+
+  /**
+   * The directed access zone entries reached over an access link segment, the segment compared by identity
+   *
+   * @param accessLinkSegment to look for
+   * @return the entries holding it, empty when none
+   */
+  public default List<DirectedConnectoidAccessZoneEntry> getDirectedAccessZoneEntriesFor(
+      EdgeSegment accessLinkSegment) {
+    return streamDirectedAccessZoneEntries().filter(e -> e.hasAccessLinkSegment(accessLinkSegment))
+        .collect(Collectors.toList());
+  }
+
+  /**
+   * Add access link segments to this connectoid's entry of the same zone and type as the given entry, made with the
+   * given entry's length when this connectoid has none, allowing the given modes
+   * <p>
+   * For access that moves from one transfer connectoid to another, such as to a connectoid at the node a moved link now
+   * ends at. The modes follow the convention of entries, none meaning every mode. A new entry allows exactly them; an
+   * existing entry allowing every mode keeps doing so, and one allowing modes explicitly gains them, none when every
+   * mode is given, since an entry allowing modes explicitly cannot come to allow every mode
+   * </p>
+   *
+   * @param entry whose zone and type the segments give access to
+   * @param segments to add
+   * @param modes the segments serve, none for every mode
+   * @return this connectoid's entry the segments were added to
+   */
+  public default DirectedConnectoidAccessZoneEntry addAccessLinkSegmentsForZoneAndTypeOf(
+      DirectedConnectoidAccessZoneEntry entry, Collection<? extends EdgeSegment> segments, Collection<Mode> modes) {
+    var target = getAsDirectedAccessZoneEntry(entry.getAccessZone(), entry.getType());
+    if (target == null) {
+      target = createDirectedAccessZoneEntry(entry.getAccessZone(), entry.getType());
+      entry.getLengthKm().ifPresent(target::setLengthKm);
+      modes.forEach(target::addExplicitAllowedMode);
+    } else if (target.hasExplicitlyAllowedModes()) {
+      modes.forEach(target::addExplicitAllowedMode);
+    }
+    segments.forEach(target::addAccessLinkSegment);
+    return target;
+  }
+
+  /**
+   * Move the given access link segments to another transfer connectoid: for each entry of this connectoid over any of
+   * them, the other gets an entry of the same zone and type, allowing the same modes explicitly and of the same length,
+   * over those segments, and this entry loses them, being removed when left without access link segments. Entries over
+   * none of them stay as they are
+   * <p>
+   * For segments that come to reach another node than this connectoid's, such as when the ends of their links are moved
+   * to another node, so each entry keeps reaching the node of its connectoid
+   * </p>
+   *
+   * @param segments to move, compared by how the set compares them
+   * @param other transfer connectoid to move them to
+   */
+  public default void moveAccessLinkSegmentsTo(Set<EdgeSegment> segments, TransferConnectoid other) {
+    for (var entry : streamDirectedAccessZoneEntries().collect(Collectors.toList())) {
+      var moving = entry.getAccessLinkSegments().stream().filter(segments::contains).collect(Collectors.toList());
+      if (moving.isEmpty()) {
+        continue;
+      }
+      other.addAccessLinkSegmentsForZoneAndTypeOf(entry, moving, entry.getExplicitlyAllowedModes());
+      moving.forEach(entry::removeAccessLinkSegment);
+      if (!entry.hasAccessLinkSegments()) {
+        removeAccessZoneEntry(entry.getAccessZone(), entry.getType());
+      }
+    }
   }
 
   /**

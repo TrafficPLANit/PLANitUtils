@@ -12,25 +12,30 @@ import java.lang.annotation.Target;
  * For example, on the getter of the consolidator settings, which the settings of the intersections hold:
  * </p>
  * <pre>
- * &#64;SettingsSection(key = "intersectionConsolidator", level = SettingsKeyLevel.UNCOMMON)
+ * &#64;SettingsSection(key = "intersectionConsolidator", level = SettingsKeyLevel.UNCOMMON,
+ *     description = "How the nodes of one junction are found and joined into one intersection")
  * public IntersectionConsolidatorSettings getIntersectionConsolidatorSettings()
  * </pre>
  * <p>
- * A file then writes the consolidator's keys under that name, as they are marked on the consolidator settings:
+ * A file then writes the consolidator's keys under that name, as they are marked on the consolidator settings, and
+ * settings written out as a file with descriptions start the section with its description:
  * </p>
  * <pre>
  * intersectionConsolidator:
+ *   # How the nodes of one junction are found and joined into one intersection
  *   maximumJoiningReachMeters: 60
  * </pre>
  * <p>
  * The getter takes no arguments and gives the nested settings themselves, not a copy, so the section's keys change the
- * settings that are used. The package documentation says how the annotations work together.
+ * settings that are used. The description is kept here as well as in the javadoc, because javadoc is not there at run
+ * time. The package documentation says how the annotations work together.
  * </p>
  * <p>
  * On a class, for example the settings of a network:
  * </p>
  * <pre>
- * &#64;SettingsSection(key = "network", level = SettingsKeyLevel.STANDARD)
+ * &#64;SettingsSection(key = "network", level = SettingsKeyLevel.STANDARD,
+ *     description = "The settings of the network")
  * public class ExampleNetworkSettings extends ExampleReaderSettings
  * </pre>
  * <p>
@@ -60,4 +65,11 @@ public @interface SettingsSection {
    * @return the level
    */
   public SettingsKeyLevel level();
+
+  /**
+   * What the section holds, in a sentence, written at its start when settings are written out as a file
+   *
+   * @return the description
+   */
+  public String description();
 }

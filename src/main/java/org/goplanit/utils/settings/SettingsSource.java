@@ -61,6 +61,19 @@ public final class SettingsSource {
   }
 
   /**
+   * Settings text under the header of a schema, so code giving a few keys need not write the header itself. For
+   * example {@code ofText(schema, "country: Germany")} gives the text {@code planitExampleSettings: 1} followed by
+   * {@code country: Germany} for a schema with that header
+   *
+   * @param schema whose header the text starts with
+   * @param body the lines after the header
+   * @return the source
+   */
+  public static SettingsSource ofText(SettingsSchema schema, String body) {
+    return ofText(String.format("%s: %d%n%s", schema.getHeader().key(), schema.getHeader().version(), body));
+  }
+
+  /**
    * The text of the source
    *
    * @return the text of the file, read as UTF-8, or the text given

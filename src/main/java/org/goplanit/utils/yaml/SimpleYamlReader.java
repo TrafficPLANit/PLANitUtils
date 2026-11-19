@@ -125,19 +125,19 @@ public final class SimpleYamlReader {
     }
     var map = new LinkedHashMap<String, Object>();
     for (var tuple : ((MappingNode) yamlNode).getValue()) {
-      var keyNode = tuple.getKeyNode();
-      if (!(keyNode instanceof ScalarNode)) {
-        addProblem(YamlProblemKind.NON_TEXT_KEY, keyPath, "A key is not text" + lineOf(keyNode));
+      var keyYamlNode = tuple.getKeyNode();
+      if (!(keyYamlNode instanceof ScalarNode)) {
+        addProblem(YamlProblemKind.NON_TEXT_KEY, keyPath, "A key is not text" + lineOf(keyYamlNode));
         continue;
       }
-      if (!Tag.STR.equals(keyNode.getTag())) {
+      if (!Tag.STR.equals(keyYamlNode.getTag())) {
         addProblem(YamlProblemKind.UNSUPPORTED_TAG, keyPath,
-            String.format("Tag %s of a key is not supported%s", keyNode.getTag(), lineOf(keyNode)));
+            String.format("Tag %s of a key is not supported%s", keyYamlNode.getTag(), lineOf(keyYamlNode)));
         continue;
       }
-      var key = ((ScalarNode) keyNode).getValue();
+      var key = ((ScalarNode) keyYamlNode).getValue();
       if (map.containsKey(key)) {
-        addProblem(YamlProblemKind.DUPLICATE_KEY, keyPathOf(keyPath, key), "Given twice" + lineOf(keyNode));
+        addProblem(YamlProblemKind.DUPLICATE_KEY, keyPathOf(keyPath, key), "Given twice" + lineOf(keyYamlNode));
         continue;
       }
       map.put(key, toValue(tuple.getValueNode(), keyPathOf(keyPath, key)));

@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.goplanit.utils.id.IdMapperType;
+import org.goplanit.utils.id.IdMappingUtils;
 import org.goplanit.utils.misc.Pair;
 import org.goplanit.utils.mode.Mode;
 import org.goplanit.utils.network.layer.modifier.MacroscopicNetworkLayerModifier;
@@ -40,8 +41,8 @@ public class IntersectionCollapserSettings {
    */
   public IntersectionCollapserSettings(IntersectionCollapserSettings other) {
     this.collapsedModes.addAll(other.collapsedModes);
-    other.nodeIdsExcludedFromCollapse.forEach(nodeIds -> this.nodeIdsExcludedFromCollapse.add(
-        Pair.of(new LinkedHashSet<>(nodeIds.first()), nodeIds.second())));
+    other.nodeIdsExcludedFromCollapse.forEach(
+        nodeIds -> this.nodeIdsExcludedFromCollapse.add(IdMappingUtils.copyIdList(nodeIds)));
   }
 
   /**
@@ -84,7 +85,7 @@ public class IntersectionCollapserSettings {
    */
   public void addNodeIdsExcludedFromCollapse(Collection<String> nodeIds, IdMapperType nodeIdType) {
     if (!nodeIds.isEmpty()) {
-      nodeIdsExcludedFromCollapse.add(Pair.of(new LinkedHashSet<>(nodeIds), nodeIdType));
+      nodeIdsExcludedFromCollapse.add(IdMappingUtils.createIdList(nodeIds, nodeIdType));
     }
   }
 }

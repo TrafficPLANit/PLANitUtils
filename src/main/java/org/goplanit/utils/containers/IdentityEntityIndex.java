@@ -13,6 +13,10 @@ import java.util.function.Function;
 /**
  * Index of entities by the keys they refer to, with keys and entities compared by identity, so it stays valid when ids
  * are recreated
+ * <p>
+ * It remembers the keys it indexed each entity under, so an entity changed directly after it was indexed is still taken
+ * from under its old keys, rather than left behind there, when it is unindexed or indexed again.
+ * </p>
  *
  * @param <K> type of key
  * @param <E> type of entity
@@ -25,6 +29,9 @@ public class IdentityEntityIndex<K, E> implements EntityIndex<K, E> {
 
   /** key to the entities indexed under it, in the order indexed */
   private final Map<K, List<E>> entitiesByKey = new IdentityHashMap<>();
+
+  /** entity to the distinct keys it is indexed under */
+  private final Map<E, Set<K>> keysByEntity = new IdentityHashMap<>();
 
   /**
    * Collect the distinct non-null keys the entity refers to at this moment, compared by identity
@@ -56,7 +63,10 @@ public class IdentityEntityIndex<K, E> implements EntityIndex<K, E> {
    */
   @Override
   public void index(E entity) {
-    for (K key : distinctKeysOf(entity)) {
+    unindex(entity);
+    var keys = distinctKeysOf(entity);
+    keysByEntity.put(entity, keys);
+    for (K key : keys) {
       entitiesByKey.computeIfAbsent(key, k -> new ArrayList<>(1)).add(entity);
     }
   }
@@ -66,10 +76,11 @@ public class IdentityEntityIndex<K, E> implements EntityIndex<K, E> {
    */
   @Override
   public void unindex(E entity) {
-    if (entity == null) {
+    var keys = keysByEntity.remove(entity);
+    if (keys == null) {
       return;
     }
-    for (K key : distinctKeysOf(entity)) {
+    for (K key : keys) {
       var indexed = entitiesByKey.get(key);
       if (indexed != null) {
         indexed.removeIf(held -> held == entity);
@@ -97,7 +108,6 @@ public class IdentityEntityIndex<K, E> implements EntityIndex<K, E> {
    */
   @Override
   public void update(E entity, Consumer<? super E> change) {
-    unindex(entity);
     change.accept(entity);
     index(entity);
   }
@@ -117,6 +127,7 @@ public class IdentityEntityIndex<K, E> implements EntityIndex<K, E> {
   @Override
   public void clear() {
     entitiesByKey.clear();
+    keysByEntity.clear();
   }
 
   /**

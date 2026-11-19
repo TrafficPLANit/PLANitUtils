@@ -34,10 +34,11 @@ public interface BannedTurns extends ManagedGraphEntities<BannedTurn> {
    * Apply a change to the segments of a registered banned turn, keeping the lookup by segment in step with what it
    * refers to before and after. The only way to change the segments of a registered banned turn
    *
+   * @param <T> the kind of banned turn, so the change can use what is particular to it
    * @param bannedTurn to change
    * @param change to apply to it
    */
-  public abstract void update(BannedTurn bannedTurn, Consumer<BannedTurn> change);
+  public abstract <T extends BannedTurn> void update(T bannedTurn, Consumer<? super T> change);
 
   /**
    * Replace the segments of every banned turn based on the mapping provided, e.g. to their copies after a deep copy

@@ -222,7 +222,8 @@ public class MapWrapperImpl<K, V> implements MapWrapper<K, V>{
    */  
   @Override
   public boolean containsValue(V value) {
-    return getMap().containsValue(value);
+    var key = value == null ? null : getKeyByValue(value);
+    return key != null && getMap().get(key) == value;
   }
 
   /**

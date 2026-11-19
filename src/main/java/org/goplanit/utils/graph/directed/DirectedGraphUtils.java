@@ -21,6 +21,128 @@ import java.util.function.Predicate;
 public class DirectedGraphUtils {
 
   /**
+   * Apply the inclusion rules of
+   * {@link #identifySubGraphForVertex(UntypedDirectedGraph, DirectedVertex, Predicate, Predicate, boolean)} to a
+   * single vertex, registering the vertex and its qualifying edges and edge segments on the given subgraph.
+   * <p>
+   * Shared by both notions of connectivity, which differ only in how they arrive at the vertices to apply this to
+   * and in whether an edge can lead out of the subgraph at all.
+   * </p>
+   *
+   * @param subGraph to register on
+   * @param currVertex the vertex to judge
+   * @param testEdge when an edge tests positive it is eligible for inclusion
+   * @param testEdgeSegment when an edge segment tests positive it is eligible for inclusion
+   * @param strict when true the vertex is only registered if all of its edges are included
+   * @param withinSubGraph whether an otherwise eligible edge belongs to this subgraph given the vertex it is
+   *          considered from. An edge ruled out here is not registered, but unlike an edge that fails the tests it
+   *          does not stop its vertex from being registered, see
+   *          {@link #identifyStronglyConnectedSubGraphs(UntypedDirectedGraph, Predicate, Predicate, boolean)}
+   * @param onIncludedEdge invoked for each edge registered, allowing a caller to extend its traversal
+   * @param <V> type of vertex
+   * @param <E> type of edge
+   * @param <ES> type of edge segment
+   */
+  @SuppressWarnings("unchecked")
+  private static <V extends DirectedVertex, E extends DirectedEdge, ES extends EdgeSegment>
+  void registerVertexAndItsEdges(
+      UntypedDirectedSubGraphImpl<V,E,ES> subGraph,
+      DirectedVertex currVertex,
+      Predicate<? super E> testEdge,
+      Predicate<? super ES> testEdgeSegment,
+      boolean strict,
+      BiPredicate<E, DirectedVertex> withinSubGraph,
+      Consumer<E> onIncludedEdge) {
+
+    boolean allEdgesIncluded = true;
+    for (E currEdge : (Collection<E>) currVertex.getEdges()) {
+
+      if(!testEdge.test(currEdge) || !qualifiesOnEdgeSegments(currEdge, testEdgeSegment, strict)){
+        /* vertex is attached to something outside the subgraph, so not wholly contained by it */
+        allEdgesIncluded = false;
+        continue;
+      }
+
+      if(!withinSubGraph.test(currEdge, currVertex)){
+        /* eligible, yet not part of this subgraph. Deliberately without disqualifying the vertex */
+        continue;
+      }
+
+      subGraph.addEdge(currEdge);
+
+      /* register the qualifying segments of this edge; under strict rules that is all of them by construction.
+       * An edge only exposes its segments as the base type, while the graph guarantees they are ES */
+      if(currEdge.hasEdgeSegmentAb() && testEdgeSegment.test((ES) currEdge.getEdgeSegmentAb())){
+        subGraph.addEdgeSegment((ES) currEdge.getEdgeSegmentAb());
+      }
+      if(currEdge.hasEdgeSegmentBa() && testEdgeSegment.test((ES) currEdge.getEdgeSegmentBa())){
+        subGraph.addEdgeSegment((ES) currEdge.getEdgeSegmentBa());
+      }
+
+      onIncludedEdge.accept(currEdge);
+    }
+
+    /* lenient: reaching a vertex means an incident edge was included, so it qualifies. A vertex without any
+     * included edges (an isolated reference vertex) still forms a subgraph of size one.
+     * strict: every incident edge must be included, which holds vacuously for an isolated vertex */
+    if(!strict || allEdgesIncluded){
+      subGraph.addVertex((V) currVertex);
+    }
+  }
+
+  /**
+   * Verify whether the edge segments of an edge allow the edge to be included, see the inclusion rules on
+   * {@link #identifySubGraphForVertex(UntypedDirectedGraph, DirectedVertex, Predicate, Predicate, boolean)}
+   *
+   * @param edge to verify
+   * @param testEdgeSegment to apply to each present segment
+   * @param strict when true all present segments must test positive, when false at least one must
+   * @return true when the edge qualifies, false otherwise
+   * @param <ES> type of edge segment
+   */
+  @SuppressWarnings("unchecked")
+  private static <ES extends EdgeSegment> boolean qualifiesOnEdgeSegments(
+      DirectedEdge edge, Predicate<? super ES> testEdgeSegment, boolean strict){
+    boolean hasAb = edge.hasEdgeSegmentAb();
+    boolean hasBa = edge.hasEdgeSegmentBa();
+    if(!hasAb && !hasBa){
+      /* nothing to test against, defer to the edge level test which has already passed */
+      return true;
+    }
+
+    boolean abQualifies = hasAb && testEdgeSegment.test((ES) edge.getEdgeSegmentAb());
+    boolean baQualifies = hasBa && testEdgeSegment.test((ES) edge.getEdgeSegmentBa());
+
+    if(strict){
+      return (!hasAb || abQualifies) && (!hasBa || baQualifies);
+    }
+    return abQualifies || baQualifies;
+  }
+
+  /**
+   * Queue an adjacent vertex for exploration when it has not been seen before and is not the vertex we came from
+   *
+   * @param candidate adjacent vertex to consider, may be null
+   * @param currVertex vertex currently being processed
+   * @param visitedVertices tracking of already queued/processed vertices by id
+   * @param verticesToExplore queue to supplement
+   */
+  private static void exploreIfUnvisited(
+      DirectedVertex candidate,
+      DirectedVertex currVertex,
+      BitSet visitedVertices,
+      Deque<DirectedVertex> verticesToExplore){
+    if(candidate == null || candidate.getId() == currVertex.getId()){
+      return;
+    }
+    if(visitedVertices.get((int) candidate.getId())){
+      return;
+    }
+    visitedVertices.set((int) candidate.getId());
+    verticesToExplore.add(candidate);
+  }
+
+  /**
    * Perform a breadth-first search from a starting vertex in a given direction with conditions
    * on:
    * <ul>
@@ -165,76 +287,6 @@ public class DirectedGraphUtils {
   }
 
   /**
-   * Apply the inclusion rules of
-   * {@link #identifySubGraphForVertex(UntypedDirectedGraph, DirectedVertex, Predicate, Predicate, boolean)} to a
-   * single vertex, registering the vertex and its qualifying edges and edge segments on the given subgraph.
-   * <p>
-   * Shared by both notions of connectivity, which differ only in how they arrive at the vertices to apply this to
-   * and in whether an edge can lead out of the subgraph at all.
-   * </p>
-   *
-   * @param subGraph to register on
-   * @param currVertex the vertex to judge
-   * @param testEdge when an edge tests positive it is eligible for inclusion
-   * @param testEdgeSegment when an edge segment tests positive it is eligible for inclusion
-   * @param strict when true the vertex is only registered if all of its edges are included
-   * @param withinSubGraph whether an otherwise eligible edge belongs to this subgraph given the vertex it is
-   *          considered from. An edge ruled out here is not registered, but unlike an edge that fails the tests it
-   *          does not stop its vertex from being registered, see
-   *          {@link #identifyStronglyConnectedSubGraphs(UntypedDirectedGraph, Predicate, Predicate, boolean)}
-   * @param onIncludedEdge invoked for each edge registered, allowing a caller to extend its traversal
-   * @param <V> type of vertex
-   * @param <E> type of edge
-   * @param <ES> type of edge segment
-   */
-  @SuppressWarnings("unchecked")
-  private static <V extends DirectedVertex, E extends DirectedEdge, ES extends EdgeSegment>
-  void registerVertexAndItsEdges(
-      UntypedDirectedSubGraphImpl<V,E,ES> subGraph,
-      DirectedVertex currVertex,
-      Predicate<? super E> testEdge,
-      Predicate<? super ES> testEdgeSegment,
-      boolean strict,
-      BiPredicate<E, DirectedVertex> withinSubGraph,
-      Consumer<E> onIncludedEdge) {
-
-    boolean allEdgesIncluded = true;
-    for (E currEdge : (Collection<E>) currVertex.getEdges()) {
-
-      if(!testEdge.test(currEdge) || !qualifiesOnEdgeSegments(currEdge, testEdgeSegment, strict)){
-        /* vertex is attached to something outside the subgraph, so not wholly contained by it */
-        allEdgesIncluded = false;
-        continue;
-      }
-
-      if(!withinSubGraph.test(currEdge, currVertex)){
-        /* eligible, yet not part of this subgraph. Deliberately without disqualifying the vertex */
-        continue;
-      }
-
-      subGraph.addEdge(currEdge);
-
-      /* register the qualifying segments of this edge; under strict rules that is all of them by construction.
-       * An edge only exposes its segments as the base type, while the graph guarantees they are ES */
-      if(currEdge.hasEdgeSegmentAb() && testEdgeSegment.test((ES) currEdge.getEdgeSegmentAb())){
-        subGraph.addEdgeSegment((ES) currEdge.getEdgeSegmentAb());
-      }
-      if(currEdge.hasEdgeSegmentBa() && testEdgeSegment.test((ES) currEdge.getEdgeSegmentBa())){
-        subGraph.addEdgeSegment((ES) currEdge.getEdgeSegmentBa());
-      }
-
-      onIncludedEdge.accept(currEdge);
-    }
-
-    /* lenient: reaching a vertex means an incident edge was included, so it qualifies. A vertex without any
-     * included edges (an isolated reference vertex) still forms a subgraph of size one.
-     * strict: every incident edge must be included, which holds vacuously for an isolated vertex */
-    if(!strict || allEdgesIncluded){
-      subGraph.addVertex((V) currVertex);
-    }
-  }
-
-  /**
    * Partition a directed graph into its strongly connected subgraphs, i.e. groups of vertices that can each reach
    * every other one while following direction.
    * <p>
@@ -292,7 +344,7 @@ public class DirectedGraphUtils {
         testEdgeSegment.test((ES) es) && (es.getParent() == null || testEdge.test((E) es.getParent()));
 
     var components =
-        StronglyConnectedComponents.execute(referenceGraph.getVertices(), traversable).getComponents();
+        StronglyConnectedComponents.executeOnVertices(referenceGraph.getVertices(), traversable).getComponents();
 
     /* resolved up front rather than through the result's own lookup, so that the boundary test below is a plain
      * map read for both endpoints of every edge considered */
@@ -328,57 +380,5 @@ public class DirectedGraphUtils {
       }
     }
     return subGraphByVertex;
-  }
-
-  /**
-   * Verify whether the edge segments of an edge allow the edge to be included, see the inclusion rules on
-   * {@link #identifySubGraphForVertex(UntypedDirectedGraph, DirectedVertex, Predicate, Predicate, boolean)}
-   *
-   * @param edge to verify
-   * @param testEdgeSegment to apply to each present segment
-   * @param strict when true all present segments must test positive, when false at least one must
-   * @return true when the edge qualifies, false otherwise
-   * @param <ES> type of edge segment
-   */
-  @SuppressWarnings("unchecked")
-  private static <ES extends EdgeSegment> boolean qualifiesOnEdgeSegments(
-      DirectedEdge edge, Predicate<? super ES> testEdgeSegment, boolean strict){
-    boolean hasAb = edge.hasEdgeSegmentAb();
-    boolean hasBa = edge.hasEdgeSegmentBa();
-    if(!hasAb && !hasBa){
-      /* nothing to test against, defer to the edge level test which has already passed */
-      return true;
-    }
-
-    boolean abQualifies = hasAb && testEdgeSegment.test((ES) edge.getEdgeSegmentAb());
-    boolean baQualifies = hasBa && testEdgeSegment.test((ES) edge.getEdgeSegmentBa());
-
-    if(strict){
-      return (!hasAb || abQualifies) && (!hasBa || baQualifies);
-    }
-    return abQualifies || baQualifies;
-  }
-
-  /**
-   * Queue an adjacent vertex for exploration when it has not been seen before and is not the vertex we came from
-   *
-   * @param candidate adjacent vertex to consider, may be null
-   * @param currVertex vertex currently being processed
-   * @param visitedVertices tracking of already queued/processed vertices by id
-   * @param verticesToExplore queue to supplement
-   */
-  private static void exploreIfUnvisited(
-      DirectedVertex candidate,
-      DirectedVertex currVertex,
-      BitSet visitedVertices,
-      Deque<DirectedVertex> verticesToExplore){
-    if(candidate == null || candidate.getId() == currVertex.getId()){
-      return;
-    }
-    if(visitedVertices.get((int) candidate.getId())){
-      return;
-    }
-    visitedVertices.set((int) candidate.getId());
-    verticesToExplore.add(candidate);
   }
 }

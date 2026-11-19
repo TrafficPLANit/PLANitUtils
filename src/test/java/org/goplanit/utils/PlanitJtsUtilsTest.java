@@ -211,6 +211,21 @@ public class PlanitJtsUtilsTest {
     assertEquals(96, withHole.getArea(), 1e-9);
   }
 
+  /** A polygon is read from WKT, the text JTS writes for it, and reads back the same */
+  @Test
+  public void polygonFromWkt() {
+    var polygon = PlanitJtsUtils.createPolygonFromWkt("POLYGON ((1 1, 4 1, 4 3, 1 3, 1 1))");
+    assertTrue(polygon.equalsTopo(PlanitJtsUtils.create2DPolygon(new Envelope(1, 4, 1, 3))));
+    assertTrue(polygon.equalsExact(PlanitJtsUtils.createPolygonFromWkt(polygon.toText())));
+  }
+
+  /** Text that is not WKT, or WKT of another geometry than a polygon, is refused */
+  @Test
+  public void polygonFromInvalidWkt() {
+    assertThrows(IllegalArgumentException.class, () -> PlanitJtsUtils.createPolygonFromWkt("POLYGON ((1 1, 4 1"));
+    assertThrows(IllegalArgumentException.class, () -> PlanitJtsUtils.createPolygonFromWkt("LINESTRING (1 1, 4 1)"));
+  }
+
   /** A multi polygon holds the polygons given, and is empty without any */
   @Test
   public void multiPolygonHoldsPolygons() {

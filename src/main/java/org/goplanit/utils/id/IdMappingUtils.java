@@ -8,6 +8,7 @@ import java.util.Collection;
 import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -116,6 +117,29 @@ public class IdMappingUtils {
       }
     }
     return found;
+  }
+
+  /**
+   * An id list: the ids, in a set of their own in the order given and each once, with the kind of id they are, as
+   * {@link #findEntitiesOfEachIdList(Iterable, List, Consumer)} takes them
+   *
+   * @param ids of the list
+   * @param idType the kind of id they are
+   * @return the id list
+   */
+  public static Pair<Set<String>, IdMapperType> createIdList(Collection<String> ids, IdMapperType idType) {
+    return Pair.of(new LinkedHashSet<>(ids), idType);
+  }
+
+  /**
+   * A copy of an id list, see {@link #createIdList(Collection, IdMapperType)}, its ids in a set of their own so the
+   * copy does not change with the list
+   *
+   * @param idList to copy
+   * @return the copy
+   */
+  public static Pair<Set<String>, IdMapperType> copyIdList(Pair<Set<String>, IdMapperType> idList) {
+    return createIdList(idList.first(), idList.second());
   }
 
   /**

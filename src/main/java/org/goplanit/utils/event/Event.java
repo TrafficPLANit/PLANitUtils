@@ -1,5 +1,7 @@
 package org.goplanit.utils.event;
 
+import java.util.Optional;
+
 import org.goplanit.utils.id.IdAble;
 
 /**
@@ -22,4 +24,14 @@ public interface Event extends IdAble
      * @return EventType; the eventType of the event
      */
     EventType getType();
+
+    /**
+     * Which end of an operation the event reports, for an event fired both when the operation starts and when it is
+     * done. Most events report neither
+     *
+     * @return the state, empty by default
+     */
+    default Optional<EventState> getState(){
+      return Optional.empty();
+    }
 }

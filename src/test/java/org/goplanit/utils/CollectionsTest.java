@@ -3,6 +3,7 @@ package org.goplanit.utils;
 import org.goplanit.utils.containers.ContainerUtils;
 import org.goplanit.utils.containers.FourAryMinHeapOpenSet;
 import org.goplanit.utils.containers.ListUtils;
+import org.goplanit.utils.containers.MapUtils;
 import org.goplanit.utils.exceptions.PlanItRunTimeException;
 import org.goplanit.utils.misc.CollectionUtils;
 import org.goplanit.utils.misc.Pair;
@@ -12,8 +13,10 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.PriorityQueue;
+import java.util.TreeMap;
 import java.util.TreeSet;
 import java.util.stream.Collectors;
 
@@ -108,6 +111,19 @@ public class CollectionsTest {
     assertEquals(0, ((String[]) CollectionUtils.toArray(List.of(), String.class)).length);
   }
 
+  /**
+   * The values of an array in order, those of a primitive type boxed, the reverse of making the array, and the values
+   * of a collection in its order; nothing else
+   */
+  @Test
+  public void toListTakesArraysOfPrimitiveTypesAndCollections() {
+    assertEquals(List.of(1L, 2L), CollectionUtils.toList(new long[] {1, 2}));
+    assertEquals(List.of("a", "b"), CollectionUtils.toList(new String[] {"a", "b"}));
+    assertEquals(List.of(), CollectionUtils.toList(new int[0]));
+    assertEquals(List.of("a", "b"), CollectionUtils.toList(new TreeSet<>(List.of("b", "a"))));
+    assertThrows(IllegalArgumentException.class, () -> CollectionUtils.toList("neither an array nor a collection"));
+  }
+
   /** A list for a List or Collection, a set for a Set, both in the order of the values; no other kind */
   @Test
   public void toCollectionAssignableToMakesAListOrASet() {
@@ -118,5 +134,23 @@ public class CollectionsTest {
     assertEquals(List.of("b", "a"), new ArrayList<>(set));
     assertThrows(PlanItRunTimeException.class,
         () -> CollectionUtils.toCollectionAssignableTo(List.of("a"), TreeSet.class));
+  }
+
+  /** The values as a set in the order given, each once */
+  @Test
+  public void toOrderedSetKeepsTheOrderGiven() {
+    assertEquals(List.of(3L, 1L), new ArrayList<>(CollectionUtils.toOrderedSet(3, 1, 3)));
+  }
+
+  /** Neither level of a map of maps can be changed through it, while a later change to an inner map shows */
+  @Test
+  public void unmodifiableMapOfMapsRefusesChangesAtBothLevels() {
+    var inner = new TreeMap<>(Map.of(1L, "a"));
+    var view = MapUtils.unmodifiableMapOfMaps(new TreeMap<>(Map.of("x", inner)));
+
+    assertThrows(UnsupportedOperationException.class, () -> view.put("y", Map.of()));
+    assertThrows(UnsupportedOperationException.class, () -> view.get("x").put(2L, "b"));
+    inner.put(2L, "b");
+    assertEquals(Map.of(1L, "a", 2L, "b"), view.get("x"));
   }
 }

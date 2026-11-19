@@ -2,6 +2,10 @@ package org.goplanit.utils.zoning.connectoid;
 
 import org.goplanit.utils.exceptions.PlanItRunTimeException;
 
+import java.util.Collections;
+import java.util.EnumSet;
+import java.util.Set;
+
 /**
  * Types of connectoids to more easily identify their purpose
  * 
@@ -23,19 +27,23 @@ public enum ZoneConnectoidType {
   
   
   private final String value;
-  
+
+  /** Constructor
+   * @param value representation of enum
+   */
+  private ZoneConnectoidType(String value){
+    this.value = value;
+  }
+
+  /** the types of entry giving travellers access to a zone, egress from it, or both */
+  public static final Set<ZoneConnectoidType> ACCESS_OR_EGRESS_TYPES =
+      Collections.unmodifiableSet(EnumSet.of(ZONE_ACCESS, ZONE_EGRESS, ZONE_ACCESS_EGRESS));
+
   /** Colect the value
    * @return value
    */
   public String value() {
     return value;
-  }
-  
-  /** Constructor
-   * @param value representation of enum
-   */
-  ZoneConnectoidType(String value){
-    this.value = value;
   }
 
   /**

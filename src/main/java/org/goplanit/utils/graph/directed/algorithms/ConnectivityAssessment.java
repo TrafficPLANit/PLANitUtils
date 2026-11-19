@@ -33,114 +33,6 @@ import java.util.function.Predicate;
 public class ConnectivityAssessment {
 
   /**
-   * Assess connectivity for the given scope.
-   * <p>
-   * The strongly connected components are determined <i>within</i> the largest weakly connected component rather
-   * than across the whole scope. Doing it the other way round allows the largest strongly connected component to
-   * be found in a different weak component than the one it is compared against, which yields a meaningless
-   * trapped count.
-   * </p>
-   *
-   * @param <V> type of directed vertex
-   * @param vertices scope to assess
-   * @param eligibleSegment condition an edge segment must meet to be traversable
-   * @return the assessment
-   */
-  public static <V extends DirectedVertex> Result<V> assess(
-      final Iterable<? extends V> vertices,
-      final Predicate<? super EdgeSegment> eligibleSegment) {
-
-    /* an edge participates when at least one of its segments does, which is what makes the undirected view the
-     * same infrastructure seen without regard for direction */
-    final Predicate<? super Edge> eligibleEdge = edge -> {
-      if (!(edge instanceof org.goplanit.utils.graph.directed.DirectedEdge)) {
-        return false;
-      }
-      var directedEdge = (org.goplanit.utils.graph.directed.DirectedEdge) edge;
-      return (directedEdge.hasEdgeSegmentAb() && eligibleSegment.test(directedEdge.getEdgeSegmentAb()))
-          || (directedEdge.hasEdgeSegmentBa() && eligibleSegment.test(directedEdge.getEdgeSegmentBa()));
-    };
-
-    final List<V> largestWeak = ConnectedComponents.largest(vertices, eligibleEdge);
-    if (largestWeak.isEmpty()) {
-      return new Result<>(List.of(), List.of(), Set.of(), Set.of(), Set.of(), Set.of(), 0);
-    }
-
-    final var scc = StronglyConnectedComponents.execute(largestWeak, eligibleSegment);
-    final List<V> main = scc.getLargest();
-    final Set<V> mainSet = new HashSet<>(main);
-
-    /* everything that can reach the main component, and everything the main component can reach */
-    final Set<V> canReachMain = traverse(mainSet, eligibleSegment, true, largestWeak);
-    final Set<V> reachableFromMain = traverse(mainSet, eligibleSegment, false, largestWeak);
-
-    final Set<V> exitOnly = new HashSet<>();
-    final Set<V> entryOnly = new HashSet<>();
-    final Set<V> severed = new HashSet<>();
-    final Set<V> partial = new HashSet<>();
-
-    for (var vertex : largestWeak) {
-      if (mainSet.contains(vertex)) {
-        continue;
-      }
-      boolean canLeave = canReachMain.contains(vertex);
-      boolean canEnter = reachableFromMain.contains(vertex);
-      if (canLeave && !canEnter) {
-        exitOnly.add(vertex);
-      } else if (canEnter && !canLeave) {
-        entryOnly.add(vertex);
-      } else if (canLeave) {
-        partial.add(vertex);
-      } else {
-        severed.add(vertex);
-      }
-    }
-
-    return new Result<>(largestWeak, main, exitOnly, entryOnly, severed, partial, scc.size() - 1);
-  }
-
-  /**
-   * Collect everything reachable from the seeds, restricted to the given scope.
-   *
-   * @param seeds to start from
-   * @param eligibleSegment condition an edge segment must meet
-   * @param invertDirection when true traverse upstream, yielding what can reach the seeds
-   * @param scope traversal never leaves this set
-   * @return reachable vertices, including the seeds
-   */
-  private static <V extends DirectedVertex> Set<V> traverse(
-      final Set<V> seeds,
-      final Predicate<? super EdgeSegment> eligibleSegment,
-      final boolean invertDirection,
-      final Iterable<? extends V> scope) {
-
-    final Set<V> inScope = new HashSet<>();
-    scope.forEach(inScope::add);
-
-    final var nextSegments = DirectedVertex.getEdgeSegmentsForVertexLambda(invertDirection);
-    final var nextVertex = EdgeSegment.getVertexForEdgeSegmentLambda(invertDirection);
-
-    final Set<V> seen = new HashSet<>(seeds);
-    final Deque<V> pending = new ArrayDeque<>(seeds);
-    while (!pending.isEmpty()) {
-      var current = pending.pop();
-      for (var segment : nextSegments.apply(current)) {
-        if (!eligibleSegment.test(segment)) {
-          continue;
-        }
-        @SuppressWarnings("unchecked")
-        var candidate = (V) nextVertex.apply(segment);
-        if (candidate == null || !inScope.contains(candidate) || seen.contains(candidate)) {
-          continue;
-        }
-        seen.add(candidate);
-        pending.push(candidate);
-      }
-    }
-    return seen;
-  }
-
-  /**
    * Outcome of a connectivity assessment, in memory rather than logged so that callers can act on it as well as
    * report it.
    *
@@ -156,8 +48,8 @@ public class ConnectivityAssessment {
     private final Set<V> partial;
     private final int pocketCount;
 
-    Result(List<V> largestWeak, List<V> largestStrong, Set<V> exitOnly, Set<V> entryOnly,
-           Set<V> severed, Set<V> partial, int pocketCount) {
+    private Result(List<V> largestWeak, List<V> largestStrong, Set<V> exitOnly, Set<V> entryOnly,
+                   Set<V> severed, Set<V> partial, int pocketCount) {
       this.largestWeak = largestWeak;
       this.largestStrong = largestStrong;
       this.exitOnly = exitOnly;
@@ -267,5 +159,107 @@ public class ConnectivityAssessment {
           largestWeak.size(), largestStrong.size(), getNumberOfTrapped(), getTrappedPercentage(),
           pocketCount, exitOnly.size(), entryOnly.size(), severed.size(), partial.size());
     }
+  }
+
+  /**
+   * Collect everything reachable from the seeds, restricted to the given scope.
+   *
+   * @param seeds to start from
+   * @param eligibleSegment condition an edge segment must meet
+   * @param invertDirection when true traverse upstream, yielding what can reach the seeds
+   * @param scope traversal never leaves this set
+   * @return reachable vertices, including the seeds
+   */
+  private static <V extends DirectedVertex> Set<V> traverse(
+      final Set<V> seeds,
+      final Predicate<? super EdgeSegment> eligibleSegment,
+      final boolean invertDirection,
+      final Iterable<? extends V> scope) {
+
+    final Set<V> inScope = new HashSet<>();
+    scope.forEach(inScope::add);
+
+    final var nextVertices = DirectedVertex.<V>getAdjacentVerticesForVertexLambda(eligibleSegment, invertDirection);
+
+    final Set<V> seen = new HashSet<>(seeds);
+    final Deque<V> pending = new ArrayDeque<>(seeds);
+    while (!pending.isEmpty()) {
+      var current = pending.pop();
+      for (var candidate : nextVertices.apply(current)) {
+        if (!inScope.contains(candidate) || seen.contains(candidate)) {
+          continue;
+        }
+        seen.add(candidate);
+        pending.push(candidate);
+      }
+    }
+    return seen;
+  }
+
+  /**
+   * Assess connectivity for the given scope.
+   * <p>
+   * The strongly connected components are determined <i>within</i> the largest weakly connected component rather
+   * than across the whole scope. Doing it the other way round allows the largest strongly connected component to
+   * be found in a different weak component than the one it is compared against, which yields a meaningless
+   * trapped count.
+   * </p>
+   *
+   * @param <V> type of directed vertex
+   * @param vertices scope to assess
+   * @param eligibleSegment condition an edge segment must meet to be traversable
+   * @return the assessment
+   */
+  public static <V extends DirectedVertex> Result<V> assess(
+      final Iterable<? extends V> vertices,
+      final Predicate<? super EdgeSegment> eligibleSegment) {
+
+    /* an edge participates when at least one of its segments does, which is what makes the undirected view the
+     * same infrastructure seen without regard for direction */
+    final Predicate<? super Edge> eligibleEdge = edge -> {
+      if (!(edge instanceof org.goplanit.utils.graph.directed.DirectedEdge)) {
+        return false;
+      }
+      var directedEdge = (org.goplanit.utils.graph.directed.DirectedEdge) edge;
+      return (directedEdge.hasEdgeSegmentAb() && eligibleSegment.test(directedEdge.getEdgeSegmentAb()))
+          || (directedEdge.hasEdgeSegmentBa() && eligibleSegment.test(directedEdge.getEdgeSegmentBa()));
+    };
+
+    final List<V> largestWeak = ConnectedComponents.largest(vertices, eligibleEdge);
+    if (largestWeak.isEmpty()) {
+      return new Result<>(List.of(), List.of(), Set.of(), Set.of(), Set.of(), Set.of(), 0);
+    }
+
+    final var scc = StronglyConnectedComponents.executeOnVertices(largestWeak, eligibleSegment);
+    final List<V> main = scc.getLargest();
+    final Set<V> mainSet = new HashSet<>(main);
+
+    /* everything that can reach the main component, and everything the main component can reach */
+    final Set<V> canReachMain = traverse(mainSet, eligibleSegment, true, largestWeak);
+    final Set<V> reachableFromMain = traverse(mainSet, eligibleSegment, false, largestWeak);
+
+    final Set<V> exitOnly = new HashSet<>();
+    final Set<V> entryOnly = new HashSet<>();
+    final Set<V> severed = new HashSet<>();
+    final Set<V> partial = new HashSet<>();
+
+    for (var vertex : largestWeak) {
+      if (mainSet.contains(vertex)) {
+        continue;
+      }
+      boolean canLeave = canReachMain.contains(vertex);
+      boolean canEnter = reachableFromMain.contains(vertex);
+      if (canLeave && !canEnter) {
+        exitOnly.add(vertex);
+      } else if (canEnter && !canLeave) {
+        entryOnly.add(vertex);
+      } else if (canLeave) {
+        partial.add(vertex);
+      } else {
+        severed.add(vertex);
+      }
+    }
+
+    return new Result<>(largestWeak, main, exitOnly, entryOnly, severed, partial, scc.size() - 1);
   }
 }

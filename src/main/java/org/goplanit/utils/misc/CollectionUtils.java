@@ -6,6 +6,9 @@ import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.LongStream;
 
 /**
  * Lightweight collection utilities
@@ -79,6 +82,28 @@ public class CollectionUtils {
   }
 
   /**
+   * The values of an array or a collection, in order, the reverse of {@link #toArray(Collection, Class)} for an array:
+   * those of a primitive type are boxed. For example, the {@code long[]} {1, 2} gives 1L and 2L, as when the value of
+   * a method taking {@code long... ids} is read through reflection, and a set of modes gives its modes, as when a
+   * getter gives a set of what a method taking {@code ModeType...} takes
+   *
+   * @param arrayOrCollection an array of any component type, given as an Object since an array of a primitive type is
+   *     no Object[], or a collection
+   * @return the values, in order
+   * @throws IllegalArgumentException when it is neither an array nor a collection
+   */
+  public static List<Object> toList(Object arrayOrCollection) {
+    if (arrayOrCollection instanceof Collection) {
+      return new ArrayList<>((Collection<?>) arrayOrCollection);
+    }
+    var values = new ArrayList<Object>(Array.getLength(arrayOrCollection));
+    for (int index = 0; index < Array.getLength(arrayOrCollection); index++) {
+      values.add(Array.get(arrayOrCollection, index));
+    }
+    return values;
+  }
+
+  /**
    * A collection holding the values, in order, of a kind a declared collection type accepts: an ArrayList for a List,
    * Collection or Iterable, and a LinkedHashSet for a Set, which keeps each value once. For example, to make the
    * argument of a method taking {@code Set<String>} when it is called through reflection
@@ -95,5 +120,15 @@ public class CollectionUtils {
     PlanItRunTimeException.throwIf(!collectionType.isAssignableFrom(LinkedHashSet.class),
         "Cannot make a %s, only a List or Set", collectionType.getName());
     return new LinkedHashSet<>(values);
+  }
+
+  /**
+   * The values as a set in the order given, each once, such as ids given one by one
+   *
+   * @param values to hold
+   * @return the set, in the order of the values
+   */
+  public static LinkedHashSet<Long> toOrderedSet(long... values) {
+    return LongStream.of(values).boxed().collect(Collectors.toCollection(LinkedHashSet::new));
   }
 }

@@ -12,7 +12,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Tests the index of entities by the keys they refer to: lookup by identity, order of indexing, and staying in step
- * through update, replace and reindex
+ * through update, replace and reindex, and after direct changes
  *
  * @author markr
  */
@@ -91,5 +91,41 @@ public class EntityIndexTest {
     index.reindex(List.of(referrer));
     assertTrue(index.get(before).isEmpty());
     assertEquals(List.of(referrer), index.get(after));
+  }
+
+  /** Removing an entity changed directly takes it from under the keys it was indexed under */
+  @Test
+  public void removingEntityChangedDirectlyLeavesNothing() {
+    var before = new Object();
+    var after = new Object();
+    var referrer = new Referrer(before);
+    index.index(referrer);
+    referrer.keys.set(0, after);
+    index.unindex(referrer);
+    assertTrue(index.get(before).isEmpty());
+    assertTrue(index.get(after).isEmpty());
+  }
+
+  /** Indexing an entity again after a direct change files it under its new keys only */
+  @Test
+  public void indexingAgainAfterDirectChangeFilesUnderNewKeysOnly() {
+    var before = new Object();
+    var after = new Object();
+    var referrer = new Referrer(before);
+    index.index(referrer);
+    referrer.keys.set(0, after);
+    index.index(referrer);
+    assertTrue(index.get(before).isEmpty());
+    assertEquals(List.of(referrer), index.get(after));
+  }
+
+  /** Indexing an entity twice keeps a single entry */
+  @Test
+  public void indexingTwiceKeepsOneEntry() {
+    var key = new Object();
+    var referrer = new Referrer(key);
+    index.index(referrer);
+    index.index(referrer);
+    assertEquals(List.of(referrer), index.get(key));
   }
 }

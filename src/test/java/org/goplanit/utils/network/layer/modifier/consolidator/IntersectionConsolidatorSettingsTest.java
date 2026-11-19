@@ -5,6 +5,13 @@ import java.util.Set;
 
 import org.goplanit.utils.id.IdMapperType;
 import org.goplanit.utils.misc.Pair;
+import org.goplanit.utils.settings.SettingsSchema;
+import org.goplanit.utils.settings.SettingsSource;
+import org.goplanit.utils.settings.SettingsYamlLoader;
+import org.goplanit.utils.settings.UserOverride;
+import org.goplanit.utils.settings.annotations.SettingsHeader;
+import org.goplanit.utils.settings.annotations.SettingsKeyLevel;
+import org.goplanit.utils.settings.annotations.SettingsSection;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -15,6 +22,68 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author markr
  */
 public class IntersectionConsolidatorSettingsTest {
+
+  /** Settings holding the consolidation settings as a section, as the settings of a converter do */
+  @SettingsHeader(key = "planitConsolidatorTestSettings", version = 1)
+  @SettingsSection(key = "test", level = SettingsKeyLevel.STANDARD,
+      description = "Settings holding the consolidation settings")
+  public static final class TestConsolidatorHolderSettings {
+
+    /** the consolidation settings held */
+    private final IntersectionConsolidatorSettings intersectionConsolidatorSettings =
+        new IntersectionConsolidatorSettings();
+
+    /** @return the consolidation settings held */
+    @SettingsSection(key = "intersectionConsolidator", level = SettingsKeyLevel.UNCOMMON,
+        description = "How the nodes of one junction are found and joined into one intersection")
+    public IntersectionConsolidatorSettings getIntersectionConsolidatorSettings() {
+      return intersectionConsolidatorSettings;
+    }
+  }
+
+  /**
+   * Every value of the consolidation settings read back from a file, each away from its default
+   */
+  @Test
+  public void everyValueReadsBackFromAFile() {
+    var schema = new SettingsSchema(TestConsolidatorHolderSettings.class);
+    var settings = new SettingsYamlLoader(schema, List.of(SettingsSource.ofText(schema,
+        "test:\n  intersectionConsolidator:\n    maximumJoiningReachMeters: 41\n" +
+            "    minimumCoverageGainPerMember: 0.06\n    coverageTieMargin: 0.07\n" +
+            "    maximumParsedIntersectionsToTryEverySubdivision: 8\n    subdivisionsKeptPerSearchStep: 4\n" +
+            "    pullInMarginBeyondRadiusMeters: 31\n    maximumPullInConnectionLengthMeters: 81\n" +
+            "    internalLinkLengthWarningMeters: 101\n" +
+            "    maximumDistanceReachedOnlyThroughIntersectionMeters: 61\n" +
+            "    maximumDistanceReachedOnlyThroughIntersectionRadiusFactor: 2.5\n" +
+            "    maximumDistanceSlipLaneCrossingToJunctionMeters: 62\n" +
+            "    maximumDistanceBetweenCrossingsSideBySideMeters: 32\n    includeActiveModesInMovements: true\n")))
+        .create(TestConsolidatorHolderSettings.class).getIntersectionConsolidatorSettings();
+
+    assertEquals(41, settings.getMaximumJoiningReachMeters());
+    assertEquals(0.06, settings.getMinimumCoverageGainPerMember());
+    assertEquals(0.07, settings.getCoverageTieMargin());
+    assertEquals(8, settings.getMaximumParsedIntersectionsToTryEverySubdivision());
+    assertEquals(4, settings.getSubdivisionsKeptPerSearchStep());
+    assertEquals(31, settings.getPullInMarginBeyondRadiusMeters());
+    assertEquals(81, settings.getMaximumPullInConnectionLengthMeters());
+    assertEquals(101, settings.getInternalLinkLengthWarningMeters());
+    assertEquals(61, settings.getMaximumDistanceReachedOnlyThroughIntersectionMeters());
+    assertEquals(2.5, settings.getMaximumDistanceReachedOnlyThroughIntersectionRadiusFactor());
+    assertEquals(62, settings.getMaximumDistanceSlipLaneCrossingToJunctionMeters());
+    assertEquals(32, settings.getMaximumDistanceBetweenCrossingsSideBySideMeters());
+    assertTrue(settings.isIncludeActiveModesInMovements());
+  }
+
+  /**
+   * No subdivision kept per search step is refused: the search would have nothing to go on from
+   */
+  @Test
+  public void noSubdivisionKeptPerSearchStepIsRefused() {
+    var settings = new IntersectionConsolidatorSettings();
+    assertThrows(IllegalArgumentException.class, () -> settings.setSubdivisionsKeptPerSearchStep(0));
+    assertEquals(IntersectionConsolidatorSettings.DEFAULT_SUBDIVISIONS_KEPT_PER_SEARCH_STEP,
+        settings.getSubdivisionsKeptPerSearchStep());
+  }
 
   /**
    * The default values are those of the spec
@@ -74,24 +143,43 @@ public class IntersectionConsolidatorSettingsTest {
     var copy = new IntersectionConsolidatorSettings(settings);
     settings.addNodeIdsToJoinIntoOneIntersection(List.of("6", "7"), IdMapperType.ID);
 
-    assertEquals(List.of(Pair.of(Set.of("1", "2"), IdMapperType.EXTERNAL_ID)),
+    assertEquals(List.of(UserOverride.of(Pair.of(Set.of("1", "2"), IdMapperType.EXTERNAL_ID))),
         copy.getNodeIdsToJoinIntoOneIntersection());
-    assertEquals(List.of(Pair.of(Set.of("3", "4"), IdMapperType.XML)), copy.getNodeIdsToKeepInSeparateIntersections());
+    assertEquals(List.of(UserOverride.of(Pair.of(Set.of("3", "4"), IdMapperType.XML))),
+        copy.getNodeIdsToKeepInSeparateIntersections());
     assertEquals(2, settings.getNodeIdsToJoinIntoOneIntersection().size());
   }
 
   /**
-   * A list needs at least two different node ids. A shorter one, of one node, of the same node twice, or empty, is not
-   * stored, for either kind of list
+   * A list keeps the reason it was added with, and so does a copy of the settings
    */
   @Test
-  public void listsWithFewerThanTwoDifferentNodesAreIgnored() {
+  public void aListKeepsItsReason() {
+    var settings = new IntersectionConsolidatorSettings();
+    settings.addNodeIdsToJoinIntoOneIntersection(List.of("1", "2"), IdMapperType.EXTERNAL_ID, "one controller");
+    settings.addNodeIdsToKeepInSeparateIntersections(List.of("3", "4"), IdMapperType.EXTERNAL_ID, "two controllers");
+    var copy = new IntersectionConsolidatorSettings(settings);
+
+    assertEquals("one controller", copy.getNodeIdsToJoinIntoOneIntersection().get(0).getReason());
+    assertEquals("two controllers", copy.getNodeIdsToKeepInSeparateIntersections().get(0).getReason());
+  }
+
+  /**
+   * A list needs at least two different node ids. A shorter one, of one node, of the same node twice, or empty, is
+   * refused and not stored, for either kind of list
+   */
+  @Test
+  public void listsWithFewerThanTwoDifferentNodesAreRefused() {
     var settings = new IntersectionConsolidatorSettings();
 
-    settings.addNodeIdsToJoinIntoOneIntersection(List.of("1"), IdMapperType.EXTERNAL_ID);
-    settings.addNodeIdsToJoinIntoOneIntersection(List.of("2", "2"), IdMapperType.EXTERNAL_ID);
-    settings.addNodeIdsToKeepInSeparateIntersections(List.of(), IdMapperType.EXTERNAL_ID);
-    settings.addNodeIdsToKeepInSeparateIntersections(List.of("3"), IdMapperType.EXTERNAL_ID);
+    assertThrows(IllegalArgumentException.class,
+        () -> settings.addNodeIdsToJoinIntoOneIntersection(List.of("1"), IdMapperType.EXTERNAL_ID));
+    assertThrows(IllegalArgumentException.class,
+        () -> settings.addNodeIdsToJoinIntoOneIntersection(List.of("2", "2"), IdMapperType.EXTERNAL_ID));
+    assertThrows(IllegalArgumentException.class,
+        () -> settings.addNodeIdsToKeepInSeparateIntersections(List.of(), IdMapperType.EXTERNAL_ID));
+    assertThrows(IllegalArgumentException.class,
+        () -> settings.addNodeIdsToKeepInSeparateIntersections(List.of("3"), IdMapperType.EXTERNAL_ID, "checked"));
 
     assertTrue(settings.getNodeIdsToJoinIntoOneIntersection().isEmpty());
     assertTrue(settings.getNodeIdsToKeepInSeparateIntersections().isEmpty());

@@ -36,10 +36,11 @@ public interface SpatialMovements extends ManagedIdEntities<SpatialMovement> {
    * Apply a change to the segments of a registered movement, keeping the lookup by segment in step with what it refers
    * to before and after. The only way to change the segments of a registered movement
    *
+   * @param <T> the kind of movement, so the change can use what is particular to it
    * @param movement to change
    * @param change to apply to it
    */
-  public abstract void update(SpatialMovement movement, Consumer<SpatialMovement> change);
+  public abstract <T extends SpatialMovement> void update(T movement, Consumer<? super T> change);
 
   /**
    * {@inheritDoc}

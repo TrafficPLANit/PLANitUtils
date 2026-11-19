@@ -6,6 +6,7 @@ import org.goplanit.utils.settings.SettingsSchema;
 import org.goplanit.utils.settings.problem.SettingsProblem;
 import org.goplanit.utils.settings.problem.SettingsProblemKind;
 import org.goplanit.utils.settings.SettingsSource;
+import org.goplanit.utils.settings.SettingsValueConverter;
 import org.goplanit.utils.settings.SettingsYamlLoader;
 import org.goplanit.utils.settings.UserOverride;
 import org.goplanit.utils.settings.annotations.SettingsHeader;
@@ -15,6 +16,7 @@ import org.goplanit.utils.settings.annotations.SettingsRead;
 import org.goplanit.utils.settings.annotations.SettingsRootValue;
 import org.goplanit.utils.settings.annotations.SettingsSection;
 import org.goplanit.utils.settings.annotations.SettingsWrite;
+import org.goplanit.utils.yaml.SimpleYamlReader;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
@@ -34,6 +36,7 @@ import java.util.TreeSet;
 
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotSame;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -136,7 +139,8 @@ public class SettingsYamlLoaderTest {
 
   /** Settings with a key of each kind the loader handles, the section {@code test}, made with a country or without */
   @SettingsHeader(key = "planitTestSettings", version = 1)
-  @SettingsSection(key = "test", level = SettingsKeyLevel.STANDARD)
+  @SettingsSection(key = "test", level = SettingsKeyLevel.STANDARD,
+      description = "Settings with a key of each kind the loader handles")
   public static final class TestSettings {
 
     /** Default of the reach */
@@ -195,11 +199,13 @@ public class SettingsYamlLoaderTest {
     }
 
     /** @param country made with, a value at the root */
-    public TestSettings(@SettingsRootValue(key = "country") String country) {
+    public TestSettings(
+        @SettingsRootValue(key = "country", description = "The country the settings are made for") String country) {
       this.country = country;
     }
 
     /** @return the country made with, null when made without */
+    @SettingsRead(key = "country")
     public String getCountry() {
       return country;
     }
@@ -401,7 +407,7 @@ public class SettingsYamlLoaderTest {
     }
 
     /** @return the nested settings */
-    @SettingsSection(key = "nested", level = SettingsKeyLevel.RARE)
+    @SettingsSection(key = "nested", level = SettingsKeyLevel.RARE, description = "Settings nested in the test settings")
     public TestNestedSettings getNested() {
       return nested;
     }
@@ -409,7 +415,8 @@ public class SettingsYamlLoaderTest {
 
   /** Settings of the section {@code other}, under the same header */
   @SettingsHeader(key = "planitTestSettings", version = 1)
-  @SettingsSection(key = "other", level = SettingsKeyLevel.RARE)
+  @SettingsSection(key = "other", level = SettingsKeyLevel.RARE,
+      description = "Settings of another section under the same header")
   public static final class TestOtherSettings {
 
     /** a text */
@@ -452,15 +459,17 @@ public class SettingsYamlLoaderTest {
   public static final class TestTwoRootValueConstructors {
 
     /** @param country a root value */
-    public TestTwoRootValueConstructors(@SettingsRootValue(key = "country") String country) {
+    public TestTwoRootValueConstructors(
+        @SettingsRootValue(key = "country", description = "The country the settings are made for") String country) {
     }
 
     /**
      * @param country a root value
      * @param region another root value
      */
-    public TestTwoRootValueConstructors(@SettingsRootValue(key = "country") String country,
-        @SettingsRootValue(key = "region") String region) {
+    public TestTwoRootValueConstructors(
+        @SettingsRootValue(key = "country", description = "The country the settings are made for") String country,
+        @SettingsRootValue(key = "region", description = "The region the settings are made for") String region) {
     }
   }
 
@@ -471,7 +480,9 @@ public class SettingsYamlLoaderTest {
      * @param country a root value
      * @param region not a root value
      */
-    public TestPartlyRootValueConstructor(@SettingsRootValue(key = "country") String country, String region) {
+    public TestPartlyRootValueConstructor(
+        @SettingsRootValue(key = "country", description = "The country the settings are made for") String country,
+        String region) {
     }
   }
 
@@ -479,12 +490,314 @@ public class SettingsYamlLoaderTest {
   public static final class TestNonTextRootValue {
 
     /** @param year a root value as a number */
-    public TestNonTextRootValue(@SettingsRootValue(key = "year") int year) {
+    public TestNonTextRootValue(
+        @SettingsRootValue(key = "year", description = "The year the settings are made for") int year) {
+    }
+  }
+
+  /** A range, which cannot change once made, so only a converter can make it from a source */
+  public static final class TestRange {
+
+    /** the smallest value */
+    private final int min;
+
+    /** the largest value */
+    private final int max;
+
+    /**
+     * Constructor
+     *
+     * @param min the smallest value
+     * @param max the largest value
+     */
+    public TestRange(int min, int max) {
+      this.min = min;
+      this.max = max;
+    }
+
+    /** @return the smallest value */
+    public int getMin() {
+      return min;
+    }
+
+    /** @return the largest value */
+    public int getMax() {
+      return max;
+    }
+
+    @Override
+    public boolean equals(Object other) {
+      return other instanceof TestRange && min == ((TestRange) other).min && max == ((TestRange) other).max;
+    }
+
+    @Override
+    public int hashCode() {
+      return Objects.hash(min, max);
+    }
+  }
+
+  /** Converter of a range written as {@code {min: 1, max: 5}}, refusing a smallest value above the largest */
+  public static final class TestRangeConverter implements SettingsValueConverter<TestRange> {
+
+    @Override
+    public Class<TestRange> getValueType() {
+      return TestRange.class;
+    }
+
+    @Override
+    public TestRange fromPlainValue(Object plainValue) {
+      var fields = SimpleYamlReader.asMap(plainValue);
+      var min = Integer.parseInt(SimpleYamlReader.asText(fields.get("min")));
+      var max = Integer.parseInt(SimpleYamlReader.asText(fields.get("max")));
+      if (min > max) {
+        throw new IllegalArgumentException(String.format("Range from %d to %d is empty", min, max));
+      }
+      return new TestRange(min, max);
+    }
+
+    @Override
+    public Object toPlainValue(TestRange range) {
+      return Map.of("min", String.valueOf(range.getMin()), "max", String.valueOf(range.getMax()));
+    }
+  }
+
+  /** Base of the settings of the root test sources, giving their header and their key at the root, a range */
+  @SettingsHeader(key = "planitRootTestSettings", version = 1)
+  public abstract static class TestRootKeyedSettings {
+
+    /** a range, null when not given */
+    private TestRange range;
+
+    /** @return the range */
+    @SettingsRead(key = "range")
+    public TestRange getRange() {
+      return range;
+    }
+
+    /** @param range the range */
+    @SettingsWrite(key = "range", level = SettingsKeyLevel.STANDARD, description = "A range")
+    public void setRange(TestRange range) {
+      this.range = range;
+    }
+  }
+
+  /** Settings of the section {@code network} of the root test sources */
+  @SettingsSection(key = "network", level = SettingsKeyLevel.STANDARD, description = "Settings of the network")
+  public static final class TestRootNetworkSettings extends TestRootKeyedSettings {
+
+    /** a text */
+    private String name = "default";
+
+    /** @return the text */
+    @SettingsRead(key = "name")
+    public String getName() {
+      return name;
+    }
+
+    /** @param name the text */
+    @SettingsWrite(key = "name", level = SettingsKeyLevel.STANDARD, description = "A text")
+    public void setName(String name) {
+      this.name = name;
+    }
+  }
+
+  /** Settings of the section {@code transport} of the root test sources, with no key of their own */
+  @SettingsSection(key = "transport", level = SettingsKeyLevel.STANDARD,
+      description = "Settings of the transport, with no key of their own")
+  public static final class TestRootTransportSettings extends TestRootKeyedSettings {
+  }
+
+  /** Settings filling no section themselves, holding the settings of both sections of the root test sources */
+  public static final class TestRootHolderSettings {
+
+    /** settings of the section network */
+    private final TestRootNetworkSettings network = new TestRootNetworkSettings();
+
+    /** settings of the section transport */
+    private final TestRootTransportSettings transport = new TestRootTransportSettings();
+
+    /** @return the settings of the section network */
+    public TestRootNetworkSettings getNetwork() {
+      return network;
+    }
+
+    /** @return the settings of the section transport */
+    public TestRootTransportSettings getTransport() {
+      return transport;
+    }
+  }
+
+  /** A section nested in the order test settings, adding to their record when its key is applied */
+  public static final class TestOrderNestedSettings {
+
+    /** the record of the keys applied, shared with the settings holding this section */
+    private final List<String> calls;
+
+    /** name of this section in the record */
+    private final String name;
+
+    /**
+     * Constructor
+     *
+     * @param calls the record to add to
+     * @param name of this section in the record
+     */
+    public TestOrderNestedSettings(List<String> calls, String name) {
+      this.calls = calls;
+      this.name = name;
+    }
+
+    /** @param value a value, recorded as applied */
+    @SettingsWrite(key = "value", level = SettingsKeyLevel.RARE, description = "A value")
+    public void setValue(String value) {
+      calls.add(name + ".value");
+    }
+  }
+
+  /** Base of the settings of the order test sources: their header, their record and a key at their root */
+  @SettingsHeader(key = "planitOrderTestSettings", version = 1)
+  public abstract static class TestOrderKeyedSettings {
+
+    /** the record of the keys applied, in the order applied, shared by every section */
+    private final List<String> calls;
+
+    /**
+     * Constructor
+     *
+     * @param calls the record to add to
+     */
+    protected TestOrderKeyedSettings(List<String> calls) {
+      this.calls = calls;
+    }
+
+    /**
+     * Add a key to the record
+     *
+     * @param call the key applied
+     */
+    protected void record(String call) {
+      calls.add(call);
+    }
+
+    /** @param mark a mark at the root, recorded as applied */
+    @SettingsWrite(key = "mark", level = SettingsKeyLevel.STANDARD, description = "A mark")
+    public void setMark(String mark) {
+      record("mark");
+    }
+  }
+
+  /** Settings of the section {@code first} of the order test sources, with a list key and two nested sections */
+  @SettingsSection(key = "first", level = SettingsKeyLevel.STANDARD,
+      description = "The first section, with a list key and two nested sections")
+  public static final class TestOrderFirstSettings extends TestOrderKeyedSettings {
+
+    /** the nested section of level rare */
+    private final TestOrderNestedSettings rare;
+
+    /** the nested section of level standard */
+    private final TestOrderNestedSettings standard;
+
+    /** @param calls the record to add to */
+    public TestOrderFirstSettings(List<String> calls) {
+      super(calls);
+      this.rare = new TestOrderNestedSettings(calls, "rare");
+      this.standard = new TestOrderNestedSettings(calls, "standard");
+    }
+
+    /** @param name a text, recorded as applied */
+    @SettingsWrite(key = "name", level = SettingsKeyLevel.STANDARD, description = "A text")
+    public void setName(String name) {
+      record("first.name");
+    }
+
+    /** @param types replacing the types, recorded as applied */
+    @SettingsWrite(key = "types", level = SettingsKeyLevel.STANDARD, description = "Types")
+    public void setTypes(List<String> types) {
+      record("first.types");
+    }
+
+    /** @param type to add, recorded as applied */
+    @SettingsWrite(key = "types+", effect = SettingsKeyEffect.ADD_EACH, level = SettingsKeyLevel.STANDARD,
+        description = "Types on top")
+    public void activateType(String type) {
+      record("first.types+");
+    }
+
+    /** @param type to remove, recorded as applied */
+    @SettingsWrite(key = "types-", effect = SettingsKeyEffect.REMOVE_EACH, level = SettingsKeyLevel.STANDARD,
+        description = "Types left out")
+    public void deactivateType(String type) {
+      record("first.types-");
+    }
+
+    /** @return the nested section of level rare */
+    @SettingsSection(key = "rare", level = SettingsKeyLevel.RARE, description = "A nested section of level rare")
+    public TestOrderNestedSettings getRare() {
+      return rare;
+    }
+
+    /** @return the nested section of level standard */
+    @SettingsSection(key = "standard", level = SettingsKeyLevel.STANDARD,
+        description = "A nested section of level standard")
+    public TestOrderNestedSettings getStandard() {
+      return standard;
+    }
+  }
+
+  /** Settings of the section {@code second} of the order test sources */
+  @SettingsSection(key = "second", level = SettingsKeyLevel.STANDARD, description = "The second section")
+  public static final class TestOrderSecondSettings extends TestOrderKeyedSettings {
+
+    /** @param calls the record to add to */
+    public TestOrderSecondSettings(List<String> calls) {
+      super(calls);
+    }
+
+    /** @param name a text, recorded as applied */
+    @SettingsWrite(key = "name", level = SettingsKeyLevel.STANDARD, description = "A text")
+    public void setName(String name) {
+      record("second.name");
+    }
+  }
+
+  /** Settings holding both sections of the order test sources, which share one record */
+  public static final class TestOrderHolderSettings {
+
+    /** the record of the keys applied, in the order applied */
+    private final List<String> calls = new ArrayList<>();
+
+    /** settings of the section first */
+    private final TestOrderFirstSettings first = new TestOrderFirstSettings(calls);
+
+    /** settings of the section second */
+    private final TestOrderSecondSettings second = new TestOrderSecondSettings(calls);
+
+    /** @return the settings of the section first */
+    public TestOrderFirstSettings getFirst() {
+      return first;
+    }
+
+    /** @return the settings of the section second */
+    public TestOrderSecondSettings getSecond() {
+      return second;
+    }
+
+    /** @return the record of the keys applied, in the order applied */
+    public List<String> getCalls() {
+      return calls;
     }
   }
 
   /** The schema of the test sources: the sections test and other */
   private static final SettingsSchema TEST_SCHEMA = new SettingsSchema(TestSettings.class, TestOtherSettings.class);
+
+  /** The schema of the root test sources: the sections network and transport, ranges made by their converter */
+  private static final SettingsSchema ROOT_TEST_SCHEMA = new SettingsSchema(List.of(new TestRangeConverter()),
+      TestRootNetworkSettings.class, TestRootTransportSettings.class);
+
+  /** The schema of the order test sources: the section first, then the section second */
+  private static final SettingsSchema ORDER_TEST_SCHEMA =
+      new SettingsSchema(TestOrderFirstSettings.class, TestOrderSecondSettings.class);
 
   /** The first line of every test source */
   private static final String HEADER = "planitTestSettings: 1\n";
@@ -496,7 +809,7 @@ public class SettingsYamlLoaderTest {
    * @return the source
    */
   private static SettingsSource text(String body) {
-    return SettingsSource.ofText(HEADER + body);
+    return SettingsSource.ofText(TEST_SCHEMA, body);
   }
 
   /**
@@ -518,6 +831,39 @@ public class SettingsYamlLoaderTest {
   private static List<SettingsProblem> problemsOf(SettingsSource... sources) {
     var loader = new SettingsYamlLoader(TEST_SCHEMA, List.of(sources));
     return assertThrows(SettingsProblemsException.class, () -> loader.create(TestSettings.class)).getProblems();
+  }
+
+  /**
+   * Settings made from one text under the header of a schema
+   *
+   * @param <T> type of the settings
+   * @param schema of the text
+   * @param settingsClass to make
+   * @param body the lines after the header
+   * @return the settings
+   */
+  private static <T> T createFromText(SettingsSchema schema, Class<T> settingsClass, String body) {
+    return new SettingsYamlLoader(schema, List.of(SettingsSource.ofText(schema, body))).create(settingsClass);
+  }
+
+  /**
+   * Settings holding both sections of the root test sources, made from a text under their header
+   *
+   * @param body the lines after the header
+   * @return the settings
+   */
+  private static TestRootHolderSettings loadRoot(String body) {
+    return createFromText(ROOT_TEST_SCHEMA, TestRootHolderSettings.class, body);
+  }
+
+  /**
+   * The keys a text under the header of the order test sources applies, in the order it applies them
+   *
+   * @param body the lines after the header
+   * @return the keys applied, in the order applied
+   */
+  private static List<String> appliedOrderOf(String body) {
+    return createFromText(ORDER_TEST_SCHEMA, TestOrderHolderSettings.class, body).getCalls();
   }
 
   /**
@@ -573,6 +919,14 @@ public class SettingsYamlLoaderTest {
         load(text("test:\n  maximumReachMeters: 50\n")).getMaximumReachMeters());
     assertEquals(50,
         load(file("a.yaml", "test:\n  maximumReachMeters: 50\n")).getMaximumReachMeters());
+  }
+
+  /** Text given without the header, under the header of a schema, works as text written with the header */
+  @Test
+  public void testTextUnderTheHeaderOfASchema() {
+    assertEquals(50, load(SettingsSource.ofText(TEST_SCHEMA, "test:\n  maximumReachMeters: 50\n"))
+        .getMaximumReachMeters());
+    assertEquals("Germany", load(SettingsSource.ofText(TEST_SCHEMA, "country: Germany")).getCountry());
   }
 
   /** Each value is converted to the type its method takes */
@@ -797,5 +1151,66 @@ public class SettingsYamlLoaderTest {
     assertEquals("Germany", settings.getCountry());
     assertEquals("x", settings.getName());
     assertNull(load(text("test:\n  name: x\n")).getCountry());
+  }
+
+  /**
+   * A key of the class giving the header, above the sections, sits at the root and applies to the settings of every
+   * section, each made its own value by the converter of its type
+   */
+  @Test
+  public void testRootKeyAppliesToEverySection() {
+    var holder = loadRoot("range: {min: 1, max: 5}\nnetwork:\n  name: x\n");
+    assertEquals(new TestRange(1, 5), holder.getNetwork().getRange());
+    assertEquals(new TestRange(1, 5), holder.getTransport().getRange());
+    assertNotSame(holder.getNetwork().getRange(), holder.getTransport().getRange());
+    assertEquals("x", holder.getNetwork().getName());
+  }
+
+  /** A key of the root given inside a section is not a key of that section */
+  @Test
+  public void testRootKeyInASectionIsAProblem() {
+    var problems = assertThrows(SettingsProblemsException.class,
+        () -> loadRoot("network:\n  range: {min: 1, max: 5}\n")).getProblems();
+    assertEquals(1, problems.size());
+    assertEquals(SettingsProblemKind.UNKNOWN_KEY, problems.get(0).getKind());
+  }
+
+  /** A value the converter of its type refuses is a problem, once, though the settings of two sections take the key */
+  @Test
+  public void testValueTheConverterRefusesIsAProblem() {
+    var problems = assertThrows(SettingsProblemsException.class,
+        () -> loadRoot("range: {min: 5, max: 1}\n")).getProblems();
+    assertEquals(1, problems.size());
+    assertEquals(SettingsProblemKind.VALUE_REFUSED, problems.get(0).getKind());
+  }
+
+  /**
+   * The keys of a section apply in the order of the source, the forms of one list kept together, whole, then minus,
+   * then plus, where the first of them is written: here types+ written first brings its list ahead of name
+   */
+  @Test
+  public void testKeysApplyInTheOrderOfTheSource() {
+    assertEquals(List.of("first.types", "first.types-", "first.types+", "first.name"),
+        appliedOrderOf("first:\n  types+: [a]\n  name: n\n  types: [b]\n  types-: [c]\n"));
+  }
+
+  /**
+   * The nested sections of a section apply after its keys, by level and then by name whatever the order of the source,
+   * so the more general settings are always given first
+   */
+  @Test
+  public void testNestedSectionsApplyAfterTheKeysInAFixedOrder() {
+    assertEquals(List.of("first.name", "standard.value", "rare.value"),
+        appliedOrderOf("first:\n  rare: {value: r}\n  standard: {value: s}\n  name: n\n"));
+  }
+
+  /**
+   * The keys at the root apply first, to every section, and the sections then apply in the order of the schema,
+   * whatever the order of the source
+   */
+  @Test
+  public void testRootKeysApplyBeforeTheSectionsInTheOrderOfTheSchema() {
+    assertEquals(List.of("mark", "mark", "first.name", "second.name"),
+        appliedOrderOf("second:\n  name: b\nfirst:\n  name: n\nmark: m\n"));
   }
 }

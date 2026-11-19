@@ -3,6 +3,7 @@ package org.goplanit.utils.misc;
 import org.goplanit.utils.time.TimePeriod;
 
 import java.util.Collection;
+import java.util.Map;
 import java.util.Objects;
 import java.util.function.Predicate;
 import java.util.logging.Logger;
@@ -14,6 +15,24 @@ import java.util.stream.Collectors;
  * @author markr
  */
 public class LoggingUtils {
+
+  /** width used for aligned settings labels */
+  private static final int SETTINGS_LABEL_WIDTH = 45;
+
+  /** what a value that is not set logs */
+  private static final String NOT_SET = "not set";
+
+  /** Two spaces of indentation per nesting level, none for level 0 or below
+   *
+   * @param level of nesting
+   * @return the indentation
+   */
+  private static String createIndentation(int level) {
+    return level > 0 ? "  ".repeat(level) : "";
+  }
+
+  /** What a setting with no values logs, see {@link #noneIfEmpty(Collection)} */
+  public static final String NONE = "none";
 
   /** Surround string with brackets "[%s]"
    * 
@@ -319,27 +338,6 @@ public class LoggingUtils {
     return testResult;
   }
 
-    /** width used for aligned settings labels */
-  private static final int SETTINGS_LABEL_WIDTH = 45;
-
-  /** create indentation for the provided nesting level
-   *
-   * @param level to create indentation for
-   * @return indentation string
-   */
-  private static String createSettingsIndentation(int level) {
-    return level > 0 ? "  ".repeat(level) : "";
-  }
-
-  /** normalise settings values for logging
-   *
-   * @param value to normalise
-   * @return string representation to use in logs
-   */
-  private static String normaliseSettingsValue(Object value) {
-    return Objects.toString(value, "not set");
-  }
-
   /** create a header for a settings block
    *
    * @param title to use
@@ -356,7 +354,7 @@ public class LoggingUtils {
    * @return formatted section header
    */
   public static String settingsSection(String title, int level) {
-    return createSettingsIndentation(level) + surroundWithBrackets(title).trim();
+    return createIndentation(level) + surroundWithBrackets(title).trim();
   }
 
   /** create a key/value settings log entry
@@ -368,7 +366,7 @@ public class LoggingUtils {
    */
   public static String settingsValue(String label, Object value, int level) {
     return String.format("%s- %-" + SETTINGS_LABEL_WIDTH + "s : %s",
-        createSettingsIndentation(level), label, normaliseSettingsValue(value));
+        createIndentation(level), label, Objects.toString(value, NOT_SET));
   }
 
   /** create a free-form settings log entry
@@ -378,7 +376,7 @@ public class LoggingUtils {
    * @return formatted settings entry
    */
   public static String settingsEntry(String text, int level) {
-    return createSettingsIndentation(level) + "- " + text;
+    return createIndentation(level) + "- " + text;
   }
 
   /** create a mapping settings log entry
@@ -390,7 +388,25 @@ public class LoggingUtils {
    */
   public static String settingsMapping(String from, Object to, int level) {
     return String.format("%s- %-" + SETTINGS_LABEL_WIDTH + "s -> %s",
-        createSettingsIndentation(level), from, normaliseSettingsValue(to));
+        createIndentation(level), from, Objects.toString(to, NOT_SET));
+  }
+
+  /** The values of a setting as logged: {@link #NONE} when there are none, such as no nodes excluded
+   *
+   * @param values of the setting
+   * @return the values, or NONE when empty
+   */
+  public static Object noneIfEmpty(Collection<?> values) {
+    return values.isEmpty() ? NONE : values;
+  }
+
+  /** The entries of a setting as logged: {@link #NONE} when there are none, such as no overrides
+   *
+   * @param entries of the setting
+   * @return the entries, or NONE when empty
+   */
+  public static Object noneIfEmpty(Map<?, ?> entries) {
+    return entries.isEmpty() ? NONE : entries;
   }
 /** log the given warning message if predicate holds
    *
