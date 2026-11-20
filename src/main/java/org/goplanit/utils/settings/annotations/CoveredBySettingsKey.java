@@ -8,12 +8,12 @@ import java.lang.annotation.Target;
 /**
  * Marks a method of a settings class that writes the same state as one or more keys of a settings file, in another form
  * <p>
- * For example, on a method that switches consolidation on and gives its settings in one call, where a file writes the
- * key {@code consolidateIntersections} and the section {@code intersectionConsolidator}:
+ * For example, on a method that switches on the removal of dangling subnetworks for one mode with the default
+ * configuration, where a file writes that mode's entry under the key {@code removeDanglingSubnetworks}:
  * </p>
  * <pre>
- * &#64;CoveredBySettingsKey({"consolidateIntersections", "intersectionConsolidator"})
- * public void setConsolidateIntersections(boolean flag, IntersectionConsolidatorSettings consolidatorSettings)
+ * &#64;CoveredBySettingsKey("removeDanglingSubnetworks")
+ * public void activateRemoveDanglingSubnetworks(PredefinedModeType modeType)
  * </pre>
  * <p>
  * Code is often offered the same change in several forms, such as one taking an array and one taking a list, or one
