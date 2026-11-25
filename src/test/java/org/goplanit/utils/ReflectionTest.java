@@ -11,8 +11,11 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Test the Reflection utils
@@ -21,6 +24,29 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  *
  */
 public class ReflectionTest {
+
+  /** An interface the test classes implement through another */
+  private interface TestCounted {
+  }
+
+  /** An interface extending another, implemented by the test base class */
+  private interface TestNamed extends TestCounted {
+  }
+
+  /** A class implementing an interface that extends another */
+  private static class TestBase implements TestNamed {
+  }
+
+  /** A class extending the test base class and implementing one more interface itself */
+  private static class TestSub extends TestBase implements Runnable {
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void run() {
+    }
+  }
 
   /**
    * A method whose parameters declare the generic types the tests read
@@ -80,6 +106,45 @@ public class ReflectionTest {
     assertEquals(Integer.class, ReflectionUtils.getBoxedClass(int.class));
     assertEquals(Boolean.class, ReflectionUtils.getBoxedClass(boolean.class));
     assertEquals(String.class, ReflectionUtils.getBoxedClass(String.class));
+  }
+
+  /**
+   * The classes a declared type is made of are its own class, an array's component and its type arguments, nested ones
+   * too, in that order
+   */
+  @Test
+  public void testFindClassesIn() {
+    var types = declaredTypes();
+    assertEquals(Set.of(String.class), ReflectionUtils.findClassesIn(types[0]));
+    assertEquals(List.of(Map.class, Long.class, List.class, Integer.class),
+        List.copyOf(ReflectionUtils.findClassesIn(types[2])));
+    assertEquals(Set.of(String[].class, String.class), ReflectionUtils.findClassesIn(String[].class));
+  }
+
+  /**
+   * The interfaces of a class are those it implements, those the classes it extends implement, and those they extend;
+   * an interface's are those it extends, and a class implementing none has none
+   */
+  @Test
+  public void testFindInterfaces() {
+    assertEquals(Set.of(TestNamed.class, TestCounted.class, Runnable.class),
+        ReflectionUtils.findInterfaces(TestSub.class));
+    assertEquals(Set.of(TestCounted.class), ReflectionUtils.findInterfaces(TestNamed.class));
+    assertEquals(Set.of(), ReflectionUtils.findInterfaces(Object.class));
+  }
+
+  /**
+   * Two methods have the same signature when they have the same name and parameter types, whichever class declares them
+   *
+   * @throws NoSuchMethodException never, the methods asked for being public
+   */
+  @Test
+  public void testIsSameSignature() throws NoSuchMethodException {
+    var run = TestSub.class.getMethod("run");
+    assertTrue(ReflectionUtils.isSameSignature(run, Runnable.class.getMethod("run")));
+    assertFalse(ReflectionUtils.isSameSignature(run, Object.class.getMethod("hashCode")));
+    assertFalse(ReflectionUtils.isSameSignature(
+        String.class.getMethod("indexOf", int.class), String.class.getMethod("indexOf", String.class)));
   }
 
   /**

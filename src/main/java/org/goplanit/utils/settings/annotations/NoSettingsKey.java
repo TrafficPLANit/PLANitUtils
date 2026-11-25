@@ -23,6 +23,8 @@ import java.lang.annotation.Target;
  *
  * @author markr
  */
+@MarksMethodChangingSettings
+@MarksGetterOfNestedSettings
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.METHOD)
 public @interface NoSettingsKey {

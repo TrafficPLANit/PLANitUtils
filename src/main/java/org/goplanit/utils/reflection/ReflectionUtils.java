@@ -104,10 +104,13 @@ public class ReflectionUtils {
         //      and instantiate automatically via these instead to get around the limitation. No time
         //      yet to implement this as it requires recursion etc.
         LOGGER.severe(String.format(
-            "Unable to find constructor for given arguments when constructing instance of %s with constructor parameters %s\n "
+            "Unable to find constructor for given arguments when constructing instance of %s with constructor "
+            + "parameters %s\n "
             + "likely constructor either requires different number of arguments or it requires super types \n"
             + "whereas provided arguments are implementations of this type \n"
-            + "and reflection is not able to infer this as a valid call, see also https://github.com/TrafficPLANit/PLANitUtils/issues/7", className, Arrays.toString(constructorParameters)));
+            + "and reflection is not able to infer this as a valid call, see also "
+            + "https://github.com/TrafficPLANit/PLANitUtils/issues/7",
+            className, Arrays.toString(constructorParameters)));
           
         e.printStackTrace();
         LOGGER.severe(e.getMessage());
@@ -189,14 +192,16 @@ public class ReflectionUtils {
    * @param <V> value in result map
    *
    * @param clazz specific class to get declared fields for
-   * @param compatibleInstance to collect from, should be compatible with class, so instance of it or derived class instance
+   * @param compatibleInstance to collect from, should be compatible with class, so instance of it or derived class
+   *     instance
    * @param keyFunction transforms field to key entry in map
    * @param valueFunction transforms field to value entry in map
    * @param modifierFilter applied to the fields of the class, when false we exclude the field, when true we keep it
    * @return map with entries, or empty if none could be found or something went wrong
    */
   public static <K,V> Map<K,V> declaredFieldsToMap(
-          Class<?> clazz, Object compatibleInstance, Function<Field,K> keyFunction,  BiFunction<Field,Object,V> valueFunction, Function<Integer,Boolean> modifierFilter) {
+          Class<?> clazz, Object compatibleInstance, Function<Field,K> keyFunction,
+          BiFunction<Field,Object,V> valueFunction, Function<Integer,Boolean> modifierFilter) {
     var fields = clazz.getDeclaredFields();
     return convertFieldsOnInstanceToKeyValueMap(fields, compatibleInstance, keyFunction, valueFunction, modifierFilter);
   }
@@ -214,9 +219,11 @@ public class ReflectionUtils {
    * @return map with entries, or empty if none could be found or something went wrong
    */
   public static <K,V> Map<K,V> declaredFieldsToMap(
-          Object settingsClazzInstance, Function<Field,K> keyFunction,  BiFunction<Field,Object,V> valueFunction, Function<Integer,Boolean> modifierFilter) {
+          Object settingsClazzInstance, Function<Field,K> keyFunction, BiFunction<Field,Object,V> valueFunction,
+          Function<Integer,Boolean> modifierFilter) {
     var fields = settingsClazzInstance.getClass().getDeclaredFields();
-    return convertFieldsOnInstanceToKeyValueMap(fields, settingsClazzInstance, keyFunction, valueFunction, modifierFilter);
+    return convertFieldsOnInstanceToKeyValueMap(
+        fields, settingsClazzInstance, keyFunction, valueFunction, modifierFilter);
   }
 
   /**
@@ -320,6 +327,82 @@ public class ReflectionUtils {
    */
   public static Class<?> getBoxedClass(Class<?> type) {
     return MethodType.methodType(type).wrap().returnType();
+  }
+
+  /**
+   * The number of classes a class extends, directly or through the classes it extends, {@code Object} included, so a
+   * class always counts more than any class it extends: 1 for a class extending only {@code Object}
+   *
+   * @param type the class
+   * @return the number of classes above it, 0 for {@code Object}, an interface or a primitive type
+   */
+  public static int countSuperclasses(Class<?> type) {
+    int count = 0;
+    for (Class<?> current = type.getSuperclass(); current != null; current = current.getSuperclass()) {
+      ++count;
+    }
+    return count;
+  }
+
+  /**
+   * The classes a declared type is made of: its own class, the component of an array, and its type arguments, nested
+   * ones included, in that order. For example, {@code Map<Long, List<Integer>>} gives {@code Map}, {@code Long},
+   * {@code List} and {@code Integer}, and {@code String[]} gives {@code String[]} and {@code String}. Code looking for
+   * classes of a kind in a declared type, such as a getter returning a map of settings, finds them all this way
+   *
+   * @param type declared, such as the generic return type of a method
+   * @return the classes, each once, in the order found
+   */
+  public static Set<Class<?>> findClassesIn(Type type) {
+    var classes = new LinkedHashSet<Class<?>>();
+    var rawClass = getRawClass(type);
+    classes.add(rawClass);
+    if (rawClass.isArray()) {
+      classes.addAll(findClassesIn(rawClass.getComponentType()));
+    }
+    if (type instanceof ParameterizedType) {
+      for (var typeArgument : ((ParameterizedType) type).getActualTypeArguments()) {
+        classes.addAll(findClassesIn(typeArgument));
+      }
+    }
+    return classes;
+  }
+
+  /**
+   * The interfaces of a type: those it implements or extends, directly, through the classes it extends, or through the
+   * interfaces those extend. For example, for {@code class Sub extends Base implements Runnable} with
+   * {@code class Base implements Named} and {@code interface Named extends Counted}, they are {@code Runnable},
+   * {@code Named} and {@code Counted}
+   *
+   * @param type a class or interface
+   * @return the interfaces, without the type itself, empty when there are none
+   */
+  public static Set<Class<?>> findInterfaces(Class<?> type) {
+    var interfaces = new LinkedHashSet<Class<?>>();
+    var toVisit = new ArrayDeque<Class<?>>();
+    for (Class<?> current = type; current != null; current = current.getSuperclass()) {
+      toVisit.addAll(List.of(current.getInterfaces()));
+    }
+    while (!toVisit.isEmpty()) {
+      var nextInterface = toVisit.poll();
+      if (interfaces.add(nextInterface)) {
+        toVisit.addAll(List.of(nextInterface.getInterfaces()));
+      }
+    }
+    return interfaces;
+  }
+
+  /**
+   * Verify whether two methods have the same signature: the same name and the same parameter types, whichever classes
+   * declare them, such as a method and the method of an interface it implements
+   *
+   * @param method a method
+   * @param other another method
+   * @return true when they have the same signature
+   */
+  public static boolean isSameSignature(Method method, Method other) {
+    return method.getName().equals(other.getName()) &&
+        Arrays.equals(method.getParameterTypes(), other.getParameterTypes());
   }
 
   /**

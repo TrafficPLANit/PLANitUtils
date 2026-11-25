@@ -22,6 +22,7 @@ import java.lang.annotation.Target;
  *
  * @author markr
  */
+@MarksGetterOfNestedSettings
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.METHOD)
 public @interface SettingsRead {
