@@ -6,16 +6,16 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Marks a constructor parameter of a settings class as taking the value of a key at the root of a settings file
+ * Marks a constructor parameter of a settings class as taking the value of a key at the top level of a settings file
  * <p>
  * For example, on the constructor of settings whose defaults depend on a country:
  * </p>
  * <pre>
  * public ExampleNetworkSettings(
- *     &#64;SettingsRootValue(key = "country", description = "The country whose defaults apply") String countryName)
+ *     &#64;SettingsTopLevelValue(key = "country", description = "The country whose defaults apply") String countryName)
  * </pre>
  * <p>
- * Settings made from a file holding {@code country: Australia} at its root are made with this constructor, given
+ * Settings made from a file holding {@code country: Australia} at its top level are made with this constructor, given
  * {@code "Australia"}; made from a file without it, with the constructor taking nothing. It is for a value only a
  * constructor can set, so it is read before the rest of the file, which then fills the settings made. Every parameter
  * of the constructor carries it, each taking text, and a class has one such constructor at most. Settings written out
@@ -26,10 +26,10 @@ import java.lang.annotation.Target;
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.PARAMETER)
-public @interface SettingsRootValue {
+public @interface SettingsTopLevelValue {
 
   /**
-   * The key at the root of a settings file whose value the parameter takes, such as {@code country}
+   * The key at the top level of a settings file whose value the parameter takes, such as {@code country}
    *
    * @return the key
    */
