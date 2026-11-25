@@ -29,16 +29,11 @@ public class Precision {
   /** no tolerance, i.e., 0.0 */
   public static final double EPSILON_0 = 0.0;
   
-  /** default decimal format used applies a maximum of 8 decimals and a minimum of 2 */
-  public static final DecimalFormat DEFAULT_DECIMAL_FORMAT;
-      
-  /* initialise decimal format */
-  static {
-    DEFAULT_DECIMAL_FORMAT = (DecimalFormat) DecimalFormat.getInstance();
-    DEFAULT_DECIMAL_FORMAT.setMaximumFractionDigits(8);
-    DEFAULT_DECIMAL_FORMAT.setMinimumFractionDigits(2);
-    DEFAULT_DECIMAL_FORMAT.setGroupingUsed(false);
-  }  
+  /**
+   * default decimal format used applies a maximum of 8 decimals and a minimum of 2, without grouping; made from its
+   * pattern, so the pattern a settings file gives for it reads back as this format
+   */
+  public static final DecimalFormat DEFAULT_DECIMAL_FORMAT = new DecimalFormat("#0.00######");
   
   /** Compare using a custom precision epsilon
    * @param d1 double1

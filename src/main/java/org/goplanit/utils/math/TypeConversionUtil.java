@@ -1,9 +1,12 @@
 package org.goplanit.utils.math;
 
+import org.geotools.api.referencing.crs.CoordinateReferenceSystem;
 import org.goplanit.utils.exceptions.ExceptionUtils;
+import org.goplanit.utils.geo.PlanitCrsUtils;
 import org.goplanit.utils.misc.FileUtils;
 import org.goplanit.utils.misc.UriUtils;
 import org.goplanit.utils.reflection.ReflectionUtils;
+import org.goplanit.utils.unit.TimeUnit;
 
 import java.io.File;
 import java.math.BigDecimal;
@@ -11,6 +14,7 @@ import java.math.BigInteger;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.file.Path;
+import java.text.DecimalFormat;
 import java.util.Map;
 import java.util.function.Function;
 
@@ -28,6 +32,7 @@ public class TypeConversionUtil {
    */
   private static final Map<Class<?>, Function<String, Object>> TEXT_PARSERS = Map.of(
       String.class, text -> text,
+      Character.class, TypeConversionUtil::toCharacter,
       Boolean.class, TypeConversionUtil::toBooleanStrictly,
       Integer.class, Integer::valueOf,
       Long.class, Long::valueOf,
@@ -58,6 +63,18 @@ public class TypeConversionUtil {
   @SuppressWarnings({"unchecked", "rawtypes"})
   private static Object toEnumConstant(String name, Class<?> enumClass) {
     return Enum.valueOf((Class) enumClass, name);
+  }
+
+  /**
+   * Text of exactly one character as that character, such as {@code ;}
+   *
+   * @param text to convert
+   * @return the character
+   * @throws IllegalArgumentException when the text is not one character
+   */
+  private static Character toCharacter(String text) {
+    ExceptionUtils.throwIllegalArgumentIf(text.length() != 1, "'%s' is not one character", text);
+    return text.charAt(0);
   }
 
 
@@ -128,8 +145,9 @@ public class TypeConversionUtil {
    * Useful when the type is only known at run time, such as the type of a method's parameter, found through
    * reflection, that a value read from a file is passed to. It takes text, the primitive types and their wrappers,
    * {@code Number} (a Long for a whole number, otherwise a Double), enums by the exact name of a constant,
-   * {@code Path} and {@code File}, and {@code URL}. {@code max} is the largest value of a whole number type, such as
-   * {@link Integer#MAX_VALUE} for an int. A path, and a URL without a scheme, is read against the folder when
+   * {@code Path} and {@code File}, {@code URL}, a coordinate reference system by its code, a decimal format by its
+   * pattern and a time unit by the name of its unit type. {@code max} is the largest value of a whole number type,
+   * such as {@link Integer#MAX_VALUE} for an int. A path, and a URL without a scheme, is read against the folder when
    * it is relative, so a file can name other files relative to itself. It is strict: only true and false are booleans
    * ({@link #toBooleanStrictly(String)}), and {@code ramp_meter} is not {@code RAMP_METER}. For example:
    * </p>
@@ -139,6 +157,8 @@ public class TypeConversionUtil {
    * int largest = TypeConversionUtil.fromString("max", int.class, folder);
    * // C:/settings/data/x.pbf
    * Path input = TypeConversionUtil.fromString("data/x.pbf", Path.class, Path.of("C:/settings"));
+   * // the projected system of Sydney
+   * var crs = TypeConversionUtil.fromString("EPSG:28356", CoordinateReferenceSystem.class, folder);
    * </pre>
    *
    * @param <T> the type, the wrapper class for a primitive type
@@ -166,6 +186,18 @@ public class TypeConversionUtil {
         throw new IllegalArgumentException(String.format("'%s' is no URL of a known protocol", text), e);
       }
     }
+    if (type == CoordinateReferenceSystem.class) {
+      var crs = PlanitCrsUtils.createCoordinateReferenceSystemWithoutWarning(text);
+      ExceptionUtils.throwIllegalArgumentIf(crs == null, "No coordinate reference system has the code %s", text);
+      return (T) crs;
+    }
+    if (type == DecimalFormat.class) {
+      /* throws an IllegalArgumentException for a pattern Java does not accept */
+      return (T) new DecimalFormat(text);
+    }
+    if (type == TimeUnit.class) {
+      return (T) TimeUnit.fromUnitTypeName(text);
+    }
     var boxedType = ReflectionUtils.getBoxedClass(type);
     if (MAX_TEXT.equals(text) && WHOLE_NUMBER_MAXIMA.containsKey(boxedType)) {
       return (T) WHOLE_NUMBER_MAXIMA.get(boxedType);
@@ -178,9 +210,11 @@ public class TypeConversionUtil {
   /**
    * A value as the text {@link #fromString(String, Class, Path)} reads back as the same value: text as it is, a boolean
    * or number as Java writes it, the largest value of a whole number type as {@code max}, an enum by the name of its
-   * constant, a path or folder in full, so it means the same wherever the text is read, and a URL in full. For example,
-   * 60.5 gives "60.5", {@link Integer#MAX_VALUE} gives "max", and the path data/x.pbf gives C:/work/data/x.pbf when the
-   * program runs in C:/work
+   * constant, a path or folder in full, so it means the same wherever the text is read, a URL in full, a coordinate
+   * reference system by its code, a decimal format by the pattern Java keeps for it, which may be written differently
+   * from the pattern it was made from but formats the same (such as {@code #0.###} for {@code #.###}), and a time unit
+   * by the name of its unit type. For example, 60.5 gives "60.5", {@link Integer#MAX_VALUE} gives "max", and the path
+   * data/x.pbf gives C:/work/data/x.pbf when the program runs in C:/work
    *
    * @param value to give as text
    * @return the text
@@ -199,6 +233,15 @@ public class TypeConversionUtil {
     }
     if (value instanceof URL) {
       return ((URL) value).toExternalForm();
+    }
+    if (value instanceof CoordinateReferenceSystem) {
+      return PlanitCrsUtils.extractSrsName((CoordinateReferenceSystem) value);
+    }
+    if (value instanceof DecimalFormat) {
+      return ((DecimalFormat) value).toPattern();
+    }
+    if (value instanceof TimeUnit) {
+      return ((TimeUnit) value).getUnitType().name();
     }
     ExceptionUtils.throwIllegalArgumentIf(!(value instanceof Number) && !TEXT_PARSERS.containsKey(value.getClass()),
         "A %s is not given as text", value.getClass().getName());

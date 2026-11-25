@@ -1,6 +1,10 @@
 package org.goplanit.utils;
 
+import org.geotools.api.referencing.crs.CoordinateReferenceSystem;
+import org.goplanit.utils.geo.PlanitCrsUtils;
 import org.goplanit.utils.math.TypeConversionUtil;
+import org.goplanit.utils.unit.TimeUnit;
+import org.goplanit.utils.unit.Unit;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
@@ -8,6 +12,7 @@ import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.file.Path;
+import java.text.DecimalFormat;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -67,6 +72,39 @@ public class TypeConversionUtilTest {
         () -> TypeConversionUtil.fromString("nosuch://x", URL.class, tempDir));
   }
 
+  /** A coordinate reference system is read from its code and written as that code; a code of no system is refused */
+  @Test
+  public void testFromStringCoordinateReferenceSystemByItsCode() {
+    var crs = TypeConversionUtil.fromString("EPSG:28356", CoordinateReferenceSystem.class, tempDir);
+    assertEquals(PlanitCrsUtils.createCoordinateReferenceSystem("EPSG:28356"), crs);
+    assertEquals("EPSG:28356", TypeConversionUtil.toString(crs));
+    assertThrows(IllegalArgumentException.class,
+        () -> TypeConversionUtil.fromString("EPSG:999999", CoordinateReferenceSystem.class, tempDir));
+  }
+
+  /**
+   * A decimal format is read from its pattern and written as a pattern that reads back as an equal format; a pattern
+   * Java does not accept is refused
+   */
+  @Test
+  public void testFromStringDecimalFormatByItsPattern() {
+    var format = TypeConversionUtil.fromString("#.###", DecimalFormat.class, tempDir);
+    assertEquals(new DecimalFormat("#.###"), format);
+    assertEquals(format,
+        TypeConversionUtil.fromString(TypeConversionUtil.toString(format), DecimalFormat.class, tempDir));
+    assertThrows(IllegalArgumentException.class,
+        () -> TypeConversionUtil.fromString("#.#.#", DecimalFormat.class, tempDir));
+  }
+
+  /** A time unit is read from the name of its unit type and written as that name; a name of no time unit is refused */
+  @Test
+  public void testFromStringTimeUnitByTheNameOfItsType() {
+    assertEquals(Unit.MINUTE, TypeConversionUtil.fromString("MINUTE", TimeUnit.class, tempDir));
+    assertEquals("SECOND", TypeConversionUtil.toString(Unit.SECOND));
+    assertThrows(IllegalArgumentException.class, () -> TypeConversionUtil.fromString("KM", TimeUnit.class, tempDir));
+    assertThrows(IllegalArgumentException.class, () -> TypeConversionUtil.fromString("DAY", TimeUnit.class, tempDir));
+  }
+
   /**
    * A value becomes text that reads back as the same value: a number and a boolean as Java writes them, an enum by
    * the name of its constant, a path and a folder in full from the working folder, and a URL in full
@@ -119,6 +157,16 @@ public class TypeConversionUtilTest {
     assertFalse(TypeConversionUtil.toBooleanStrictly("false"));
     assertThrows(IllegalArgumentException.class, () -> TypeConversionUtil.toBooleanStrictly("True"));
     assertThrows(IllegalArgumentException.class, () -> TypeConversionUtil.toBooleanStrictly("yes"));
+  }
+
+  /** Text of one character is that character, given back as that text; other text is no character */
+  @Test
+  public void testCharacter() {
+    assertEquals(';', TypeConversionUtil.fromString(";", char.class, tempDir));
+    assertEquals(' ', TypeConversionUtil.fromString(" ", Character.class, tempDir));
+    assertEquals(";", TypeConversionUtil.toString(';'));
+    assertThrows(IllegalArgumentException.class, () -> TypeConversionUtil.fromString("ab", Character.class, tempDir));
+    assertThrows(IllegalArgumentException.class, () -> TypeConversionUtil.fromString("", char.class, tempDir));
   }
 
   /** A whole number is a Long and any other number a Double */

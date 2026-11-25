@@ -80,31 +80,36 @@ public class PlanitCrsUtils {
    * </p>
    * 
    * @param code for the CRS
-   * @return the created coordinate reference system
+   * @return the created coordinate reference system, null with a warning logged when no system has the code
    */
   public static CoordinateReferenceSystem createCoordinateReferenceSystem(String code) {
-    silenceHsqlLogging();
-    
-    CoordinateReferenceSystem crs = null;
-    if (code != null) {
-      try {
-        
-        /* decode lookup is performed using the gt hsql database which is loaded as dependency in pom */
-        crs = CRS.decode(code);
-
-        if(crs==null) {
-          LOGGER.warning(String.format("Unable to decode CRS %s to coordinate reference system",code));
-        }
-      } catch (Exception e1) {
-        try {
-          crs = CRS.decode(code, true);
-        } catch (Exception e2) {
-          e2.printStackTrace();
-          LOGGER.warning(String.format("unable to find coordinate reference system for %s", code));
-        }
-      }
+    var crs = code == null ? null : createCoordinateReferenceSystemWithoutWarning(code);
+    if (code != null && crs == null) {
+      LOGGER.warning(String.format("Unable to find coordinate reference system for %s", code));
     }
     return crs;
+  }
+
+  /**
+   * The coordinate reference system of a code, as {@link #createCoordinateReferenceSystem(String)}, but logging no
+   * warning when no system has the code, for a caller that reports an unknown code itself, such as the text conversion
+   * of a settings value, which the loader reports as a value of the wrong type, so it is reported once
+   *
+   * @param code for the CRS, such as {@code EPSG:28356}
+   * @return the created coordinate reference system, null when no system has the code
+   */
+  public static CoordinateReferenceSystem createCoordinateReferenceSystemWithoutWarning(String code) {
+    silenceHsqlLogging();
+    try {
+      /* decode lookup is performed using the gt hsql database which is loaded as dependency in pom */
+      return CRS.decode(code);
+    } catch (Exception e1) {
+      try {
+        return CRS.decode(code, true);
+      } catch (Exception e2) {
+        return null;
+      }
+    }
   }
 
   /**

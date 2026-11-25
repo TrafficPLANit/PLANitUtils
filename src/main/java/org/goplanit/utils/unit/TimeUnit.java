@@ -2,7 +2,7 @@ package org.goplanit.utils.unit;
 
 import java.util.logging.Logger;
 
-import org.goplanit.utils.exceptions.PlanItRunTimeException;
+import org.goplanit.utils.exceptions.ExceptionUtils;
 import org.goplanit.utils.exceptions.PlanItRunTimeException;
 
 /** Unit class for all time related units.
@@ -68,6 +68,20 @@ public class TimeUnit extends SimpleUnit{
    * second to hour conversion multiplier
    */
   public static final double SECOND_2_HOUR = 1.0/HOUR_2_SECOND;
+
+  /**
+   * The time unit of the name of its unit type, such as {@code HOUR}, as a settings file gives it
+   *
+   * @param name of the unit type: HOUR, MINUTE, SECOND or MILLISECOND
+   * @return the time unit
+   * @throws IllegalArgumentException when no unit type has the name, or its unit is no time unit
+   */
+  public static TimeUnit fromUnitTypeName(String name) {
+    /* throws an IllegalArgumentException for a name of no unit type */
+    var unitType = UnitType.valueOf(name);
+    ExceptionUtils.throwIllegalArgumentIf(unitType.getGroup() != UnitGroup.TIME, "%s is no time unit", name);
+    return (TimeUnit) Unit.of(unitType);
+  }
 
   /** convert millisecond to...
    *

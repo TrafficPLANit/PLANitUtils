@@ -24,4 +24,13 @@ public class TimeUnitTest {
     assertEquals(7_200_000, tu_ms);
   }
 
+  /** A time unit is made from the name of its unit type; a name of no unit type, or of no time unit, is refused */
+  @Test
+  public void timeUnitByTheNameOfItsType() {
+    assertEquals(Unit.MINUTE, TimeUnit.fromUnitTypeName("MINUTE"));
+    assertEquals(Unit.HOUR, TimeUnit.fromUnitTypeName("HOUR"));
+    assertThrows(IllegalArgumentException.class, () -> TimeUnit.fromUnitTypeName("KM"));
+    assertThrows(IllegalArgumentException.class, () -> TimeUnit.fromUnitTypeName("DAY"));
+  }
+
 }

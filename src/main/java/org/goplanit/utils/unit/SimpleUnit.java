@@ -11,7 +11,15 @@ public abstract class SimpleUnit implements Unit {
    * type of the unit 
    */
   protected UnitType unitType;
-    
+
+  /** Constructor
+   * @param unitType to use
+   */
+  protected SimpleUnit (UnitType unitType) {
+    super();
+    this.unitType = unitType;
+  }
+
   /**
    * {@inheritDoc}
    */
@@ -20,14 +28,15 @@ public abstract class SimpleUnit implements Unit {
     return false;
   }
 
-  /** Constructor 
-   * @param unitType to use
+  /**
+   * The type of this unit, such as {@link UnitType#HOUR}
+   *
+   * @return the type
    */
-  protected SimpleUnit (UnitType unitType) {
-    super();
-    this.unitType = unitType;
+  public UnitType getUnitType() {
+    return unitType;
   }
-      
+
   /**
    * {@inheritDoc}
    */
