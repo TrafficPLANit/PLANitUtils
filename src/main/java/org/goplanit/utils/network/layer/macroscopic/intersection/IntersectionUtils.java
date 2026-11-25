@@ -50,7 +50,7 @@ public class IntersectionUtils {
    * @param segment to verify, of the layer or a connectoid segment
    * @return true when it enters from outside, false otherwise
    */
-  public static boolean isSegmentEnteringFromOutside(Intersection intersection, LinkSegment segment) {
+  public static boolean isSegmentEnteringIntersection(Intersection intersection, LinkSegment segment) {
     return intersection.hasMemberNode(segment.getDownstreamVertex())
         && !intersection.hasMemberNode(segment.getUpstreamVertex());
   }
@@ -64,26 +64,26 @@ public class IntersectionUtils {
    * @param segment to verify, of the layer or a connectoid segment
    * @return true when it enters from outside and is not an approach, false otherwise
    */
-  public static boolean isSegmentEnteringFromOutsideThatIsNotAnApproach(
+  public static boolean isSegmentEnteringIntersectionThatIsNotAnApproach(
       Intersection intersection, LinkSegment segment) {
-    return isSegmentEnteringFromOutside(intersection, segment) && !intersection.isApproachSegment(segment);
+    return isSegmentEnteringIntersection(intersection, segment) && !intersection.isApproachSegment(segment);
   }
 
   /**
    * Find the link segments that enter an intersection from outside, ending at a member node and starting at a node that
    * is not one, its approaches included, and that meet a condition
    *
-   * @param <LS> type of link segment to find, see {@link #findSegmentsEnteringFromOutsideThatAreNotApproaches}
+   * @param <LS> type of link segment to find, see {@link #findSegmentsEnteringIntersectionThatAreNotApproaches}
    * @param intersection to find them for
    * @param condition to meet, such as allowing a mode
    * @return the segments found, by member node in the order of the member nodes, empty when there are none
    */
-  public static <LS extends LinkSegment> List<LS> findSegmentsEnteringFromOutside(
+  public static <LS extends LinkSegment> List<LS> findSegmentsEnteringIntersection(
       Intersection intersection, Predicate<? super LS> condition) {
     var entering = new ArrayList<LS>();
     for (var memberNode : intersection.getMemberNodes()) {
       entering.addAll(NodeUtils.<LS>findEntryLinkSegments(memberNode, segment ->
-          isSegmentEnteringFromOutside(intersection, segment) && condition.test(segment)));
+          isSegmentEnteringIntersection(intersection, segment) && condition.test(segment)));
     }
     return entering;
   }
@@ -99,9 +99,9 @@ public class IntersectionUtils {
    * @param condition to meet, such as allowing a motorised road mode
    * @return the segments found, by member node in the order of the member nodes, empty when there are none
    */
-  public static <LS extends LinkSegment> List<LS> findSegmentsEnteringFromOutsideThatAreNotApproaches(
+  public static <LS extends LinkSegment> List<LS> findSegmentsEnteringIntersectionThatAreNotApproaches(
       Intersection intersection, Predicate<? super LS> condition) {
-    return findSegmentsEnteringFromOutside(
+    return findSegmentsEnteringIntersection(
         intersection, segment -> !intersection.isApproachSegment(segment) && condition.test(segment));
   }
 

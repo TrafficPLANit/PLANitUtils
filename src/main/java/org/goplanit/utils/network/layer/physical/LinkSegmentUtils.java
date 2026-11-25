@@ -53,83 +53,83 @@ public class LinkSegmentUtils {
   }
 
   /**
-   * Find the link segments a segment continues on beyond the node it arrives at. They leave that node, meet the
-   * condition, and are not on the link arrived on, so going back is never a continuation. For example, arriving at a
-   * node where a road splits in two, both roads ahead are continuations, but the opposite direction of the road arrived
-   * along is not.
+   * Find the link segments adjacent downstream of a segment, one step on: they leave the node it arrives at, meet the
+   * condition, and are not on the link arrived on, so going back is never adjacent downstream. For example, arriving at
+   * a node where a road splits in two, both roads ahead are adjacent downstream, but the opposite direction of the road
+   * arrived along is not.
    *
    * @param <LS> type of the link segments
    * @param arriving segment arriving at the node
-   * @param condition a continuation must meet
-   * @return the continuations, empty when there are none
+   * @param condition an adjacent segment must meet
+   * @return the adjacent downstream segments, empty when there are none
    */
-  public static <LS extends LinkSegment> List<LS> findContinuations(
+  public static <LS extends LinkSegment> List<LS> findAdjacentDownstream(
       final LS arriving, final Predicate<? super LS> condition) {
-    var continuations = new ArrayList<LS>(2);
+    var adjacent = new ArrayList<LS>(2);
     for (LS leaving : arriving.getDownstreamNode().<LS>getExitLinkSegments()) {
       if (leaving.getParent() != arriving.getParent() && condition.test(leaving)) {
-        continuations.add(leaving);
+        adjacent.add(leaving);
       }
     }
-    return continuations;
+    return adjacent;
   }
 
   /**
-   * Find the link segments a segment can be reached from before the node it leaves. They enter that node, meet the
-   * condition, and are not on the link it leaves along, so coming back along it is never a predecessor. For example,
-   * leaving a node where two roads merge, both roads behind are predecessors, but the opposite direction of the road
-   * left along is not.
+   * Find the link segments adjacent upstream of a segment, one step back: they enter the node it leaves, meet the
+   * condition, and are not on the link it leaves along, so coming back along it is never adjacent upstream. For
+   * example, leaving a node where two roads merge, both roads behind are adjacent upstream, but the opposite direction
+   * of the road left along is not.
    *
    * @param <LS> type of the link segments
    * @param leaving segment leaving the node
-   * @param condition a predecessor must meet
-   * @return the predecessors, empty when there are none
+   * @param condition an adjacent segment must meet
+   * @return the adjacent upstream segments, empty when there are none
    */
-  public static <LS extends LinkSegment> List<LS> findPredecessors(
+  public static <LS extends LinkSegment> List<LS> findAdjacentUpstream(
       final LS leaving, final Predicate<? super LS> condition) {
-    var predecessors = new ArrayList<LS>(2);
+    var adjacent = new ArrayList<LS>(2);
     for (LS entering : leaving.getUpstreamNode().<LS>getEntryLinkSegments()) {
       if (entering.getParent() != leaving.getParent() && condition.test(entering)) {
-        predecessors.add(entering);
+        adjacent.add(entering);
       }
     }
-    return predecessors;
+    return adjacent;
   }
 
   /**
-   * Find the link segments onward from a segment in a direction: its continuations in the traffic direction, see
-   * {@link #findContinuations}, or its predecessors against it, see {@link #findPredecessors}
+   * Find the link segments adjacent to a segment in a direction, one step: adjacent downstream in the traffic
+   * direction, see {@link #findAdjacentDownstream}, or adjacent upstream against it, see {@link #findAdjacentUpstream}
    *
    * @param <LS> type of the link segments
-   * @param segment to go on from
-   * @param inTrafficDirection true to go in the traffic direction, false to go back against it
-   * @param condition a segment onward must meet
-   * @return the segments onward, empty when there are none
+   * @param segment to look from
+   * @param inTrafficDirection true to look in the traffic direction, false to look back against it
+   * @param condition an adjacent segment must meet
+   * @return the adjacent segments, empty when there are none
    */
-  public static <LS extends LinkSegment> List<LS> findOnward(final LS segment,
+  public static <LS extends LinkSegment> List<LS> findAdjacent(final LS segment,
       boolean inTrafficDirection, final Predicate<? super LS> condition) {
-    return inTrafficDirection ? findContinuations(segment, condition) : findPredecessors(segment, condition);
+    return inTrafficDirection ? findAdjacentDownstream(segment, condition) : findAdjacentUpstream(segment, condition);
   }
 
   /**
-   * Find the only link segment onward from a segment in a direction, see {@link #findOnward}
+   * Find the only link segment adjacent to a segment in a direction, see {@link #findAdjacent}
    *
    * @param <LS> type of the link segments
-   * @param segment to go on from
-   * @param inTrafficDirection true to go in the traffic direction, false to go back against it
-   * @param condition a segment onward must meet
-   * @return the only segment onward, null when there are several or none
+   * @param segment to look from
+   * @param inTrafficDirection true to look in the traffic direction, false to look back against it
+   * @param condition an adjacent segment must meet
+   * @return the only adjacent segment, null when there are several or none
    */
-  public static <LS extends LinkSegment> LS findOnlySegmentOnward(final LS segment,
+  public static <LS extends LinkSegment> LS findOnlyAdjacent(final LS segment,
       boolean inTrafficDirection, final Predicate<? super LS> condition) {
-    var onward = findOnward(segment, inTrafficDirection, condition);
-    return onward.size() == 1 ? onward.get(0) : null;
+    var adjacent = findAdjacent(segment, inTrafficDirection, condition);
+    return adjacent.size() == 1 ? adjacent.get(0) : null;
   }
 
   /**
-   * Follow segments meeting a condition from a segment, through nodes where they simply continue: one segment onward
-   * meets the condition, see {@link #findOnward}, and none comes back, other than on the link just followed. For
-   * example, a road followed through the shape nodes of a long bend, up to the junction it reaches
+   * Follow segments meeting a condition from a segment, through nodes where they simply continue: one adjacent segment
+   * in the direction meets the condition, see {@link #findAdjacent}, and none comes back, other than on the link just
+   * followed. For example, a road followed through the shape nodes of a long bend, up to the junction it reaches
    *
    * @param <LS> type of the link segments
    * @param segment to start along
@@ -148,7 +148,7 @@ public class LinkSegmentUtils {
               NodeUtils.<LS>findEntryLinkSegments(node, condition) :
               NodeUtils.<LS>findExitLinkSegments(node, condition);
           back.removeIf(previous -> previous.getParent() == current.getParent());
-          return findOnlySegmentOnward(current, inTrafficDirection, condition) == null || !back.isEmpty() ?
+          return findOnlyAdjacent(current, inTrafficDirection, condition) == null || !back.isEmpty() ?
               current : null;
         });
   }
@@ -197,8 +197,8 @@ public class LinkSegmentUtils {
   /**
    * Follow segments from a segment one after the other, in a direction, until a rule gives an answer at a node reached,
    * see {@link #followSegmentsUntilAnswered(LinkSegment, boolean, double, double, BiFunction, UnaryOperator)}. The
-   * segment followed next is the only one onward that meets the condition, see {@link #findOnlySegmentOnward}, so it
-   * also stops where none or more than one does
+   * segment followed next is the only adjacent one that meets the condition, see {@link #findOnlyAdjacent}, so it also
+   * stops where none or more than one does
    *
    * @param <LS> type of the link segments
    * @param <R> type of the answer
@@ -215,7 +215,7 @@ public class LinkSegmentUtils {
       boolean inTrafficDirection, double metersToFirstNodeReached, double maximumDistanceMeters,
       final Predicate<? super LS> condition, final BiFunction<? super LS, Double, ? extends R> answerAt) {
     return followSegmentsUntilAnswered(start, inTrafficDirection, metersToFirstNodeReached, maximumDistanceMeters,
-        answerAt, current -> findOnlySegmentOnward(current, inTrafficDirection, condition));
+        answerAt, current -> findOnlyAdjacent(current, inTrafficDirection, condition));
   }
 
   /**
