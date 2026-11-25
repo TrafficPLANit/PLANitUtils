@@ -7,8 +7,8 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Gives the header of the settings files whose root sections a settings class fills: their first line, a key naming
- * the kind of settings, and the version of their keys
+ * Gives the header of the settings files whose top level sections a settings class fills: their first line, a key
+ * naming the kind of settings, and the version of their keys
  * <p>
  * For example, on the base class of the settings of some readers:
  * </p>
@@ -17,7 +17,7 @@ import java.lang.annotation.Target;
  * public abstract class ExampleReaderSettings
  * </pre>
  * <p>
- * Its subclasses marked with the section they fill at the root ({@link SettingsSection}) then take files starting
+ * Its subclasses marked with the section they fill at the top level ({@link SettingsSection}) then take files starting
  * with {@code planitExampleSettings: 1}. It is inherited, so it is given once for every class sharing the header. Each
  * kind of settings has a header key of its own, so text meant for other settings is refused before any of its keys is
  * read, and the keys of one kind can change without touching another. The version goes up only for a change that
@@ -25,8 +25,8 @@ import java.lang.annotation.Target;
  * wrongly.
  * </p>
  * <p>
- * When the class giving the header fills no section itself, the keys it declares sit at the root of the files, next to
- * the header, and apply to the settings of every section, since the classes of the sections all extend it. With
+ * When the class giving the header fills no section itself, the keys it declares sit at the top level of the files,
+ * next to the header, and apply to the settings of every section, since the classes of the sections all extend it. With
  * </p>
  * <pre>
  * &#64;SettingsWrite(key = "retainTags", level = SettingsKeyLevel.STANDARD, description = "Keep the input tags")

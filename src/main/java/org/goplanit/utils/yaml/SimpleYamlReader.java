@@ -38,8 +38,8 @@ import java.util.Set;
  * {@code lanes} a map in which {@code forward} is the text {@code 2} and {@code enabled} the text {@code NO}:
  * </p>
  * <pre>
- * var root = SimpleYamlReader.asMap(SimpleYamlReader.read(Path.of("scenario.yaml")));
- * var lanes = SimpleYamlReader.asMap(root.get("lanes"));
+ * var topLevel = SimpleYamlReader.asMap(SimpleYamlReader.read(Path.of("scenario.yaml")));
+ * var lanes = SimpleYamlReader.asMap(topLevel.get("lanes"));
  * int forward = Integer.parseInt(SimpleYamlReader.asText(lanes.get("forward")));
  * </pre>
  * <p>
@@ -146,23 +146,23 @@ public final class SimpleYamlReader {
   }
 
   /**
-   * The plain value of the root of YAML text, recording each problem found
+   * The plain value of the top level of YAML text, recording each problem found
    *
    * @param yamlText to read
    * @return the value, null for an empty document or text that is not YAML
    */
-  private Object toRootValue(String yamlText) {
+  private Object toTopLevelValue(String yamlText) {
     /* keys that are not text are let through here, so the walk refuses each one with its key path and carries on */
     var settings = LoadSettings.builder().setSchema(new FailsafeSchema()).setMaxAliasesForCollections(MAX_ALIASES)
         .setAllowNonScalarKeys(true).build();
-    Optional<org.snakeyaml.engine.v2.nodes.Node> root;
+    Optional<org.snakeyaml.engine.v2.nodes.Node> topLevel;
     try {
-      root = new Compose(settings).composeString(yamlText);
+      topLevel = new Compose(settings).composeString(yamlText);
     } catch (YamlEngineException e) {
       addProblem(YamlProblemKind.NOT_YAML, "", e.getMessage());
       return null;
     }
-    return root.map(yamlNode -> toValue(yamlNode, "")).orElse(null);
+    return topLevel.map(yamlNode -> toValue(yamlNode, "")).orElse(null);
   }
 
   /** the most aliases of lists and maps the text may hold, so it cannot grow without bound through nested aliases */
@@ -171,7 +171,7 @@ public final class SimpleYamlReader {
   /**
    * The path of a key in a map, as problems give it: {@code lanes} and {@code forward} give {@code lanes.forward}
    *
-   * @param path of the map, empty at the root
+   * @param path of the map, empty at the top level
    * @param key in the map
    * @return the path of the key, with a dot between nested maps
    */
@@ -191,7 +191,7 @@ public final class SimpleYamlReader {
   }
 
   /**
-   * A value as text, such as {@code asText(root.get("name"))}
+   * A value as text, such as {@code asText(topLevel.get("name"))}
    *
    * @param value as {@link #read(String)} gives it
    * @return its text, null when it is a list or a map
@@ -201,7 +201,7 @@ public final class SimpleYamlReader {
   }
 
   /**
-   * A value as keys with values, such as {@code asMap(root.get("lanes"))}, the keys in the order of the YAML
+   * A value as keys with values, such as {@code asMap(topLevel.get("lanes"))}, the keys in the order of the YAML
    *
    * @param value as {@link #read(String)} gives it
    * @return the map, null when it is text or a list
@@ -215,24 +215,24 @@ public final class SimpleYamlReader {
    * The plain values of YAML text
    *
    * @param yamlText to read
-   * @return the value of the root, a Map, a List or a String with any values in it nested as in the YAML; null for an
-   *     empty document
+   * @return the value of the top level, a Map, a List or a String with any values in it nested as in the YAML; null for
+   *     an empty document
    * @throws YamlProblemsException holding every problem found, when there is any
    */
   public static Object read(String yamlText) {
     var reader = new SimpleYamlReader();
-    var root = reader.toRootValue(yamlText);
+    var topLevel = reader.toTopLevelValue(yamlText);
     if (!reader.problems.isEmpty()) {
       throw new YamlProblemsException(reader.problems);
     }
-    return root;
+    return topLevel;
   }
 
   /**
    * The plain values of a YAML file, read as UTF-8
    *
    * @param file to read
-   * @return the value of the root, as {@link #read(String)} gives it
+   * @return the value of the top level, as {@link #read(String)} gives it
    * @throws IOException when the file cannot be read
    * @throws YamlProblemsException holding every problem found, when there is any
    */

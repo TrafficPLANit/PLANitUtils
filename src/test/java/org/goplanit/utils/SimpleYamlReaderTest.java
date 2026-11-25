@@ -53,12 +53,12 @@ public class SimpleYamlReaderTest {
   /** Maps keep the order of the YAML, nesting is kept, and every value stays text, NO and numbers included */
   @Test
   public void testPlainValuesNestedAndText() {
-    var root = (Map<?, ?>) SimpleYamlReader.read(
+    var topLevel = (Map<?, ?>) SimpleYamlReader.read(
         "name: Sydney\nmodes: [car, NO, 2.5]\nlanes:\n  forward: 2\n  sides:\n    - {left: 1}\n");
-    assertEquals(List.of("name", "modes", "lanes"), List.copyOf(root.keySet()));
-    assertEquals("Sydney", root.get("name"));
-    assertEquals(List.of("car", "NO", "2.5"), root.get("modes"));
-    var lanes = (Map<?, ?>) root.get("lanes");
+    assertEquals(List.of("name", "modes", "lanes"), List.copyOf(topLevel.keySet()));
+    assertEquals("Sydney", topLevel.get("name"));
+    assertEquals(List.of("car", "NO", "2.5"), topLevel.get("modes"));
+    var lanes = (Map<?, ?>) topLevel.get("lanes");
     assertEquals("2", lanes.get("forward"));
     assertEquals(List.of(Map.of("left", "1")), lanes.get("sides"));
   }
@@ -66,11 +66,11 @@ public class SimpleYamlReaderTest {
   /** A value is read as text or as keys with values only when it is one, and is null otherwise */
   @Test
   public void testValueAsTextOrMap() {
-    var root = SimpleYamlReader.asMap(SimpleYamlReader.read("name: Sydney\nlanes:\n  forward: 2\n"));
-    assertEquals("Sydney", SimpleYamlReader.asText(root.get("name")));
-    assertEquals("2", SimpleYamlReader.asText(SimpleYamlReader.asMap(root.get("lanes")).get("forward")));
-    assertNull(SimpleYamlReader.asMap(root.get("name")));
-    assertNull(SimpleYamlReader.asText(root.get("lanes")));
+    var topLevel = SimpleYamlReader.asMap(SimpleYamlReader.read("name: Sydney\nlanes:\n  forward: 2\n"));
+    assertEquals("Sydney", SimpleYamlReader.asText(topLevel.get("name")));
+    assertEquals("2", SimpleYamlReader.asText(SimpleYamlReader.asMap(topLevel.get("lanes")).get("forward")));
+    assertNull(SimpleYamlReader.asMap(topLevel.get("name")));
+    assertNull(SimpleYamlReader.asText(topLevel.get("lanes")));
   }
 
   /** An empty document, or one holding only a comment, gives null */

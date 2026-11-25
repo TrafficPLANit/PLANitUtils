@@ -12,7 +12,7 @@ import java.util.List;
  * </p>
  * <pre>
  * try {
- *   var root = SimpleYamlReader.read(file);
+ *   var topLevel = SimpleYamlReader.read(file);
  * } catch (YamlProblemsException e) {
  *   e.getProblems().forEach(problem -&gt; LOGGER.severe(problem.toString()));
  * }

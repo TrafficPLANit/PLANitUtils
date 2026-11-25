@@ -16,6 +16,6 @@ public enum SettingsFileContentType {
   /** Every key at its value, and with descriptions a key with no value commented out */
   ALL_KEYS,
 
-  /** Only the keys whose value differs from that of fresh settings, made with the same values at the root */
+  /** Only the keys whose value differs from that of fresh settings, made with the same values at the top level */
   KEYS_DIFFERING_FROM_DEFAULTS
 }

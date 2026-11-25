@@ -9,8 +9,8 @@ package org.goplanit.utils.settings.problem;
  * C:\settings\network.yaml: network.nmae: no such key (UNKNOWN_KEY)
  * </pre>
  * <p>
- * The key is given as its path from the root of the file, with dots between sections, so it can be found in the file.
- * A problem with the file as a whole, such as one that cannot be read, has an empty path.
+ * The key is given as its path from the top level of the file, with dots between sections, so it can be found in the
+ * file. A problem with the file as a whole, such as one that cannot be read, has an empty path.
  * </p>
  *
  * @author markr
@@ -23,7 +23,7 @@ public final class SettingsProblem {
   /** the file or text the problem is in */
   private final String source;
 
-  /** path of the key from the root, empty for the file as a whole */
+  /** path of the key from the top level, empty for the file as a whole */
   private final String keyPath;
 
   /** what is wrong, for people */
@@ -34,7 +34,7 @@ public final class SettingsProblem {
    *
    * @param kind the kind of problem
    * @param source description of the file or text the problem is in
-   * @param keyPath path of the key from the root, sections separated by dots, empty for the file as a whole
+   * @param keyPath path of the key from the top level, sections separated by dots, empty for the file as a whole
    * @param detail what is wrong, for people
    */
   public SettingsProblem(SettingsProblemKind kind, String source, String keyPath, String detail) {
@@ -63,7 +63,7 @@ public final class SettingsProblem {
   }
 
   /**
-   * The path of the key the problem is about, from the root of the file, sections separated by dots
+   * The path of the key the problem is about, from the top level of the file, sections separated by dots
    *
    * @return the path, empty for the file as a whole
    */

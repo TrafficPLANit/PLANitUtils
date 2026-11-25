@@ -7,7 +7,7 @@ import java.lang.annotation.Target;
 
 /**
  * Names a section of a settings file: on a getter of a settings class, the section of the nested settings it gives;
- * on a settings class, the section it fills at the root of a file
+ * on a settings class, the section it fills at the top level of a file
  * <p>
  * For example, on the getter of the consolidator settings, which the settings of the intersections hold:
  * </p>
@@ -39,9 +39,9 @@ import java.lang.annotation.Target;
  * public class ExampleNetworkSettings extends ExampleReaderSettings
  * </pre>
  * <p>
- * a file holds their keys under {@code network} at its root, after the header the class gives ({@link SettingsHeader}).
- * Such a class is listed in a {@link org.goplanit.utils.settings.SettingsSchema}, which finds the section from the
- * settings given, so code filling settings from files names no section.
+ * a file holds their keys under {@code network} at its top level, after the header the class gives
+ * ({@link SettingsHeader}). Such a class is listed in a {@link org.goplanit.utils.settings.SettingsSchema}, which finds
+ * the section from the settings given, so code filling settings from files names no section.
  * </p>
  *
  * @author markr

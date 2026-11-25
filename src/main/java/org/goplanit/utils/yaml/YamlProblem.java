@@ -9,7 +9,7 @@ package org.goplanit.utils.yaml;
  * groups[1].name: given twice on line 7 (DUPLICATE_KEY)
  * </pre>
  * <p>
- * The key is given as its path from the root, with a dot between nested maps and the index of a list entry in
+ * The key is given as its path from the top level, with a dot between nested maps and the index of a list entry in
  * brackets, so it can be found in the text. A problem with the text as a whole, such as text that is not YAML, has an
  * empty path.
  * </p>
@@ -21,7 +21,7 @@ public final class YamlProblem {
   /** the kind of problem */
   private final YamlProblemKind kind;
 
-  /** path of the key from the root, empty for the text as a whole */
+  /** path of the key from the top level, empty for the text as a whole */
   private final String keyPath;
 
   /** what is wrong, for people */
@@ -31,7 +31,7 @@ public final class YamlProblem {
    * Constructor
    *
    * @param kind the kind of problem
-   * @param keyPath path of the key from the root, empty for the text as a whole
+   * @param keyPath path of the key from the top level, empty for the text as a whole
    * @param detail what is wrong, for people
    */
   public YamlProblem(YamlProblemKind kind, String keyPath, String detail) {
@@ -50,7 +50,7 @@ public final class YamlProblem {
   }
 
   /**
-   * The path of the key the problem is about, from the root, such as {@code lanes.forward} or {@code modes[1]}
+   * The path of the key the problem is about, from the top level, such as {@code lanes.forward} or {@code modes[1]}
    *
    * @return the path, empty for the text as a whole
    */
