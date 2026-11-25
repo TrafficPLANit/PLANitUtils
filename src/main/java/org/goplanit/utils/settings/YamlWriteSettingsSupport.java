@@ -32,7 +32,8 @@ public interface YamlWriteSettingsSupport {
   public abstract SettingsSchema getSettingsSchema();
 
   /**
-   * Write these settings to a settings file, in the layout {@link #getSettingsSchema()} gives
+   * Write these settings to a settings file, in the layout {@link #getSettingsSchema()} gives, and each part whose
+   * settings file a key names to a file of its own next to it
    *
    * @param file to write
    * @param content which keys to write

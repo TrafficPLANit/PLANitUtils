@@ -11,12 +11,12 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * The layout of the sources of some settings: the settings classes filling the sections at their root, which give the
- * header the sources start with
+ * The layout of the sources of some settings: the settings classes filling the sections at their top level, which give
+ * the header the sources start with
  * <p>
  * For example, with {@code ExampleNetworkSettings} marked {@code @SettingsSection(key = "network", ...)} and
  * {@code @SettingsHeader(key = "planitExampleSettings", version = 1)}, and its constructor taking the country
- * ({@code @SettingsRootValue(key = "country", ...)}), the schema
+ * ({@code @SettingsTopLevelValue(key = "country", ...)}), the schema
  * </p>
  * <pre>
  * public static final SettingsSchema SCHEMA = new SettingsSchema(ExampleNetworkSettings.class);
@@ -38,6 +38,12 @@ import java.util.Map;
  * subclass of another's. The sections apply in the order the schema gives them. The converters of types that are
  * neither plain values nor small sections are registered on the schema too ({@link SettingsValueConverter}).
  * </p>
+ * <p>
+ * Settings filling no section have a schema of their one class, which gives the header: every key of their class sits
+ * at the top level, so {@code new SettingsSchema(ExampleWriterSettings.class)} describes
+ * {@code planitExampleWriterSettings: 1} followed by {@code outputDirectory: out}, and a file holds the settings of one
+ * object.
+ * </p>
  *
  * @author markr
  */
@@ -46,7 +52,7 @@ public final class SettingsSchema {
   /** the header every source starts with, given by every class of a section */
   private final SettingsHeader header;
 
-  /** class of the settings each section at the root fills, by its key, in the order given */
+  /** class of the settings each section at the top level fills, by its key, in the order given */
   private final Map<String, Class<?>> sectionClasses = new LinkedHashMap<>();
 
   /** the converter of each type that is neither a plain value nor a small section, by the type */
@@ -55,11 +61,12 @@ public final class SettingsSchema {
   /**
    * Constructor
    *
-   * @param sectionClasses of the settings filling the sections at the root, each marked with {@link SettingsSection},
-   *     all giving the same {@link SettingsHeader}, no class a subclass of another
+   * @param settingsClasses of the settings filling the sections at the top level, each marked with
+   *     {@link SettingsSection}, all giving the same {@link SettingsHeader}, no class a subclass of another; or the one
+   *     class giving the header of settings filling no section
    */
-  public SettingsSchema(Class<?>... sectionClasses) {
-    this(List.of(), sectionClasses);
+  public SettingsSchema(Class<?>... settingsClasses) {
+    this(List.of(), settingsClasses);
   }
 
   /**
@@ -72,25 +79,31 @@ public final class SettingsSchema {
    *
    * @param converters making the values of keys of types that are neither plain values nor small sections, one per
    *     type
-   * @param sectionClasses of the settings filling the sections at the root, each marked with {@link SettingsSection},
-   *     all giving the same {@link SettingsHeader}, no class a subclass of another
+   * @param settingsClasses of the settings filling the sections at the top level, each marked with
+   *     {@link SettingsSection}, all giving the same {@link SettingsHeader}, no class a subclass of another; or the one
+   *     class giving the header of settings filling no section
    */
-  public SettingsSchema(List<SettingsValueConverter<?>> converters, Class<?>... sectionClasses) {
-    PlanItRunTimeException.throwIf(sectionClasses.length == 0, "A schema needs at least one section");
-    this.header = sectionClasses[0].getAnnotation(SettingsHeader.class);
-    for (var sectionClass : sectionClasses) {
-      var section = sectionClass.getAnnotation(SettingsSection.class);
-      PlanItRunTimeException.throwIf(section == null, "%s is not marked with the section it fills",
-          sectionClass.getName());
-      PlanItRunTimeException.throwIf(header == null || !header.equals(sectionClass.getAnnotation(SettingsHeader.class)),
-          "%s does not give the header of the schema", sectionClass.getName());
-      for (var known : this.sectionClasses.values()) {
-        PlanItRunTimeException.throwIf(known.isAssignableFrom(sectionClass) || sectionClass.isAssignableFrom(known),
-            "Sections of %s and %s cannot be told apart", known.getName(), sectionClass.getName());
+  public SettingsSchema(List<SettingsValueConverter<?>> converters, Class<?>... settingsClasses) {
+    PlanItRunTimeException.throwIf(settingsClasses.length == 0, "A schema needs at least one settings class");
+    this.header = settingsClasses[0].getAnnotation(SettingsHeader.class);
+    if (settingsClasses.length == 1 && settingsClasses[0].getAnnotation(SettingsSection.class) == null) {
+      PlanItRunTimeException.throwIf(header == null, "%s gives no header", settingsClasses[0].getName());
+    } else {
+      for (var sectionClass : settingsClasses) {
+        var section = sectionClass.getAnnotation(SettingsSection.class);
+        PlanItRunTimeException.throwIf(section == null, "%s is not marked with the section it fills",
+            sectionClass.getName());
+        PlanItRunTimeException.throwIf(
+            header == null || !header.equals(sectionClass.getAnnotation(SettingsHeader.class)),
+            "%s does not give the header of the schema", sectionClass.getName());
+        for (var known : this.sectionClasses.values()) {
+          PlanItRunTimeException.throwIf(known.isAssignableFrom(sectionClass) || sectionClass.isAssignableFrom(known),
+              "Sections of %s and %s cannot be told apart", known.getName(), sectionClass.getName());
+        }
+        PlanItRunTimeException.throwIf(this.sectionClasses.containsKey(section.key()), "Section %s is named twice",
+            section.key());
+        this.sectionClasses.put(section.key(), sectionClass);
       }
-      PlanItRunTimeException.throwIf(this.sectionClasses.containsKey(section.key()), "Section %s is named twice",
-          section.key());
-      this.sectionClasses.put(section.key(), sectionClass);
     }
     for (var converter : converters) {
       PlanItRunTimeException.throwIf(this.converters.containsKey(converter.getValueType()),
@@ -109,9 +122,9 @@ public final class SettingsSchema {
   }
 
   /**
-   * Whether a key at the root is a section
+   * Whether a key at the top level is a section
    *
-   * @param key at the root
+   * @param key at the top level
    * @return true when it is
    */
   public boolean isSectionKey(String key) {
@@ -130,7 +143,7 @@ public final class SettingsSchema {
   }
 
   /**
-   * The keys of the sections at the root, in the order the schema gives them, which is the order they apply in
+   * The keys of the sections at the top level, in the order the schema gives them, which is the order they apply in
    *
    * @return the keys, unmodifiable
    */
@@ -139,7 +152,7 @@ public final class SettingsSchema {
   }
 
   /**
-   * The annotation of a section at the root, on the class of its settings, giving its level and description
+   * The annotation of a section at the top level, on the class of its settings, giving its level and description
    *
    * @param key of the section
    * @return the annotation, null when the schema has no such section
@@ -154,10 +167,14 @@ public final class SettingsSchema {
    * otherwise what their getters give, found by the class each gives
    *
    * @param settings to find the sections of
-   * @return the settings of each section, by its key
-   * @throws PlanItRunTimeException when the settings fill no section and give none, or give one twice
+   * @return the settings of each section, by its key, empty for a schema of settings filling no section
+   * @throws PlanItRunTimeException when the settings fill no section of a schema with sections and give none, or give
+   *     one twice
    */
   public Map<String, Object> getSectionSettingsOf(Object settings) {
+    if (sectionClasses.isEmpty()) {
+      return Map.of();
+    }
     var ownKey = findSectionKeyOf(settings.getClass());
     if (ownKey != null) {
       return Map.of(ownKey, settings);

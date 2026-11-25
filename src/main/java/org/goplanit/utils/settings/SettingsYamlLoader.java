@@ -8,8 +8,9 @@ import org.goplanit.utils.misc.CollectionUtils;
 import org.goplanit.utils.misc.Pair;
 import org.goplanit.utils.misc.StringUtils;
 import org.goplanit.utils.reflection.ReflectionUtils;
+import org.goplanit.utils.settings.annotations.SettingsFileReference;
 import org.goplanit.utils.settings.annotations.SettingsKeyEffect;
-import org.goplanit.utils.settings.annotations.SettingsRootValue;
+import org.goplanit.utils.settings.annotations.SettingsTopLevelValue;
 import org.goplanit.utils.settings.annotations.SettingsSection;
 import org.goplanit.utils.settings.annotations.SettingsWrite;
 import org.goplanit.utils.settings.problem.SettingsProblem;
@@ -21,11 +22,14 @@ import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Type;
+import java.nio.file.Path;
+import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Deque;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
@@ -71,14 +75,14 @@ import java.util.stream.Stream;
  * them. Code changing the settings afterwards wins.
  * </p>
  * <p>
- * The loader makes the settings: a value only a constructor can set, such as a country, sits at the root of the
- * sources, and the constructor taking it ({@link SettingsRootValue}) is called with it, or the constructor taking
+ * The loader makes the settings: a value only a constructor can set, such as a country, sits at the top level of the
+ * sources, and the constructor taking it ({@link SettingsTopLevelValue}) is called with it, or the constructor taking
  * nothing when no source gives it. The sections are then filled: the settings themselves when their class names a
  * section, otherwise what their getters give, found by the class each gives. Settings made in code are made with
  * their constructors as before.
  * </p>
  * <p>
- * Keys can also sit at the root of the sources, next to the header, when the settings of several sections share
+ * Keys can also sit at the top level of the sources, next to the header, when the settings of several sections share
  * them. They are the keys of the class giving the header, as long as that class fills no section itself. For example,
  * with
  * </p>
@@ -113,6 +117,15 @@ import java.util.stream.Stream;
  * made by the converter of its type registered on the schema ({@link SettingsValueConverter}).
  * </p>
  * <p>
+ * Settings filling no section, made from a schema of their one class, take every key of their class at the top level,
+ * whichever class in their class chain declares it, so a file holds the settings of one object. A getter marked with
+ * {@link SettingsFileReference} names the file of a part, or a list of files: the part the getter gives is filled from
+ * each file in the order listed, as stacked sources are, a relative path read against the folder of the file naming
+ * it, as it would be filled from those files on its own, and a part no file names keeps its settings. A named file
+ * that cannot be read, has another header, or names, directly or through others, a file being read is a problem of
+ * its own.
+ * </p>
+ * <p>
  * The loader knows no settings class, so any settings can be filled from files by annotating their methods, and they
  * stay ordinary objects, made and changed in code as before. It finds the method of a key through its annotation, and
  * learns what to turn the text into from the types the method declares, which Java keeps in its signature:
@@ -121,17 +134,17 @@ import java.util.stream.Stream;
  * for every later source.
  * </p>
  * <p>
- * Sources apply in order, each calling methods as code would, so a later source wins for a replacing key and adds to
- * an adding key ({@link SettingsKeyEffect}). Within a source the keys apply in the order written, so a later key wins
- * as a later call does in code, with three fixed points: the values at the root a constructor takes come first; the
- * forms of one list stay together where the first of them is written, the whole list, then its {@code -} form, then
- * its {@code +} form; and sections come after the keys beside them, those at the root in the order of the schema and
- * nested ones by level and then by name, so the more general settings always apply before the more particular ones
- * below them. Loading is strict: every source is
- * checked, every problem is kept with its source and the path of its key, and all are thrown together once every
- * source is done, so a user fixes every mistake in one go. Reading the YAML is left to {@link SimpleYamlReader}, which
- * gives every value as text and refuses tags, so {@code NO} is never read as false and no Java object is ever made
- * from a file; a source with a YAML problem is not applied, its YAML problems reported with the rest.
+ * Sources apply in order, each calling methods as code would, so a later source wins for a replacing key and adds to an
+ * adding key ({@link SettingsKeyEffect}). Within a source the keys apply in the order written, so a later key wins as a
+ * later call does in code, with three fixed points: the values at the top level a constructor takes come first; the
+ * forms of one list stay together where the first of them is written, the whole list, then its {@code -} form, then its
+ * {@code +} form; and sections come after the keys beside them, those at the top level in the order of the schema and
+ * nested ones in the order settings are written out in, level first, so the more general settings always apply before
+ * the more particular ones below them. Loading is strict: every source is checked, every problem is kept with its
+ * source and the path of its key, and all are thrown together once every source is done, so a user fixes every mistake
+ * in one go. Reading the YAML is left to {@link SimpleYamlReader}, which gives every value as text and refuses tags, so
+ * {@code NO} is never read as false and no Java object is ever made from a file; a source with a YAML problem is not
+ * applied, its YAML problems reported with the rest.
  * </p>
  *
  * @author markr
@@ -157,7 +170,7 @@ public final class SettingsYamlLoader {
   /**
    * The keys of a section in the order they apply: its settings keys in the order of the source, the forms of one
    * list kept together where the first of them is written, whole list, then minus, then plus; then its nested
-   * sections, by level and then by name, whatever the order of the source
+   * sections, in the order settings are written out in, level first, whatever the order of the source
    * <p>
    * Applying in the order written lets a later key win, as a later call does in code. Nested sections come last, in
    * the order settings are written out in, so the more general settings of a section always apply before the more
@@ -179,7 +192,7 @@ public final class SettingsYamlLoader {
         .sorted(Comparator.comparingInt((String key) -> firstPositionOfList.get(SettingsKeyIndex.listKeyOf(key)))
             .thenComparingInt(SettingsKeyIndex::applyingOrderOfListForm));
     var sections = entries.keySet().stream().filter(key -> index.findSectionGetter(key) != null)
-        .sorted(index.byLevelThenName());
+        .sorted(index.inWritingOrder());
     return Stream.concat(keys, sections).collect(Collectors.toList());
   }
 
@@ -214,7 +227,7 @@ public final class SettingsYamlLoader {
   /** the layout of the sources */
   private final SettingsSchema schema;
 
-  /** each source with a right header, with the values at its root */
+  /** each source with a right header, with the values at its top level */
   private final List<Pair<SettingsSource, Map<String, Object>>> parsedSources = new ArrayList<>();
 
   /** problems found so far */
@@ -222,6 +235,9 @@ public final class SettingsYamlLoader {
 
   /** warnings found so far */
   private final List<SettingsProblem> warnings = new ArrayList<>();
+
+  /** the files being read, the source applied first, so a part file naming one of them back is found */
+  private final Deque<String> filesBeingRead = new ArrayDeque<>();
 
   /**
    * Record a problem
@@ -236,12 +252,12 @@ public final class SettingsYamlLoader {
   }
 
   /**
-   * The text of a key at the root of the sources
+   * The text of a key at the top level of the sources
    *
-   * @param key at the root
+   * @param key at the top level
    * @return the text the last source giving the key as a single value gives, null when none does
    */
-  private String findRootText(String key) {
+  private String findTopLevelText(String key) {
     String found = null;
     for (var parsed : parsedSources) {
       var text = SimpleYamlReader.asText(parsed.second().get(key));
@@ -253,43 +269,42 @@ public final class SettingsYamlLoader {
   }
 
   /**
-   * Read a source and keep its root when its YAML can be read and its header is right, recording any problem
+   * Read a source, recording any problem
    *
    * @param source to read
+   * @return the values at its top level when its YAML can be read and its header is right, otherwise null
    */
-  private void parse(SettingsSource source) {
-    Object root;
+  private Map<String, Object> readTopLevel(SettingsSource source) {
+    Object topLevel;
     try {
-      root = SimpleYamlReader.read(source.readText());
+      topLevel = SimpleYamlReader.read(source.readText());
     } catch (IOException e) {
       addProblem(SettingsProblemKind.FILE_NOT_READ, source, "", "Cannot be read: " + e);
-      return;
+      return null;
     } catch (YamlProblemsException e) {
       e.getProblems().forEach(problem ->
           addProblem(settingsKindOf(problem.getKind()), source, problem.getKeyPath(), problem.getDetail()));
-      return;
+      return null;
     }
-    if (!(root instanceof Map)) {
-      addProblem(SettingsProblemKind.UNREADABLE_TEXT, source, "", "Holds no keys at its root");
-      return;
+    if (!(topLevel instanceof Map)) {
+      addProblem(SettingsProblemKind.UNREADABLE_TEXT, source, "", "Holds no keys at its top level");
+      return null;
     }
-    if (isHeaderRight(SimpleYamlReader.asMap(root), source)) {
-      parsedSources.add(Pair.of(source, SimpleYamlReader.asMap(root)));
-    }
+    return isHeaderRight(SimpleYamlReader.asMap(topLevel), source) ? SimpleYamlReader.asMap(topLevel) : null;
   }
 
   /**
    * Check the first key of a source is the header key, with the version
    *
-   * @param root values of the source
+   * @param topLevel values of the source
    * @param source it is
    * @return true when right, otherwise false with the problem recorded
    */
-  private boolean isHeaderRight(Map<String, Object> root, SettingsSource source) {
+  private boolean isHeaderRight(Map<String, Object> topLevel, SettingsSource source) {
     var header = schema.getHeader();
-    var firstKey = root.isEmpty() ? null : root.keySet().iterator().next();
+    var firstKey = topLevel.isEmpty() ? null : topLevel.keySet().iterator().next();
     if (header.key().equals(firstKey)) {
-      var version = SimpleYamlReader.asText(root.get(firstKey));
+      var version = SimpleYamlReader.asText(topLevel.get(firstKey));
       if (String.valueOf(header.version()).equals(version)) {
         return true;
       }
@@ -323,58 +338,129 @@ public final class SettingsYamlLoader {
   }
 
   /**
-   * Apply the root of a source: each key at the root to the settings of every section, in the order of the source,
-   * then each section to its settings, in the order of the schema, recording keys outside the schema and sections
-   * the settings made do not take
+   * Apply the top level of a source, with the source among the files being read while it applies: each key at the top
+   * level, in the order of the source, to the settings themselves when they fill no section, otherwise to the settings
+   * of every section, a key naming the file of a part filling that part; then each section to its settings, in the
+   * order of the schema, recording keys outside the schema and sections the settings do not take
+   * <p>
+   * One method serves the sources given and the files of parts alike, so the file of a part is read exactly as it
+   * would be were the part made on its own. Each source stays among the files being read while it applies, which is
+   * how a part file naming a file further up is found: {@code a.yaml} naming {@code b.yaml}, which names
+   * {@code a.yaml} again, for example.
+   * </p>
    *
-   * @param source the root is of
-   * @param root values of the source
-   * @param settingsBySectionKey the settings each root section fills
-   * @param rootValueKeys keys at the root the constructor of the settings took
+   * @param source the top level is of
+   * @param topLevel values of the source
+   * @param settings to apply it to
+   * @param settingsBySectionKey the settings each top level section fills, empty when the settings fill no section
    */
-  private void applyRoot(SettingsSource source, Map<String, Object> root, Map<String, Object> settingsBySectionKey,
-      List<String> rootValueKeys) {
-    for (var entry : root.entrySet()) {
+  private void applyTopLevel(SettingsSource source, Map<String, Object> topLevel, Object settings,
+      Map<String, Object> settingsBySectionKey) {
+    var index = SettingsKeyIndex.of(settings.getClass());
+    Collection<Object> topLevelKeySettings =
+        settingsBySectionKey.isEmpty() ? List.of(settings) : settingsBySectionKey.values();
+    filesBeingRead.push(source.getDescription());
+    for (var entry : topLevel.entrySet()) {
       var key = entry.getKey();
       if (key.equals(schema.getHeader().key()) || schema.isSectionKey(key)) {
         continue;
       }
-      if (rootValueKeys.contains(key)) {
+      var fileReferenceGetter = index.findFileReferenceGetter(key);
+      if (index.getTopLevelValueKeys().contains(key)) {
         isKindOf(entry.getValue(), String.class, key, source);
+      } else if (fileReferenceGetter != null) {
+        applyFileReference(fileReferenceGetter, entry.getValue(), settings, key, source);
       } else {
-        applyRootKey(key, entry.getValue(), settingsBySectionKey, source);
+        applyTopLevelKey(key, entry.getValue(), topLevelKeySettings, source);
       }
     }
     for (var key : schema.getSectionKeys()) {
-      if (!root.containsKey(key)) {
+      if (!topLevel.containsKey(key)) {
         continue;
       }
       if (settingsBySectionKey.containsKey(key)) {
-        applySection(root.get(key), settingsBySectionKey.get(key), key, source);
+        applySection(topLevel.get(key), settingsBySectionKey.get(key), key, source);
       } else {
         addProblem(SettingsProblemKind.UNKNOWN_KEY, source, key, "A section these settings do not take");
       }
     }
+    filesBeingRead.pop();
   }
 
   /**
-   * Apply a key at the root of a source to the settings of every section, the value converted for each so no two
-   * share it, and a value refused recorded once rather than once for each section
+   * Fill a part from the settings file a key names, or from each file of a list in the order listed, as stacked
+   * sources are, a relative path read against the folder of the source naming it. A list is read as entries, so a
+   * problem names the entry, and no file is read when an entry is refused
    *
-   * @param key at the root
+   * @param getter of the part
+   * @param value of the key, the path of a file or a list of them
+   * @param settings holding the part
+   * @param keyPath of the key
+   * @param source naming the files
+   */
+  private void applyFileReference(Method getter, Object value, Object settings, String keyPath, SettingsSource source) {
+    Object paths;
+    if (value instanceof List) {
+      paths = convertEntries(value, Path.class, keyPath, source);
+    } else {
+      var path = isKindOf(value, String.class, keyPath, source) ?
+          convertText((String) value, Path.class, keyPath, source) : FAILED;
+      paths = path == FAILED ? FAILED : List.of(path);
+    }
+    if (paths == FAILED) {
+      return;
+    }
+    for (var path : (List<?>) paths) {
+      fillPartFromFile(getter, (Path) path, settings, keyPath, source);
+    }
+  }
+
+  /**
+   * Fill a part from one settings file, as the part would be filled from that file on its own. A file being read
+   * already is a loop, recorded and not read again, so files naming each other do not go on without end
+   *
+   * @param getter of the part
+   * @param path of the file
+   * @param settings holding the part
+   * @param keyPath of the key naming the file
+   * @param source naming the file
+   */
+  private void fillPartFromFile(Method getter, Path path, Object settings, String keyPath, SettingsSource source) {
+    var partSource = SettingsSource.ofFile(path);
+    if (filesBeingRead.contains(partSource.getDescription())) {
+      addProblem(SettingsProblemKind.FILE_REFERENCE_LOOP, source, keyPath,
+          String.format("Names %s, which itself names this file, directly or through other files",
+              partSource.getDescription()));
+      return;
+    }
+    var partTopLevel = readTopLevel(partSource);
+    var part = partTopLevel == null ? FAILED : call(getter, settings, new Object[0], keyPath, source);
+    if (part != FAILED) {
+      PlanItRunTimeException.throwIfNull(part, "Part %s of %s is null", keyPath, settings.getClass().getName());
+      applyTopLevel(partSource, partTopLevel, part, schema.getSectionSettingsOf(part));
+    }
+  }
+
+  /**
+   * Apply a key at the top level of a source to the settings it applies to, the value converted for each so no two
+   * share it, and a value refused recorded once rather than once for each of them
+   *
+   * @param key at the top level
    * @param value of the key
-   * @param settingsBySectionKey the settings each root section fills
+   * @param topLevelKeySettings the settings the key applies to: those of every section, or the settings themselves when
+   *     they fill no section
    * @param source it is in
    */
-  private void applyRootKey(String key, Object value, Map<String, Object> settingsBySectionKey, SettingsSource source) {
-    var anySettings = settingsBySectionKey.values().iterator().next();
+  private void applyTopLevelKey(String key, Object value, Collection<Object> topLevelKeySettings,
+      SettingsSource source) {
+    var anySettings = topLevelKeySettings.iterator().next();
     var write = findWrite(SettingsKeyIndex.of(anySettings.getClass()), key, true, key, source);
     if (write == null) {
       addProblem(SettingsProblemKind.UNKNOWN_KEY, source, key, "No such key");
       return;
     }
     var problemCount = problems.size();
-    for (var settings : settingsBySectionKey.values()) {
+    for (var settings : topLevelKeySettings) {
       applyWrite(write, value, settings, key, source);
       if (problems.size() > problemCount) {
         return;
@@ -383,20 +469,22 @@ public final class SettingsYamlLoader {
   }
 
   /**
-   * The method writing a key at the root or in a section, found by its name or by a former name, which is warned about
+   * The method writing a key at the top level or in a section, found by its name or by a former name, which is warned
+   * about
    *
    * @param index of the settings keys of the settings
    * @param key as given in the source
-   * @param atRoot true for a key at the root of the source, false for one in a section
+   * @param atTopLevel true for a key at the top level of the source, false for one in a section
    * @param keyPath of the key
    * @param source it is in
    * @return the method, null when the settings have no such key there
    */
-  private Method findWrite(SettingsKeyIndex index, String key, boolean atRoot, String keyPath, SettingsSource source) {
+  private Method findWrite(SettingsKeyIndex index, String key, boolean atTopLevel, String keyPath,
+      SettingsSource source) {
     var write = index.findWrite(key);
     var former = write == null ? index.findFormerWrite(key) : null;
     var found = write != null ? write : former;
-    if (found == null || index.isRootWrite(found) != atRoot) {
+    if (found == null || index.isTopLevelWrite(found) != atTopLevel) {
       return null;
     }
     if (former != null) {
@@ -478,7 +566,7 @@ public final class SettingsYamlLoader {
     var write = findWrite(index, key, false, keyPath, source);
     if (write == null) {
       addProblem(SettingsProblemKind.UNKNOWN_KEY, source, keyPath,
-          index.findWrite(key) != null ? "A key of the root, not of this section" : "No such key");
+          index.findWrite(key) != null ? "A key of the top level, not of this section" : "No such key");
       return;
     }
     applyWrite(write, value, settings, keyPath, source);
@@ -721,12 +809,17 @@ public final class SettingsYamlLoader {
    */
   public SettingsYamlLoader(SettingsSchema schema, List<SettingsSource> sources) {
     this.schema = schema;
-    sources.forEach(this::parse);
+    for (var source : sources) {
+      var topLevel = readTopLevel(source);
+      if (topLevel != null) {
+        parsedSources.add(Pair.of(source, topLevel));
+      }
+    }
   }
 
   /**
-   * Make settings of a class from the sources: made with the values at the root its constructor takes, then filled by
-   * every source in order. Call it once
+   * Make settings of a class from the sources: made with the values at the top level its constructor takes, then filled
+   * by every source in order. Call it once
    *
    * @param <T> type of the settings
    * @param settingsClass to make: the class of a section of the schema, or one giving such settings through getters
@@ -735,10 +828,9 @@ public final class SettingsYamlLoader {
    */
   public <T> T create(Class<T> settingsClass) {
     var index = SettingsKeyIndex.of(settingsClass);
-    var rootValueKeys = index.getRootValueKeys();
-    var settings = settingsClass.cast(index.createSettings(this::findRootText));
+    var settings = settingsClass.cast(index.createSettings(this::findTopLevelText));
     var settingsBySectionKey = schema.getSectionSettingsOf(settings);
-    parsedSources.forEach(parsed -> applyRoot(parsed.first(), parsed.second(), settingsBySectionKey, rootValueKeys));
+    parsedSources.forEach(parsed -> applyTopLevel(parsed.first(), parsed.second(), settings, settingsBySectionKey));
     if (!problems.isEmpty()) {
       throw new SettingsProblemsException(problems);
     }

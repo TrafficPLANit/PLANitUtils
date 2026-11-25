@@ -5,6 +5,7 @@ import org.goplanit.utils.math.TypeConversionUtil;
 import org.goplanit.utils.misc.CollectionUtils;
 import org.goplanit.utils.misc.StringUtils;
 import org.goplanit.utils.reflection.ReflectionUtils;
+import org.goplanit.utils.settings.annotations.SettingsFileReference;
 import org.goplanit.utils.settings.annotations.SettingsKeyEffect;
 import org.goplanit.utils.settings.annotations.SettingsKeyLevel;
 import org.goplanit.utils.settings.annotations.SettingsRead;
@@ -39,6 +40,7 @@ import java.util.stream.Collectors;
  * give the file
  * </p>
  * <pre>
+ * # The kind of these settings and the version of their keys
  * planitExampleSettings: 1
  * network:
  *   # The settings of the network
@@ -49,20 +51,31 @@ import java.util.stream.Collectors;
  * <p>
  * It exists so that anyone can see every key of some settings with its value and description, start a file from them,
  * or keep the choices made in a run, and read them back into equal settings. A writer holds the text of one file, made
- * when it is constructed. A file holds the header, then the values at the root the constructor of the settings took
- * and the keys at the root, both read from the settings of the first section, which settings holding the settings of
- * the sections pass their values at the root on to, then the sections in the order of the schema. Inside a section,
- * keys and nested sections go by level and then by name, the order nested sections apply in
- * when read. With descriptions, each level has a heading, each section starts with its description, and each key has
- * its description above it, with what it does when it is not a plain replace and the values of an enum it takes;
- * without, the file holds no comment at all. A key is written through its getter, whole: a list in place of its
- * {@code +} and {@code -} forms, the entries of an adding key, and the map of a putting key. Values are written as
+ * when it is constructed. A file holds the header, then the values at the top level the constructor of the settings
+ * took and the keys at the top level, both read from the settings themselves when they fill no section, otherwise from
+ * the settings of the first section, which settings holding the settings of the sections pass their values at the top
+ * level on to, then the sections in the order of the schema.
+ * The keys at the top level, and the keys and nested sections inside a section, go by level, then by the class first
+ * annotating their method, the keys of a class before those of the classes extending it, then by name: the order nested
+ * sections apply in when read.
+ * With descriptions, each level has a heading, each section starts with its description, and each key has its
+ * description above it, with what it does when it is not a plain replace and the values of an enum it takes; without,
+ * the file holds no comment at all. A key is written through its getter, whole: a list in place of its {@code +} and
+ * {@code -} forms, the entries of an adding key, and the map of a putting key. Values are written as
  * {@link TypeConversionUtil#toString(Object)} gives them, an override with a reason as
  * {@code {value: ..., reason: ...}}, a small section as its keys that have a value, and a type with a converter as the
  * converter gives it. Of every key, one with no value is commented out when descriptions are written, so taking the
  * {@code #} away puts it where it belongs, and left out otherwise. Of the keys differing from defaults, each key is
- * compared with that of fresh settings made with the same values at the root. A section with no key to write is left
- * out. A key without a getter is a mistake in the code, so it throws.
+ * compared with that of fresh settings made with the same values at the top level. A section with no key to write is
+ * left out. A key without a getter is a mistake in the code, so it throws.
+ * </p>
+ * <p>
+ * With descriptions, the header line has a comment above it saying it gives the kind of the settings and the version of
+ * their keys. Settings filling no section have every key of their class at the top level. A key naming the settings
+ * file of a part ({@link SettingsFileReference}) is always written, as the name of a file of the part's own: the key's
+ * name followed by {@code .yaml}, such as {@code zoning: zoning.yaml}. {@link #write(Path)} writes that file next to
+ * the file naming it, so the files read back give the same settings, while {@link #toString()} gives the text of the
+ * naming file only.
  * </p>
  *
  * @author markr
@@ -73,6 +86,12 @@ public final class SettingsYamlWriter {
   private static final Map<SettingsKeyEffect, String> EFFECT_NOTES = Map.of(
       SettingsKeyEffect.ADD_EACH, " (adds to the list)",
       SettingsKeyEffect.PUT_EACH, " (adds or replaces by key)");
+
+  /** what the comment above the header line says, written with the descriptions */
+  private static final String HEADER_DESCRIPTION = "The kind of these settings and the version of their keys";
+
+  /** the extension of the file a part is written to, after the key naming it */
+  private static final String PART_FILE_EXTENSION = ".yaml";
 
   /**
    * The heading of a level, such as "--- standard ---"
@@ -129,7 +148,7 @@ public final class SettingsYamlWriter {
   }
 
   /**
-   * The text of a value at the root that the constructor of the settings took
+   * The text of a value at the top level that the constructor of the settings took
    *
    * @param settings of the first section, holding the value, as the settings made with it pass it on to them
    * @param index of the keys of the settings of the first section
@@ -137,7 +156,7 @@ public final class SettingsYamlWriter {
    * @return the text, null when there is no value
    * @throws PlanItRunTimeException when the value has no getter
    */
-  private static String readRootValueText(Object settings, SettingsKeyIndex index, String key) {
+  private static String readTopLevelValueText(Object settings, SettingsKeyIndex index, String key) {
     var value = index.readValue(settings, key);
     return value == null ? null : TypeConversionUtil.toString(value);
   }
@@ -168,11 +187,17 @@ public final class SettingsYamlWriter {
   /** the layout of the text */
   private final SettingsSchema schema;
 
+  /** which keys to write */
+  private final SettingsFileContentType content;
+
   /** true to write the descriptions and level headings as comments, and keys with no value commented out */
   private final boolean withDescriptions;
 
   /** the YAML written so far */
   private final SimpleYamlWriter yaml = new SimpleYamlWriter();
+
+  /** the writer of each part whose settings file a key names, by the name of that file */
+  private final Map<String, SettingsYamlWriter> partWriters = new LinkedHashMap<>();
 
   /**
    * The plain value of a value of a type the method of a key takes, from which the loader makes an equal value
@@ -248,7 +273,7 @@ public final class SettingsYamlWriter {
   }
 
   /**
-   * The plain value of a small section, the value of a key: its keys that have a value, by level and then by name
+   * The plain value of a small section, the value of a key: its keys that have a value, in writing order
    *
    * @param section to write
    * @return the keys with their plain values
@@ -256,7 +281,7 @@ public final class SettingsYamlWriter {
   private Map<String, Object> toPlainSection(Object section) {
     var index = SettingsKeyIndex.of(section.getClass());
     var fields = new LinkedHashMap<String, Object>();
-    for (var key : index.getSectionEntryKeysByLevelThenName()) {
+    for (var key : index.getSectionEntryKeysInWritingOrder()) {
       var sectionGetter = index.findSectionGetter(key);
       var plainValue = sectionGetter != null ? toPlainSection(readNestedSectionOf(sectionGetter, section)) :
           toPlainValueOfKey(section, index, key);
@@ -327,7 +352,7 @@ public final class SettingsYamlWriter {
    */
   private boolean hasKeysToWrite(Object settings, Object defaults) {
     var index = SettingsKeyIndex.of(settings.getClass());
-    return index.getSectionEntryKeysByLevelThenName().stream()
+    return index.getSectionEntryKeysInWritingOrder().stream()
         .anyMatch(key -> isWritten(settings, defaults, index, key));
   }
 
@@ -367,18 +392,35 @@ public final class SettingsYamlWriter {
   }
 
   /**
-   * Add the keys of settings that are written: their keys at the root, or the keys and nested sections of a section,
-   * by level and then by name, under a heading per level when descriptions are written
+   * Add a key naming the settings file of a part, the file named after the key, keeping a writer of the part to write
+   * that file next to the file naming it
+   *
+   * @param key naming the file
+   * @param fileReferenceGetter of the part
+   * @param settings holding the part
+   */
+  private void addPart(String key, Method fileReferenceGetter, Object settings) {
+    var fileName = key + PART_FILE_EXTENSION;
+    addKey(key, List.of(fileReferenceGetter.getAnnotation(SettingsFileReference.class).description()), fileName);
+    partWriters.put(fileName, new SettingsYamlWriter(schema, ReflectionUtils.invoke(fileReferenceGetter, settings),
+        content, withDescriptions));
+  }
+
+  /**
+   * Add the keys of settings that are written: their keys at the top level, or the keys and nested sections of a
+   * section, in writing order, under a heading per level when descriptions are written. A key naming the file of a part
+   * is always written
    *
    * @param settings to add the keys of
    * @param defaults fresh settings of the same class to compare with, null to write every key
-   * @param atRoot true for the keys at the root, false for those of a section
+   * @param atTopLevel true for the keys at the top level, false for those of a section
    */
-  private void addKeys(Object settings, Object defaults, boolean atRoot) {
+  private void addKeys(Object settings, Object defaults, boolean atTopLevel) {
     var index = SettingsKeyIndex.of(settings.getClass());
     SettingsKeyLevel headedLevel = null;
-    for (var key : atRoot ? index.getRootKeysByLevelThenName() : index.getSectionEntryKeysByLevelThenName()) {
-      if (!isWritten(settings, defaults, index, key)) {
+    for (var key : atTopLevel ? index.getTopLevelKeysInWritingOrder() : index.getSectionEntryKeysInWritingOrder()) {
+      var fileReferenceGetter = index.findFileReferenceGetter(key);
+      if (fileReferenceGetter == null && !isWritten(settings, defaults, index, key)) {
         continue;
       }
       if (withDescriptions && index.getLevel(key) != headedLevel) {
@@ -386,7 +428,9 @@ public final class SettingsYamlWriter {
         yaml.addComment(headingOf(headedLevel));
       }
       var sectionGetter = index.findSectionGetter(key);
-      if (sectionGetter == null) {
+      if (fileReferenceGetter != null) {
+        addPart(key, fileReferenceGetter, settings);
+      } else if (sectionGetter == null) {
         addKey(key, describeYamlKey(index.findWrite(key)), toPlainValueOfKey(settings, index, key));
       } else {
         addSection(key, sectionGetter.getAnnotation(SettingsSection.class).description(),
@@ -399,35 +443,43 @@ public final class SettingsYamlWriter {
    * Constructor, writing the YAML text of settings
    *
    * @param schema the layout of the text, as the loader reads it
-   * @param settings to write out: the settings of a section of the schema, or settings giving such settings through
-   *     getters, as the loader makes them
+   * @param settings to write out: the settings of a section of the schema, settings giving such settings through
+   *     getters, or settings filling no section, as the loader makes them
    * @param content which keys to write
    * @param withDescriptions true to write the description of each section and key, and a heading per level, as
    *     comments; false for no comment at all
-   * @throws PlanItRunTimeException when a key or value at the root has no getter marked with {@link SettingsRead}
+   * @throws PlanItRunTimeException when a key or value at the top level has no getter marked with {@link SettingsRead}
    * @throws IllegalStateException when a section to write holds keys with no value only, which YAML cannot keep
    *     commented out at their depth
    */
   public SettingsYamlWriter(SettingsSchema schema, Object settings, SettingsFileContentType content,
       boolean withDescriptions) {
     this.schema = schema;
+    this.content = content;
     this.withDescriptions = withDescriptions;
     var sections = schema.getSectionSettingsOf(settings);
     var sectionKeys = schema.getSectionKeys().stream().filter(sections::containsKey).collect(Collectors.toList());
-    var firstSection = sections.get(sectionKeys.get(0));
-    var firstSectionIndex = SettingsKeyIndex.of(firstSection.getClass());
+    /* the keys and values at the top level are read from the settings themselves when they fill no section, otherwise
+     * from those of the first section, which settings holding the sections pass them on to */
+    var topLevelSettings = sections.isEmpty() ? settings : sections.get(sectionKeys.get(0));
+    var topLevelIndex = SettingsKeyIndex.of(topLevelSettings.getClass());
     var index = SettingsKeyIndex.of(settings.getClass());
     var defaults = content == SettingsFileContentType.KEYS_DIFFERING_FROM_DEFAULTS ?
-        index.createSettings(key -> readRootValueText(firstSection, firstSectionIndex, key)) : null;
+        index.createSettings(key -> readTopLevelValueText(topLevelSettings, topLevelIndex, key)) : null;
     Map<String, Object> defaultSections = defaults == null ? Map.of() : schema.getSectionSettingsOf(defaults);
+    var topLevelDefaults =
+        defaults == null || sections.isEmpty() ? defaults : defaultSections.get(sectionKeys.get(0));
+    if (withDescriptions) {
+      yaml.addComment(HEADER_DESCRIPTION);
+    }
     yaml.addEntry(schema.getHeader().key(), String.valueOf(schema.getHeader().version()));
-    for (var rootValue : index.getRootValues()) {
-      var text = readRootValueText(firstSection, firstSectionIndex, rootValue.key());
+    for (var topLevelValue : index.getTopLevelValues()) {
+      var text = readTopLevelValueText(topLevelSettings, topLevelIndex, topLevelValue.key());
       if (text != null || (defaults == null && withDescriptions)) {
-        addKey(rootValue.key(), List.of(rootValue.description()), text);
+        addKey(topLevelValue.key(), List.of(topLevelValue.description()), text);
       }
     }
-    addKeys(firstSection, defaultSections.get(sectionKeys.get(0)), true);
+    addKeys(topLevelSettings, topLevelDefaults, true);
     for (var key : sectionKeys) {
       if (hasKeysToWrite(sections.get(key), defaultSections.get(key))) {
         addSection(key, schema.getSection(key).description(), sections.get(key), defaultSections.get(key));
@@ -436,7 +488,7 @@ public final class SettingsYamlWriter {
   }
 
   /**
-   * The YAML text of the settings
+   * The YAML text of the settings, without the files of their parts
    *
    * @return the text
    */
@@ -446,12 +498,16 @@ public final class SettingsYamlWriter {
   }
 
   /**
-   * Write the YAML text of the settings to a file, as UTF-8
+   * Write the YAML text of the settings to a file, as UTF-8, and each part whose settings file a key names to a file of
+   * its own next to it, named after the key
    *
    * @param file to write
-   * @throws IOException when the file cannot be written
+   * @throws IOException when a file cannot be written
    */
   public void write(Path file) throws IOException {
     yaml.write(file);
+    for (var part : partWriters.entrySet()) {
+      part.getValue().write(file.resolveSibling(part.getKey()));
+    }
   }
 }

@@ -1,10 +1,13 @@
 package org.goplanit.utils;
 
+import org.goplanit.utils.SettingsYamlLoaderTest.TestFlatPartSettings;
+import org.goplanit.utils.SettingsYamlLoaderTest.TestFlatSettings;
 import org.goplanit.utils.settings.SettingsFileContentType;
 import org.goplanit.utils.settings.SettingsSchema;
 import org.goplanit.utils.settings.SettingsSource;
 import org.goplanit.utils.settings.SettingsYamlLoader;
 import org.goplanit.utils.settings.YamlWriteSettingsSupport;
+import org.goplanit.utils.settings.annotations.SettingsFileReference;
 import org.goplanit.utils.settings.annotations.SettingsHeader;
 import org.goplanit.utils.settings.annotations.SettingsKeyLevel;
 import org.goplanit.utils.settings.annotations.SettingsRead;
@@ -21,7 +24,8 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
- * Tests of {@link YamlWriteSettingsSupport}: settings that have settings files write one, which the loader reads back
+ * Tests of {@link YamlWriteSettingsSupport}: settings that have settings files write one, with a file of its own for
+ * each part they hold, which the loader reads back
  *
  * @author markr
  */
@@ -56,6 +60,28 @@ public class YamlWriteSettingsSupportTest {
     }
   }
 
+  /** Settings that have settings files, holding a part whose settings file a key names */
+  public static final class TestYamlHolderSettings implements YamlWriteSettingsSupport {
+
+    /** the layout of the settings files of these settings and their part */
+    private static final SettingsSchema SCHEMA = new SettingsSchema(TestFlatSettings.class);
+
+    /** settings of the network part */
+    private final TestFlatPartSettings network = new TestFlatPartSettings();
+
+    /** @return the settings of the network part */
+    @SettingsFileReference(key = "network", level = SettingsKeyLevel.STANDARD,
+        description = "The settings file of the network part")
+    public TestFlatPartSettings getNetwork() {
+      return network;
+    }
+
+    @Override
+    public SettingsSchema getSettingsSchema() {
+      return SCHEMA;
+    }
+  }
+
   /** folder for the test files */
   @TempDir
   public Path tempDir;
@@ -72,5 +98,24 @@ public class YamlWriteSettingsSupportTest {
     var readBack = new SettingsYamlLoader(settings.getSettingsSchema(), List.of(SettingsSource.ofFile(file)))
         .create(TestYamlSettings.class);
     assertEquals("north", readBack.getName());
+  }
+
+  /**
+   * Settings holding a part write their file naming the part's file, and the part's file next to it holding the key
+   * changed, which the loader reads back
+   */
+  @Test
+  public void partWrittenNextToTheFileNamingIt() throws IOException {
+    var settings = new TestYamlHolderSettings();
+    settings.getNetwork().setFileName("roads.xml");
+    var file = tempDir.resolve("holder.yaml");
+    settings.writeSettingsFile(file, SettingsFileContentType.KEYS_DIFFERING_FROM_DEFAULTS, false);
+    assertEquals("planitFlatTestSettings: 1\nnetwork: network.yaml\n", Files.readString(file));
+    assertEquals("planitFlatTestSettings: 1\nfileName: roads.xml\n",
+        Files.readString(file.resolveSibling("network.yaml")));
+
+    var readBack = new SettingsYamlLoader(settings.getSettingsSchema(), List.of(SettingsSource.ofFile(file)))
+        .create(TestYamlHolderSettings.class);
+    assertEquals("roads.xml", readBack.getNetwork().getFileName());
   }
 }

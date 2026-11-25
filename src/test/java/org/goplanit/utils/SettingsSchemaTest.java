@@ -19,7 +19,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Tests of {@link SettingsSchema}: the section of settings found from their class, the header from a class they
- * extend, the converter of a type, and the classes a schema refuses because it could not tell their section or header
+ * extend, the schema of settings filling no section, the converter of a type, and the classes a schema refuses because
+ * it could not tell their section or header
  *
  * @author markr
  */
@@ -119,11 +120,26 @@ public class SettingsSchemaTest {
     assertEquals(1, schema.getHeader().version());
   }
 
-  /** Classes whose section or header the schema cannot tell are refused, being a mistake in the code */
+  /** Settings filling no section have a schema of their one class: the header it gives, and no section */
+  @Test
+  public void schemaOfSettingsFillingNoSection() {
+    var schema = new SettingsSchema(TestNoSectionSettings.class);
+
+    assertEquals("planitTestSettings", schema.getHeader().key());
+    assertTrue(schema.getSectionKeys().isEmpty());
+    assertTrue(schema.getSectionSettingsOf(new TestNoSectionSettings()).isEmpty());
+  }
+
+  /**
+   * Classes whose section or header the schema cannot tell are refused, being a mistake in the code: among them a
+   * class filling no section next to classes of sections, and one class giving no header
+   */
   @Test
   public void classesItCannotTellRefused() {
     assertThrows(PlanItRunTimeException.class, () -> new SettingsSchema());
-    assertThrows(PlanItRunTimeException.class, () -> new SettingsSchema(TestNoSectionSettings.class));
+    assertThrows(PlanItRunTimeException.class,
+        () -> new SettingsSchema(TestNetworkSettings.class, TestNoSectionSettings.class));
+    assertThrows(PlanItRunTimeException.class, () -> new SettingsSchema(TestCode.class));
     assertThrows(PlanItRunTimeException.class, () -> new SettingsSchema(TestNoHeaderSettings.class));
     assertThrows(PlanItRunTimeException.class,
         () -> new SettingsSchema(TestNetworkSettings.class, TestOtherHeaderSettings.class));

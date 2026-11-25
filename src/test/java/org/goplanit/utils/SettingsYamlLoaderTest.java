@@ -1,7 +1,7 @@
 package org.goplanit.utils;
 
 import org.goplanit.utils.exceptions.PlanItRunTimeException;
-import org.goplanit.utils.exceptions.SettingsProblemsException;
+import org.goplanit.utils.geo.PlanitCrsUtils;
 import org.goplanit.utils.settings.SettingsSchema;
 import org.goplanit.utils.settings.problem.SettingsProblem;
 import org.goplanit.utils.settings.problem.SettingsProblemKind;
@@ -9,20 +9,24 @@ import org.goplanit.utils.settings.SettingsSource;
 import org.goplanit.utils.settings.SettingsValueConverter;
 import org.goplanit.utils.settings.SettingsYamlLoader;
 import org.goplanit.utils.settings.UserOverride;
+import org.goplanit.utils.settings.annotations.SettingsFileReference;
 import org.goplanit.utils.settings.annotations.SettingsHeader;
 import org.goplanit.utils.settings.annotations.SettingsKeyEffect;
 import org.goplanit.utils.settings.annotations.SettingsKeyLevel;
 import org.goplanit.utils.settings.annotations.SettingsRead;
-import org.goplanit.utils.settings.annotations.SettingsRootValue;
+import org.goplanit.utils.settings.annotations.SettingsTopLevelValue;
 import org.goplanit.utils.settings.annotations.SettingsSection;
 import org.goplanit.utils.settings.annotations.SettingsWrite;
+import org.goplanit.utils.test.SettingsFileAssertionUtils;
 import org.goplanit.utils.yaml.SimpleYamlReader;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
+import org.geotools.api.referencing.crs.CoordinateReferenceSystem;
 
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
+import java.text.DecimalFormat;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -36,6 +40,7 @@ import java.util.TreeSet;
 
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotSame;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -198,9 +203,9 @@ public class SettingsYamlLoaderTest {
     public TestSettings() {
     }
 
-    /** @param country made with, a value at the root */
+    /** @param country made with, a value at the top level */
     public TestSettings(
-        @SettingsRootValue(key = "country", description = "The country the settings are made for") String country) {
+        @SettingsTopLevelValue(key = "country", description = "The country the settings are made for") String country) {
       this.country = country;
     }
 
@@ -407,7 +412,8 @@ public class SettingsYamlLoaderTest {
     }
 
     /** @return the nested settings */
-    @SettingsSection(key = "nested", level = SettingsKeyLevel.RARE, description = "Settings nested in the test settings")
+    @SettingsSection(key = "nested", level = SettingsKeyLevel.RARE,
+        description = "Settings nested in the test settings")
     public TestNestedSettings getNested() {
       return nested;
     }
@@ -455,43 +461,43 @@ public class SettingsYamlLoaderTest {
     }
   }
 
-  /** Settings with two constructors taking root values, which is refused */
-  public static final class TestTwoRootValueConstructors {
+  /** Settings with two constructors taking top level values, which is refused */
+  public static final class TestTwoTopLevelValueConstructors {
 
-    /** @param country a root value */
-    public TestTwoRootValueConstructors(
-        @SettingsRootValue(key = "country", description = "The country the settings are made for") String country) {
+    /** @param country a top level value */
+    public TestTwoTopLevelValueConstructors(
+        @SettingsTopLevelValue(key = "country", description = "The country the settings are made for") String country) {
     }
 
     /**
-     * @param country a root value
-     * @param region another root value
+     * @param country a top level value
+     * @param region another top level value
      */
-    public TestTwoRootValueConstructors(
-        @SettingsRootValue(key = "country", description = "The country the settings are made for") String country,
-        @SettingsRootValue(key = "region", description = "The region the settings are made for") String region) {
+    public TestTwoTopLevelValueConstructors(
+        @SettingsTopLevelValue(key = "country", description = "The country the settings are made for") String country,
+        @SettingsTopLevelValue(key = "region", description = "The region the settings are made for") String region) {
     }
   }
 
-  /** Settings with a constructor taking a root value and another value, which is refused */
-  public static final class TestPartlyRootValueConstructor {
+  /** Settings with a constructor taking a top level value and another value, which is refused */
+  public static final class TestPartlyTopLevelValueConstructor {
 
     /**
-     * @param country a root value
-     * @param region not a root value
+     * @param country a top level value
+     * @param region not a top level value
      */
-    public TestPartlyRootValueConstructor(
-        @SettingsRootValue(key = "country", description = "The country the settings are made for") String country,
+    public TestPartlyTopLevelValueConstructor(
+        @SettingsTopLevelValue(key = "country", description = "The country the settings are made for") String country,
         String region) {
     }
   }
 
-  /** Settings with a constructor taking a root value that is not text, which is refused */
-  public static final class TestNonTextRootValue {
+  /** Settings with a constructor taking a top level value that is not text, which is refused */
+  public static final class TestNonTextTopLevelValue {
 
-    /** @param year a root value as a number */
-    public TestNonTextRootValue(
-        @SettingsRootValue(key = "year", description = "The year the settings are made for") int year) {
+    /** @param year a top level value as a number */
+    public TestNonTextTopLevelValue(
+        @SettingsTopLevelValue(key = "year", description = "The year the settings are made for") int year) {
     }
   }
 
@@ -561,9 +567,9 @@ public class SettingsYamlLoaderTest {
     }
   }
 
-  /** Base of the settings of the root test sources, giving their header and their key at the root, a range */
-  @SettingsHeader(key = "planitRootTestSettings", version = 1)
-  public abstract static class TestRootKeyedSettings {
+  /** Base of the settings of the top level test sources, giving their header and their key at the top level, a range */
+  @SettingsHeader(key = "planitTopLevelTestSettings", version = 1)
+  public abstract static class TestTopLevelKeyedSettings {
 
     /** a range, null when not given */
     private TestRange range;
@@ -581,9 +587,9 @@ public class SettingsYamlLoaderTest {
     }
   }
 
-  /** Settings of the section {@code network} of the root test sources */
+  /** Settings of the section {@code network} of the top level test sources */
   @SettingsSection(key = "network", level = SettingsKeyLevel.STANDARD, description = "Settings of the network")
-  public static final class TestRootNetworkSettings extends TestRootKeyedSettings {
+  public static final class TestTopLevelNetworkSettings extends TestTopLevelKeyedSettings {
 
     /** a text */
     private String name = "default";
@@ -601,28 +607,28 @@ public class SettingsYamlLoaderTest {
     }
   }
 
-  /** Settings of the section {@code transport} of the root test sources, with no key of their own */
+  /** Settings of the section {@code transport} of the top level test sources, with no key of their own */
   @SettingsSection(key = "transport", level = SettingsKeyLevel.STANDARD,
       description = "Settings of the transport, with no key of their own")
-  public static final class TestRootTransportSettings extends TestRootKeyedSettings {
+  public static final class TestTopLevelTransportSettings extends TestTopLevelKeyedSettings {
   }
 
-  /** Settings filling no section themselves, holding the settings of both sections of the root test sources */
-  public static final class TestRootHolderSettings {
+  /** Settings filling no section themselves, holding the settings of both sections of the top level test sources */
+  public static final class TestTopLevelHolderSettings {
 
     /** settings of the section network */
-    private final TestRootNetworkSettings network = new TestRootNetworkSettings();
+    private final TestTopLevelNetworkSettings network = new TestTopLevelNetworkSettings();
 
     /** settings of the section transport */
-    private final TestRootTransportSettings transport = new TestRootTransportSettings();
+    private final TestTopLevelTransportSettings transport = new TestTopLevelTransportSettings();
 
     /** @return the settings of the section network */
-    public TestRootNetworkSettings getNetwork() {
+    public TestTopLevelNetworkSettings getNetwork() {
       return network;
     }
 
     /** @return the settings of the section transport */
-    public TestRootTransportSettings getTransport() {
+    public TestTopLevelTransportSettings getTransport() {
       return transport;
     }
   }
@@ -654,7 +660,7 @@ public class SettingsYamlLoaderTest {
     }
   }
 
-  /** Base of the settings of the order test sources: their header, their record and a key at their root */
+  /** Base of the settings of the order test sources: their header, their record and a key at their top level */
   @SettingsHeader(key = "planitOrderTestSettings", version = 1)
   public abstract static class TestOrderKeyedSettings {
 
@@ -679,7 +685,7 @@ public class SettingsYamlLoaderTest {
       calls.add(call);
     }
 
-    /** @param mark a mark at the root, recorded as applied */
+    /** @param mark a mark at the top level, recorded as applied */
     @SettingsWrite(key = "mark", level = SettingsKeyLevel.STANDARD, description = "A mark")
     public void setMark(String mark) {
       record("mark");
@@ -788,19 +794,177 @@ public class SettingsYamlLoaderTest {
     }
   }
 
+  /** Base of the flat test settings, declaring a key above the class giving their header, as converter bases do */
+  public abstract static class TestFlatBaseSettings {
+
+    /** a folder, as text */
+    private String outputDirectory = "default";
+
+    /** @return the folder */
+    @SettingsRead(key = "outputDirectory")
+    public String getOutputDirectory() {
+      return outputDirectory;
+    }
+
+    /** @param outputDirectory the folder */
+    @SettingsWrite(key = "outputDirectory", level = SettingsKeyLevel.STANDARD, description = "A folder, as text")
+    public void setOutputDirectory(String outputDirectory) {
+      this.outputDirectory = outputDirectory;
+    }
+  }
+
+  /** Settings filling no section, so every key of their class sits at the top level, inherited ones included */
+  @SettingsHeader(key = "planitFlatTestSettings", version = 1)
+  public static class TestFlatSettings extends TestFlatBaseSettings {
+
+    /** a file name */
+    private String fileName = "default.xml";
+
+    /** @return the file name */
+    @SettingsRead(key = "fileName")
+    public String getFileName() {
+      return fileName;
+    }
+
+    /** @param fileName the file name */
+    @SettingsWrite(key = "fileName", level = SettingsKeyLevel.STANDARD, description = "A file name")
+    public void setFileName(String fileName) {
+      this.fileName = fileName;
+    }
+  }
+
+  /**
+   * Settings of a part, filling no section, with a key of their own besides those of the flat test settings, and the
+   * folder key of their base class repeated on an override, as a class does to describe an inherited key for itself
+   */
+  public static final class TestFlatPartSettings extends TestFlatSettings {
+
+    /** a yes or no choice */
+    private boolean removeDangling = true;
+
+    /** @return the choice */
+    @SettingsRead(key = "removeDangling")
+    public boolean isRemoveDangling() {
+      return removeDangling;
+    }
+
+    /** @param removeDangling the choice */
+    @SettingsWrite(key = "removeDangling", level = SettingsKeyLevel.UNCOMMON, description = "A yes or no choice")
+    public void setRemoveDangling(boolean removeDangling) {
+      this.removeDangling = removeDangling;
+    }
+
+    /** @param outputDirectory the folder */
+    @Override
+    @SettingsWrite(key = "outputDirectory", level = SettingsKeyLevel.STANDARD, description = "A folder, as text")
+    public void setOutputDirectory(String outputDirectory) {
+      super.setOutputDirectory(outputDirectory);
+    }
+  }
+
+  /** Settings naming the file of the next settings of their own kind, so files can name each other in a loop */
+  public static final class TestFlatChainSettings extends TestFlatSettings {
+
+    /** the next settings, made when first asked for */
+    private TestFlatChainSettings next;
+
+    /** @return the next settings */
+    @SettingsFileReference(key = "next", level = SettingsKeyLevel.RARE,
+        description = "The settings file of the next settings")
+    public TestFlatChainSettings getNext() {
+      if (next == null) {
+        next = new TestFlatChainSettings();
+      }
+      return next;
+    }
+  }
+
+  /** Settings holding two parts, each made from the file a key names, as intermodal settings hold theirs */
+  public static final class TestFlatHolderSettings {
+
+    /** settings of the network part */
+    private final TestFlatPartSettings network = new TestFlatPartSettings();
+
+    /** settings of the zoning part */
+    private final TestFlatSettings zoning = new TestFlatSettings();
+
+    /** @return the settings of the network part */
+    @SettingsFileReference(key = "network", level = SettingsKeyLevel.STANDARD,
+        description = "The settings file of the network part")
+    public TestFlatPartSettings getNetwork() {
+      return network;
+    }
+
+    /** @return the settings of the zoning part */
+    @SettingsFileReference(key = "zoning", level = SettingsKeyLevel.STANDARD,
+        description = "The settings file of the zoning part")
+    public TestFlatSettings getZoning() {
+      return zoning;
+    }
+  }
+
+  /**
+   * Settings filling no section with values given as one text: a coordinate reference system by its code and a decimal
+   * format by its pattern
+   */
+  @SettingsHeader(key = "planitCrsAndFormatTestSettings", version = 1)
+  public static final class TestCrsAndFormatSettings {
+
+    /** a coordinate reference system, null when not given */
+    private CoordinateReferenceSystem destinationCrs;
+
+    /** a decimal format */
+    private DecimalFormat decimalFormat = new DecimalFormat("#.##");
+
+    /** @return the coordinate reference system */
+    @SettingsRead(key = "destinationCrs")
+    public CoordinateReferenceSystem getDestinationCrs() {
+      return destinationCrs;
+    }
+
+    /** @param destinationCrs the coordinate reference system */
+    @SettingsWrite(key = "destinationCrs", level = SettingsKeyLevel.STANDARD,
+        description = "A coordinate reference system, by its code")
+    public void setDestinationCrs(CoordinateReferenceSystem destinationCrs) {
+      this.destinationCrs = destinationCrs;
+    }
+
+    /** @return the decimal format */
+    @SettingsRead(key = "decimalFormat")
+    public DecimalFormat getDecimalFormat() {
+      return decimalFormat;
+    }
+
+    /** @param decimalFormat the decimal format */
+    @SettingsWrite(key = "decimalFormat", level = SettingsKeyLevel.UNCOMMON,
+        description = "A decimal format, by its pattern")
+    public void setDecimalFormat(DecimalFormat decimalFormat) {
+      this.decimalFormat = decimalFormat;
+    }
+  }
+
   /** The schema of the test sources: the sections test and other */
   private static final SettingsSchema TEST_SCHEMA = new SettingsSchema(TestSettings.class, TestOtherSettings.class);
 
-  /** The schema of the root test sources: the sections network and transport, ranges made by their converter */
-  private static final SettingsSchema ROOT_TEST_SCHEMA = new SettingsSchema(List.of(new TestRangeConverter()),
-      TestRootNetworkSettings.class, TestRootTransportSettings.class);
+  /** The schema of the top level test sources: the sections network and transport, ranges made by their converter */
+  private static final SettingsSchema TOP_LEVEL_TEST_SCHEMA = new SettingsSchema(List.of(new TestRangeConverter()),
+      TestTopLevelNetworkSettings.class, TestTopLevelTransportSettings.class);
 
   /** The schema of the order test sources: the section first, then the section second */
   private static final SettingsSchema ORDER_TEST_SCHEMA =
       new SettingsSchema(TestOrderFirstSettings.class, TestOrderSecondSettings.class);
 
+  /** The schema of the flat test sources: settings filling no section, every key at the top level */
+  private static final SettingsSchema FLAT_TEST_SCHEMA = new SettingsSchema(TestFlatSettings.class);
+
+  /** The schema of the test sources of a coordinate reference system and a decimal format */
+  private static final SettingsSchema CRS_AND_FORMAT_TEST_SCHEMA = new SettingsSchema(TestCrsAndFormatSettings.class);
+
   /** The first line of every test source */
   private static final String HEADER = "planitTestSettings: 1\n";
+
+  /** The first line of every flat test source */
+  private static final String FLAT_HEADER = "planitFlatTestSettings: 1\n";
 
   /**
    * A source of YAML text under the test header
@@ -813,13 +977,40 @@ public class SettingsYamlLoaderTest {
   }
 
   /**
+   * Settings made from sources of a schema
+   *
+   * @param <T> type of the settings
+   * @param schema of the sources
+   * @param settingsClass to make
+   * @param sources in order
+   * @return the settings
+   */
+  private static <T> T createFromSources(SettingsSchema schema, Class<T> settingsClass, SettingsSource... sources) {
+    return new SettingsYamlLoader(schema, List.of(sources)).create(settingsClass);
+  }
+
+  /**
    * Test settings made from the sources, the section {@code test}
    *
    * @param sources in order
    * @return the settings
    */
   private static TestSettings load(SettingsSource... sources) {
-    return new SettingsYamlLoader(TEST_SCHEMA, List.of(sources)).create(TestSettings.class);
+    return createFromSources(TEST_SCHEMA, TestSettings.class, sources);
+  }
+
+  /**
+   * The problems making settings from sources of a schema stops with
+   *
+   * @param schema of the sources
+   * @param settingsClass to make
+   * @param sources in order
+   * @return the problems
+   */
+  private static List<SettingsProblem> problemsOf(SettingsSchema schema, Class<?> settingsClass,
+      SettingsSource... sources) {
+    return SettingsFileAssertionUtils.assertThrowsSettingsProblems(
+        () -> createFromSources(schema, settingsClass, sources));
   }
 
   /**
@@ -829,8 +1020,7 @@ public class SettingsYamlLoaderTest {
    * @return the problems
    */
   private static List<SettingsProblem> problemsOf(SettingsSource... sources) {
-    var loader = new SettingsYamlLoader(TEST_SCHEMA, List.of(sources));
-    return assertThrows(SettingsProblemsException.class, () -> loader.create(TestSettings.class)).getProblems();
+    return problemsOf(TEST_SCHEMA, TestSettings.class, sources);
   }
 
   /**
@@ -843,17 +1033,17 @@ public class SettingsYamlLoaderTest {
    * @return the settings
    */
   private static <T> T createFromText(SettingsSchema schema, Class<T> settingsClass, String body) {
-    return new SettingsYamlLoader(schema, List.of(SettingsSource.ofText(schema, body))).create(settingsClass);
+    return createFromSources(schema, settingsClass, SettingsSource.ofText(schema, body));
   }
 
   /**
-   * Settings holding both sections of the root test sources, made from a text under their header
+   * Settings holding both sections of the top level test sources, made from a text under their header
    *
    * @param body the lines after the header
    * @return the settings
    */
-  private static TestRootHolderSettings loadRoot(String body) {
-    return createFromText(ROOT_TEST_SCHEMA, TestRootHolderSettings.class, body);
+  private static TestTopLevelHolderSettings loadTopLevel(String body) {
+    return createFromText(TOP_LEVEL_TEST_SCHEMA, TestTopLevelHolderSettings.class, body);
   }
 
   /**
@@ -878,6 +1068,21 @@ public class SettingsYamlLoaderTest {
   }
 
   /**
+   * A source of a file written in the test folder
+   *
+   * @param relativePath of the file in the test folder
+   * @param text of the file, its header included
+   * @return the source
+   * @throws IOException when the file cannot be written
+   */
+  private SettingsSource writeFile(String relativePath, String text) throws IOException {
+    Path path = tempDir.resolve(relativePath);
+    Files.createDirectories(path.getParent());
+    Files.writeString(path, text);
+    return SettingsSource.ofFile(path);
+  }
+
+  /**
    * A source of a file written under the test header
    *
    * @param relativePath of the file in the test folder
@@ -886,10 +1091,19 @@ public class SettingsYamlLoaderTest {
    * @throws IOException when the file cannot be written
    */
   private SettingsSource file(String relativePath, String body) throws IOException {
-    Path path = tempDir.resolve(relativePath);
-    Files.createDirectories(path.getParent());
-    Files.writeString(path, HEADER + body);
-    return SettingsSource.ofFile(path);
+    return writeFile(relativePath, HEADER + body);
+  }
+
+  /**
+   * A source of a file written under the flat test header
+   *
+   * @param relativePath of the file in the test folder
+   * @param body the lines after the header
+   * @return the source
+   * @throws IOException when the file cannot be written
+   */
+  private SettingsSource flatFile(String relativePath, String body) throws IOException {
+    return writeFile(relativePath, FLAT_HEADER + body);
   }
 
   /** folder for the test files */
@@ -1064,11 +1278,11 @@ public class SettingsYamlLoaderTest {
   }
 
   /**
-   * A root section the settings made do not take is a problem, and so is a key outside the schema; a root value their
-   * constructor takes is not
+   * A top level section the settings made do not take is a problem, and so is a key outside the schema; a top level
+   * value their constructor takes is not
    */
   @Test
-  public void testRootKeyNotTakenIsAProblem() {
+  public void testTopLevelKeyNotTakenIsAProblem() {
     var problems = problemsOf(text("country: Australia\nother:\n  name: x\nmissing: 1\n"));
     assertEquals(2, problems.size());
     assertEquals(2, count(problems, SettingsProblemKind.UNKNOWN_KEY));
@@ -1084,16 +1298,16 @@ public class SettingsYamlLoaderTest {
   }
 
   /**
-   * A class the schema has no section for, or whose constructors take root values in a way the annotation does not
+   * A class the schema has no section for, or whose constructors take top level values in a way the annotation does not
    * allow, is refused, being a mistake in the code
    */
   @Test
   public void testClassesItCannotMakeRefused() {
     var loader = new SettingsYamlLoader(TEST_SCHEMA, List.of(text("test: {}\n")));
     assertThrows(PlanItRunTimeException.class, () -> loader.create(TestNestedSettings.class));
-    assertThrows(PlanItRunTimeException.class, () -> loader.create(TestTwoRootValueConstructors.class));
-    assertThrows(PlanItRunTimeException.class, () -> loader.create(TestPartlyRootValueConstructor.class));
-    assertThrows(PlanItRunTimeException.class, () -> loader.create(TestNonTextRootValue.class));
+    assertThrows(PlanItRunTimeException.class, () -> loader.create(TestTwoTopLevelValueConstructors.class));
+    assertThrows(PlanItRunTimeException.class, () -> loader.create(TestPartlyTopLevelValueConstructor.class));
+    assertThrows(PlanItRunTimeException.class, () -> loader.create(TestNonTextTopLevelValue.class));
   }
 
   /** A relative path resolves against the folder of the file it is in, and in text against the working folder */
@@ -1142,11 +1356,11 @@ public class SettingsYamlLoaderTest {
   }
 
   /**
-   * A value at the root goes to the constructor taking it, the last source giving it winning; without it, the
+   * A value at the top level goes to the constructor taking it, the last source giving it winning; without it, the
    * constructor taking nothing makes the settings
    */
   @Test
-  public void testRootValueGoesToTheConstructor() {
+  public void testTopLevelValueGoesToTheConstructor() {
     var settings = load(text("country: Australia\n"), text("country: Germany\n"), text("test:\n  name: x\n"));
     assertEquals("Germany", settings.getCountry());
     assertEquals("x", settings.getName());
@@ -1154,34 +1368,30 @@ public class SettingsYamlLoaderTest {
   }
 
   /**
-   * A key of the class giving the header, above the sections, sits at the root and applies to the settings of every
-   * section, each made its own value by the converter of its type
+   * A key of the class giving the header, above the sections, sits at the top level and applies to the settings of
+   * every section, each made its own value by the converter of its type
    */
   @Test
-  public void testRootKeyAppliesToEverySection() {
-    var holder = loadRoot("range: {min: 1, max: 5}\nnetwork:\n  name: x\n");
+  public void testTopLevelKeyAppliesToEverySection() {
+    var holder = loadTopLevel("range: {min: 1, max: 5}\nnetwork:\n  name: x\n");
     assertEquals(new TestRange(1, 5), holder.getNetwork().getRange());
     assertEquals(new TestRange(1, 5), holder.getTransport().getRange());
     assertNotSame(holder.getNetwork().getRange(), holder.getTransport().getRange());
     assertEquals("x", holder.getNetwork().getName());
   }
 
-  /** A key of the root given inside a section is not a key of that section */
+  /** A key of the top level given inside a section is not a key of that section */
   @Test
-  public void testRootKeyInASectionIsAProblem() {
-    var problems = assertThrows(SettingsProblemsException.class,
-        () -> loadRoot("network:\n  range: {min: 1, max: 5}\n")).getProblems();
-    assertEquals(1, problems.size());
-    assertEquals(SettingsProblemKind.UNKNOWN_KEY, problems.get(0).getKind());
+  public void testTopLevelKeyInASectionIsAProblem() {
+    SettingsFileAssertionUtils.assertThrowsOneSettingsProblem(SettingsProblemKind.UNKNOWN_KEY,
+        () -> loadTopLevel("network:\n  range: {min: 1, max: 5}\n"));
   }
 
   /** A value the converter of its type refuses is a problem, once, though the settings of two sections take the key */
   @Test
   public void testValueTheConverterRefusesIsAProblem() {
-    var problems = assertThrows(SettingsProblemsException.class,
-        () -> loadRoot("range: {min: 5, max: 1}\n")).getProblems();
-    assertEquals(1, problems.size());
-    assertEquals(SettingsProblemKind.VALUE_REFUSED, problems.get(0).getKind());
+    SettingsFileAssertionUtils.assertThrowsOneSettingsProblem(SettingsProblemKind.VALUE_REFUSED,
+        () -> loadTopLevel("range: {min: 5, max: 1}\n"));
   }
 
   /**
@@ -1195,8 +1405,8 @@ public class SettingsYamlLoaderTest {
   }
 
   /**
-   * The nested sections of a section apply after its keys, by level and then by name whatever the order of the source,
-   * so the more general settings are always given first
+   * The nested sections of a section apply after its keys, in the order settings are written out in, level first,
+   * whatever the order of the source, so the more general settings are always given first
    */
   @Test
   public void testNestedSectionsApplyAfterTheKeysInAFixedOrder() {
@@ -1205,12 +1415,151 @@ public class SettingsYamlLoaderTest {
   }
 
   /**
-   * The keys at the root apply first, to every section, and the sections then apply in the order of the schema,
+   * The keys at the top level apply first, to every section, and the sections then apply in the order of the schema,
    * whatever the order of the source
    */
   @Test
-  public void testRootKeysApplyBeforeTheSectionsInTheOrderOfTheSchema() {
+  public void testTopLevelKeysApplyBeforeTheSectionsInTheOrderOfTheSchema() {
     assertEquals(List.of("mark", "mark", "first.name", "second.name"),
         appliedOrderOf("second:\n  name: b\nfirst:\n  name: n\nmark: m\n"));
+  }
+
+  /**
+   * Settings filling no section take every key of their class at the top level, a key declared on a class above the
+   * one giving the header included
+   */
+  @Test
+  public void testKeyOfABaseClassAtTheTopLevel() {
+    var settings = createFromText(FLAT_TEST_SCHEMA, TestFlatSettings.class, "outputDirectory: out\nfileName: a.xml\n");
+    assertEquals("out", settings.getOutputDirectory());
+    assertEquals("a.xml", settings.getFileName());
+    var part = createFromText(FLAT_TEST_SCHEMA, TestFlatPartSettings.class,
+        "outputDirectory: out\nremoveDangling: false\n");
+    assertEquals("out", part.getOutputDirectory());
+    assertFalse(part.isRemoveDangling());
+  }
+
+  /** A key of the class of a section stays a key of that section: at the top level it is no key */
+  @Test
+  public void testSectionKeyAtTheTopLevelIsAProblem() {
+    SettingsFileAssertionUtils.assertThrowsOneSettingsProblem(SettingsProblemKind.UNKNOWN_KEY,
+        () -> loadTopLevel("name: x\n"));
+  }
+
+  /** A part is made from the file its key names, a relative path read against the folder of the file naming it */
+  @Test
+  public void testPartFromTheFileItsKeyNames() throws IOException {
+    flatFile("run/parts/network.yaml", "outputDirectory: out\nremoveDangling: false\n");
+    var holder = createFromSources(FLAT_TEST_SCHEMA, TestFlatHolderSettings.class,
+        flatFile("run/holder.yaml", "network: parts/network.yaml\n"));
+    assertEquals("out", holder.getNetwork().getOutputDirectory());
+    assertFalse(holder.getNetwork().isRemoveDangling());
+  }
+
+  /** A part no source names keeps its defaults */
+  @Test
+  public void testPartNotNamedKeepsItsDefaults() throws IOException {
+    flatFile("run/network.yaml", "outputDirectory: out\nfileName: roads.xml\n");
+    var holder = createFromSources(FLAT_TEST_SCHEMA, TestFlatHolderSettings.class,
+        flatFile("run/holder.yaml", "network: network.yaml\n"));
+    var defaults = new TestFlatSettings();
+    assertEquals(defaults.getOutputDirectory(), holder.getZoning().getOutputDirectory());
+    assertEquals(defaults.getFileName(), holder.getZoning().getFileName());
+  }
+
+  /** A named file that is missing, or headed for other settings, is one problem, found in that file */
+  @Test
+  public void testNamedFileMissingOrOfOtherSettingsIsAProblem() throws IOException {
+    var namingMissing = flatFile("a/holder.yaml", "zoning: none.yaml\n");
+    var missing = SettingsFileAssertionUtils.assertThrowsOneSettingsProblem(SettingsProblemKind.FILE_NOT_READ,
+        () -> createFromSources(FLAT_TEST_SCHEMA, TestFlatHolderSettings.class, namingMissing));
+    assertEquals(SettingsSource.ofFile(tempDir.resolve("a/none.yaml")).getDescription(), missing.getSource());
+
+    var otherSettings = file("b/zoning.yaml", "test:\n  name: x\n");
+    var namingOther = flatFile("b/holder.yaml", "zoning: zoning.yaml\n");
+    var otherHeader = SettingsFileAssertionUtils.assertThrowsOneSettingsProblem(SettingsProblemKind.WRONG_HEADER,
+        () -> createFromSources(FLAT_TEST_SCHEMA, TestFlatHolderSettings.class, namingOther));
+    assertEquals(otherSettings.getDescription(), otherHeader.getSource());
+  }
+
+  /** Files naming each other in a loop are one problem, found in the file naming back, and no settings are made */
+  @Test
+  public void testFilesNamingEachOtherIsAProblem() throws IOException {
+    var namingBack = flatFile("b.yaml", "next: a.yaml\n");
+    var first = flatFile("a.yaml", "next: b.yaml\n");
+    var problem = SettingsFileAssertionUtils.assertThrowsOneSettingsProblem(SettingsProblemKind.FILE_REFERENCE_LOOP,
+        () -> createFromSources(FLAT_TEST_SCHEMA, TestFlatChainSettings.class, first));
+    assertEquals(namingBack.getDescription(), problem.getSource());
+  }
+
+  /**
+   * A part named by a list of files is made from each in the order listed, as stacked sources are, so where two set the
+   * same key the later wins, and a list of one file names that file
+   */
+  @Test
+  public void testPartFromAListOfFiles() throws IOException {
+    flatFile("run/shared.yaml", "outputDirectory: shared\nfileName: shared.xml\n");
+    flatFile("run/network.yaml", "outputDirectory: own\nremoveDangling: false\n");
+    var holder = createFromSources(FLAT_TEST_SCHEMA, TestFlatHolderSettings.class,
+        flatFile("run/holder.yaml", "network: [shared.yaml, network.yaml]\nzoning: [shared.yaml]\n"));
+    assertEquals("own", holder.getNetwork().getOutputDirectory());
+    assertEquals("shared.xml", holder.getNetwork().getFileName());
+    assertFalse(holder.getNetwork().isRemoveDangling());
+    assertEquals("shared", holder.getZoning().getOutputDirectory());
+    assertEquals("shared.xml", holder.getZoning().getFileName());
+  }
+
+  /** A file in a list naming back the file naming the list is one problem, found in that file */
+  @Test
+  public void testLoopThroughAFileInAListIsAProblem() throws IOException {
+    flatFile("shared.yaml", "outputDirectory: out\n");
+    var namingBack = flatFile("b.yaml", "next: a.yaml\n");
+    var first = flatFile("a.yaml", "next: [shared.yaml, b.yaml]\n");
+    var problem = SettingsFileAssertionUtils.assertThrowsOneSettingsProblem(SettingsProblemKind.FILE_REFERENCE_LOOP,
+        () -> createFromSources(FLAT_TEST_SCHEMA, TestFlatChainSettings.class, first));
+    assertEquals(namingBack.getDescription(), problem.getSource());
+  }
+
+  /** An entry of a list of files that is no path is a problem of that entry */
+  @Test
+  public void testEntryOfAListOfFilesThatIsNoPathIsAProblem() throws IOException {
+    flatFile("run/network.yaml", "outputDirectory: out\n");
+    var holderFile = flatFile("run/holder.yaml", "network: [network.yaml, {a: b}]\n");
+    var problem = SettingsFileAssertionUtils.assertThrowsOneSettingsProblem(SettingsProblemKind.WRONG_TYPE,
+        () -> createFromSources(FLAT_TEST_SCHEMA, TestFlatHolderSettings.class, holderFile));
+    assertEquals("network[1]", problem.getKeyPath());
+  }
+
+  /** A coordinate reference system is given by its code */
+  @Test
+  public void testCoordinateReferenceSystemByItsCode() {
+    var settings = createFromText(CRS_AND_FORMAT_TEST_SCHEMA, TestCrsAndFormatSettings.class,
+        "destinationCrs: EPSG:28356\n");
+    assertEquals(PlanitCrsUtils.createCoordinateReferenceSystem("EPSG:28356"), settings.getDestinationCrs());
+  }
+
+  /** A code naming no coordinate reference system is one problem, of that key */
+  @Test
+  public void testUnknownCoordinateReferenceSystemIsAProblem() {
+    var problem = SettingsFileAssertionUtils.assertThrowsOneSettingsProblem(SettingsProblemKind.WRONG_TYPE,
+        () -> createFromSources(CRS_AND_FORMAT_TEST_SCHEMA, TestCrsAndFormatSettings.class,
+            SettingsSource.ofText(CRS_AND_FORMAT_TEST_SCHEMA, "destinationCrs: EPSG:999999\n")));
+    assertEquals("destinationCrs", problem.getKeyPath());
+  }
+
+  /** A decimal format is given by its pattern */
+  @Test
+  public void testDecimalFormatByItsPattern() {
+    var settings = createFromText(CRS_AND_FORMAT_TEST_SCHEMA, TestCrsAndFormatSettings.class,
+        "decimalFormat: \"#.###\"\n");
+    assertEquals(new DecimalFormat("#.###"), settings.getDecimalFormat());
+  }
+
+  /** A key of a part, given in the source naming the parts' files, is no key of the settings holding the parts */
+  @Test
+  public void testPartKeyInTheNamingSourceIsAProblem() {
+    SettingsFileAssertionUtils.assertThrowsOneSettingsProblem(SettingsProblemKind.UNKNOWN_KEY,
+        () -> createFromSources(FLAT_TEST_SCHEMA, TestFlatHolderSettings.class,
+            SettingsSource.ofText(FLAT_TEST_SCHEMA, "outputDirectory: out\n")));
   }
 }

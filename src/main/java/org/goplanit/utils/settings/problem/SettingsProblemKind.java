@@ -20,9 +20,12 @@ public enum SettingsProblemKind {
   /** The file cannot be read, such as a file that does not exist */
   FILE_NOT_READ,
 
+  /** A file named as the settings file of a part names, directly or through other files, the file naming it */
+  FILE_REFERENCE_LOOP,
+
   /**
    * The text cannot be read as settings, such as text with a list left open or a value tagged with a Java type, or
-   * text without keys at its root; the detail says what is wrong
+   * text without keys at its top level; the detail says what is wrong
    */
   UNREADABLE_TEXT,
 

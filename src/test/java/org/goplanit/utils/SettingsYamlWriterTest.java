@@ -1,5 +1,9 @@
 package org.goplanit.utils;
 
+import org.goplanit.utils.SettingsYamlLoaderTest.TestCrsAndFormatSettings;
+import org.goplanit.utils.SettingsYamlLoaderTest.TestFlatHolderSettings;
+import org.goplanit.utils.SettingsYamlLoaderTest.TestFlatPartSettings;
+import org.goplanit.utils.SettingsYamlLoaderTest.TestFlatSettings;
 import org.goplanit.utils.SettingsYamlLoaderTest.TestKind;
 import org.goplanit.utils.SettingsYamlLoaderTest.TestLanes;
 import org.goplanit.utils.SettingsYamlLoaderTest.TestOrderFirstSettings;
@@ -8,21 +12,25 @@ import org.goplanit.utils.SettingsYamlLoaderTest.TestOrderSecondSettings;
 import org.goplanit.utils.SettingsYamlLoaderTest.TestOtherSettings;
 import org.goplanit.utils.SettingsYamlLoaderTest.TestRange;
 import org.goplanit.utils.SettingsYamlLoaderTest.TestRangeConverter;
-import org.goplanit.utils.SettingsYamlLoaderTest.TestRootHolderSettings;
-import org.goplanit.utils.SettingsYamlLoaderTest.TestRootNetworkSettings;
-import org.goplanit.utils.SettingsYamlLoaderTest.TestRootTransportSettings;
+import org.goplanit.utils.SettingsYamlLoaderTest.TestTopLevelHolderSettings;
+import org.goplanit.utils.SettingsYamlLoaderTest.TestTopLevelNetworkSettings;
+import org.goplanit.utils.SettingsYamlLoaderTest.TestTopLevelTransportSettings;
 import org.goplanit.utils.SettingsYamlLoaderTest.TestSettings;
 import org.goplanit.utils.exceptions.PlanItRunTimeException;
+import org.goplanit.utils.geo.PlanitCrsUtils;
 import org.goplanit.utils.settings.*;
 import org.goplanit.utils.settings.SettingsFileContentType;
 import org.goplanit.utils.settings.SettingsYamlLoader;
-import org.goplanit.utils.settings.annotations.SettingsRootValue;
+import org.goplanit.utils.settings.annotations.SettingsTopLevelValue;
+import org.goplanit.utils.yaml.SimpleYamlReader;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
 import java.io.IOException;
 import java.net.URL;
+import java.nio.file.Files;
 import java.nio.file.Path;
+import java.text.DecimalFormat;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -30,6 +38,7 @@ import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -56,9 +65,9 @@ public class SettingsYamlWriterTest {
       this.test = new TestSettings();
     }
 
-    /** @param country made with, a value at the root, passed on to the test settings */
+    /** @param country made with, a value at the top level, passed on to the test settings */
     public TestCountryHolderSettings(
-        @SettingsRootValue(key = "country", description = "The country the settings are made for") String country) {
+        @SettingsTopLevelValue(key = "country", description = "The country the settings are made for") String country) {
       this.test = new TestSettings(country);
     }
 
@@ -71,9 +80,18 @@ public class SettingsYamlWriterTest {
   /** The schema of the test settings: the sections test and other */
   private static final SettingsSchema TEST_SCHEMA = new SettingsSchema(TestSettings.class, TestOtherSettings.class);
 
-  /** The schema of the root test settings: the sections network and transport, a range at the root */
-  private static final SettingsSchema ROOT_TEST_SCHEMA = new SettingsSchema(List.of(new TestRangeConverter()),
-      TestRootNetworkSettings.class, TestRootTransportSettings.class);
+  /** The schema of the top level test settings: the sections network and transport, a range at the top level */
+  private static final SettingsSchema TOP_LEVEL_TEST_SCHEMA = new SettingsSchema(List.of(new TestRangeConverter()),
+      TestTopLevelNetworkSettings.class, TestTopLevelTransportSettings.class);
+
+  /** The schema of the flat test settings: settings filling no section, every key at the top level */
+  private static final SettingsSchema FLAT_TEST_SCHEMA = new SettingsSchema(TestFlatSettings.class);
+
+  /** The schema of the test settings of a coordinate reference system and a decimal format */
+  private static final SettingsSchema CRS_AND_FORMAT_TEST_SCHEMA = new SettingsSchema(TestCrsAndFormatSettings.class);
+
+  /** The comment above the header line of settings written out with descriptions */
+  private static final String HEADER_COMMENT = "# The kind of these settings and the version of their keys\n";
 
   /**
    * Change a key of each kind of the test settings from its default, the paths and the number excepted, so the text
@@ -122,7 +140,8 @@ public class SettingsYamlWriterTest {
   public void testAllKeysWithDescriptions() {
     var text = new SettingsYamlWriter(TEST_SCHEMA, change(new TestSettings()), SettingsFileContentType.ALL_KEYS,
         true).toString();
-    assertEquals("planitTestSettings: 1\n"
+    assertEquals(HEADER_COMMENT
+        + "planitTestSettings: 1\n"
         + "# The country the settings are made for\n"
         + "# country:\n"
         + "test:\n"
@@ -208,7 +227,8 @@ public class SettingsYamlWriterTest {
     assertEquals("planitTestSettings: 1\ntest:\n  name: Sydney\n",
         new SettingsYamlWriter(TEST_SCHEMA, settings, SettingsFileContentType.KEYS_DIFFERING_FROM_DEFAULTS, false)
             .toString());
-    assertEquals("planitTestSettings: 1\n"
+    assertEquals(HEADER_COMMENT
+            + "planitTestSettings: 1\n"
             + "test:\n"
             + "  # Settings with a key of each kind the loader handles\n"
             + "  # --- standard ---\n"
@@ -216,7 +236,7 @@ public class SettingsYamlWriterTest {
             + "  name: Sydney\n",
         new SettingsYamlWriter(TEST_SCHEMA, settings, SettingsFileContentType.KEYS_DIFFERING_FROM_DEFAULTS, true)
             .toString());
-    assertEquals("planitTestSettings: 1\n",
+    assertEquals(HEADER_COMMENT + "planitTestSettings: 1\n",
         new SettingsYamlWriter(TEST_SCHEMA, new TestSettings(), SettingsFileContentType.KEYS_DIFFERING_FROM_DEFAULTS,
             true).toString());
   }
@@ -226,7 +246,7 @@ public class SettingsYamlWriterTest {
    * key whose default depends on them is compared with the right default
    */
   @Test
-  public void testRootValues() {
+  public void testTopLevelValues() {
     var settings = new TestSettings("Australia");
     settings.setEnabled(true);
     assertEquals("planitTestSettings: 1\ncountry: Australia\ntest:\n  enabled: true\n",
@@ -236,14 +256,15 @@ public class SettingsYamlWriterTest {
 
   /**
    * Settings holding the settings of the sections, which they pass the values they are made with on to, have their
-   * values at the root read from the settings of the first section, like their keys at the root
+   * values at the top level read from the settings of the first section, like their keys at the top level
    */
   @Test
-  public void testRootValuesOfSettingsHoldingTheSections() {
+  public void testTopLevelValuesOfSettingsHoldingTheSections() {
     var settings = new TestCountryHolderSettings("Australia");
     settings.getTest().setEnabled(true);
-    var text = new SettingsYamlWriter(TEST_SCHEMA, settings, SettingsFileContentType.KEYS_DIFFERING_FROM_DEFAULTS, false)
-        .toString();
+    var text =
+        new SettingsYamlWriter(TEST_SCHEMA, settings, SettingsFileContentType.KEYS_DIFFERING_FROM_DEFAULTS, false)
+            .toString();
     assertEquals("planitTestSettings: 1\ncountry: Australia\ntest:\n  enabled: true\n", text);
     assertEquals("Australia", readBack(TEST_SCHEMA, TestCountryHolderSettings.class, text).getTest().getCountry());
   }
@@ -282,23 +303,24 @@ public class SettingsYamlWriterTest {
   }
 
   /**
-   * A key at the root is written once, after the header, through the converter of its type, and read back into the
+   * A key at the top level is written once, after the header, through the converter of its type, and read back into the
    * settings of every section; a section with no key of its own is left out
    */
   @Test
-  public void testRootKeysAndConverters() {
-    var settings = new TestRootHolderSettings();
+  public void testTopLevelKeysAndConverters() {
+    var settings = new TestTopLevelHolderSettings();
     settings.getNetwork().setRange(new TestRange(1, 5));
     settings.getTransport().setRange(new TestRange(1, 5));
     settings.getNetwork().setName("north");
-    var text = new SettingsYamlWriter(ROOT_TEST_SCHEMA, settings, SettingsFileContentType.ALL_KEYS, false).toString();
+    var text = new SettingsYamlWriter(TOP_LEVEL_TEST_SCHEMA, settings, SettingsFileContentType.ALL_KEYS, false)
+        .toString();
     var lines = text.lines().collect(Collectors.toList());
     assertEquals(4, lines.size());
-    assertEquals(List.of("planitRootTestSettings: 1", "network:", "  name: north"),
+    assertEquals(List.of("planitTopLevelTestSettings: 1", "network:", "  name: north"),
         List.of(lines.get(0), lines.get(2), lines.get(3)));
     assertTrue(lines.get(1).startsWith("range: {"));
 
-    var readBack = readBack(ROOT_TEST_SCHEMA, TestRootHolderSettings.class, text);
+    var readBack = readBack(TOP_LEVEL_TEST_SCHEMA, TestTopLevelHolderSettings.class, text);
     assertEquals(new TestRange(1, 5), readBack.getNetwork().getRange());
     assertEquals(new TestRange(1, 5), readBack.getTransport().getRange());
     assertEquals("north", readBack.getNetwork().getName());
@@ -316,10 +338,75 @@ public class SettingsYamlWriterTest {
   @Test
   public void testFileWritten() throws IOException {
     var file = tempDir.resolve("settings.yaml");
-    new SettingsYamlWriter(TEST_SCHEMA, change(new TestSettings()), SettingsFileContentType.KEYS_DIFFERING_FROM_DEFAULTS,
-        true).write(file);
+    new SettingsYamlWriter(
+        TEST_SCHEMA, change(new TestSettings()), SettingsFileContentType.KEYS_DIFFERING_FROM_DEFAULTS, true)
+        .write(file);
     var readBack = new SettingsYamlLoader(TEST_SCHEMA, List.of(SettingsSource.ofFile(file))).create(TestSettings.class);
     assertEquals("Sydney", readBack.getName());
     assertEquals(Map.of(12L, UserOverride.of(new TestLanes(2, 1), "imagery")), readBack.getLanesOverrides());
+  }
+
+  /** A coordinate reference system is written as its code and a decimal format as its pattern, both read back equal */
+  @Test
+  public void testCoordinateReferenceSystemAndDecimalFormatWrittenBack() {
+    var settings = new TestCrsAndFormatSettings();
+    settings.setDestinationCrs(PlanitCrsUtils.createCoordinateReferenceSystem("EPSG:28356"));
+    settings.setDecimalFormat(new DecimalFormat("#.###"));
+    var text = new SettingsYamlWriter(CRS_AND_FORMAT_TEST_SCHEMA, settings, SettingsFileContentType.ALL_KEYS, false)
+        .toString();
+    var written = SimpleYamlReader.asMap(SimpleYamlReader.read(text));
+    assertEquals("EPSG:28356", written.get("destinationCrs"));
+    assertEquals(new DecimalFormat("#.###").toPattern(), written.get("decimalFormat"));
+
+    var readBack = readBack(CRS_AND_FORMAT_TEST_SCHEMA, TestCrsAndFormatSettings.class, text);
+    assertEquals(settings.getDestinationCrs(), readBack.getDestinationCrs());
+    assertEquals(settings.getDecimalFormat(), readBack.getDecimalFormat());
+  }
+
+  /**
+   * Settings filling no section have every key of their class at the top level, inherited ones included, by level,
+   * then the keys of a class before those of the classes extending it, then by name, under the header comment when
+   * written with descriptions, and read back into equal settings. The folder key of the base class comes first, though
+   * the class of the part repeats its annotation on an override
+   */
+  @Test
+  public void testSettingsFillingNoSection() {
+    var settings = new TestFlatPartSettings();
+    settings.setOutputDirectory("out");
+    var text = new SettingsYamlWriter(FLAT_TEST_SCHEMA, settings, SettingsFileContentType.ALL_KEYS, true).toString();
+    assertEquals(HEADER_COMMENT
+        + "planitFlatTestSettings: 1\n"
+        + "# --- standard ---\n"
+        + "# A folder, as text\n"
+        + "outputDirectory: out\n"
+        + "# A file name\n"
+        + "fileName: default.xml\n"
+        + "# --- uncommon ---\n"
+        + "# A yes or no choice\n"
+        + "removeDangling: true\n", text);
+    assertEquals("out", readBack(FLAT_TEST_SCHEMA, TestFlatPartSettings.class, text).getOutputDirectory());
+  }
+
+  /**
+   * Settings holding parts, written to a file, name a file per part there, each part written to a file of its own
+   * next to it under the key's name, and the files read back give the same settings
+   */
+  @Test
+  public void testPartsWrittenToFilesOfTheirOwn() throws IOException {
+    var settings = new TestFlatHolderSettings();
+    settings.getNetwork().setOutputDirectory("out");
+    settings.getNetwork().setRemoveDangling(false);
+    var file = tempDir.resolve("run/holder.yaml");
+    Files.createDirectories(file.getParent());
+    new SettingsYamlWriter(FLAT_TEST_SCHEMA, settings, SettingsFileContentType.ALL_KEYS, false).write(file);
+    assertEquals("planitFlatTestSettings: 1\nnetwork: network.yaml\nzoning: zoning.yaml\n", Files.readString(file));
+    assertEquals("planitFlatTestSettings: 1\noutputDirectory: out\nfileName: default.xml\nremoveDangling: false\n",
+        Files.readString(file.resolveSibling("network.yaml")));
+
+    var readBack = new SettingsYamlLoader(FLAT_TEST_SCHEMA, List.of(SettingsSource.ofFile(file)))
+        .create(TestFlatHolderSettings.class);
+    assertEquals("out", readBack.getNetwork().getOutputDirectory());
+    assertFalse(readBack.getNetwork().isRemoveDangling());
+    assertEquals(new TestFlatSettings().getFileName(), readBack.getZoning().getFileName());
   }
 }
