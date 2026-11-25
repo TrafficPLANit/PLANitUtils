@@ -51,9 +51,9 @@ public class SimpleYamlWriterTest {
     for (int index = 0; index < texts.size(); index++) {
       yaml.addEntry("text" + index, texts.get(index));
     }
-    var root = SimpleYamlReader.asMap(SimpleYamlReader.read(yaml.toString()));
+    var topLevel = SimpleYamlReader.asMap(SimpleYamlReader.read(yaml.toString()));
     for (int index = 0; index < texts.size(); index++) {
-      assertEquals(texts.get(index), root.get("text" + index));
+      assertEquals(texts.get(index), topLevel.get("text" + index));
     }
   }
 
@@ -203,6 +203,16 @@ public class SimpleYamlWriterTest {
     var yaml = new SimpleYamlWriter();
     yaml.addEntry("name", "Sydney");
     var file = tempDir.resolve("a.yaml");
+    yaml.write(file);
+    assertEquals(Map.of("name", "Sydney"), SimpleYamlReader.read(file));
+  }
+
+  /** A file in a folder that is not there yet is written, the folder made */
+  @Test
+  public void testFileWrittenIntoAFolderNotThereYet() throws IOException {
+    var yaml = new SimpleYamlWriter();
+    yaml.addEntry("name", "Sydney");
+    var file = tempDir.resolve("run").resolve("output").resolve("a.yaml");
     yaml.write(file);
     assertEquals(Map.of("name", "Sydney"), SimpleYamlReader.read(file));
   }

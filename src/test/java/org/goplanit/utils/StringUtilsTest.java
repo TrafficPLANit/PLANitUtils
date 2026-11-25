@@ -46,4 +46,17 @@ public class StringUtilsTest {
     assertEquals(List.of("first", "second line"), StringUtils.wrapLineAtSpaces("first\nsecond line", 20));
     assertEquals(List.of(""), StringUtils.wrapLineAtSpaces("", 10));
   }
+
+  /**
+   * Text containing any of the parts is put in double quotes, with each double quote inside it doubled; text containing
+   * none is left as it is
+   */
+  @Test
+  public void quoteIfContainsAny() {
+    assertEquals("plain", StringUtils.quoteIfContainsAny("plain", ","));
+    assertEquals("\"a,b\"", StringUtils.quoteIfContainsAny("a,b", ","));
+    assertEquals("\"say \"\"hi\"\"\"", StringUtils.quoteIfContainsAny("say \"hi\"", ",", "\""));
+    assertEquals("\"two\nlines\"", StringUtils.quoteIfContainsAny("two\nlines", ";", "\n"));
+    assertEquals("a,b", StringUtils.quoteIfContainsAny("a,b", ";"));
+  }
 }

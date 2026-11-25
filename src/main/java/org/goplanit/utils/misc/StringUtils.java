@@ -17,12 +17,6 @@ import java.util.stream.Collectors;
  */
 public class StringUtils {
 
-  /** precompiled regex pattern to split a string based on encountering a non-alphanumeric character */
-  public static final Pattern SPLIT_BY_NON_ALPHA_NUMERIC = Pattern.compile("[^a-zA-Z0-9]");
-
-  /** number of values {@link #toBracketedList} is given to list when a collection may be too large to list in full */
-  public static final int DEFAULT_MAX_LISTED_ENTRIES = 10;
-
   /**
    * Create string ot use in String.format of form "0numPadding%d"
    * @param numPadding to apply
@@ -31,6 +25,12 @@ public class StringUtils {
   private static String createPaddingFormatString(int numPadding){
     return "%0" + numPadding + "d";
   }
+
+  /** precompiled regex pattern to split a string based on encountering a non-alphanumeric character */
+  public static final Pattern SPLIT_BY_NON_ALPHA_NUMERIC = Pattern.compile("[^a-zA-Z0-9]");
+
+  /** number of values {@link #toBracketedList} is given to list when a collection may be too large to list in full */
+  public static final int DEFAULT_MAX_LISTED_ENTRIES = 10;
 
   /**
    * A String might have some byte order mark preceding the string (for example InputStreamReader might include this).
@@ -116,6 +116,24 @@ public class StringUtils {
    */
   public static String removeEndingStringWhenPresent(String theString, String endString) {
     return theString.endsWith(endString) ? theString.substring(0, theString.length() - endString.length()) : theString;
+  }
+
+  /**
+   * The text in double quotes, each double quote inside it doubled, when it contains any of the parts given; otherwise
+   * the text as it is. For example {@code a,b} containing {@code ,} gives {@code "a,b"}, and {@code say "hi"}
+   * containing {@code "} gives {@code "say ""hi"""}
+   *
+   * @param text to quote
+   * @param parts any of which makes the text be quoted
+   * @return the text quoted, or as it is
+   */
+  public static String quoteIfContainsAny(String text, String... parts) {
+    for (var part : parts) {
+      if (text.contains(part)) {
+        return "\"" + text.replace("\"", "\"\"") + "\"";
+      }
+    }
+    return text;
   }
 
   /**

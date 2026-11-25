@@ -1,5 +1,7 @@
 package org.goplanit.utils.csv;
 
+import org.goplanit.utils.misc.FileUtils;
+
 import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.UncheckedIOException;
@@ -29,15 +31,6 @@ import java.util.Objects;
  */
 public class SimpleCsvWriter implements AutoCloseable {
 
-  /** separator used when none is provided */
-  public static final String DEFAULT_SEPARATOR = ",";
-
-  /** by default values are inspected and quoted where required */
-  public static final boolean DEFAULT_ESCAPE_VALUES = true;
-
-  /** characters that force a value to be quoted, beyond the separator itself */
-  private static final char[] ALWAYS_QUOTE_TRIGGERS = {'"', '\n', '\r'};
-
   /** the underlying writer */
   private final BufferedWriter writer;
 
@@ -49,6 +42,21 @@ public class SimpleCsvWriter implements AutoCloseable {
 
   /** number of values each row is expected to hold, taken from the header */
   private final int numColumns;
+
+  /**
+   * Convert a value to its written form, quoting it when leaving it bare would corrupt the row
+   *
+   * @param value to convert, may be null
+   * @return value as it is to appear in the file
+   */
+  private String escape(final Object value) {
+    if (value == null) {
+      return "";
+    }
+
+    var asString = value.toString();
+    return escapeValues ? CsvUtils.escapeStringIfContainsSeparator(asString, separator) : asString;
+  }
 
   /**
    * Constructor, creates the file and any missing parent directories and writes the header row
@@ -69,16 +77,19 @@ public class SimpleCsvWriter implements AutoCloseable {
     this.numColumns = headers.length;
 
     try {
-      var parentDir = filePath.getParent();
-      if (parentDir != null) {
-        Files.createDirectories(parentDir);
-      }
+      FileUtils.createParentDirectories(filePath);
       this.writer = Files.newBufferedWriter(filePath, StandardCharsets.UTF_8);
       writeRow((Object[]) headers);
     } catch (IOException e) {
       throw new UncheckedIOException("unable to create CSV file " + filePath, e);
     }
   }
+
+  /** separator used when none is provided */
+  public static final String DEFAULT_SEPARATOR = ",";
+
+  /** by default values are inspected and quoted where required */
+  public static final boolean DEFAULT_ESCAPE_VALUES = true;
 
   /**
    * Create a writer using the default separator
@@ -206,32 +217,5 @@ public class SimpleCsvWriter implements AutoCloseable {
     } catch (IOException e) {
       throw new UncheckedIOException("unable to close CSV file", e);
     }
-  }
-
-  /**
-   * Convert a value to its written form, quoting it when leaving it bare would corrupt the row
-   *
-   * @param value to convert, may be null
-   * @return value as it is to appear in the file
-   */
-  private String escape(final Object value) {
-    if (value == null) {
-      return "";
-    }
-
-    var asString = value.toString();
-    if (!escapeValues) {
-      return asString;
-    }
-
-    boolean requiresQuoting = asString.contains(separator);
-    for (int index = 0; !requiresQuoting && index < ALWAYS_QUOTE_TRIGGERS.length; ++index) {
-      requiresQuoting = asString.indexOf(ALWAYS_QUOTE_TRIGGERS[index]) >= 0;
-    }
-
-    if (!requiresQuoting) {
-      return asString;
-    }
-    return "\"" + asString.replace("\"", "\"\"") + "\"";
   }
 }

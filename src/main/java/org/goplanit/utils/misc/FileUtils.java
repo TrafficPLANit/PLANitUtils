@@ -309,6 +309,19 @@ public class FileUtils {
   }
 
   /**
+   * Create the folders a file is to be written in, when they are not there yet
+   *
+   * @param file to be written
+   * @throws IOException when a folder cannot be created
+   */
+  public static void createParentDirectories(Path file) throws IOException {
+    var parent = file.toAbsolutePath().getParent();
+    if (parent != null) {
+      Files.createDirectories(parent);
+    }
+  }
+
+  /**
    * Convenience method to create directories from provided string if they do not exist. In case
    * of an IO exception a warning is issued and exception is caught
    *
