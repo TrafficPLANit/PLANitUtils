@@ -1,6 +1,7 @@
 package org.goplanit.utils.yaml;
 
 import org.goplanit.utils.exceptions.ExceptionUtils;
+import org.goplanit.utils.misc.FileUtils;
 import org.goplanit.utils.misc.StringUtils;
 import org.snakeyaml.engine.v2.api.Dump;
 import org.snakeyaml.engine.v2.api.DumpSettings;
@@ -98,10 +99,10 @@ public final class SimpleYamlWriter {
   /** A YAML section: its entries in order, and the comment lines waiting for what follows them */
   private static final class YamlSection {
 
-    /** path of the section, as messages give it, empty at the root */
+    /** path of the section, as messages give it, empty at the top level */
     private final String keyPath;
 
-    /** how deep the section is nested, 0 at the root */
+    /** how deep the section is nested, 0 at the top level */
     private final int depth;
 
     /** each key with its entry, in the order added */
@@ -113,8 +114,8 @@ public final class SimpleYamlWriter {
     /**
      * Constructor
      *
-     * @param keyPath of the section, empty at the root
-     * @param depth of the section, 0 at the root
+     * @param keyPath of the section, empty at the top level
+     * @param depth of the section, 0 at the top level
      */
     private YamlSection(String keyPath, int depth) {
       this.keyPath = keyPath;
@@ -263,7 +264,7 @@ public final class SimpleYamlWriter {
         "Section '%s' holds only comments, which YAML cannot keep at its depth", section.keyPath);
   }
 
-  /** the sections not yet ended, the one entries go to on top, the root at the bottom */
+  /** the sections not yet ended, the one entries go to on top, the top level at the bottom */
   private final Deque<YamlSection> openSections = new ArrayDeque<>();
 
   /** longest a comment line may be, its indent and # included */
@@ -343,21 +344,23 @@ public final class SimpleYamlWriter {
   public String toString() {
     ExceptionUtils.throwIllegalStateIf(openSections.size() > 1, "Section '%s' is not ended",
         openSections.peek().keyPath);
-    var root = openSections.peek();
-    throwIfOnlyComments(root);
+    var topLevel = openSections.peek();
+    throwIfOnlyComments(topLevel);
     var text = new TextWriter();
-    new Dump(PERSIST_SETTINGS).dumpNode(toMappingYamlNode(root), text);
+    new Dump(PERSIST_SETTINGS).dumpNode(toMappingYamlNode(topLevel), text);
     return text.toString();
   }
 
   /**
-   * Write the YAML text of everything added to a file, as UTF-8
+   * Write the YAML text of everything added to a file, as UTF-8, creating the folders of the file when they are not
+   * there
    *
    * @param file to write
    * @throws IOException when the file cannot be written
    * @throws IllegalStateException when a section is not ended, or the text holds only comments
    */
   public void write(Path file) throws IOException {
+    FileUtils.createParentDirectories(file);
     Files.writeString(file, toString());
   }
 }
