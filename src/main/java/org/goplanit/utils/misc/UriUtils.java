@@ -74,8 +74,8 @@ public class UriUtils {
     return !uri.toString().endsWith("/") ? URI.create(uri.toString().concat("/")) : uri;
   }
   
-  /** collect only the jar URI part by stripping all beyond the jar, i.e., remove the part that points to a location within the jar
-   * If this is not a jar URI, we return the original URI
+  /** collect only the jar URI part by stripping all beyond the jar, i.e., remove the part that points to a location
+   * within the jar. If this is not a jar URI, we return the original URI
    * 
    * @param uri to extract jar component from
    * @return URI with only jar component
@@ -229,16 +229,14 @@ public class UriUtils {
     return jarLocationURIWithoutScheme.relativize(desiredUriWithoutScheme);
   }
 
-  /** Method that attempts to strip everything from the URI to make it a relative URI. This is useful if the URI points
-   * to a resource that should be available within the application. Given that resources are to be streamed from a
-   * String, apply this method and convert to String afterward to let Java search for the resource. Often we cannot
-   * provide the (absolute) URI because it does not work in case it, for example, points to non-file like objects,
-   * or files contained within other file systems, such as jars. When providing the correct relative URI, Java can
-   * work around this whereas otherwise it cannot.
+  /** Attempt to strip everything from the URI to make it a relative URI. This is useful if the URI points to a
+   * resource that should be available within the application. Resources are streamed from a String, so apply this
+   * method and convert to String afterward to let Java search for the resource. The (absolute) URI often does not
+   * work, for example when it points to non-file like objects, or files within other file systems, such as jars.
+   * Given the correct relative URI, Java can work around this, otherwise it cannot.
    * <p>
-   * We attempt three ways to make the URI relative: (i) relative against the current working directory,
-   * (ii) relative against the user.dir, (iii) relative
-   * against the URI jar file (if applicable). If none succeed, the original URI is returned
+   * Three ways to make the URI relative are tried: (i) against the current working directory, (ii) against the
+   * user.dir, (iii) against the URI jar file (if applicable). If none succeed, the original URI is returned
    * 
    * @param uri to convert
    * @return relativised URI, original uri if unable to create a relatives version

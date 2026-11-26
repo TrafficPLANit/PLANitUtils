@@ -16,17 +16,16 @@ import java.util.function.Predicate;
 /**
  * Depth-first traversal over a directed graph, or over any items that each lead on to other items.
  * <p>
- * Unlike {@link BreadthFirstSearch}, which searches outward from one vertex for a target, this exists to visit a
- * whole set and report the order in which its members <i>finish</i>, i.e. the order in which they are left
- * behind once everything reachable from them has been explored. That ordering is what
- * {@link StronglyConnectedComponents} needs for its first pass.
+ * Unlike {@link BreadthFirstSearch}, which searches outward from one vertex for a target, this visits a whole set and
+ * reports the order in which its members <i>finish</i>, i.e. are left behind once everything reachable from them has
+ * been explored. {@link StronglyConnectedComponents} needs that order for its first pass.
  * </p>
  * <p>
- * <b>Iterative by necessity, not by taste.</b> The recursive formulation found in textbooks recurses once per
- * vertex along a path, and these traversals run on road networks with hundreds of thousands of vertices, where a
- * single long chain of links is enough to overflow the stack. The explicit stack below holds an item together
- * with an iterator over the items it leads on to, so an item is only finished once its iterator is exhausted, which
- * reproduces the recursive post-order exactly.
+ * <b>Iterative by necessity.</b> The recursive formulation found in textbooks recurses once per vertex along a path,
+ * and these traversals run on road networks with hundreds of thousands of vertices, where a single long chain of
+ * links is enough to overflow the stack. The explicit stack below holds an item with an iterator over the items it
+ * leads on to, so an item is only finished once its iterator is exhausted. This reproduces the recursive post-order
+ * exactly.
  * </p>
  *
  * @author markr

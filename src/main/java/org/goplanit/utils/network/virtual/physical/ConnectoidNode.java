@@ -7,11 +7,11 @@ import org.goplanit.utils.network.virtual.physical.conjugate.ConjugateConnectoid
 import java.util.Collection;
 
 /**
- * Connectoid Node is a node but not all nodes are connectoid nodes.
- * Connectoid nodes represent vertices in the virtual network.
+ * A connectoid node is a node, but not all nodes are connectoid nodes. Connectoid nodes represent vertices in the
+ * virtual network.
  * <p>
- *   Typically these are only used in conjugate form as
- *  * virtual networks typically run from a centroid vertex to a physical vertex obviating the need for this type of node
+ *   They are typically only used in conjugate form, as virtual networks typically run from a centroid vertex to a
+ *   physical vertex, obviating the need for this type of node
  * </p>
  * 
  * @author markr

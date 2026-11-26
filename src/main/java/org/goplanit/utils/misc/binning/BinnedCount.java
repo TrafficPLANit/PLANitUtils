@@ -9,10 +9,10 @@ import java.util.stream.Collectors;
 /**
  * Counts collected against a {@link BinningConfiguration}, i.e. how many values fell in each of its bins.
  * <p>
- * Values falling outside the range covered are counted separately rather than discarded or rejected. Collecting a
- * distribution is usually done while something else is going on, e.g. a network parse, and aborting it over a value
- * the bins did not anticipate would be out of proportion; equally, silently dropping such values would leave the
- * total quietly wrong. Counting them apart keeps the totals honest either way.
+ * Values outside the range covered are counted separately, not discarded or rejected. A distribution is usually
+ * collected while something else is going on, e.g. a network parse, and aborting that over a value the bins did not
+ * anticipate would be out of proportion. Silently dropping such values would leave the total quietly wrong. Counting
+ * them apart keeps the totals honest either way.
  * </p>
  *
  * @author markr

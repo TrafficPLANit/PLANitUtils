@@ -77,9 +77,9 @@ public interface UntypedDirectedSubGraph<V extends DirectedVertex, E extends Dir
   /**
    * Construct a new list from all edge segments registered on this subgraph.
    * <p>
-   * Implementations tracking membership by id should resolve this by keyed lookup rather than by scanning the
-   * parent container, so that the cost is proportional to the subgraph and not to the entire graph. Callers that
-   * materialise many subgraphs, e.g. dangling subnetwork removal, otherwise become quadratic in the graph size.
+   * Implementations tracking membership by id should use a keyed lookup, not a scan of the parent container, so the
+   * cost is proportional to the subgraph, not to the entire graph. Otherwise callers listing the edge segments of many
+   * subgraphs, e.g. dangling subnetwork removal, become quadratic in the graph size.
    * </p>
    *
    * @param parentEdgeSegments to collect the registered segments from
@@ -118,8 +118,7 @@ public interface UntypedDirectedSubGraph<V extends DirectedVertex, E extends Dir
   }
 
   /**
-   * Perform a breadth-first search from a starting vertex in a given direction with conditions
-   * on:
+   * Perform a breadth-first search from a starting vertex in a given direction with conditions on:
    * <ul>
    *   <li>what initial edge segments from the start vertex to consider</li>
    *   <li>what edge segments from any other vertex to consider</li>
@@ -129,7 +128,8 @@ public interface UntypedDirectedSubGraph<V extends DirectedVertex, E extends Dir
    * @param startVertex to start search from
    * @param invertDirection direction for searching, when true invert direction from downstream to upstream
    * @param initialVertexSegmentInclusionCondition predicate for initial condition on edge segments to consider
-   * @param vertexSegmentInclusionCondition predicate for general condition on edge segments to consider (prevEdgeSegment, currEdgeSegment)
+   * @param vertexSegmentInclusionCondition predicate for general condition on edge segments to consider
+   *                                        (prevEdgeSegment, currEdgeSegment)
    * @param vertexSegmentTerminationCondition predicate for termination condition for successful search completion
    * @return found vertex (if any) based on termination and the back links for all processed vertices
    */

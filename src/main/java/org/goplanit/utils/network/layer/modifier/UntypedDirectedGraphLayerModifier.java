@@ -13,10 +13,10 @@ import java.util.*;
 import java.util.function.Predicate;
 
 /**
- * Modifier with additional functionality related to modifications to layers derived from
- * {@link UntypedDirectedGraphLayer}. Since it wraps an untyped directed graph it exposes the event listener
- * functionality to the end user by implementing the GraphModifierEventProducer interface allowing users to register
- * listeners for the events fired when breaking links or removing subnetworks (subgraphs)
+ * Modifier with additional functionality for modifying layers derived from {@link UntypedDirectedGraphLayer}. As it
+ * wraps an untyped directed graph, it exposes the event listener functionality to the end user by implementing the
+ * GraphModifierEventProducer interface, so users can register listeners for the events fired when breaking links or
+ * removing subnetworks (subgraphs)
  *
  * @author markr
  */

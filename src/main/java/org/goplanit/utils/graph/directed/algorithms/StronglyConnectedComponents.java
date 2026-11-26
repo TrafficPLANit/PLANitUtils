@@ -21,21 +21,19 @@ import java.util.function.Predicate;
  * Partition a directed graph into strongly connected components using Kosaraju's algorithm.
  * <p>
  * Two vertices are in the same strongly connected component when each can reach the other following direction.
- * This is the connectivity notion routing needs. It is stricter than the weak connectivity established by
- * undirected traversal, which only asks whether a path exists when direction is ignored, and which therefore
- * reports a one way trap as perfectly healthy.
+ * Routing needs this notion of connectivity. It is stricter than the weak connectivity found by undirected traversal,
+ * which only asks whether a path exists when direction is ignored, and so reports a one way trap as healthy.
  * </p>
  * <p>
- * <b>Scope matters, so it is required rather than optional.</b> The useful question is nearly always "what are
- * the components <i>within</i> this part of the graph", most often within a weakly connected component. Asking
- * globally and then comparing against a weak component gives a wrong answer whenever the largest strongly
- * connected component happens to lie in a different weak component, which is easy to do by accident and produces
- * plausible looking nonsense.
+ * <b>Scope matters, so it is required, not optional.</b> The useful question is nearly always "what are the
+ * components <i>within</i> this part of the graph", most often within a weakly connected component. Asking globally
+ * and then comparing with a weak component gives a wrong answer whenever the largest strongly connected component
+ * lies in another weak component. That is easy to do by accident, and the result looks plausible.
  * </p>
  * <p>
- * Eligibility of edge segments is a predicate so that the same algorithm answers per mode, per track type and
- * unrestricted questions. Edge segments themselves carry no notion of mode; anything mode aware belongs on the
- * network layer side and reaches this algorithm only as a predicate.
+ * Which edge segments are eligible is a predicate, so the same algorithm answers per mode, per track type and
+ * unrestricted questions. Edge segments carry no notion of mode; anything mode aware belongs on the network layer
+ * side and reaches this algorithm only as a predicate.
  * </p>
  * <p>
  * The same partition is available for edge segments, given which turns between them are allowed, and for any items,
@@ -84,9 +82,9 @@ public class StronglyConnectedComponents {
     /**
      * The largest component, empty when the scope held no items.
      * <p>
-     * When several components share the largest size, which one is returned is arbitrary. That is rarely a
-     * concern on real networks, where the routable component dwarfs everything else, but it means a caller
-     * treating "largest" as "the main network" is relying on that disparity rather than on a guarantee.
+     * When several components share the largest size, which one is returned is arbitrary. That rarely matters on real
+     * networks, where the routable component dwarfs everything else, but a caller treating "largest" as "the main
+     * network" relies on that disparity, not on a guarantee.
      * </p>
      *
      * @return largest component

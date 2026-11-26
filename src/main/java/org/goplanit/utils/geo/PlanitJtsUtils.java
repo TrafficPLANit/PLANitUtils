@@ -43,7 +43,8 @@ public class PlanitJtsUtils {
   private static final Logger LOGGER = Logger.getLogger(PlanitJtsUtils.class.getCanonicalName());
   
 
-  /** jts geometry factory, jts geometry differs from opengis implementation by not carrying the crs and being more lightweight */
+  /** jts geometry factory, jts geometry differs from opengis implementation by not carrying the crs and being more
+   * lightweight */
   protected static final GeometryFactory jtsGeometryFactory = JTSFactoryFinder.getGeometryFactory();
    
   /**
@@ -407,10 +408,8 @@ public class PlanitJtsUtils {
   }
 
   /**
-   * Computes the centroid location for a given polygon or multipolygon geometry.
-   * If a multipolygon is supplied, the centroid is derived specifically from the
-   * single constituent polygon containing the largest surface area to prevent
-   * the point from warping into dead zones between disjoint territories.
+   * Computes the centroid of a polygon or multipolygon geometry. For a multipolygon it is the centroid of its polygon
+   * with the largest area, so the point does not end up in the space between its separate parts.
    *
    * @param geometry the input zone geometry to inspect
    * @return the calculated centroid point, or null if the geometry is invalid or unsupported
@@ -499,7 +498,8 @@ public class PlanitJtsUtils {
   }
 
   /**
-   * Create an array of coordinates based on a list of some type that can be interpreted as strings and converted to doubles.
+   * Create an array of coordinates based on a list of some type that can be interpreted as strings and converted to
+   * doubles.
    * 
    * @param posList to extract coordinates from
    * @return coordinates array
@@ -684,8 +684,8 @@ public class PlanitJtsUtils {
     }
   }
 
-  /** create a copy of the passed in coord list and close it by adding a new coordinate at the end that matches the first.
-   * If the list is already closed, it is returned as is. If not eligible for closing, exception is thrown.
+  /** create a copy of the passed in coord list and close it by adding a new coordinate at the end that matches the
+   * first. If the list is already closed, it is returned as is. If not eligible for closing, exception is thrown.
    *
    * @param coordinateList to make closed if possible
    * @return closed version of original (copy + coord)
@@ -750,8 +750,8 @@ public class PlanitJtsUtils {
   }
 
   /**
-   * Remove all coordinates in the line string up to but not including the first occurrence of the passed in position. In case the position cannot be found, an exception will be
-   * thrown
+   * Remove all coordinates in the line string up to but not including the first occurrence of the passed in position.
+   * In case the position cannot be found, an exception will be thrown
    * 
    * @param position to use
    * @param geometry linestring
@@ -792,7 +792,8 @@ public class PlanitJtsUtils {
   }
 
   /**
-   * Remove all coordinates in the line string after but not including the passed in position. In case the position cannot be found, an exception will be thrown
+   * Remove all coordinates in the line string after but not including the passed in position. In case the position
+   * cannot be found, an exception will be thrown
    * 
    * @param position first location of this position in geometry is the last entry in the copied geometry
    * @param geometry line string
@@ -948,7 +949,8 @@ public class PlanitJtsUtils {
   }
 
   /**
-   * concatenate the passed in gemoetries (lines strings) by simply copying all the coorcinates in order and create a new line string from these points
+   * concatenate the passed in geometries (lines strings) by simply copying all the coordinates in order and create a
+   * new line string from these points
    * 
    * @param geometries to concatenate
    * @return created concatenated linesString
@@ -971,7 +973,8 @@ public class PlanitJtsUtils {
     return (LineString) jtsMultiLineString.getGeometryN(0);
   }
 
-  /** split a line string into two line strings at a given location along the original geometry. the resulting linestrings have the split location in common
+  /** split a line string into two line strings at a given location along the original geometry. the resulting
+   * linestrings have the split location in common
    * 
    * @param geometry to split
    * @param splitLocation where to split
@@ -1019,7 +1022,8 @@ public class PlanitJtsUtils {
     return (LineString) merged.iterator().next();
   }
 
-  /** Using the normalised sign of the determinant of line AB and AM we determine if coordM resides left of the line segment AB
+  /** Using the normalised sign of the determinant of line AB and AM we determine if coordM resides left of the line
+   * segment AB
    * 
    * @param coordM to check if left of AB
    * @param coordA A coord of AB
@@ -1031,7 +1035,8 @@ public class PlanitJtsUtils {
     return RobustDeterminant.orientationIndex( coordA, coordB, coordM) == 1;
   }
   
-  /** Using the normalised sign of the determinant of line AB and AM we determine if coordM resides right of the line segment AB
+  /** Using the normalised sign of the determinant of line AB and AM we determine if coordM resides right of the line
+   * segment AB
    * 
    * @param coordM to check if right of AB
    * @param coordA A coord of AB
@@ -1060,7 +1065,8 @@ public class PlanitJtsUtils {
 
 
   /**
-   * Compute the minimum difference t get to one angle to another in either direction between the given two angles (0-360)
+   * Compute the minimum difference to get from one angle to another in either direction between the given two angles
+   * (0-360)
    *
    * @param angleDegrees1 first angle in degrees
    * @param angleDegrees2 second angle in degrees
@@ -1114,8 +1120,8 @@ public class PlanitJtsUtils {
 
   /**
    * Add coord array contiguously in correct order to either the front or back of current contiguous coords by checking
-   * shared start/end nodes and if needed reverse adding to front or back depending on match found. the shared coordinate
-   * is not added to avoid duplicates in result
+   * shared start/end nodes and if needed reverse adding to front or back depending on match found. the shared
+   * coordinate is not added to avoid duplicates in result
    *
    * @param contiguousCoords to add to
    * @param coordArrayToAdd to add to contiguous coords

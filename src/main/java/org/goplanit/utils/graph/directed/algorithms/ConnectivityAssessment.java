@@ -14,18 +14,16 @@ import java.util.Set;
 import java.util.function.Predicate;
 
 /**
- * Compare what a graph is weakly connected by against what it is strongly connected by, and classify the
- * difference.
+ * Compare the weak and the strong connectivity of a graph, and classify the difference.
  * <p>
- * The gap between the two is the interesting part. A vertex sitting inside the largest weakly connected component
- * looks healthy to any undirected check, yet may be unusable in practice because direction prevents reaching it,
- * leaving it, or both. Those three cases have different consequences, so they are reported separately rather than
- * as a single count.
+ * The gap between the two is what matters. A vertex inside the largest weakly connected component looks healthy to
+ * any undirected check, yet may be unusable in practice because direction prevents reaching it, leaving it, or both.
+ * These three cases have different consequences, so they are reported separately, not as a single count.
  * </p>
  * <p>
- * This deliberately returns a value and logs nothing. Callers need the members and not a message: filtering
- * demand to routable infrastructure needs the strongly connected set, and treating traps needs the trapped
- * vertices as objects. What to report, at which level, and whether to report at all is the caller's decision.
+ * This returns a value and logs nothing, as callers need the members, not a message: filtering demand to routable
+ * infrastructure needs the strongly connected set, and treating traps needs the trapped vertices as objects. What to
+ * report, at which level, and whether to report at all is the caller's decision.
  * </p>
  *
  * @author markr
@@ -199,10 +197,9 @@ public class ConnectivityAssessment {
   /**
    * Assess connectivity for the given scope.
    * <p>
-   * The strongly connected components are determined <i>within</i> the largest weakly connected component rather
-   * than across the whole scope. Doing it the other way round allows the largest strongly connected component to
-   * be found in a different weak component than the one it is compared against, which yields a meaningless
-   * trapped count.
+   * The strongly connected components are determined <i>within</i> the largest weakly connected component, not across
+   * the whole scope. Otherwise the largest strongly connected component could be in another weak component than the
+   * one it is compared against, giving a meaningless trapped count.
    * </p>
    *
    * @param <V> type of directed vertex

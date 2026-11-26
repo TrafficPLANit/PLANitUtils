@@ -15,15 +15,14 @@ import java.util.function.Predicate;
 /**
  * Partition a graph into connected components, treating every edge as traversable in both directions.
  * <p>
- * Typed on {@link Vertex} and {@link Edge} rather than on their directed counterparts, which is deliberate: the
- * <i>weak</i> components of a directed graph are exactly the connected components of its underlying undirected
- * graph, and directed vertices are vertices. A directed caller therefore uses this one, and no directed variant
- * needs to exist.
+ * Typed on {@link Vertex} and {@link Edge}, not on their directed counterparts: the <i>weak</i> components of a
+ * directed graph are exactly the connected components of its underlying undirected graph, and directed vertices are
+ * vertices. So a directed caller uses this one, and no directed variant is needed.
  * </p>
  * <p>
- * Note what this establishes and what it does not. Membership of the same component means a path exists when
- * direction is ignored. It does <b>not</b> mean the vertices can reach each other in practice, which is what
- * {@code StronglyConnectedComponents} answers. Pruning built only on this reports a one way trap as healthy.
+ * Being in the same component means a path exists when direction is ignored. It does <b>not</b> mean the vertices can
+ * reach each other in practice, which is what {@code StronglyConnectedComponents} answers. Pruning built only on this
+ * reports a one way trap as healthy.
  * </p>
  * <p>
  * Iterative, since the networks involved are far too large for recursion.

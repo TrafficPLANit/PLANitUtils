@@ -21,8 +21,8 @@ public abstract class ManagedGraphEntitiesImpl<E extends GraphEntity & ManagedId
    * Constructor, keeping the entities in a {@link org.goplanit.utils.containers.LongKeyArrayMap}
    *
    * @param valueToKey the mapping from key to value of the graph entity
-   * @param managedIdClass should reflect the class signature used for generating the managed id of this class when creating it via the factory
-   * of this container
+   * @param managedIdClass should reflect the class signature used for generating the managed id of this class when
+   * creating it via the factory of this container
    */
   protected ManagedGraphEntitiesImpl(
           final Function<E, Long> valueToKey, final Class<? extends ManagedId> managedIdClass) {
@@ -30,8 +30,9 @@ public abstract class ManagedGraphEntitiesImpl<E extends GraphEntity & ManagedId
   }
 
   /**
-   * Constructor, keeping the entities in a {@link org.goplanit.utils.containers.LongKeyArrayMap}. while not recommended it is allowed to create managed ids that do not rely on id generation of the class itself. It can be that they rely on child
-   * ids or synced ids of other internal referenced classes. In that case this constructor can be used directly. this however should generally be avoided.
+   * Constructor, keeping the entities in a {@link org.goplanit.utils.containers.LongKeyArrayMap}, for managed ids that
+   * do not rely on id generation of the class itself, such as ids relying on child ids or synced ids of other internal
+   * referenced classes. This is allowed but not recommended, and should generally be avoided.
    *
    * @param valueToKey the mapping from key to value of the graph entity
    */
@@ -95,8 +96,8 @@ public abstract class ManagedGraphEntitiesImpl<E extends GraphEntity & ManagedId
   /**
    * {@inheritDoc}
    *
-   * Note: not an efficient implementation since it loops over all entities in linear time to identify the correct one,
-   * preferably use {@link #get(Object)} instead whenever possible.
+   * Note: not efficient, as it loops over all entities in linear time to find the right one. Use {@link #get(Object)}
+   * instead where possible.
    */
   @Override
   public E getByXmlId(String xmlId)

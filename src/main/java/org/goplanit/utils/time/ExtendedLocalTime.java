@@ -9,12 +9,11 @@ import java.util.concurrent.TimeUnit;
 import java.util.logging.Logger;
 
 /**
- * Simple immutable extension to Local Time to allow for additional time beyond midnight within a single time
- * entity, e.g. 25:01:01 (HH:mm:ss).
+ * Simple immutable extension to Local Time allowing time beyond midnight within a single time entity, e.g. 25:01:01
+ * (HH:mm:ss).
  * <p>
- *   This class does not support nano seconds and only allows for time to be expanded up to hour 47, i.e., not beyond
- *   another midnight.   Also we only support strings to be parsed and output of the form HH:mm:ss, to keep
- *   things simple
+ *   It does not support nano seconds and only allows time up to hour 47, i.e., not beyond another midnight. To keep
+ *   things simple, it only parses and outputs strings of the form HH:mm:ss
  * </p>
  */
 public class ExtendedLocalTime implements Comparable<ExtendedLocalTime>{
@@ -122,9 +121,9 @@ public class ExtendedLocalTime implements Comparable<ExtendedLocalTime>{
     if(hours > 23){
       beforeMidnight = LocalTime.MAX;
 
-      // add one nanosecond to increment to the next second, which is  added to the after midnight part for good form (not used),
-      // since we do not support nano seconds in the input, we implicitly assume they are set at 0 for the after midnight part
-      // ensuring no overflow can occur onto the seconds or minutes, etc.
+      // add one nanosecond to increment to the next second, which is added to the after midnight part for good form
+      // (not used), since we do not support nano seconds in the input, we implicitly assume they are set at 0 for the
+      // after midnight part ensuring no overflow can occur onto the seconds or minutes, etc.
       int hoursBeyondMidnight = (int) (hours - TimeUnit.DAYS.toHours(1));
       beyondMidnight = LocalTime.of(hoursBeyondMidnight, min, sec);
     }else{
@@ -183,8 +182,8 @@ public class ExtendedLocalTime implements Comparable<ExtendedLocalTime>{
   }
 
   /**
-   * subtract other from this and return newly created extended time reflecting the new time. One cannot subtract to invalid time, e.g.
-   * negative time is not allowed, so this time must be larger than other
+   * subtract other from this and return newly created extended time reflecting the new time. One cannot subtract to
+   * invalid time, e.g. negative time is not allowed, so this time must be larger than other
    *
    * @param other to subtract
    * @return newly created time, null if invalid
@@ -200,8 +199,8 @@ public class ExtendedLocalTime implements Comparable<ExtendedLocalTime>{
   }
 
   /**
-   * add other to this and return newly created extended time reflecting the new time. One cannot add to invalid time, e.g.,
-   * negative time is not allowed, so this time must be larger than other
+   * add other to this and return newly created extended time reflecting the new time. One cannot add to invalid time,
+   * e.g., negative time is not allowed, so this time must be larger than other
    *
    * @param other to subtract
    * @return newly created time, null if invalid

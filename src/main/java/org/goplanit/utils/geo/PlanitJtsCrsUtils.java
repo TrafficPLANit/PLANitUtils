@@ -31,13 +31,13 @@ import java.util.logging.Logger;
 import static org.goplanit.utils.epsg.ProjectedEpsgCodesByCountry.WORLD_PROJECTED_WGS84;
 
 /**
- * General geographic JTS utilities that rely on a known Coordinate Reference system (CRS). 
- * Uses geodetic distance when possible. In case the CRS is not based on an ellipsoid (2d plane) it will simply
- * compute the distance between coordinates using Pythagoras with the unit distance in meters,
- * consistent with the {@code CartesianAuthorityFactory.GENERIC_2D}
- * 
- * It is assumed that x coordinate refers to latitude and y coordinate refers to longitude
- * 
+ * General geographic JTS utilities that rely on a known Coordinate Reference system (CRS). They use geodetic distance
+ * when possible. When the CRS is not based on an ellipsoid (2d plane), the distance between coordinates is computed
+ * with Pythagoras, with the unit of distance in meters, consistent with {@code CartesianAuthorityFactory.GENERIC_2D}
+ * <p>
+ * The x coordinate is assumed to refer to latitude and the y coordinate to longitude
+ * </p>
+ *
  * @author markr
  *
  */
@@ -284,10 +284,9 @@ public class PlanitJtsCrsUtils {
     }      
   }
   
-  /** Find the closest location from the reference coordinate to the line string expressed as a linear location.
-   * Here we project onto the geometry, so we find the location with the actual closest distance and create a
-   * linear location regardless if this coordinate is part of the geometry as a predefined coordinate at an
-   * extreme point.
+  /** Find the location on the line string closest to the reference coordinate, as a linear location. The coordinate is
+   * projected onto the line string, so the location found is the closest, whether or not it is an existing coordinate
+   * of the line string.
    * 
    * @param referenceCoordinate the reference point
    * @param lineString to find closest distance to point to (must be a linear geometry)
@@ -299,10 +298,9 @@ public class PlanitJtsCrsUtils {
     return locIndexedLine.project(referenceCoordinate);
   } 
   
-  /** Find the closest location from the reference coordinate to the polygon expressed as a linear location.
-   *  Here we project onto the geometry, so we find the location with the actual closest distance and create a
-   *  linear location regardless if this coordinate is part of the geometry as a predefined coordinate at
-   *  an extreme point.
+  /** Find the location on the polygon closest to the reference coordinate, as a linear location. The coordinate is
+   * projected onto the polygon, so the location found is the closest, whether or not it is an existing coordinate of
+   * the polygon.
    * 
    * @param referenceCoordinate the reference point
    * @param polygon to find closest distance to point to (must be a linear geometry)
@@ -339,10 +337,9 @@ public class PlanitJtsCrsUtils {
   }   
    
   
-  /** find the closest location from any existing coordinate of the reference geometry to the line string geometry
-   * as a linear location. Here we project onto the geometry, so we find the location with the actual closest distance
-   * and extract the linear location regardless if this coordinate is part of the geometry as a predefined
-   * coordinate at an extreme point.
+  /** find the location on the line string closest to any existing coordinate of the reference geometry, as a linear
+   * location. Each coordinate is projected onto the line string, so the location found is the closest, whether or not
+   * it is an existing coordinate of the line string.
    * 
    * @param referenceGeometry the reference geometry
    * @param linearGeometry to find closest distance to point to (must be a linear geometry)
@@ -405,7 +402,8 @@ public class PlanitJtsCrsUtils {
   
   /** find the closest location from the reference coordinate to the polygon expressed as a linear location.
    * Here we project onto the polygon, so we find the location with the actual closest distance and create a
-   * linear location regardless if this coordinate is part of the polygon as a predefined coordinate at an extreme point.
+   * linear location regardless if this coordinate is part of the polygon as a predefined coordinate at an extreme
+   * point.
    * 
    * @param reference the reference location
    * @param polygon to find closest distance to point to using its exterior ring
@@ -429,8 +427,8 @@ public class PlanitJtsCrsUtils {
   }  
       
   
-  /** find the closest distance in meters from the point to the geometry.Here we project onto the geometry, so we find the actual closest distance instead of merely finding the closest
-   * modelled coordinated within the geometry.
+  /** find the closest distance in meters from the point to the geometry. Here we project onto the geometry, so we find
+   * the actual closest distance instead of merely finding the closest modelled coordinated within the geometry.
    * 
    * @param reference the reference location
    * @param geometry to find closest distance to point to
@@ -575,7 +573,8 @@ public class PlanitJtsCrsUtils {
   }
 
   /**
-   * Determine if the distance in metres between two (JTS) coordinates (assuming the positions are provided in the same crs as registered on this class instance) is within the given distance
+   * Determine if the distance in metres between two (JTS) coordinates (assuming the positions are provided in the same
+   * crs as registered on this class instance) is within the given distance
    *
    * @param startCoordinate location of the start point
    * @param endCoordinate   location of the end point
@@ -669,9 +668,8 @@ public class PlanitJtsCrsUtils {
     return new Envelope(x1, x2, y2, y1);
   }
   
-  /** create a square bounding box envelope instance based on an existing envelope bounding box and buffer length
-   * in meters resulting in a larger bounding box returned, it is expected the locations (when no cartesian)
-   * are in lat/long regardless of the transformation of the underlying CRS
+  /** create a square bounding box envelope from an existing envelope, enlarged by the buffer length in meters. The
+   * locations are expected in lat/long (when not cartesian), whatever the transformation of the underlying CRS
    * 
    * @param boundingBox original bounding box
    * @param lengthMeters buffer length in meters
@@ -682,11 +680,9 @@ public class PlanitJtsCrsUtils {
             boundingBox.getMinX(),boundingBox.getMinY(), boundingBox.getMaxX(), boundingBox.getMaxY(), lengthMeters);
   }  
 
-  /** create a square bounding box envelope instance based on the passed in bounding box coordinates and buffer
-   *  length in meters
-   * resulting in a larger bounding box returned, it is expected the locations (when no cartesian) are in
-   * lat/long regardless of the transformation
-   * of the underlying CRS
+  /** create a square bounding box envelope from the given bounding box coordinates, enlarged by the buffer length in
+   * meters. The locations are expected in lat/long (when not cartesian), whatever the transformation of the
+   * underlying CRS
    * 
    * @param minX x (longitude) coord of minimum extreme point
    * @param minY y (latitude) coord of minimum extreme point

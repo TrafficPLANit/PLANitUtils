@@ -13,16 +13,13 @@ import org.goplanit.utils.exceptions.PlanItRunTimeException;
 import org.goplanit.utils.reflection.ReflectionUtils;
 
 /**
- * 
- * This is the base class for all configuration oriented proxy classes. Whenever we configure a traffic assignment
- * component, or any other component with functionality that should not be exposed to the user, while at the same time
- * this user must be able to configure this class by setting one or more configuration options, we must use this class
- * to provide a convenient mapping mechanism that work for any such situation without having to manually implement
- * all the configuration options that are already present on the class that contains the functionality.
- * 
- * The aim of this configurator is to store all the function calls that should be delayed and deferred to the class
- * that contains the actual functionality in a concise and general way.
- * 
+ * Base class of all configuration proxy classes. A traffic assignment component, or any other component whose
+ * functionality should not be exposed to the user, is configured by the user through this class. It works for any
+ * such component, without implementing again all the configuration options the component already has.
+ * <p>
+ * It stores, in a concise and general way, the calls to be made later on the class that holds the functionality.
+ * </p>
+ *
  * @author markr
  *
  */
@@ -112,7 +109,8 @@ public class Configurator<T> {
   }
 
   /**
-   * Register a method call to a setter that should be invoked on the to be configured object instance once it is available
+   * Register a method call to a setter that should be invoked on the to be configured object instance once it is
+   * available
    * 
    * @param methodName the method name
    * @param parameters the parameters of the method

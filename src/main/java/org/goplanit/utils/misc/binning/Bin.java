@@ -5,17 +5,16 @@ import org.goplanit.utils.exceptions.PlanItRunTimeException;
 import java.util.Objects;
 
 /**
- * A single bin of a numeric range, i.e. an interval with a lower and upper bound, each of which may be inclusive or
- * exclusive, and a label to report it by.
+ * A single bin of a numeric range, i.e. an interval with a lower and upper bound, each inclusive or exclusive, and a
+ * label to report it by.
  * <p>
- * The bound type is required to be both a {@code Number} and {@code Comparable}, since without an ordering there is
- * no way to decide whether a value falls in the bin. This does mean a raw {@code Number} cannot be used, only the
- * concrete numeric types, which is what makes the comparison meaningful in the first place.
+ * The bound type must be both a {@code Number} and {@code Comparable}, since without an ordering there is no way to
+ * decide whether a value falls in the bin. So a raw {@code Number} cannot be used, only the concrete numeric types.
  * </p>
  * <p>
- * When no label is given one is inferred, deliberately in plain interval notation, e.g. {@code [2,5)}. Prettier
- * conventions such as {@code 2-5} or {@code &gt;200} depend on knowing the bins are integral and contiguous, which a
- * single bin does not know, so those are left to whoever constructs the bins, see {@link BinBuilder}.
+ * When no label is given one is inferred, in plain interval notation, e.g. {@code [2,5)}. Prettier conventions such as
+ * {@code 2-5} or {@code &gt;200} need to know the bins are integral and contiguous, which a single bin does not, so
+ * those are left to whoever constructs the bins, see {@link BinBuilder}.
  * </p>
  *
  * @author markr

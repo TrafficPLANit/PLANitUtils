@@ -170,12 +170,11 @@ public class UntypedSubGraphImpl<V extends Vertex, E extends Edge> implements Un
   /**
    * {@inheritDoc}
    * <p>
-   * Membership is tracked by id in a bit set, so the members are collected by walking the set bits and looking each
-   * one up in the parent container, which is a keyed lookup. The interface default instead scans the whole parent
-   * container and tests each entity for membership, making a single call proportional to the size of the entire
-   * graph rather than to the size of this subgraph. That difference dominates any caller that identifies or removes
-   * many subgraphs, e.g. dangling subnetwork removal, which calls this once per subgraph and would otherwise be
-   * quadratic in the graph size.
+   * Membership is tracked by id in a bit set, so the members are collected by going over the set bits and looking each
+   * one up by key in the parent container. The interface default instead scans the whole parent container and tests
+   * each entity, so one call costs in proportion to the entire graph, not to this subgraph. That difference dominates
+   * any caller that identifies or removes many subgraphs, e.g. dangling subnetwork removal, which calls this once per
+   * subgraph and would otherwise be quadratic in the graph size.
    * </p>
    */
   @Override

@@ -72,15 +72,17 @@ public interface MacroscopicLinkSegmentType extends ExternalIdAble, ManagedId {
   
   /**
    * Return the explicitly set capacity per lane of this macroscopic link segment type. This signifies a capacity
-   * that is to be preferred over any inferred capacity based on physical parameters such as free speed, jam density etc. If this is set
-   * any fundamental diagrams used by assignment are to be made compatible with this explicitly set capacity
+   * that is to be preferred over any inferred capacity based on physical parameters such as free speed, jam density
+   * etc. If this is set any fundamental diagrams used by assignment are to be made compatible with this explicitly set
+   * capacity
    * 
    * @return capacity per lane in pcu/h/lane, null if not set
    */
   public abstract Double getExplicitCapacityPerLane();  
 
   /**
-   * Return the explicitly defined capacity per lane of this macroscopic link segment type or the default if it has not been explicitly set
+   * Return the explicitly defined capacity per lane of this macroscopic link segment type or the default if it has not
+   * been explicitly set
    * 
    * @return capacity per lane in pcu/h/lane or default
    */
@@ -107,7 +109,8 @@ public interface MacroscopicLinkSegmentType extends ExternalIdAble, ManagedId {
   public abstract Double getExplicitMaximumDensityPerLane();
   
   /**
-   * Return the maximum density per lane  of this macroscopic link segment type or the default if it has not been explicitly set
+   * Return the maximum density per lane of this macroscopic link segment type or the default if it has not been
+   * explicitly set
    * 
    * @return the maximum density per lane in pcu/km/lane
    */
@@ -139,10 +142,9 @@ public interface MacroscopicLinkSegmentType extends ExternalIdAble, ManagedId {
    */
   public abstract void setAccessGroupProperties(final AccessGroupProperties accessProperties);
 
-  /** Add access group properties for the modes allowed by it. By adding instead of setting them, it is verified
-   * these properties do not yet exist, if they already exist they are not registered and a warning is issued.
-   * To make sure only new group access properties are registered
-   * use {@link #findEqualAccessPropertiesForAnyMode(AccessGroupProperties)}
+  /** Add access group properties for the modes allowed by it. Unlike setting them, adding verifies they do not exist
+   * yet: if they do, they are not registered and a warning is issued. To make sure only new group access properties
+   * are registered, use {@link #findEqualAccessPropertiesForAnyMode(AccessGroupProperties)}
    * 
    * @param accessProperties to register
    * @param logWarning when true warn as indicated, no warning logged otherwise

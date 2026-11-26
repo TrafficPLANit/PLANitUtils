@@ -5,9 +5,8 @@ import java.util.Optional;
 import org.goplanit.utils.id.IdAble;
 
 /**
- * The Event interface defines a typed event (using the EventType). The sender of the event can be identified via
- * its source. This is a local event not appropriate to send across a network as it allows the use of local
- * references regarding its source and content.
+ * A typed event (using the EventType), whose sender is identified by its source. It is a local event, not suited to
+ * sending across a network, as its source and content may be local references.
  */
 public interface Event extends IdAble
 {   

@@ -18,11 +18,11 @@ public interface VirtualNetwork extends UntypedVirtualNetwork<VirtualNetworkLaye
 
   /**
    * Create a conjugate version of this virtual network, also known as the edge-to-vertex-dual representation, where
-   * all connectoidedges/edge segments become (dangling) conjugate vertices.
+   * all connectoid edges/edge segments become (dangling) conjugate vertices.
    * <p>
-   * It is recommended to first create the conjugate of this virtual network BEFORE creating conjugates of network
-   * layers. The latter takes a conjugate zoning as input such that it can connect the conjugate virtual nodes to
-   * the conjugate network layer where appropriate, otherwise these connections are ignored
+   * It is recommended to create the conjugate of this virtual network BEFORE the conjugates of network layers. These
+   * take a conjugate zoning as input, to connect the conjugate virtual nodes to the conjugate network layer where
+   * appropriate; without it these connections are ignored
    * </p>
    * 
    * @param idToken to use for conjugate entity creation

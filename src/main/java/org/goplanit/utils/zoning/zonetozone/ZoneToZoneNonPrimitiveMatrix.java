@@ -10,10 +10,9 @@ import org.goplanit.utils.zoning.Zones;
 
 /**
  * This class contains common methods for handling origin-demand matrices where values are non-primitive types, i.e.
- * Objects of some type. Data container used is a raw array of a fixed size based on the Od number of zones. Cells
- * that have no value entry will still take up space in this implementation. If the matrix is dense and contains
- * very little empty cells, this is likely the most computationally efficient implementation, if not, consider
- * other implementations that deal better with sparse matrices in terms of memory usage.
+ * Objects of some type. The data is held in a raw array of a fixed size based on the number of Od zones, so cells
+ * without a value still take up space. For a dense matrix with very few empty cells this is likely the most
+ * computationally efficient implementation; otherwise consider implementations using less memory for sparse matrices.
  * TODO: replace internal structure with flat array rather than array of arrays to make it more efficient
  * 
  * @author gman6028m, markr

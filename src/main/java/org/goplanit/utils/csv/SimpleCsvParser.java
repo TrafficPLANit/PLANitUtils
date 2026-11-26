@@ -9,11 +9,11 @@ import java.util.Scanner;
 import static org.goplanit.utils.misc.FileUtils.resolveFileFromAbsoluteOrRelativeString;
 
 /**
- * Simple CSV parser class that takes care of parsing the file and can be use din three ways:
+ * Simple CSV parser, used in one of three ways:
  * <ul>
- *   <li>directly parse contents to memory via parse()</li>
- *   <li>extend class and arse with hook methods to override via parseWithHooks()</li>
- *   <li>use class directly but provide consumers for callbacks via parseWithCallBacks()</li>
+ *   <li>parse the contents to memory via parse()</li>
+ *   <li>extend the class and parse with hook methods to override via parseWithHooks()</li>
+ *   <li>use the class directly with consumers as callbacks via parseWithCallBacks()</li>
  * </ul>
  */
 public class SimpleCsvParser{
@@ -80,7 +80,8 @@ public class SimpleCsvParser{
    * Parse contents in raw memory form.
    *
    * @param scanner to use
-   * @return triple containing [header column entries, header row entries, value content: values as string array per row]
+   * @return triple containing [header column entries, header row entries, value content: values as string array per
+   * row]
    */
   protected Triple<List<String>, String[], List<String[]>> parseToMemory(Scanner scanner) {
     var callBacks = new SimpleCsvParserCallbacksImpl();

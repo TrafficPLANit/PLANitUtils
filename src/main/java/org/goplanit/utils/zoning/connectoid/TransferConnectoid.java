@@ -14,12 +14,12 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 /**
- * A directed connectoid is referring to one or more zone-type-mode combination entries such as pt vehicle stops
- * that explicitly define eligible (directed) access edge segments (disallowing all others), therefore this
- * connectoid is considered directed.
+ * A directed connectoid refers to one or more zone-type-mode combination entries, such as pt vehicle stops, that
+ * explicitly define the eligible (directed) access edge segments, disallowing all others, so this connectoid is
+ * considered directed.
  * <p>
- *   this does not preclude the connected from having non-directed entries where all segments are eligible but this
- *   would then be for a subset of other zone-type-mode combinations such as traveller access
+ *   It can still have non-directed entries, where all segments are eligible, but then for a subset of other
+ *   zone-type-mode combinations, such as traveller access
  * </p>
  *
  * @author markr

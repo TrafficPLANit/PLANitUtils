@@ -12,12 +12,10 @@ import org.goplanit.utils.network.layer.modifier.UntypedDirectedGraphLayerModifi
 import java.util.function.Consumer;
 
 /**
- * Untyped direted graph layer comprising containers with custom entity types. Use this as a base template for
- * implementations and derived interfaced that
- * are typed. No access to containers is dictated to allow for maximum flexibility for derived interface to define
- * suitable method names to access
- * underlying containers and/or entities. Since all entities are id managed we do require access to the id token
- * used by this layer
+ * Untyped directed graph layer comprising containers with custom entity types. Use this as a base template for typed
+ * implementations and derived interfaces. No access to containers is dictated, so derived interfaces are free to
+ * define suitable method names to access the underlying containers and/or entities. As all entities are id managed,
+ * access to the id token used by this layer is required
  *
  * @author markr
  */

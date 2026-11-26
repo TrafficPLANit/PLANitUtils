@@ -12,11 +12,9 @@ import java.util.TreeSet;
 import java.util.logging.Logger;
 
 /**
- * The EventProducer is the base class able to produce events. It provides protected methods to register listeners
- * and remove listeners as well as ways to fire a generic event. Event producing classes should either extend
- * this class to provide more user friendly public methods with the correct signatures that enforce the
- * appropriate event and listener combinations suitable for that particular class while internally
- * making use of this implementations functionality. 
+ * Base class of event producers. It provides protected methods to register and remove listeners and to fire a generic
+ * event. Event producing classes should extend it with more user friendly public methods, whose signatures enforce the
+ * event and listener combinations that suit the class, and use this implementation internally.
  * 
  * @author markr
  */
@@ -179,10 +177,9 @@ public abstract class EventProducerImpl{
     return result;
   }
 
-  /** Let derived class deal with the handling of the listener, where based on the derived event implementation
-   * the listener's concrete class can be determined which in turn allows for calling the right event callback method
-   * which is unknown at this base level since this event mechanism does not force a particular notification
-   * method signature on its listener interface
+  /** Let the derived class notify the listener. From the derived event it can tell the listener's concrete class, and
+   * so call the right callback method. That method is unknown here, as this event mechanism does not force a
+   * notification method signature on its listener interface
    * 
    * @param eventListener to notify for the event
    * @param event to process for the listener

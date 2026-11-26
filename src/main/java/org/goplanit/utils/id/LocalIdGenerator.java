@@ -3,10 +3,8 @@ package org.goplanit.utils.id;
 import java.util.HashMap;
 
 /**
- * Convenience class to track unique ids across different classes that decide to
- * use a generator for their id members. Ids are generated starting at zero and in an incremental
- * consecutive fashion
- * allowing the placement of objects in raw arrays and indexing them by their id
+ * Convenience class to track unique ids across the classes that use a generator for their id members. Ids are
+ * generated from zero, consecutively, so objects can be placed in raw arrays and indexed by their id
  * 
  * @author markr
  *

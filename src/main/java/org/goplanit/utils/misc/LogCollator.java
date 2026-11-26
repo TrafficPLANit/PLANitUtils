@@ -18,15 +18,15 @@ import java.util.stream.Collectors;
  * occurrence.
  * <p>
  * A parser that meets the same condition for thousands of entities produces a log in which the conditions worth
- * reading cannot be told apart from the ones that merely repeat. Collating by template inverts that: a condition
- * appears once with its total, accompanied by the first few entity ids that triggered it, which is enough to begin an
- * investigation without displacing everything else in the log.
+ * reading cannot be told apart from those that merely repeat. Collating by template turns that around: a condition
+ * appears once with its total and the first few entity ids that triggered it, enough to begin an investigation
+ * without crowding out everything else in the log.
  * </p>
  * <p>
  * Every occurrence is retained by default, so a collapsed log entry can still be backed by a complete per entity
- * listing elsewhere, for instance when persisted to disk. Where a template is expected to fire for a very large number
- * of entities, retention can be capped at construction, in which case the total remains exact while only the retained
- * prefix is available for listing.
+ * listing elsewhere, for instance when persisted to disk. Where a template is expected to fire for very many
+ * entities, retention can be capped at construction: the total stays exact, while only the first occurrences, those
+ * retained, can be listed.
  * </p>
  * <p>
  * Safe for concurrent use: occurrences may be recorded from several threads at once.
@@ -447,9 +447,9 @@ public class LogCollator {
   /**
    * Absorb everything another collator recorded, leaving the other untouched.
    * <p>
-   * Totals are exact afterwards, whereas the retained occurrences are those of this collator followed by as many of
-   * the other's as this collator's own retention limit still permits, so a merge never retains more than a single
-   * collator would have
+   * Totals are exact afterwards. The retained occurrences are those of this collator followed by as many of the
+   * other's as this collator's own retention limit still permits, so a merge never retains more than a single collator
+   * would have
    * </p>
    *
    * @param other to absorb, ignored when null

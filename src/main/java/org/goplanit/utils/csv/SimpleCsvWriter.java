@@ -16,15 +16,14 @@ import java.util.Objects;
  * Simple CSV writer counterpart to {@link SimpleCsvParser}, writing a header row followed by any number of content
  * rows.
  * <p>
- * Values are quoted only where they have to be, i.e. when they contain the separator, a quote, or a line break, with
- * embedded quotes doubled. Writing a value containing a separator without quoting it would silently shift every
- * subsequent column of that row, which is the kind of corruption that only surfaces when the file is read back long
- * after the run that produced it.
+ * Values are quoted only when they contain the separator, a quote, or a line break, with embedded quotes doubled. An
+ * unquoted value containing a separator would silently shift every later column of that row, a fault that only shows
+ * when the file is read back long after the run that wrote it.
  * </p>
  * <p>
- * Where the content is already available in full, {@link #write(Path, List, Collection)} writes the entire file in a
- * single call. Otherwise an instance is created and rows are written as they are produced, in which case it belongs in
- * a try-with-resources block since it holds an open file handle.
+ * When the content is available in full, {@link #write(Path, List, Collection)} writes the entire file in one call.
+ * Otherwise create an instance and write rows as they are produced, in a try-with-resources block, as it holds an
+ * open file handle.
  * </p>
  *
  * @author markr

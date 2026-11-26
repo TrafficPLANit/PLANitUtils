@@ -2,13 +2,11 @@ package org.goplanit.utils.graph;
 
 import org.goplanit.utils.id.ManagedIdEntityFactory;
 
-/** A base abstract class for factories that create graph entities on an underlying container 
- * No specification of the container here because it is used as a placeholder to be able to let
- * derived classes implement this interface with as much freedom as possible. Also note that 
- * graph entities are assumed to have managed ids, but we do not require them to be part of a managedIdEntities container
- * within the graph. This way, a graph can reuse edges, vertices, etc. if needed across multiple graphs. In that particular
- * case, care must be taken when modifying the graph since the resued components will be modified on all graphs that use this
- * instance.  
+/** Base of factories that create graph entities on an underlying container. The container is not specified here, as
+ * this is a placeholder giving derived classes as much freedom as possible to implement this interface. Graph entities
+ * are assumed to have managed ids, but need not be part of a managedIdEntities container within the graph, so a graph
+ * can reuse edges, vertices, etc. across multiple graphs. Then take care when modifying the graph, as the reused
+ * components change on all graphs that use them.
  * 
  * @author markr
  *

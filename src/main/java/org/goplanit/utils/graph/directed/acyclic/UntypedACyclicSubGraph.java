@@ -11,19 +11,18 @@ import org.goplanit.utils.graph.directed.DirectedVertex;
 import org.goplanit.utils.graph.directed.EdgeSegment;
 
 /**
- * 
- * An untyped acyclic sub graph contains a subset of a full graph, with generics regarding vertices and edges,
- * without cycles. The active subset of the graph is tracked by explicitly registering edge segments.
- * Edge segments are by definition directed.
+ * An untyped acyclic sub graph contains a subset of a full graph without cycles, with generics for its vertices and
+ * edges. The active subset is tracked by registering its edge segments, which are directed by definition.
  * <p>
- * A topological sort on the current state of the graph allows for fast traversal of the graph for various
- * algorithms (shortest path). It also reveals if the graph is still acyclic.
+ * A topological sort on the current state of the graph allows fast traversal of the graph for various algorithms
+ * (shortest path). It also reveals if the graph is still acyclic.
+ * </p>
  * <p>
- * To allow for maximum flexibility we do not require any information on how the edges, vertices, edge segments of
- * this graph are configured, i.e., they may be an amalgamation of other (combined) graphs. As long as their
- * internal structure (downstream, upstream vertices, exit and entry segments) represent a valid acyclic graph
- * structure, then any implementation should be able to deal with it.
- * 
+ * For flexibility, nothing is required about how its edges, vertices and edge segments are configured: they may
+ * combine other graphs. As long as their internal structure (downstream and upstream vertices, exit and entry
+ * segments) forms a valid acyclic graph, any implementation should be able to deal with it.
+ * </p>
+ *
  * @author markr
  *
  */

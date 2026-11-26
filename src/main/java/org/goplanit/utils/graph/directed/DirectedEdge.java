@@ -31,11 +31,9 @@ public interface DirectedEdge extends Edge {
   public abstract DirectedVertex getVertexB();
 
   /**
-   * Register EdgeSegment.
-   *
-   * If there already exists an edgeSegment for that direction it is replaced and returned. If the edge segment
-   * has no parent edge, this edge is set. If there is a discrepancy between the edge segment's parent edge and
-   * this edge a warning is issued and the edge segment is not registered
+   * Register EdgeSegment. An existing edgeSegment for that direction is replaced and returned. An edge segment without
+   * parent edge gets this edge as parent. When its parent edge is another edge, a warning is issued and the edge
+   * segment is not registered
    *
    * @param edgeSegment the edgeSegment to be registered
    * @param directionAB direction of travel
@@ -46,11 +44,9 @@ public interface DirectedEdge extends Edge {
   }
 
   /**
-   * Register EdgeSegment.
-   *
-   * If there already exists an edgeSegment for that direction it is replaced and returned. If the edge segment
-   * has no parent edge, this edge is set. If there is a discrepancy between the edge segment's parent
-   * edge and this edge a warning is issued and the edge segment is not registered
+   * Register EdgeSegment. An existing edgeSegment for that direction is replaced and returned. An edge segment without
+   * parent edge gets this edge as parent. When its parent edge is another edge, a warning is issued and the edge
+   * segment is not registered
    *
    * @param edgeSegment the edgeSegment to be registered
    * @param directionAB direction of travel

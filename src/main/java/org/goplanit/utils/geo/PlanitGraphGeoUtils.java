@@ -25,8 +25,8 @@ import org.locationtech.jts.linearref.LinearLocation;
 
 /**
  * A class with utility methods that leverage the geospatial information of PLANit enities pertaining to graphs.
- * For geo utilities only utilising JTS entities, we refer the user to PlanitJtsUtils instead. this class is dedicated to
- * functionality that directly requires the involvement of Planit Graph elements (vertices, edges, etc.).
+ * For geo utilities only utilising JTS entities, we refer the user to PlanitJtsUtils instead. this class is dedicated
+ * to functionality that directly requires the involvement of Planit Graph elements (vertices, edges, etc.).
  * 
  * @author markr
  *
@@ -67,11 +67,13 @@ public class PlanitGraphGeoUtils {
   }  
   
   
-  /** Find the closest distance to the reference point and the geometry for some PLANit entity with a supported geometry from the provided collection.
+  /** Find the closest distance to the reference point and the geometry for some PLANit entity with a supported
+   * geometry from the provided collection.
    * This method computes the distance between any location on any line segment of the (outer) boundary
-   * of the PLANit entities geometry (or its point location if no polygon/linestring is available) and the reference coordinate and it is therefore very precise. 
+   * of the PLANit entities geometry (or its point location if no polygon/linestring is available) and the reference
+   * coordinate and it is therefore very precise.
    * A cap is placed on how far an entity is allowed to be to still be regarded as closest via maxDistanceMeters.
-   * 
+   *
    * @param <T> PLANit entity type
    * @param reference reference location to find distance to
    * @param planitEntity to check against using their geometries
@@ -95,10 +97,12 @@ public class PlanitGraphGeoUtils {
 
   }  
   
-  /** Find the distances to the reference point and the geometry for all given PLANit entities with a supported geometry from the provided collection.
+  /** Find the distances to the reference point and the geometry for all given PLANit entities with a supported
+   * geometry from the provided collection.
    * This method computes the distance between any location on any line segment of the (outer) boundary
-   * of the PLANit entities geometry (or its point location if no polygon/linestring is available) and the reference coordinate and it is therefore very precise. 
-   * 
+   * of the PLANit entities geometry (or its point location if no polygon/linestring is available) and the reference
+   * coordinate and it is therefore very precise.
+   *
    * @param <T> PLANit entity type
    * @param reference reference location to find distance to
    * @param planitEntities to check against using their geometries
@@ -114,9 +118,11 @@ public class PlanitGraphGeoUtils {
     return distanceMap;    
   } 
   
-  /** Find the distances to the line string and the geometry for all given PLANit entities with a supported geometry from the provided collection.
+  /** Find the distances to the line string and the geometry for all given PLANit entities with a supported geometry
+   * from the provided collection.
    * This method computes the distance between any location on any line segment of the (outer) boundary
-   * of the PLANit entities geometry (or its point location if no polygon/linestring is available) and the reference coordinate and it is therefore very precise. 
+   * of the PLANit entities geometry (or its point location if no polygon/linestring is available) and the reference
+   * coordinate and it is therefore very precise.
    * 
    * @param <T> PLANit entity type
    * @param lineString reference to find distance to
@@ -145,12 +151,9 @@ public class PlanitGraphGeoUtils {
     return distanceMap;
   }   
   
-  /** Find all PLANit entities within striking distance of the line string from the available entities based on the
-   * max distance provided.
-   * This method computes the actual distance between any location on any line segment of the geometry of the
-   * entity and any existing coordinate on
-   * the line string and it is therefore is very precise. A cap is placed on how far an entities geometry is
-   * allowed to be away to still be regarded as closest via maxDistanceMeters.
+  /** Find all given PLANit entities within maxDistanceMeters of the line string. The distance is computed between any
+   * location on any line segment of the entity's geometry and any existing coordinate of the line string, so it is
+   * very precise.
    * 
    * @param <T> PLANit entity type
    * @param lineString reference line string
@@ -196,11 +199,13 @@ public class PlanitGraphGeoUtils {
     return result.keySet();
   }    
   
-  /** Find the closest distance to the reference point and the geometry for some PLANit entity with a supported geometry from the provided collection.
+  /** Find the closest distance to the reference point and the geometry for some PLANit entity with a supported
+   * geometry from the provided collection.
    * This method computes the distance between any location on any line segment of the (outer) boundary
-   * of the PLANit entities geometry (or its point location if no polygon/linestring is available) and the reference coordinate and it is therefore very precise. 
+   * of the PLANit entities geometry (or its point location if no polygon/linestring is available) and the reference
+   * coordinate and it is therefore very precise.
    * A cap is placed on how far an entity is allowed to be to still be regarded as closest via maxDistanceMeters.
-   * 
+   *
    * @param <T> PLANit entity type
    * @param reference reference location to find distance to
    * @param planitEntities to check against using their geometries
@@ -316,13 +321,15 @@ public class PlanitGraphGeoUtils {
     return Pair.of(minEntry.first(), new TreeSet<Edge>(result.keySet()));
   }
 
-  /** Find the edges within the given buffer distance (around shortest distance found) to the passed in geometry using a projection from any existing coordinate on the geometry to the geometry of the link. All edges that are
+  /** Find the edges within the given buffer distance (around shortest distance found) to the passed in geometry using
+   * a projection from any existing coordinate on the geometry to the geometry of the link. All edges that are
    * found within a small buffer distance of the closest distance are also retrieved
    *
    * @param <T> type of edge
    * @param geometry to find closest link for
    * @param edges to check against
-   * @param bufferDistanceMeters margin used to collect all edges with distance smaller or equal to buffer (distance to closest edge + this margin)
+   * @param bufferDistanceMeters margin used to collect all edges with distance smaller or equal to buffer (distance to
+   *                             closest edge + this margin)
    * @param geoUtils used to compute distances
    * @return edges found with their distances to the geometry, can be null if none match
    */
@@ -349,7 +356,8 @@ public class PlanitGraphGeoUtils {
     return result;
   }
 
-  /** Extract the JTS line segment from the edge segment that is closest to the reference geometry in its intended direction.
+  /** Extract the JTS line segment from the edge segment that is closest to the reference geometry in its intended
+   * direction.
    * 
    * @param <T> edge segment type
    * @param referenceGeometry to determine closeness criteria on  
@@ -381,8 +389,8 @@ public class PlanitGraphGeoUtils {
   }  
 
   /**
-   * Verify if a geometry lies left of an edge segment, as seen in the direction the segment runs, at the piece of its
-   * edge's geometry closest to the geometry, see {@link #extractClosestLineSegmentTo(Geometry, EdgeSegment,
+   * Verify if a geometry lies left of an edge segment, as seen in the direction the segment runs, at the line segment
+   * of its edge's geometry closest to the geometry, see {@link #extractClosestLineSegmentTo(Geometry, EdgeSegment,
    * PlanitJtsCrsUtils)}. So what lies left of one direction of an edge lies right of the other. For example, a stop on
    * the kerb of a road where traffic drives on the left lies left of the segment its vehicles stop on
    *

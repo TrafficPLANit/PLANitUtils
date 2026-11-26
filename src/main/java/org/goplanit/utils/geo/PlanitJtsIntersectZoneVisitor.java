@@ -8,10 +8,9 @@ import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.Polygon;
 
 /**
- * An item visitor for quadtree spatial index to filter out the zones in a quadtree that truly intersect with the
- * given bounding box provided in the query. Since spatial granularity of the "squares" in the quadtree might be too coarse 
- * it may select a too large a set of matches for any given bounding box. By providing this visitor we explicitly check the provided subset
- * if it indeed intersects with the given filer, i.e., bounding box that we are searching for.
+ * An item visitor for a quadtree spatial index, keeping the zones in the quadtree that truly intersect the bounding box
+ * of the query. The "squares" of the quadtree may be too coarse and select too many matches for a bounding box, so
+ * this visitor checks each one against the filter, i.e., the bounding box searched for.
  * 
  * @author markr
  *

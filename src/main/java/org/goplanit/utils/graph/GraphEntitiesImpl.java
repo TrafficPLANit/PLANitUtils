@@ -71,8 +71,8 @@ public abstract class GraphEntitiesImpl<E extends GraphEntity> extends LongMapWr
   /**
    * {@inheritDoc}
    *
-   * Note: not an efficient implementation since it loops over all entities in linear time to identify the correct one,
-   * preferably use {@link #get(Object)} instead whenever possible.
+   * Note: not efficient, as it loops over all entities in linear time to find the right one. Use {@link #get(Object)}
+   * instead where possible.
    */
   @Override
   public E getByXmlId(String xmlId)

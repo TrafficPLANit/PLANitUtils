@@ -24,11 +24,10 @@ public class PlanitGeoDataStoreUtils {
   private static final Logger LOGGER = Logger.getLogger(SimpleShapeFileParser.class.getCanonicalName());
 
   /**
-   * Create a data store for database based type, e.g., geopackage. Use the dbType string to indicate which
-   * type of database we're using
+   * Create a data store for a database based type, e.g., geopackage. The "dbtype" param gives the type of database:
    * <ul>
-   *   <li>"geopkg" for geopackage, s
-   *   ee <a href="https://docs.geotools.org/latest/userguide/library/data/geopackage.html">geotools</a></li>
+   *   <li>"geopkg" for geopackage, see
+   *   <a href="https://docs.geotools.org/latest/userguide/library/data/geopackage.html">geotools</a></li>
    * </ul>
    * @param outputFileNameWithPath the file to store the result in/read from
    * @param params params to feed the datastore, e.g., ("create,true), ("read-only", true), in addition to
@@ -56,14 +55,15 @@ public class PlanitGeoDataStoreUtils {
   }
 
    /**
-   * Create a data store for single file database based type, e.g., geopackage. Use the dbType string to indicate which
-   * type of database we're using
+   * Create a data store for a single file database based type, e.g., geopackage. The "dbtype" param gives the type of
+   * database:
    * <ul>
-   *   <li>"geopkg" for geopackage, see <a href="https://docs.geotools.org/latest/userguide/library/data/geopackage.html">geotools</a></li>
+   *   <li>"geopkg" for geopackage, see
+   *   <a href="https://docs.geotools.org/latest/userguide/library/data/geopackage.html">geotools</a></li>
    * </ul>
    * @param outputFileNameWithPath the file to store the result in/read from
    * @param params additional params to feed the datastore, ("dbtype", "geopkg") etc.
-    *               (supplemented with param to create it)
+   *               (supplemented with param to create it)
    * @return created datastore compatible with chosen type
    */
    public static DataStore createFileDataBaseDataStore(

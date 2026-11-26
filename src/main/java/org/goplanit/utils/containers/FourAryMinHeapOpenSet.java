@@ -4,11 +4,10 @@ import java.util.Arrays;
 import java.util.NoSuchElementException;
 
 /**
- * A 4-ary heap open set implementation which is more efficient than PriorityQueue for large path finding
- * exercises such as A*
+ * A 4-ary heap open set, more efficient than PriorityQueue for large path finding exercises such as A*
  * <p>
- *   It is assumed the number of vertices passed in at construction is the absolute maximum and the ids of
- *   the vertices are contiguous and increasing from 0-max
+ *   The number of vertices passed in at construction is taken as the maximum, and vertex ids as contiguous from 0 up
+ *   to it
  * </p>
  */
 public final class FourAryMinHeapOpenSet {

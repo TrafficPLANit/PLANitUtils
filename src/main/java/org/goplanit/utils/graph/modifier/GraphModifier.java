@@ -110,16 +110,16 @@ public interface GraphModifier<V extends Vertex, E extends Edge>
           final V vertexToBreakAt, final Ex edgeToBreak, final PlanitJtsCrsUtils geoUtils);
 
   /**
-   * This method will recreate all ids of the graph's components, e.g., vertices, edges, etc. but only when the
-   * containers used for them are the primary ManagedIdEntities containers, i.e., when the graph is responsible for
-   * uniquely tracking all entities by their managed id. If not, for example, if this is a subgraph reusing parts
-   * of the main graph, it will not recreate the ids.
+   * Recreate all ids of the graph's components, e.g., vertices, edges, etc., but only when their containers are the
+   * primary ManagedIdEntities containers, i.e., when the graph is responsible for uniquely tracking all entities by
+   * their managed id. Otherwise, for example for a subgraph reusing parts of the main graph, the ids are not recreated.
    * <p>
-   * The reasoning is that if we would recreate ids of the container while the container does not contain
-   * all = let's say - vertices, their managedId is no longer guaranteed to be unique which can lead to issues
-   * <p> 
-   * Method can be used in conjunctions with the removal of parts of the graph and the result is required to
-   * have unique contiguous ids
+   * Recreating the ids of a container that does not hold all of, say, the vertices would no longer guarantee their
+   * managed ids to be unique, which can lead to issues.
+   * </p>
+   * <p>
+   * Use it together with the removal of parts of the graph when the result must have unique contiguous ids
+   * </p>
    * <p>
    *   Should fire #RecreatedGraphEntitiesManagedIdsEvent after it has been executed
    * </p>

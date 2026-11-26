@@ -38,10 +38,9 @@ public interface ConjugateVertex extends Vertex {
   }
 
   /**
-   * Conjugate vertex's position is derived on-the-fly from its parent edge. Currently, we simply
-   * take the mid-point of the original edge its two vertices ignoring any projection information
-   * todo: improve by considering projection and possibly the shape of the line string of the original
-   *  edge
+   * Conjugate vertex's position, derived from its parent edge each time it is asked for: the mid-point of the original
+   * edge's two vertices, ignoring any projection information
+   * todo: improve by considering projection and possibly the shape of the line string of the original edge
    * @return derived location
    */
   @Override

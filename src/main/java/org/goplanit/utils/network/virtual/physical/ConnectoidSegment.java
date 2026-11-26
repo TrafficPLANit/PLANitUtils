@@ -31,10 +31,11 @@ public interface ConnectoidSegment extends LinkSegment, PcuCapacitated {
   public abstract ConnectoidSegment deepClone();
 
   /**
-   * Connectoid segments are not capacity restricted by default, but can be used in conjunction with a capacitated network.
-   * Therefore, they by default return {@code Double.MAX_VALUE} as their capacity. We have no limitation on capacity to ensure that
-   * demand does not get "trapped" in zones, but can at least be loaded onto connectoid segments so it is present in the network during loading 
-   * 
+   * Connectoid segments are not capacity restricted by default, but can be used with a capacitated network, so by
+   * default they return {@code Double.MAX_VALUE} as their capacity. Without a limit on capacity, demand does not get
+   * "trapped" in zones, but can at least be loaded onto connectoid segments, so it is present in the network during
+   * loading
+   *
    */
   @Override
   public default double getCapacityOrDefaultPcuH() {

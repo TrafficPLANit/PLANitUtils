@@ -18,8 +18,9 @@ public class PlanitEntityGeoUtils {
   /** Logger to use */
   private static final Logger LOGGER = Logger.getLogger(PlanitEntityGeoUtils.class.getCanonicalName());
 
-  /** find the distance from the zone to the coordinate. This method computes the actual distance between any location on any line segment of the outer boundary
-   * of the zones (or its centroid if no polygon/linestring is available) and the reference point and it is therefore very precise.
+  /** find the distance from the zone to the coordinate. This method computes the actual distance between any location
+   * on any line segment of the outer boundary of the zones (or its centroid if no polygon/linestring is available) and
+   * the reference point and it is therefore very precise.
    *
    * @param coord used
    * @param zone to check against using its geometry
@@ -70,11 +71,10 @@ public class PlanitEntityGeoUtils {
     return findPlanitEntityClosest(coord, planitEntities, Double.POSITIVE_INFINITY, suppressLogging, geoUtils);
   }
 
-  /** find the closest distance to the coordinate for some PLANit entity with a supported geometry from the provided
-   * collection. This method computes the actual distance between any location on any line segment of the (outer)
-   * boundary of the planit entities geometry (or its point location if no polygon/linestring is available) and the
-   * reference node and it is therefore very precise. A cap is placed on how far a zone is allowed to be to still
-   * be regarded as closest via maxDistanceMeters.
+  /** find the PLANit entity with a supported geometry in the collection that is closest to the coordinate. The
+   * distance is computed to any location on any line segment of the (outer) boundary of the entity's geometry (or its
+   * point location if no polygon/linestring is available), so it is very precise. Only an entity closer than
+   * maxDistanceMeters can be regarded as closest.
    *
    * @param <T> type of the PLANit entity
    * @param coord reference location

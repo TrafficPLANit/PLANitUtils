@@ -5,9 +5,9 @@ import java.util.function.Consumer;
 
 /**
  * Index of entities by the keys they refer to, so the entities referring to a key are found without going over all of
- * them. An entity is indexed under the keys it refers to at the moment it is indexed, and the index remembers them: a
+ * them. An entity is indexed under the keys it refers to at the moment it is indexed, and the index remembers them. A
  * direct change to what it refers to is seen once the entity is indexed again, or at once when made through
- * {@link #update(Object, Consumer)}, and unindexing always takes the entity from under the keys it was indexed under
+ * {@link #update(Object, Consumer)}. Unindexing always takes the entity from under the keys it was indexed under
  * <p>
  * A container reacting to a change of what its entities refer to needs the entities affected, for example the
  * intersection a removed node is a member of. Going over every entity for each change adds up when a network change
@@ -22,8 +22,8 @@ import java.util.function.Consumer;
 public interface EntityIndex<K, E> {
 
   /**
-   * Index the entity under every key it refers to at this moment, null keys excepted. An entity already indexed is first
-   * taken from under the keys it was indexed under, so it is never indexed twice
+   * Index the entity under every key it refers to at this moment, null keys excepted. An entity already indexed is
+   * first taken from under the keys it was indexed under, so it is never indexed twice
    *
    * @param entity to index
    */

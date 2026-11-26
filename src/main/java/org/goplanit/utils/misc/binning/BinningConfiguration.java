@@ -13,13 +13,12 @@ import java.util.stream.Collectors;
  * An ordered set of {@link Bin}s forming a single contiguous range, i.e. covering everything between the lower bound
  * of the first bin and the upper bound of the last without gaps or overlaps.
  * <p>
- * Contiguity is enforced rather than assumed, because the point of binning is that every value in range lands in
- * exactly one bin. A gap would silently lose values and an overlap would silently count them twice, and either would
- * show up only as a total that does not add up. Bins meeting at a shared bound must therefore have exactly one of the
- * two ends claiming it.
+ * Contiguity is enforced, not assumed, because the point of binning is that every value in range lands in exactly one
+ * bin. A gap would silently lose values and an overlap would silently count them twice, either showing only as a
+ * total that does not add up. So of two bins meeting at a shared bound, exactly one must claim it.
  * </p>
  * <p>
- * All bins share the same numeric type by construction, which is what the generic buys us over a loose collection of
+ * All bins share the same numeric type by construction, which is what the generic adds over a loose collection of
  * bins.
  * </p>
  *

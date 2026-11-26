@@ -23,14 +23,14 @@ public class LinkSegmentUtils {
   /**
    * Create a predicate selecting only those edge segments that are link segments permitting the given mode.
    * <p>
-   * Shaped as a {@code Predicate<EdgeSegment>} so it can be handed straight to the graph level algorithms, which know
-   * nothing about modes, since an edge segment carries no mode information at all. Mode access is a network layer
-   * concept, and a predicate is the seam through which it reaches a graph algorithm without that algorithm having to
-   * learn about it. Any segment that is not a link segment is rejected.
+   * A {@code Predicate<EdgeSegment>}, so it can be handed straight to the graph level algorithms, which know nothing
+   * about modes, as an edge segment carries no mode information at all. Mode access is a network layer concept, and a
+   * predicate lets it reach a graph algorithm without that algorithm having to learn about it. Any segment that is not
+   * a link segment is rejected.
    * </p>
    * <p>
-   * Useful for asking connectivity questions per mode, e.g. whether the car network is strongly connected, which
-   * is a different question from whether the infrastructure carrying it is.
+   * Useful for asking connectivity questions per mode, e.g. whether the car network is strongly connected, a different
+   * question from whether the infrastructure carrying it is.
    * </p>
    *
    * @param mode the mode that must be permitted

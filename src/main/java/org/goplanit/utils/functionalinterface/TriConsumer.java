@@ -1,13 +1,9 @@
 package org.goplanit.utils.functionalinterface;
 
 /**
- * Function Interface which can process three input objects.
- * 
- * Used to register initial costs in test cases.
- * 
- * There is no equivalent functional interface in the java.util.function library so we have created
- * this one.
- * 
+ * Functional interface processing three input objects, used to register initial costs in test cases. The
+ * java.util.function library has no equivalent.
+ *
  * @author gman6028
  *
  * @param <T> first object to be processed

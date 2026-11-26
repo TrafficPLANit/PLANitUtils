@@ -3,10 +3,9 @@ package org.goplanit.utils.mode;
 import java.util.EnumSet;
 
 /**
- * While PLANit allows the user to come up with its own modes. It does suggest a number of predefined modes to use.
- * This is especially useful to get started quickly or when one wants to use the PLANit memory model to convert
- * networks of one type to another with PLANit as the intermediary memory model, in which case some kind of mapping
- * between known modes is required.
+ * PLANit allows users to come up with their own modes, but suggests a number of predefined modes to use. These help
+ * to get started quickly, or to convert networks of one type to another with the PLANit memory model as intermediary,
+ * which needs some kind of mapping between known modes.
  * <p>
  * When a custom mode is used, i.e., the mode factory is not used to create one of the defaults, the type of the mode
  * is automatically set to CUSTOM

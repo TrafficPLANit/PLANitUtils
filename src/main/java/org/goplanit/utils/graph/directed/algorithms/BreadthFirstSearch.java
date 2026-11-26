@@ -16,19 +16,18 @@ import java.util.function.Predicate;
 /**
  * Breadth-first search over a directed graph.
  * <p>
- * Terminating, i.e. it explores outward from one vertex, or from several at once, until a termination condition is
- * met, returning the back links that allow the path to be reconstructed. Each vertex is processed once, the first time
- * it is reached, so lengths play no part; for the shortest connections see the shortest path algorithms. It answers
- * "can I get there, and how", which is a different question from the whole graph partitioning performed by
- * {@link StronglyConnectedComponents}.
+ * It explores outward from one vertex, or from several at once, until a termination condition is met, and returns the
+ * back links from which the path can be rebuilt. Each vertex is processed once, the first time it is reached, so
+ * lengths play no part. For the shortest connections see the shortest path algorithms. It answers "can I get there,
+ * and how", a different question from the whole graph partitioning of {@link StronglyConnectedComponents}.
  * </p>
  * <p>
- * Direction is a parameter rather than a property of the graph, so the same call searches downstream or upstream
- * without any transposed copy of the graph existing.
+ * Direction is a parameter, not a property of the graph, so the same call searches downstream or upstream without a
+ * transposed copy of the graph.
  * </p>
  * <p>
- * Deliberately iterative. These searches run on networks with hundreds of thousands of vertices, where a
- * recursive formulation overflows the stack.
+ * Iterative, as these searches run on networks with hundreds of thousands of vertices, where a recursive formulation
+ * overflows the stack.
  * </p>
  *
  * @author markr
@@ -36,8 +35,7 @@ import java.util.function.Predicate;
 public class BreadthFirstSearch {
 
   /**
-   * Perform a breadth-first search from a starting vertex in a given direction with conditions
-   * on:
+   * Perform a breadth-first search from a starting vertex in a given direction with conditions on:
    * <ul>
    *   <li>what initial edge segments from the start vertex to consider</li>
    *   <li>what edge segments from any other vertex to consider</li>
@@ -49,7 +47,8 @@ public class BreadthFirstSearch {
    * @param startVertex to start search from
    * @param invertDirection direction for searching, when true invert direction from downstream to upstream
    * @param initialVertexSegmentInclusionCondition predicate for initial condition on edge segments to consider
-   * @param vertexSegmentInclusionCondition predicate for general condition on edge segments to consider (prevEdgeSegment, currEdgeSegment)
+   * @param vertexSegmentInclusionCondition predicate for general condition on edge segments to consider
+   *                                        (prevEdgeSegment, currEdgeSegment)
    * @param vertexSegmentTerminationCondition predicate for termination condition for successful search completion
    * @return found vertex (if any) based on termination and the back links for all processed vertices
    */

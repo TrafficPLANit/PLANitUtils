@@ -143,8 +143,7 @@ public class DirectedGraphUtils {
   }
 
   /**
-   * Perform a breadth-first search from a starting vertex in a given direction with conditions
-   * on:
+   * Perform a breadth-first search from a starting vertex in a given direction with conditions on:
    * <ul>
    *   <li>what initial edge segments from the start vertex to consider</li>
    *   <li>what edge segments from any other vertex to consider</li>
@@ -156,7 +155,8 @@ public class DirectedGraphUtils {
    * @param startVertex to start search from
    * @param invertDirection direction for searching, when true invert direction from downstream to upstream
    * @param initialVertexSegmentInclusionCondition predicate for initial condition on edge segments to consider
-   * @param vertexSegmentInclusionCondition predicate for general condition on edge segments to consider (prevEdgeSegment, currEdgeSegment)
+   * @param vertexSegmentInclusionCondition predicate for general condition on edge segments to consider
+   *                                        (prevEdgeSegment, currEdgeSegment)
    * @param vertexSegmentTerminationCondition predicate for termination condition for successful search completion
    * @return found vertex (if any) based on termination and the back links for all processed vertices
    */
@@ -212,8 +212,7 @@ public class DirectedGraphUtils {
   }
 
   /**
-   * Helper function for subgraph identification (deliberately NOT recursive to avoid stack overflow on
-   * large networks)
+   * Helper function for subgraph identification, not recursive to avoid a stack overflow on large networks
    * <p>
    * Traversal always follows connectivity across edges that qualify, so the full connected component is explored
    * regardless of strictness. Strictness only governs what ends up registered on the returned subgraph.
@@ -291,29 +290,29 @@ public class DirectedGraphUtils {
    * every other one while following direction.
    * <p>
    * The counterpart of {@link #identifySubGraphForVertex(UntypedDirectedGraph, DirectedVertex, Predicate,
-   * Predicate, boolean)} for {@link Connectivity#STRONG}. Where that method discovers one subgraph per call by
-   * traversing outwards from a vertex, this partitions the graph in a single pass and returns the result keyed by
-   * vertex, because a caller pruning subgraphs asks the question once per vertex and repeating the partition for
-   * each of them would be quadratic in the size of the graph.
+   * Predicate, boolean)} for {@link Connectivity#STRONG}. That method finds one subgraph per call by traversing
+   * outwards from a vertex. This one partitions the graph in a single pass and returns the result keyed by vertex,
+   * because a caller pruning subgraphs asks once per vertex, and repeating the partition for each would be quadratic
+   * in the size of the graph.
    * </p>
    * <b>Inclusion rules, and how they differ from the weakly connected case.</b> A weakly connected subgraph is
-   * closed under edges: no edge leaves it. A strongly connected one is not, and the edge that leaves it is the
-   * very thing that makes it a separate component. That forces a distinction the weakly connected case never has
-   * to make, since there an excluded edge can only ever mean the first of these:
+   * closed under edges: no edge leaves it. A strongly connected one is not, and the edge leaving it is what makes it
+   * a separate component. That forces a distinction the weakly connected case never makes, as there an excluded edge
+   * can only mean the first of these:
    * <ul>
    *   <li>an edge that <b>fails the tests</b> belongs to infrastructure this partition is not concerned with, e.g.
    *   a rail segment while road is being partitioned. Its vertex is shared with a network judged separately and
-   *   must not be considered wholly contained here, exactly as in the weakly connected case</li>
-   *   <li>an edge that <b>passes the tests but leads to another component</b> is part of this same network and is
-   *   merely the boundary between two of its components. It is registered on neither subgraph and does not stop
-   *   its vertices from being wholly contained, since it cannot outlive whichever of the two is removed</li>
+   *   must not be considered wholly contained here, as in the weakly connected case</li>
+   *   <li>an edge that <b>passes the tests but leads to another component</b> is part of this same network, merely
+   *   the boundary between two of its components. It is registered on neither subgraph and does not stop its
+   *   vertices from being wholly contained, since it cannot outlive whichever of the two is removed</li>
    * </ul>
    * Without that distinction every component would retain the vertex its outgoing boundary edge attaches to, and
    * pruning would leave a stub vertex behind for each one.
    * <p>
-   * Traversal follows individual edge segments rather than edges, which is what direction means here: a segment is
-   * traversable when it passes the segment test and its parent edge passes the edge test. Strictness governs what
-   * is registered, not what is reachable.
+   * Traversal follows edge segments, not edges, which is what direction means here: a segment is traversable when it
+   * passes the segment test and its parent edge passes the edge test. Strictness governs what is registered, not what
+   * is reachable.
    * </p>
    * <p>
    * Every vertex of the reference graph appears as a key, so a caller may look up any vertex without a null check.

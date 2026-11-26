@@ -33,10 +33,9 @@ public class StringUtils {
   public static final int DEFAULT_MAX_LISTED_ENTRIES = 10;
 
   /**
-   * A String might have some byte order mark preceding the string (for example InputStreamReader might include this).
-   * These are not visible in the string but do change the underlying bytes compared to a string without this BOM and
-   * comparing them will fail despite looking identical.
-   * This method will remove the BOM from a copy of this string which is returned.
+   * A String might start with a byte order mark (BOM), for example from an InputStreamReader. It is not visible, but it
+   * changes the underlying bytes, so comparing with the same string without the BOM fails despite looking identical.
+   * This method returns a copy of the string without the BOM.
    *
    * @param value to remove BOM from
    * @return BOM-less copy

@@ -5,10 +5,9 @@ import java.util.Map;
 import java.util.logging.Logger;
 
 /**
- * Convenience class to track unique ids across different classes that decide to
- * use a generator for their id members. Ids are generated starting at zero and in an incremental
- * consecutive fashion. They are unique to their parent though, so if the same class is registered twice with different parents, then their ids will be unique per parent
- * but not across parents.
+ * Convenience class to track unique ids across the classes that use a generator for their id members. Ids are
+ * generated from zero, consecutively. They are unique per parent: when the same class is registered twice with
+ * different parents, its ids are unique per parent but not across parents.
  * 
  * @author markr
  *

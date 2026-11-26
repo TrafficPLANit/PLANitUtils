@@ -12,11 +12,10 @@ import java.util.stream.IntStream;
  * Builder for a {@link BinningConfiguration}, both freely bin by bin and via factory methods for the arrangements
  * most often wanted.
  * <p>
- * Bins meeting at a shared bound is what makes a configuration contiguous, so bins covering whole numbers are built
- * half open, e.g. {@code [2,6)} rather than {@code [2,5]}, even where the caller thinks in inclusive terms. The
- * inclusive form is what the integer factory methods accept and what their labels report, e.g. {@code 2-5}, so the
- * half open representation stays an implementation detail of the range rather than something a caller has to
- * translate.
+ * Bins meeting at a shared bound make a configuration contiguous, so bins covering whole numbers are built half open,
+ * e.g. {@code [2,6)} rather than {@code [2,5]}, even where the caller thinks in inclusive terms. The integer factory
+ * methods accept, and their labels report, the inclusive form, e.g. {@code 2-5}, so the half open form stays internal
+ * to the range and a caller never has to translate it.
  * </p>
  *
  * @author markr
@@ -85,12 +84,12 @@ public class BinBuilder<T extends Number & Comparable<T>> {
   }
 
   /**
-   * Factory method for bins over whole numbers given the inclusive upper bound of each, i.e. the arrangement one
-   * reaches for when reporting a distribution over sizes or counts.
+   * Factory method for bins over whole numbers given the inclusive upper bound of each, as used to report a
+   * distribution over sizes or counts.
    * <p>
    * For example {@code ofInclusiveIntegerUpperBounds(1, 1, 5, 20, Integer.MAX_VALUE)} yields bins labelled
-   * {@code 1}, {@code 2-5}, {@code 6-20} and {@code &gt;=21}. An upper bound of {@code Integer.MAX_VALUE} is taken to
-   * mean unbounded and is therefore only allowed as the last one.
+   * {@code 1}, {@code 2-5}, {@code 6-20} and {@code &gt;=21}. An upper bound of {@code Integer.MAX_VALUE} means
+   * unbounded, so it is only allowed as the last one.
    * </p>
    *
    * @param lowerBound of the first bin, inclusive
@@ -131,16 +130,15 @@ public class BinBuilder<T extends Number & Comparable<T>> {
    * unbounded.
    * <p>
    * For example {@code ofInclusiveIntegerLowerBounds(1, 2, 5, 20, 200)} yields bins labelled {@code [1,2)},
-   * {@code [2,5)}, {@code [5,20)}, {@code [20,200)} and {@code &gt;=200}. Preferable over
-   * {@link #ofInclusiveIntegerUpperBounds(int, int...)} whenever it is the point at which a bin starts that carries
-   * the meaning, in particular where the open ended tail should begin at a round number: stating the bounds as upper
-   * ones would put that number at the top of the preceding bin instead, leaving the tail to start at an awkward one
-   * above it.
+   * {@code [2,5)}, {@code [5,20)}, {@code [20,200)} and {@code &gt;=200}. Prefer it over
+   * {@link #ofInclusiveIntegerUpperBounds(int, int...)} when the point at which a bin starts carries the meaning, in
+   * particular when the open ended tail should begin at a round number: as upper bounds, that number would be the top
+   * of the bin before it, and the tail would start at an awkward number above it.
    * </p>
    * <p>
-   * The bins are labelled in interval notation rather than by the whole numbers they contain, since here it is the
-   * bounds themselves that were chosen and reporting them is what lets a reader see where the next bin picks up.
-   * Only the unbounded one is labelled explicitly, having no upper bound worth printing.
+   * The bins are labelled in interval notation, not by the whole numbers they contain, since here the bounds
+   * themselves were chosen, and reporting them shows a reader where the next bin picks up. Only the unbounded one is
+   * labelled explicitly, having no upper bound worth printing.
    * </p>
    *
    * @param inclusiveLowerBounds lower bound of each bin in increasing order, inclusive, the last one opening the
@@ -157,9 +155,8 @@ public class BinBuilder<T extends Number & Comparable<T>> {
    * unbounded, as {@link #ofInclusiveIntegerLowerBounds(int...)} makes them for whole numbers.
    * <p>
    * For example {@code ofInclusiveDoubleLowerBounds(0, 1, 2, 5)} yields bins labelled {@code [0.0,1.0)},
-   * {@code [1.0,2.0)}, {@code [2.0,5.0)} and {@code &gt;=5.0}, so a value of exactly 2 falls in the third. Bands of
-   * distance are the arrangement this is for: each band starts at a round number, and the last holds everything
-   * further.
+   * {@code [1.0,2.0)}, {@code [2.0,5.0)} and {@code &gt;=5.0}, so a value of exactly 2 falls in the third. It is meant
+   * for bands of distance: each band starts at a round number, and the last holds everything further.
    * </p>
    *
    * @param inclusiveLowerBounds lower bound of each bin in strictly increasing order, inclusive, the last one opening

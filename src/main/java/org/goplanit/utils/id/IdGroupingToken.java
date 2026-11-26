@@ -3,15 +3,15 @@ package org.goplanit.utils.id;
 import java.util.UUID;
 
 /**
- * Class used as token to group ids, i.e., ids for a class generated with this token will be unique within this group.
- * This allows you to have different groups of ids that are unique within each group but not between groups.
- * 
- * An example of when this is useful is if you have multiple instances of container classes (maps, sets) that hold objects that
- * should have unique, continguous ids within this container but NOT across containers, i.e., if a new instances is added to another 
- * container it should not lead to a gap in the ids in the other container.
- * 
- * We use the UUID library to generate the token.
- * 
+ * Token to group ids: ids for a class generated with this token are unique within this group. So there can be
+ * different groups of ids, unique within each group but not between groups. The token is generated with the UUID
+ * library.
+ * <p>
+ * This is useful, for example, for multiple instances of container classes (maps, sets) holding objects that should
+ * have unique, contiguous ids within each container but NOT across containers: a new instance added to one container
+ * should not leave a gap in the ids of another.
+ * </p>
+ *
  * @author markr
  *
  */

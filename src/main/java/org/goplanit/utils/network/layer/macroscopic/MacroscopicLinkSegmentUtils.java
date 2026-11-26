@@ -17,11 +17,11 @@ public class MacroscopicLinkSegmentUtils {
    * Verify whether a link segment belongs exclusively to the network of a single track type, i.e. every mode it
    * grants access to propagates over that track type.
    * <p>
-   * Exclusivity rather than mere presence is deliberate. A segment permitting both a road and a rail mode - a tram
-   * embedded in a street being the typical case - is part of both networks at once, so it conforms to neither in
-   * isolation. Requiring all modes to agree means such shared infrastructure matches no track type and is left
-   * alone by any per track type processing, which is the safe outcome: claiming it for one network would allow
-   * that network's pruning to remove infrastructure the other still depends on.
+   * Exclusivity is required, not mere presence: a segment permitting both a road and a rail mode, typically a tram in
+   * a street, is part of both networks at once, so it conforms to neither on its own. Requiring all modes to agree
+   * means such shared infrastructure matches no track type, and any per track type processing leaves it alone. That is
+   * the safe outcome: claiming it for one network would let that network's pruning remove infrastructure the other
+   * still depends on.
    * </p>
    *
    * @param linkSegment to verify, may be null
@@ -71,9 +71,9 @@ public class MacroscopicLinkSegmentUtils {
    * to the network of the given track type, see
    * {@link #isExclusivelyOfTrackType(MacroscopicLinkSegment, TrackModeType)}.
    * <p>
-   * Shaped as a {@code Predicate<EdgeSegment>} so it can be handed straight to the graph level utilities that
-   * identify subgraphs, which operate on the untyped graph and therefore only know about edge segments. Any
-   * segment that is not a macroscopic link segment is rejected.
+   * A {@code Predicate<EdgeSegment>}, so it can be handed straight to the graph level utilities that identify
+   * subgraphs, which work on the untyped graph and so only know edge segments. Any segment that is not a macroscopic
+   * link segment is rejected.
    * </p>
    *
    * @param trackType the track type all allowed modes must propagate over

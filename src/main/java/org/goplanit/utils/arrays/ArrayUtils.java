@@ -172,8 +172,9 @@ public class ArrayUtils {
     return destination;
   }  
 
-  /** divide each entry in array by the sum of the entries. When divisor is zero, all entries are set to divideByZeroResult
-   * 
+  /** divide each entry in array by the sum of the entries. When divisor is zero, all entries are set to
+   * divideByZeroResult
+   *
    * @param destination array to apply to
    * @param divideByZeroResult result if provided division value is zero
    * @return destination array
@@ -196,12 +197,9 @@ public class ArrayUtils {
   }
 
   /**
-   * Return the dot product of two arrays
-   * 
-   * The dot product is found by multiplying the elements of each array at each
-   * position together and then taking the sum of the multiplied values e.g.
-   * a[1]*b[1]+ a[2]*b[2] + a[3]*b[3] etc
-   * 
+   * Return the dot product of two arrays: the sum of the products of their elements at each position, e.g.
+   * a[1]*b[1] + a[2]*b[2] + a[3]*b[3] etc
+   *
    * @param d1
    *          first array in the dot product
    * @param d2

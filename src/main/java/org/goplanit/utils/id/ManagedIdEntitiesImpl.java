@@ -58,10 +58,9 @@ public abstract class ManagedIdEntitiesImpl<E extends ManagedId> extends
   }
 
   /**
-   * Constructor, keeping the entities in a {@link LongKeyArrayMap}. while not recommended it is allowed to create
-   * managed ids that do not rely on id generation of the class itself. It can be that they rely on child ids or
-   * synced ids of other internal referenced classes. In that case this constructor can be used directly. this however
-   * should generally be avoided.
+   * Constructor, keeping the entities in a {@link LongKeyArrayMap}, for managed ids that do not rely on id generation
+   * of the class itself, such as ids relying on child ids or synced ids of other internal referenced classes. This is
+   * allowed but not recommended, and should generally be avoided.
    *
    * @param valueToKey the mapping from key to value of the graph entity
    */

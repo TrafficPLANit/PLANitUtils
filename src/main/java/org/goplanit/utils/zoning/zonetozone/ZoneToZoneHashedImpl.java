@@ -10,10 +10,9 @@ import org.goplanit.utils.zoning.Zone;
 import org.goplanit.utils.zoning.Zones;
 
 /**
- * This class stores paths by their origin and destination by creating a unique hash for the combined ids of the zones.
- * This results in a memory efficient implementation requiring only a single hash based container,
- * instead of having as many containers as there are origins. It also means only conducting a single lookup despite
- * the fact we have two keys (from and to).
+ * This class stores paths by their origin and destination under a unique hash of the combined ids of the zones. This is
+ * memory efficient, needing a single hash based container instead of as many containers as there are origins, and a
+ * single lookup despite the two keys (from and to).
  *
  * @author markr
  *

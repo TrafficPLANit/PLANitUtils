@@ -46,8 +46,7 @@ public class UndirectedGraphUtils {
   }
 
   /**
-   * Helper function for subgraph identification (deliberately NOT recursive to avoid stack overflow on
-   * large networks)
+   * Helper function for subgraph identification, not recursive to avoid a stack overflow on large networks
    *
    * Traversal always follows connectivity across edges that test positive, so the full connected component is
    * explored regardless of strictness. Strictness only governs what ends up registered on the returned subgraph.

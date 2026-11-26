@@ -36,8 +36,8 @@ public class LinkUtils {
    * Create a predicate selecting only those edges that are links with a segment, in either direction, permitting at
    * least one motorised road mode, such as a car or a bus, see {@link LinkSegmentUtils#permitsMotorisedRoadMode()}.
    * <p>
-   * Shaped as a {@code Predicate<Edge>} so it can be handed straight to a vertex, e.g. to count the links at a node
-   * that road traffic can use. Any edge that is not a link is rejected.
+   * A {@code Predicate<Edge>}, so it can be handed straight to a vertex, e.g. to count the links at a node that road
+   * traffic can use. Any edge that is not a link is rejected.
    * </p>
    *
    * @return predicate to use

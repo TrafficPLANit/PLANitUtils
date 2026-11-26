@@ -14,15 +14,14 @@ public interface ConjugateMacroscopicNetworkLayer extends
         UntypedPhysicalLayer<ConjugateNode, ConjugateLink, ConjugateLinkSegment> {
 
   /**
-   * Reset and re-populate entire conjugate network layer based on current state of original layer this is the
+   * Reset and re-populate the entire conjugate network layer from the current state of the original layer it is the
    * conjugate of.
    * <p>
-   *   It is assumed the conjugate virtual network layer is already populated (if present) and therefore
-   *   we do not reset the managed ids to enforce contiguous ids across edges and vertices.
+   *   The conjugate virtual network layer is assumed to be populated already (if present), so the managed ids are not
+   *   reset, to enforce contiguous ids across edges and vertices.
    * </p>
    * <p>
-   *   XMLids of conjugate entities will be derived from their underlying original counterparts and marked with '*'
-   *   to reflect this.
+   *   XML ids of conjugate entities are derived from their original counterparts and marked with '*' to show this.
    * </p>
    *
    * @param conjugateVirtualNetworkLayer optional to connect to original connectoid edges/segments when present

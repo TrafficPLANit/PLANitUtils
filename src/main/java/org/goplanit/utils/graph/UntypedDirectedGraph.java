@@ -63,8 +63,7 @@ public interface UntypedDirectedGraph<V extends DirectedVertex, E extends Direct
   }
 
   /**
-   * Perform a breadth-first search from a starting vertex in a given direction with conditions
-   * on:
+   * Perform a breadth-first search from a starting vertex in a given direction with conditions on:
    * <ul>
    *   <li>what initial edge segments from the start vertex to consider</li>
    *   <li>what edge segments from any other vertex to consider</li>

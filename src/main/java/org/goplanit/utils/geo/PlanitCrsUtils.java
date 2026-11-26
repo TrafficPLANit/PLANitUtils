@@ -68,15 +68,13 @@ public class PlanitCrsUtils {
   }
 
   /**
-   * create a coordinate reference system instance based on String representation, e.g. "EPSG:4326" for WGS84",
-   * using the underlying geotools hsql authority factory. see also
-   * {@code https://docs.geotools.org/latest/userguide/library/referencing/crs.html} on some context on why we include
-   * the hsql dependency in the planit build to ensure that the provided crs codes here can actually be transformed
-   * into a viable CRS and why it makes sense to provide this simple wrapper method in this utility class
+   * Create a coordinate reference system from its code, e.g. "EPSG:4326" for WGS84, using the underlying geotools hsql
+   * authority factory. See {@code https://docs.geotools.org/latest/userguide/library/referencing/crs.html} for why
+   * the planit build includes the hsql dependency, so the codes given here can be turned into a viable CRS, and why
+   * this simple wrapper method is worth having in this utility class
    * <p>
-   * always make sure you lookup the CRS via this method as it ensures the logging of PLANit is not messed up by the
-   * geotools-HSQL dependency since we programmatically disallow it to overwrite our logging configuration in the
-   * static initialiser of this class.
+   * Always look up the CRS through this method: it keeps the geotools-HSQL dependency from messing up the logging of
+   * PLANit, as the static initialiser of this class stops it from overwriting the logging configuration.
    * </p>
    * 
    * @param code for the CRS
@@ -115,8 +113,7 @@ public class PlanitCrsUtils {
   /**
    * Create the EPSG code for the WGS84 UTM zone covering the provided longitude/latitude location.
    *
-   * <p>The returned code uses the standard WGS84 north/south UTM EPSG ranges:
-   * `EPSG:32601`-`EPSG:32660` for the northern hemisphere and
+   * <p>The code is in the standard WGS84 UTM EPSG ranges: `EPSG:32601`-`EPSG:32660` for the northern hemisphere and
    * `EPSG:32701`-`EPSG:32760` for the southern hemisphere.</p>
    *
    * @param longitudeInDegrees longitude in degrees
@@ -134,9 +131,9 @@ public class PlanitCrsUtils {
   /**
    * Verify if the first two planar axes are length-compatible.
    *
-   * <p>This is intended for planar operations such as drawing, viewport handling, and local
-   * geometric calculations where the first two axes must both use a length-compatible unit. It is
-   * not a guarantee that the CRS is low-distortion or otherwise optimal for the covered area.</p>
+   * <p>Intended for planar operations such as drawing, viewport handling and local geometric calculations, where the
+   * first two axes must both use a length-compatible unit. It does not guarantee that the CRS is low-distortion or
+   * otherwise optimal for the covered area.</p>
    *
    * @param crs to check
    * @return true when the first two planar axes are length-compatible, false otherwise

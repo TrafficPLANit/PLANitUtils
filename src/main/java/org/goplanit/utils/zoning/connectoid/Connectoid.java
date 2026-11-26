@@ -11,12 +11,11 @@ import org.goplanit.utils.mode.Mode;
 import org.goplanit.utils.zoning.Zone;
 
 /**
- * the connecting component between zone(s) and the network.
- * Note that connectoids are not vertices, they merely refer to physical entities via derived interfaces 
- * and the physical network.
+ * the connecting component between zone(s) and the network. Connectoids are not vertices: they merely refer to
+ * physical entities via derived interfaces and the physical network.
  * <p>
- * Each combination of (zone,connectoid) can have additional properties such as length or allowed modes.
- * Not specifying those will cause the use of defaults (DEFAULT_LENGTH_KM, all modes allowed)
+ * Each combination of (zone,connectoid) can have additional properties such as length or allowed modes. Without them
+ * the defaults are used (DEFAULT_LENGTH_KM, all modes allowed)
  * </p>
  * 
  * @author markr

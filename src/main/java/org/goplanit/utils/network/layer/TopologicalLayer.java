@@ -6,11 +6,9 @@ import org.goplanit.utils.graph.modifier.TopologicalModifier;
 import org.locationtech.jts.geom.Envelope;
 
 /**
- * A topological layer represents a layer suited for a number of modes that is topologically meaningful without
- * enforcing the actual implemantation of
- * this topology. IT only assumes that the topology can be modified by an underlying modifier that is accessible
- * to the user.
- * Since it is topologically meaningful it can have a coordinate reference system as well.
+ * A topological layer is a layer suited for a number of modes that is topologically meaningful, without enforcing how
+ * this topology is implemented. It only assumes that the topology can be modified by an underlying modifier the user
+ * can access. Being topologically meaningful, it can have a coordinate reference system as well.
  * 
  * @author markr
  *

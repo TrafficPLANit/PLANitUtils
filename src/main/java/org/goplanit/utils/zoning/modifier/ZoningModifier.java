@@ -12,7 +12,8 @@ import org.goplanit.utils.zoning.connectoid.ZoneConnectoidType;
 import org.goplanit.utils.zoning.modifier.event.ZoningModifierEventProducer;
 
 /**
- * zoning modifier takes care of modifications that comprise multiple components across the zoning in an integrated fashion
+ * zoning modifier takes care of modifications that comprise multiple components across the zoning in an integrated
+ * fashion
  * 
  * @author markr
  *
@@ -44,8 +45,9 @@ public interface ZoningModifier extends ZoningModifierEventProducer, LoggableMod
   public abstract void recreateTransferZoneGroupIds();
 
   /**
-   * a Method that scans the transfer zones and removes any transfer zones that are not associated with any directed connectoids, i.e., are not connected to any
-   * physical network layer and therefore are considered dangling. If a transfer zone is removed and this zone belongs to a transfer zone group, it is also removed from this group
+   * Remove any transfer zones not associated with any directed connectoids, i.e., not connected to any physical
+   * network layer and therefore considered dangling. A removed transfer zone that belongs to a transfer zone group is
+   * also removed from that group
    *
    * <p>
    *   fires two #RecreatedZoningEntitiesManagedIdsEvent upon completion for transfer zones
@@ -56,8 +58,8 @@ public interface ZoningModifier extends ZoningModifierEventProducer, LoggableMod
   public abstract void removeDanglingTransferZones(boolean recreateIds);
 
   /**
-   * a Method that scans the od zones and removes any that are not associated with any  connectoids, i.e., are not connected to any
-   * physical network layer and therefore are considered dangling.
+   * Remove any od zones not associated with any connectoids, i.e., not connected to any physical network layer and
+   * therefore considered dangling.
    *
    * <p>
    *   fires two #RecreatedZoningEntitiesManagedIdsEvent upon completion for od zones
@@ -68,12 +70,12 @@ public interface ZoningModifier extends ZoningModifierEventProducer, LoggableMod
   public abstract void removeDanglingOdZones(boolean recreateIds);
   
   /**
-   * a Method that scans the zones and removes any zones that are not associated with any connectoids, i.e.,
-   * are not connected to any physical network layer and therefore are considered dangling. If a transfer zone is
-   * removed and this zone belongs to a transfer zone group, it is also removed from this group
+   * Remove any zones not associated with any connectoids, i.e., not connected to any physical network layer and
+   * therefore considered dangling. A removed transfer zone that belongs to a transfer zone group is also removed from
+   * that group
    *
    * <p>
-   *   fires two #RecreatedZoningEntitiesManagedIdsEvent upon completion one for od and one for transfer zones if
+   *   fires two #RecreatedZoningEntitiesManagedIdsEvent upon completion, one for od and one for transfer zones, if
    *   ids are recreated
    * </p>
    *
@@ -82,8 +84,8 @@ public interface ZoningModifier extends ZoningModifierEventProducer, LoggableMod
   public abstract void removeDanglingZones(boolean recreateManagedIds);
 
   /**
-   * a Method that scans the transfer zone groups and removes any groups that are empty, i.e., have no transfer zones
-   * and are therefore considered dangling.
+   * Remove any transfer zone groups that are empty, i.e., have no transfer zones and are therefore considered
+   * dangling.
    * <p>
    *   fire #RecreatedZoningEntitiesManagedIdsEvent upon completion with those transfer zone groups if ids are
    *   recreated
@@ -157,7 +159,7 @@ public interface ZoningModifier extends ZoningModifierEventProducer, LoggableMod
    * Recreate all managed id entities owned by this zoning. Virtual network ids are not part of this as they
    * are shared with the physical network
    * <p>
-   *   fires #RecreatedZoningManagedIdsEvent after each managedIds container that is has updated
+   *   fires #RecreatedZoningManagedIdsEvent after each managedIds container that has updated
    * </p>
    * todo: add functionality to also deal with virtual network recreation in conjunction with physical network somehow
    */

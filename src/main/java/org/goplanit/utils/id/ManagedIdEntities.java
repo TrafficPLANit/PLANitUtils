@@ -28,7 +28,8 @@ public interface ManagedIdEntities<E extends ManagedId> extends LongMapWrapper<E
   public abstract ManagedIdEntityFactory<E> getFactory();
   
   /**
-   * Collect the class identifier used for the managed ids within the id group for instances of this class used in this container
+   * Collect the class identifier used for the managed ids within the id group for instances of this class used in this
+   * container
    * 
    * @return managedIdClass for instances this factory creates
    */
@@ -83,9 +84,8 @@ public interface ManagedIdEntities<E extends ManagedId> extends LongMapWrapper<E
   }
 
   /**
-   * When reset it called, it clears the entries, but also resets the managedids if requested, such that when the
-   * container is reused the managed ids start from zero again. If any entries are
-   * managedEntities themselves or contain managed entities themselves, they are reset as well
+   * Clear the entries, and reset the managed ids if requested, so the managed ids start from zero again when the
+   * container is reused. Entries that are, or contain, managed entities themselves are reset as well
    *
    * @param resetManagedIdToken when true rest token such that new entries will start from zero
    */
@@ -100,9 +100,8 @@ public interface ManagedIdEntities<E extends ManagedId> extends LongMapWrapper<E
   }
 
   /**
-   * When reset it called, it not only clears the entries, but also resets the managedids, such that when the
-   * container is reused the managed ids start from zero again. If any entries are
-   * managedEntities themselves or contain managed entities themselves, they are reset as well
+   * Clear the entries and reset the managed ids, so the managed ids start from zero again when the container is
+   * reused. Entries that are, or contain, managed entities themselves are reset as well
    */
   public default void reset() {
     reset(true);

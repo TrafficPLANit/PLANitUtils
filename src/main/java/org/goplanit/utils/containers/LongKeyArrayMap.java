@@ -451,8 +451,8 @@ public class LongKeyArrayMap<V> extends AbstractMap<Long, V> {
   /**
    * {@inheritDoc}
    * <p>
-   * Into an empty map, from another LongKeyArrayMap holding its entries in its array, the array is copied whole, so a
-   * copy keeps the array however spread the keys left after removals are
+   * When this map is empty and the other is a LongKeyArrayMap holding its entries in its array, that array is copied
+   * whole, so a copy keeps the array however spread out the keys left after removals are
    * </p>
    */
   @Override
