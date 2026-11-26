@@ -12,6 +12,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
+import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -22,9 +23,9 @@ import java.util.stream.Collectors;
  * A converter's tests hold two settings files per kind of settings: every key not at its default, and the global
  * defaults. These checks make settings from such a file, or at their defaults, write them out and compare the lines
  * written with those of the file, so a key added, renamed, or given another default or description fails a test until
- * the file is updated. A test of a mistake in a file checks the problems the exception holds instead. The checks fail
- * with an {@link AssertionError}, so the library needs no test framework, and a JUnit test calls them as any other
- * assertion.
+ * the file is updated. A reset is checked against settings made new, so a key a reset misses fails too. A test of a
+ * mistake in a file checks the problems the exception holds instead. The checks fail with an {@link AssertionError},
+ * so the library needs no test framework, and a JUnit test calls them as any other assertion.
  * </p>
  *
  * @author markr
@@ -117,6 +118,34 @@ public final class SettingsFileAssertionUtils {
     var madeAgainFile = folder.resolve("global_defaults_again.yaml");
     madeAgain.writeSettingsFile(madeAgainFile, SettingsFileContentType.ALL_KEYS, true);
     assertLinesWritten(expectedLines, madeAgainFile, "Every key, of settings made from the file", globalDefaultsFile);
+  }
+
+  /**
+   * Settings made from a file of every key not at its default, then reset, write every key as settings made new do, so
+   * a reset puts back every key a user can change. Settings made new are given rather than a file, as a reset keeps
+   * what only a constructor sets, such as a country whose defaults the settings are made with
+   *
+   * @param <S> the type of the settings
+   * @param fromYaml makes the settings from sources
+   * @param reset resets the settings, such as {@code NetworkWriterSettings::reset}
+   * @param everyKeyNotDefaultFile to make the settings from
+   * @param madeNew settings made new, with what only a constructor sets as the file gives it
+   * @param folder to write the files to
+   * @throws IOException when a file cannot be written or read
+   * @throws AssertionError when the files written differ
+   */
+  public static <S extends YamlWriteSettingsSupport> void assertResetGivesSettingsAsMadeNew(
+      Function<List<SettingsSource>, S> fromYaml, Consumer<? super S> reset, Path everyKeyNotDefaultFile,
+      YamlWriteSettingsSupport madeNew, Path folder) throws IOException {
+    var madeNewFile = folder.resolve("made_new.yaml");
+    madeNew.writeSettingsFile(madeNewFile, SettingsFileContentType.ALL_KEYS, true);
+
+    var settings = fromYaml.apply(List.of(SettingsSource.ofFile(everyKeyNotDefaultFile)));
+    reset.accept(settings);
+    var resetFile = folder.resolve("reset.yaml");
+    settings.writeSettingsFile(resetFile, SettingsFileContentType.ALL_KEYS, true);
+    assertLinesWritten(Files.readAllLines(madeNewFile), resetFile,
+        "Every key after a reset of the settings made from " + everyKeyNotDefaultFile.getFileName(), madeNewFile);
   }
 
   /**
