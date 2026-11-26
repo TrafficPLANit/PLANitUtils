@@ -159,8 +159,8 @@ public class SettingsCoverageTest {
 
   /**
    * Settings whose methods are told apart without lists of names: a key and a section marked with annotations known by
-   * their mark alone, a method of an interface that is not settings, a fluent setter named with any verb, and a logging
-   * method of their own, the last two needing a mark like any other method changing settings
+   * their mark alone, a method of an interface that is not settings, a copy, a fluent setter named with any verb, and a
+   * logging method of their own, the last two needing a mark like any other method changing settings
    */
   public static final class TestUnlistedSettings implements TestCounting {
 
@@ -213,6 +213,14 @@ public class SettingsCoverageTest {
     /** Log the scale and the count */
     public void logScaleAndCount() {
       /* nothing to log in a test */
+    }
+
+    /** @return a copy of these settings, holding the same nested settings */
+    public TestUnlistedSettings shallowClone() {
+      var copy = new TestUnlistedSettings();
+      copy.scale = scale;
+      copy.count = count;
+      return copy;
     }
   }
 
@@ -312,8 +320,9 @@ public class SettingsCoverageTest {
 
   /**
    * Methods are told apart without lists of names: annotations count by their mark, a method of an interface that is
-   * not settings is no key, a getter looking up nested settings by an argument changes nothing, and a fluent setter
-   * named with any verb and a logging method of the settings' own are reported until marked
+   * not settings is no key, a getter looking up nested settings by an argument changes nothing, a copy returning its
+   * own class is no getter of nested settings, and a fluent setter named with any verb and a logging method of the
+   * settings' own are reported until marked
    */
   @Test
   public void methodsToldApartWithoutListsOfNames() {

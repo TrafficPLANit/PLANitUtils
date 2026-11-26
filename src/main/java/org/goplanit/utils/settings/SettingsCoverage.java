@@ -53,7 +53,9 @@ import org.goplanit.utils.settings.annotations.SettingsWrite;
  * settings, such as
  * {@code reset} and {@code logSettings} of the interfaces of converter settings or {@code writeSettingsFile}, keeps
  * the life cycle of the settings and is left out; any other method changing settings carries a mark, logging methods
- * of a settings class's own included.
+ * of a settings class's own included. A getter of nested settings takes nothing and returns settings of another class;
+ * a copy, such as {@code shallowClone()}, returns its own class and is left out. So a method that only reads, a lookup
+ * by an argument or a copy, needs no mark.
  * </p>
  *
  * @author markr
@@ -121,6 +123,17 @@ public final class SettingsCoverage {
   private static boolean isGetter(Method method) {
     return method.getParameterCount() == 0 && method.getReturnType() != void.class &&
         !isMethodOfObjectOrOfInterfaceOutsideSettings(method);
+  }
+
+  /**
+   * Verify whether a method is a copy: it returns the class declaring it, or a class above that one, as
+   * {@code shallowClone()} does. Settings held by other settings are of another class, so a copy is no getter of them
+   *
+   * @param method to check
+   * @return true when it is a copy
+   */
+  private static boolean isCopy(Method method) {
+    return method.getReturnType().isAssignableFrom(method.getDeclaringClass());
   }
 
   /**
@@ -316,13 +329,14 @@ public final class SettingsCoverage {
   /**
    * The getters of nested settings without an annotation marked with {@link MarksGetterOfNestedSettings}, such as
    * {@link SettingsSection}, {@link SettingsFileReference}, {@link SettingsRead} and {@link NoSettingsKey}, leaving out
-   * those returning settings that name their own section, such as the network settings intermodal settings hold
+   * copies and those returning settings that name their own section, such as the network settings intermodal settings
+   * hold
    *
    * @return the getters, by class and name, sorted
    */
   public List<String> findUnmarkedGettersOfNestedSettings() {
     return findPlanitMethods().stream()
-        .filter(method -> isGetter(method) && !settingsClassesReturnedBy(method).isEmpty() &&
+        .filter(method -> isGetter(method) && !isCopy(method) && !settingsClassesReturnedBy(method).isEmpty() &&
             AnnotationUtils.getAnnotationsMarkedWith(method, MarksGetterOfNestedSettings.class).isEmpty() &&
             !method.getReturnType().isAnnotationPresent(SettingsSection.class))
         .map(SettingsCoverage::nameOf).sorted().collect(Collectors.toList());

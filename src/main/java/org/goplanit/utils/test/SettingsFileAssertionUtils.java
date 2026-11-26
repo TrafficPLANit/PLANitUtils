@@ -19,7 +19,7 @@ import java.util.stream.Collectors;
  * Checks of the settings files a converter's settings write, and of the problems a {@link SettingsProblemsException}
  * holds when making settings throws it, shipped for the tests of every converter
  * <p>
- * A converter's tests hold two settings files per kind of settings: one changing every key, and one of the global
+ * A converter's tests hold two settings files per kind of settings: every key not at its default, and the global
  * defaults. These checks make settings from such a file, or at their defaults, write them out and compare the lines
  * written with those of the file, so a key added, renamed, or given another default or description fails a test until
  * the file is updated. A test of a mistake in a file checks the problems the exception holds instead. The checks fail
@@ -55,33 +55,34 @@ public final class SettingsFileAssertionUtils {
   }
 
   /**
-   * Settings made from a file changing every key write that file again: with every key, with the keys differing from
-   * the defaults, which are all of them, and when made again from the file they write without descriptions
+   * Settings made from a file of every key not at its default write that file again: with every key, with the keys
+   * differing from the defaults, which are all of them, and when made again from the file they write without
+   * descriptions
    *
    * @param fromYaml makes the settings from sources
-   * @param everyKeyChangedFile to make the settings from
+   * @param everyKeyNotDefaultFile to make the settings from
    * @param folder to write the files to
    * @throws IOException when a file cannot be written or read
    * @throws AssertionError when a file written differs
    */
   public static void assertFileWrittenAgainBySettingsMadeFromIt(
-      Function<List<SettingsSource>, ? extends YamlWriteSettingsSupport> fromYaml, Path everyKeyChangedFile,
+      Function<List<SettingsSource>, ? extends YamlWriteSettingsSupport> fromYaml, Path everyKeyNotDefaultFile,
       Path folder) throws IOException {
     /* a relative output directory is written in full, as the loader reads it against the folder of the file */
-    var expectedLines = Files.readAllLines(everyKeyChangedFile).stream()
+    var expectedLines = Files.readAllLines(everyKeyNotDefaultFile).stream()
         .map(line -> !line.startsWith(OUTPUT_DIRECTORY_KEY) ? line :
             OUTPUT_DIRECTORY_KEY + FileUtils.resolveAgainstFolder(
-                line.substring(OUTPUT_DIRECTORY_KEY.length()), everyKeyChangedFile.getParent()))
+                line.substring(OUTPUT_DIRECTORY_KEY.length()), everyKeyNotDefaultFile.getParent()))
         .collect(Collectors.toList());
-    var settings = fromYaml.apply(List.of(SettingsSource.ofFile(everyKeyChangedFile)));
+    var settings = fromYaml.apply(List.of(SettingsSource.ofFile(everyKeyNotDefaultFile)));
 
     var everyKey = folder.resolve("every_key.yaml");
     settings.writeSettingsFile(everyKey, SettingsFileContentType.ALL_KEYS, true);
-    assertLinesWritten(expectedLines, everyKey, "Every key", everyKeyChangedFile);
+    assertLinesWritten(expectedLines, everyKey, "Every key", everyKeyNotDefaultFile);
 
     var keysDiffering = folder.resolve("keys_differing.yaml");
     settings.writeSettingsFile(keysDiffering, SettingsFileContentType.KEYS_DIFFERING_FROM_DEFAULTS, true);
-    assertLinesWritten(expectedLines, keysDiffering, "The keys differing from the defaults", everyKeyChangedFile);
+    assertLinesWritten(expectedLines, keysDiffering, "The keys differing from the defaults", everyKeyNotDefaultFile);
 
     var withoutDescriptions = folder.resolve("without_descriptions.yaml");
     settings.writeSettingsFile(withoutDescriptions, SettingsFileContentType.ALL_KEYS, false);
@@ -89,7 +90,7 @@ public final class SettingsFileAssertionUtils {
     var everyKeyAgain = folder.resolve("every_key_again.yaml");
     madeAgain.writeSettingsFile(everyKeyAgain, SettingsFileContentType.ALL_KEYS, true);
     assertLinesWritten(expectedLines, everyKeyAgain,
-        "Every key, of settings made again from a file without descriptions", everyKeyChangedFile);
+        "Every key, of settings made again from a file without descriptions", everyKeyNotDefaultFile);
   }
 
   /**

@@ -33,6 +33,9 @@
  * carries exactly one of {@link SettingsWrite}, {@link CoveredBySettingsKey},
  * {@link DelegatedToSyncedInternalSettingsKeys} and {@link NoSettingsKey}, which {@code SettingsCoverage} in that
  * package checks from a test of each converter's settings, so a new setting cannot be left out of the files unnoticed.
+ * A method changes settings when it returns nothing, or takes arguments and returns its settings, as a fluent setter
+ * does. A method that only reads, such as a lookup by an argument or a copy such as {@code shallowClone()}, carries
+ * none of them.
  * </p>
  * <p>
  * The check knows these annotations by a mark on their definitions rather than by a list: {@link SettingsWrite},
