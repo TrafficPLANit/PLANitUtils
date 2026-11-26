@@ -834,10 +834,10 @@ public class SettingsYamlLoaderTest {
   }
 
   /**
-   * Settings of a part, filling no section, with a key of their own besides those of the flat test settings, and the
+   * Nested settings, filling no section, with a key of their own besides those of the flat test settings, and the
    * folder key of their base class repeated on an override, as a class does to describe an inherited key for itself
    */
-  public static final class TestFlatPartSettings extends TestFlatSettings {
+  public static final class TestFlatNestedSettings extends TestFlatSettings {
 
     /** a yes or no choice */
     private boolean removeDangling = true;
@@ -879,25 +879,25 @@ public class SettingsYamlLoaderTest {
     }
   }
 
-  /** Settings holding two parts, each made from the file a key names, as intermodal settings hold theirs */
+  /** Settings holding two nested settings, each made from the file a key names, as intermodal settings hold theirs */
   public static final class TestFlatHolderSettings {
 
-    /** settings of the network part */
-    private final TestFlatPartSettings network = new TestFlatPartSettings();
+    /** the nested network settings */
+    private final TestFlatNestedSettings network = new TestFlatNestedSettings();
 
-    /** settings of the zoning part */
+    /** the nested zoning settings */
     private final TestFlatSettings zoning = new TestFlatSettings();
 
-    /** @return the settings of the network part */
+    /** @return the nested network settings */
     @SettingsFileReference(key = "network", level = SettingsKeyLevel.STANDARD,
-        description = "The settings file of the network part")
-    public TestFlatPartSettings getNetwork() {
+        description = "The settings file of the nested network settings")
+    public TestFlatNestedSettings getNetwork() {
       return network;
     }
 
-    /** @return the settings of the zoning part */
+    /** @return the nested zoning settings */
     @SettingsFileReference(key = "zoning", level = SettingsKeyLevel.STANDARD,
-        description = "The settings file of the zoning part")
+        description = "The settings file of the nested zoning settings")
     public TestFlatSettings getZoning() {
       return zoning;
     }
@@ -1433,10 +1433,10 @@ public class SettingsYamlLoaderTest {
     var settings = createFromText(FLAT_TEST_SCHEMA, TestFlatSettings.class, "outputDirectory: out\nfileName: a.xml\n");
     assertEquals("out", settings.getOutputDirectory());
     assertEquals("a.xml", settings.getFileName());
-    var part = createFromText(FLAT_TEST_SCHEMA, TestFlatPartSettings.class,
+    var nestedSettings = createFromText(FLAT_TEST_SCHEMA, TestFlatNestedSettings.class,
         "outputDirectory: out\nremoveDangling: false\n");
-    assertEquals("out", part.getOutputDirectory());
-    assertFalse(part.isRemoveDangling());
+    assertEquals("out", nestedSettings.getOutputDirectory());
+    assertFalse(nestedSettings.isRemoveDangling());
   }
 
   /** A key of the class of a section stays a key of that section: at the top level it is no key */
@@ -1446,19 +1446,22 @@ public class SettingsYamlLoaderTest {
         () -> loadTopLevel("name: x\n"));
   }
 
-  /** A part is made from the file its key names, a relative path read against the folder of the file naming it */
+  /**
+   * Nested settings are made from the file their key names, a relative path read against the folder of the file naming
+   * it
+   */
   @Test
-  public void testPartFromTheFileItsKeyNames() throws IOException {
-    flatFile("run/parts/network.yaml", "outputDirectory: out\nremoveDangling: false\n");
+  public void testNestedSettingsFromTheFileTheirKeyNames() throws IOException {
+    flatFile("run/nested/network.yaml", "outputDirectory: out\nremoveDangling: false\n");
     var holder = createFromSources(FLAT_TEST_SCHEMA, TestFlatHolderSettings.class,
-        flatFile("run/holder.yaml", "network: parts/network.yaml\n"));
+        flatFile("run/holder.yaml", "network: nested/network.yaml\n"));
     assertEquals("out", holder.getNetwork().getOutputDirectory());
     assertFalse(holder.getNetwork().isRemoveDangling());
   }
 
-  /** A part no source names keeps its defaults */
+  /** Nested settings no source names keep their defaults */
   @Test
-  public void testPartNotNamedKeepsItsDefaults() throws IOException {
+  public void testNestedSettingsNotNamedKeepTheirDefaults() throws IOException {
     flatFile("run/network.yaml", "outputDirectory: out\nfileName: roads.xml\n");
     var holder = createFromSources(FLAT_TEST_SCHEMA, TestFlatHolderSettings.class,
         flatFile("run/holder.yaml", "network: network.yaml\n"));
@@ -1493,11 +1496,11 @@ public class SettingsYamlLoaderTest {
   }
 
   /**
-   * A part named by a list of files is made from each in the order listed, as stacked sources are, so where two set the
-   * same key the later wins, and a list of one file names that file
+   * Nested settings named by a list of files are made from each in the order listed, as stacked sources are, so where
+   * two set the same key the later wins, and a list of one file names that file
    */
   @Test
-  public void testPartFromAListOfFiles() throws IOException {
+  public void testNestedSettingsFromAListOfFiles() throws IOException {
     flatFile("run/shared.yaml", "outputDirectory: shared\nfileName: shared.xml\n");
     flatFile("run/network.yaml", "outputDirectory: own\nremoveDangling: false\n");
     var holder = createFromSources(FLAT_TEST_SCHEMA, TestFlatHolderSettings.class,
@@ -1555,9 +1558,12 @@ public class SettingsYamlLoaderTest {
     assertEquals(new DecimalFormat("#.###"), settings.getDecimalFormat());
   }
 
-  /** A key of a part, given in the source naming the parts' files, is no key of the settings holding the parts */
+  /**
+   * A key of nested settings, given in the source naming the files of the nested settings, is no key of the settings
+   * holding them
+   */
   @Test
-  public void testPartKeyInTheNamingSourceIsAProblem() {
+  public void testKeyOfNestedSettingsInTheNamingSourceIsAProblem() {
     SettingsFileAssertionUtils.assertThrowsOneSettingsProblem(SettingsProblemKind.UNKNOWN_KEY,
         () -> createFromSources(FLAT_TEST_SCHEMA, TestFlatHolderSettings.class,
             SettingsSource.ofText(FLAT_TEST_SCHEMA, "outputDirectory: out\n")));

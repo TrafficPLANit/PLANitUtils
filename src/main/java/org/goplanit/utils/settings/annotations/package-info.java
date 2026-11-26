@@ -17,14 +17,14 @@
  * top level of the file and apply to every section, such as {@code retainTags: true} under the header. Settings filling
  * no section take every key of their class at the top level, whichever class declares it, so a file holds one
  * object;</li>
- * <li>{@link SettingsFileReference} on a getter of the settings of a part, a key naming the file the part is filled
- * from;</li>
+ * <li>{@link SettingsFileReference} on a getter of nested settings, a key naming the file the nested settings are
+ * filled from;</li>
  * <li>{@link SettingsTopLevelValue} on every parameter of the one constructor taking values at the top level of a file,
  * such as a country, which only a constructor can set;</li>
  * <li>{@link CoveredBySettingsKey} on a method that writes the same state as a key in other words, such as a form
  * taking an array where the key takes a list;</li>
- * <li>{@link DelegatedToSyncedInternalSettingsKeys} on a method of settings holding parts that sets the same keys in
- * every part, such as one output folder for all the writers an intermodal writer holds;</li>
+ * <li>{@link DelegatedToSyncedInternalSettingsKeys} on a method of settings holding nested settings that sets the same
+ * keys in all of them, such as one output folder for all the writers an intermodal writer holds;</li>
  * <li>{@link NoSettingsKey} on any other method that changes settings, saying why it stays out of the files.</li>
  * </ul>
  * <p>

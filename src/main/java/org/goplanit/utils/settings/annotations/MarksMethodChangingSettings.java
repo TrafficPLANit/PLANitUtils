@@ -7,8 +7,8 @@ import java.lang.annotation.Target;
 
 /**
  * Marks the definition of an annotation that, written on a method changing settings, says how a settings file reaches
- * that method: through a key, through a key in other words, through the keys of the parts the settings hold, or not at
- * all with a reason
+ * that method: through a key, through a key in other words, through the keys of the nested settings the settings hold,
+ * or not at all with a reason
  * <p>
  * This annotation goes on the definition of another annotation, never on a settings method. For example,
  * {@link SettingsWrite} is defined as

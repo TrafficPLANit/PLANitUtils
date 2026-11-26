@@ -1,5 +1,6 @@
 package org.goplanit.utils.settings;
 
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.ArrayDeque;
@@ -8,6 +9,7 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -57,6 +59,11 @@ import org.goplanit.utils.settings.annotations.SettingsWrite;
  * a copy, such as {@code shallowClone()}, returns its own class and is left out. So a method that only reads, a lookup
  * by an argument or a copy, needs no mark.
  * </p>
+ * <p>
+ * Static checks next to these keep the split of a settings class from its YAML keyed class, the class holding only its
+ * keys, for the pairs a converter's tests name: see
+ * {@link #findSettingsClassesNotExtendingTheirYamlKeyedClassDirectly(Map)}.
+ * </p>
  *
  * @author markr
  */
@@ -67,6 +74,16 @@ public final class SettingsCoverage {
 
   /** what the name of a getter starts with, as Java's own convention for getters (JavaBeans) has it */
   private static final List<String> GETTER_NAME_PREFIXES = List.of("get", "is");
+
+  /** the annotations of a key or section, the methods a settings file reaches directly */
+  private static final List<Class<? extends Annotation>> KEY_OR_SECTION_ANNOTATIONS =
+      List.of(SettingsWrite.class, SettingsRead.class, SettingsSection.class);
+
+  /** the name of the method putting the keys of a YAML keyed class back to their defaults, taking nothing */
+  private static final String RESET_METHOD_NAME = "reset";
+
+  /** the name of the method logging the keys of a YAML keyed class, taking the level to indent them at */
+  private static final String LOG_SETTINGS_METHOD_NAME = "logSettings";
 
   /**
    * Verify whether a method is a public method of an object, declared by a PLANit class, and written in the code
@@ -280,6 +297,19 @@ public final class SettingsCoverage {
         Arrays.stream(method.getParameterTypes()).map(Class::getSimpleName).collect(Collectors.joining(",", "(", ")"));
   }
 
+  /**
+   * Verify whether a method is the reset or the logging a YAML keyed class may declare besides its keys:
+   * {@code reset()}, putting those keys back to their defaults, or {@code logSettings(int)}, logging them
+   *
+   * @param method to check
+   * @return true when it is
+   */
+  private static boolean isResetOrLogSettings(Method method) {
+    return (method.getName().equals(RESET_METHOD_NAME) && method.getParameterCount() == 0) ||
+        (method.getName().equals(LOG_SETTINGS_METHOD_NAME) && method.getParameterCount() == 1 &&
+            method.getParameterTypes()[0] == int.class);
+  }
+
   /** the settings classes checked */
   private final Set<Class<?>> settingsClasses;
 
@@ -310,6 +340,76 @@ public final class SettingsCoverage {
    */
   public static SettingsCoverage of(Class<?>... rootSettingsClasses) {
     return new SettingsCoverage(findReachableSettingsClasses(rootSettingsClasses));
+  }
+
+  /**
+   * The settings classes that do not extend their YAML keyed class directly, so they would not inherit its keys as
+   * they are
+   * <p>
+   * A settings class with many methods made for code keeps its keys on a class of their own, its YAML keyed class, which
+   * it extends, so that one class shows all a settings file can say about it. This check and the three next to it keep
+   * that split as keys are added; each converter's tests give them its settings classes with their YAML keyed classes.
+   * </p>
+   *
+   * @param yamlKeyedClassBySettingsClass each settings class with the YAML keyed class holding its keys
+   * @return the settings classes, by their simple name, sorted
+   */
+  public static List<String> findSettingsClassesNotExtendingTheirYamlKeyedClassDirectly(
+      Map<Class<?>, Class<?>> yamlKeyedClassBySettingsClass) {
+    return yamlKeyedClassBySettingsClass.entrySet().stream()
+        .filter(entry -> entry.getKey().getSuperclass() != entry.getValue())
+        .map(entry -> entry.getKey().getSimpleName()).sorted().collect(Collectors.toList());
+  }
+
+  /**
+   * The keys and sections a settings class declares itself, where they belong on its YAML keyed class, see
+   * {@link #findSettingsClassesNotExtendingTheirYamlKeyedClassDirectly(Map)}
+   *
+   * @param yamlKeyedClassBySettingsClass each settings class with the YAML keyed class holding its keys
+   * @return the methods, by class and name, sorted
+   */
+  public static List<String> findKeysAndSectionsDeclaredOnSettingsClasses(
+      Map<Class<?>, Class<?>> yamlKeyedClassBySettingsClass) {
+    return yamlKeyedClassBySettingsClass.keySet().stream()
+        .flatMap(settingsClass ->
+            AnnotationUtils.getDeclaredMethodsWithAnyAnnotation(settingsClass, KEY_OR_SECTION_ANNOTATIONS).stream())
+        .map(SettingsCoverage::nameOf).sorted().collect(Collectors.toList());
+  }
+
+  /**
+   * The keys and sections of a YAML keyed class that its settings class overrides, as an override hides the key's
+   * annotations from the settings files, see {@link #findSettingsClassesNotExtendingTheirYamlKeyedClassDirectly(Map)}
+   *
+   * @param yamlKeyedClassBySettingsClass each settings class with the YAML keyed class holding its keys
+   * @return the overriding methods, by class and name, sorted
+   */
+  public static List<String> findKeysAndSectionsOverriddenBySettingsClasses(
+      Map<Class<?>, Class<?>> yamlKeyedClassBySettingsClass) {
+    return yamlKeyedClassBySettingsClass.entrySet().stream()
+        .filter(entry -> entry.getValue().isAssignableFrom(entry.getKey()))
+        .flatMap(entry -> AnnotationUtils.getDeclaredMethodsWithAnyAnnotation(
+            entry.getValue(), KEY_OR_SECTION_ANNOTATIONS).stream()
+            .flatMap(keyMethod -> Arrays.stream(entry.getKey().getMethods())
+                .filter(method -> !method.isBridge() && ReflectionUtils.isSameSignature(method, keyMethod) &&
+                    method.getDeclaringClass() != keyMethod.getDeclaringClass())))
+        .map(SettingsCoverage::nameOf).sorted().collect(Collectors.toList());
+  }
+
+  /**
+   * The public methods a YAML keyed class declares that are neither a key nor a section, nor its {@code reset()} or
+   * {@code logSettings(int)}: plain getters, conveniences and everything else made for code belong on its settings
+   * class, see {@link #findSettingsClassesNotExtendingTheirYamlKeyedClassDirectly(Map)}
+   *
+   * @param yamlKeyedClassBySettingsClass each settings class with the YAML keyed class holding its keys
+   * @return the methods, by class and name, sorted
+   */
+  public static List<String> findMethodsOfYamlKeyedClassesNotKeysOrSections(
+      Map<Class<?>, Class<?>> yamlKeyedClassBySettingsClass) {
+    return yamlKeyedClassBySettingsClass.values().stream().distinct()
+        .flatMap(yamlKeyedClass -> Arrays.stream(yamlKeyedClass.getDeclaredMethods()))
+        .filter(method -> !method.isSynthetic() && Modifier.isPublic(method.getModifiers()) &&
+            !AnnotationUtils.hasAnyAnnotation(method, KEY_OR_SECTION_ANNOTATIONS) && !isResetOrLogSettings(method))
+        .map(SettingsCoverage::nameOf).sorted().collect(Collectors.toList());
   }
 
   /**

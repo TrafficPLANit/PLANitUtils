@@ -21,6 +21,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -93,8 +94,8 @@ public class SettingsCoverageTest {
     }
   }
 
-  /** Settings of an internal part, with an output folder and no country */
-  public static final class TestPartSettings {
+  /** Nested settings, held internally, with an output folder and no country */
+  public static final class TestNestedSettings {
 
     /** a folder */
     private String outputDirectory;
@@ -119,18 +120,19 @@ public class SettingsCoverageTest {
   public static final class TestHolderSettings {
 
     /** the settings held */
-    private final TestPartSettings part = new TestPartSettings();
+    private final TestNestedSettings nested = new TestNestedSettings();
 
     /** @return the settings held */
-    @SettingsFileReference(key = "part", level = SettingsKeyLevel.STANDARD, description = "The file of the part")
-    public TestPartSettings getPart() {
-      return part;
+    @SettingsFileReference(key = "nested", level = SettingsKeyLevel.STANDARD,
+        description = "The file of the nested settings")
+    public TestNestedSettings getNested() {
+      return nested;
     }
 
     /** @param outputDirectory the folder of the settings held */
     @DelegatedToSyncedInternalSettingsKeys("outputDirectory")
     public void setOutputDirectory(String outputDirectory) {
-      part.setOutputDirectory(outputDirectory);
+      nested.setOutputDirectory(outputDirectory);
     }
 
     /** @param country ignored, the settings held having none */
@@ -221,6 +223,92 @@ public class SettingsCoverageTest {
       copy.scale = scale;
       copy.count = count;
       return copy;
+    }
+  }
+
+  /** The keys of test settings in a class of their own, with their reset and their logging and nothing else */
+  public static class TestYamlKeyedSettings {
+
+    /** a scale */
+    private double scale;
+
+    /** @param scale the scale */
+    @SettingsWrite(key = "scale", level = SettingsKeyLevel.STANDARD, description = "A scale")
+    public void setScale(double scale) {
+      this.scale = scale;
+    }
+
+    /** @return the scale */
+    @SettingsRead(key = "scale")
+    public double getScale() {
+      return scale;
+    }
+
+    /** Put the scale back to its default */
+    public void reset() {
+      scale = 0;
+    }
+
+    /** @param level to log at */
+    public void logSettings(int level) {
+      /* nothing to log in a test */
+    }
+  }
+
+  /** Settings extending their YAML keyed class directly, adding only what code uses */
+  public static final class TestSettingsOfYamlKeyedClass extends TestYamlKeyedSettings {
+
+    /** @return whether the scale enlarges, for code */
+    public boolean isEnlarging() {
+      return getScale() > 1;
+    }
+  }
+
+  /** A YAML keyed class holding, besides its key, a method for code that belongs on its settings class */
+  public static class TestBrokenYamlKeyedSettings {
+
+    /** a count */
+    private int count;
+
+    /** @param count the count */
+    @SettingsWrite(key = "count", level = SettingsKeyLevel.STANDARD, description = "A count")
+    public void setCount(int count) {
+      this.count = count;
+    }
+
+    /** @return the count */
+    @SettingsRead(key = "count")
+    public int getCount() {
+      return count;
+    }
+
+    /** @return whether there is a count, for code */
+    public boolean isCounting() {
+      return count > 0;
+    }
+  }
+
+  /** Settings declaring a key of their own and overriding a key of their YAML keyed class */
+  public static final class TestBrokenSettingsOfYamlKeyedClass extends TestBrokenYamlKeyedSettings {
+
+    /** a size */
+    private int size;
+
+    /** @param size the size */
+    @SettingsWrite(key = "size", level = SettingsKeyLevel.STANDARD, description = "A size")
+    public void setSize(int size) {
+      this.size = size;
+    }
+
+    /** @return the size */
+    public int getSize() {
+      return size;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public void setCount(int count) {
+      super.setCount(count);
     }
   }
 
@@ -330,6 +418,32 @@ public class SettingsCoverageTest {
     assertEquals(List.of("TestUnlistedSettings#applyScale(double)", "TestUnlistedSettings#logScaleAndCount()"),
         coverage.findUnmarkedMethodsChangingSettings());
     assertEquals(List.of(), coverage.findUnmarkedGettersOfNestedSettings());
+  }
+
+  /**
+   * Settings whose keys sit in a YAML keyed class keep them apart: a settings class extends its YAML keyed class
+   * directly, declares no key or section, and overrides none of its class's, and the YAML keyed class declares only
+   * keys and sections, its reset and its logSettings(int). A split kept so has nothing reported; each break is
+   * reported by the class or method breaking it
+   */
+  @Test
+  public void yamlKeyedSplitBreaksReported() {
+    var kept = Map.<Class<?>, Class<?>>of(TestSettingsOfYamlKeyedClass.class, TestYamlKeyedSettings.class);
+    assertEquals(List.of(), SettingsCoverage.findSettingsClassesNotExtendingTheirYamlKeyedClassDirectly(kept));
+    assertEquals(List.of(), SettingsCoverage.findKeysAndSectionsDeclaredOnSettingsClasses(kept));
+    assertEquals(List.of(), SettingsCoverage.findKeysAndSectionsOverriddenBySettingsClasses(kept));
+    assertEquals(List.of(), SettingsCoverage.findMethodsOfYamlKeyedClassesNotKeysOrSections(kept));
+
+    var broken = Map.<Class<?>, Class<?>>of(TestBrokenSettingsOfYamlKeyedClass.class,
+        TestBrokenYamlKeyedSettings.class, TestHolderOfNothingSettings.class, TestYamlKeyedSettings.class);
+    assertEquals(List.of("TestHolderOfNothingSettings"),
+        SettingsCoverage.findSettingsClassesNotExtendingTheirYamlKeyedClassDirectly(broken));
+    assertEquals(List.of("TestBrokenSettingsOfYamlKeyedClass#setSize(int)"),
+        SettingsCoverage.findKeysAndSectionsDeclaredOnSettingsClasses(broken));
+    assertEquals(List.of("TestBrokenSettingsOfYamlKeyedClass#setCount(int)"),
+        SettingsCoverage.findKeysAndSectionsOverriddenBySettingsClasses(broken));
+    assertEquals(List.of("TestBrokenYamlKeyedSettings#isCounting()"),
+        SettingsCoverage.findMethodsOfYamlKeyedClassesNotKeysOrSections(broken));
   }
 
   /**

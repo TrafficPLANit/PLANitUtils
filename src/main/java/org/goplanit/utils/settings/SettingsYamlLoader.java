@@ -119,9 +119,10 @@ import java.util.stream.Stream;
  * <p>
  * Settings filling no section, made from a schema of their one class, take every key of their class at the top level,
  * whichever class in their class chain declares it, so a file holds the settings of one object. A getter marked with
- * {@link SettingsFileReference} names the file of a part, or a list of files: the part the getter gives is filled from
- * each file in the order listed, as stacked sources are, a relative path read against the folder of the file naming
- * it, as it would be filled from those files on its own, and a part no file names keeps its settings. A named file
+ * {@link SettingsFileReference} names the file of nested settings, or a list of files: the nested settings the getter
+ * gives are filled from each file in the order listed, as stacked sources are, a relative path read against the folder
+ * of the file naming it, as they would be filled from those files on their own, and nested settings no file names keep
+ * their settings. A named file
  * that cannot be read, has another header, or names, directly or through others, a file being read is a problem of
  * its own.
  * </p>
@@ -236,7 +237,7 @@ public final class SettingsYamlLoader {
   /** warnings found so far */
   private final List<SettingsProblem> warnings = new ArrayList<>();
 
-  /** the files being read, the source applied first, so a part file naming one of them back is found */
+  /** the files being read, the source applied first, so a file of nested settings naming one of them back is found */
   private final Deque<String> filesBeingRead = new ArrayDeque<>();
 
   /**
@@ -340,12 +341,13 @@ public final class SettingsYamlLoader {
   /**
    * Apply the top level of a source, with the source among the files being read while it applies: each key at the top
    * level, in the order of the source, to the settings themselves when they fill no section, otherwise to the settings
-   * of every section, a key naming the file of a part filling that part; then each section to its settings, in the
-   * order of the schema, recording keys outside the schema and sections the settings do not take
+   * of every section, a key naming the file of nested settings filling those nested settings; then each section to its
+   * settings, in the order of the schema, recording keys outside the schema and sections the settings do not take
    * <p>
-   * One method serves the sources given and the files of parts alike, so the file of a part is read exactly as it
-   * would be were the part made on its own. Each source stays among the files being read while it applies, which is
-   * how a part file naming a file further up is found: {@code a.yaml} naming {@code b.yaml}, which names
+   * One method serves the sources given and the files of nested settings alike, so the file of nested settings is read
+   * exactly as it would be were the nested settings made on their own. Each source stays among the files being read
+   * while it applies, which is how a file of nested settings naming a file further up is found: {@code a.yaml} naming
+   * {@code b.yaml}, which names
    * {@code a.yaml} again, for example.
    * </p>
    *
@@ -388,13 +390,13 @@ public final class SettingsYamlLoader {
   }
 
   /**
-   * Fill a part from the settings file a key names, or from each file of a list in the order listed, as stacked
-   * sources are, a relative path read against the folder of the source naming it. A list is read as entries, so a
-   * problem names the entry, and no file is read when an entry is refused
+   * Fill nested settings from the settings file a key names, or from each file of a list in the order listed, as
+   * stacked sources are, a relative path read against the folder of the source naming it. A list is read as entries, so
+   * a problem names the entry, and no file is read when an entry is refused
    *
-   * @param getter of the part
+   * @param getter of the nested settings
    * @param value of the key, the path of a file or a list of them
-   * @param settings holding the part
+   * @param settings holding the nested settings
    * @param keyPath of the key
    * @param source naming the files
    */
@@ -411,33 +413,37 @@ public final class SettingsYamlLoader {
       return;
     }
     for (var path : (List<?>) paths) {
-      fillPartFromFile(getter, (Path) path, settings, keyPath, source);
+      fillNestedSettingsFromFile(getter, (Path) path, settings, keyPath, source);
     }
   }
 
   /**
-   * Fill a part from one settings file, as the part would be filled from that file on its own. A file being read
-   * already is a loop, recorded and not read again, so files naming each other do not go on without end
+   * Fill nested settings from one settings file, as they would be filled from that file on their own. A file being
+   * read already is a loop, recorded and not read again, so files naming each other do not go on without end
    *
-   * @param getter of the part
+   * @param getter of the nested settings
    * @param path of the file
-   * @param settings holding the part
+   * @param settings holding the nested settings
    * @param keyPath of the key naming the file
    * @param source naming the file
    */
-  private void fillPartFromFile(Method getter, Path path, Object settings, String keyPath, SettingsSource source) {
-    var partSource = SettingsSource.ofFile(path);
-    if (filesBeingRead.contains(partSource.getDescription())) {
+  private void fillNestedSettingsFromFile(Method getter, Path path, Object settings, String keyPath,
+      SettingsSource source) {
+    var nestedSettingsSource = SettingsSource.ofFile(path);
+    if (filesBeingRead.contains(nestedSettingsSource.getDescription())) {
       addProblem(SettingsProblemKind.FILE_REFERENCE_LOOP, source, keyPath,
           String.format("Names %s, which itself names this file, directly or through other files",
-              partSource.getDescription()));
+              nestedSettingsSource.getDescription()));
       return;
     }
-    var partTopLevel = readTopLevel(partSource);
-    var part = partTopLevel == null ? FAILED : call(getter, settings, new Object[0], keyPath, source);
-    if (part != FAILED) {
-      PlanItRunTimeException.throwIfNull(part, "Part %s of %s is null", keyPath, settings.getClass().getName());
-      applyTopLevel(partSource, partTopLevel, part, schema.getSectionSettingsOf(part));
+    var nestedSettingsTopLevel = readTopLevel(nestedSettingsSource);
+    var nestedSettings =
+        nestedSettingsTopLevel == null ? FAILED : call(getter, settings, new Object[0], keyPath, source);
+    if (nestedSettings != FAILED) {
+      PlanItRunTimeException.throwIfNull(nestedSettings, "Nested settings %s of %s are null", keyPath,
+          settings.getClass().getName());
+      applyTopLevel(nestedSettingsSource, nestedSettingsTopLevel, nestedSettings,
+          schema.getSectionSettingsOf(nestedSettings));
     }
   }
 

@@ -20,7 +20,7 @@ public enum SettingsProblemKind {
   /** The file cannot be read, such as a file that does not exist */
   FILE_NOT_READ,
 
-  /** A file named as the settings file of a part names, directly or through other files, the file naming it */
+  /** A file named as the settings file of nested settings names, directly or through other files, the file naming it */
   FILE_REFERENCE_LOOP,
 
   /**

@@ -32,8 +32,9 @@ public interface YamlWriteSettingsSupport {
   public abstract SettingsSchema getSettingsSchema();
 
   /**
-   * Write these settings to a settings file, in the layout {@link #getSettingsSchema()} gives, and each part whose
-   * settings file a key names to a file of its own next to it
+   * Write these settings to a settings file, in the layout {@link #getSettingsSchema()} gives, and each of the nested
+   * settings whose settings file a key names to a file of its own next to it, named after the file followed by the key,
+   * such as {@code intermodal_network.yaml} next to {@code intermodal.yaml}
    *
    * @param file to write
    * @param content which keys to write
@@ -43,6 +44,6 @@ public interface YamlWriteSettingsSupport {
    */
   public default void writeSettingsFile(Path file, SettingsFileContentType content, boolean withDescriptions)
       throws IOException {
-    new SettingsYamlWriter(getSettingsSchema(), this, content, withDescriptions).write(file);
+    new SettingsYamlWriter(getSettingsSchema(), this, content, withDescriptions, file).write();
   }
 }

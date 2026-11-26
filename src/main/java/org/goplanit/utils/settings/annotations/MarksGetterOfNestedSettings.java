@@ -7,7 +7,7 @@ import java.lang.annotation.Target;
 
 /**
  * Marks the definition of an annotation that, written on a getter returning nested settings, says how a settings file
- * reaches those settings: as a section, as the file of a part, as the value of a key, or not at all with a reason
+ * reaches those settings: as a section, as a file of their own, as the value of a key, or not at all with a reason
  * <p>
  * This annotation goes on the definition of another annotation, never on a settings method. For example,
  * {@link SettingsSection} is defined as

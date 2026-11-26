@@ -3,6 +3,7 @@ package org.goplanit.utils.settings;
 import org.goplanit.utils.exceptions.PlanItRunTimeException;
 import org.goplanit.utils.math.TypeConversionUtil;
 import org.goplanit.utils.misc.CollectionUtils;
+import org.goplanit.utils.misc.FileUtils;
 import org.goplanit.utils.misc.StringUtils;
 import org.goplanit.utils.reflection.ReflectionUtils;
 import org.goplanit.utils.settings.annotations.SettingsFileReference;
@@ -34,7 +35,7 @@ import java.util.stream.Collectors;
  * </p>
  * <pre>
  * new SettingsYamlWriter(new SettingsSchema(ExampleNetworkSettings.class), settings,
- *     SettingsFileContent.KEYS_DIFFERING_FROM_DEFAULTS, true).write(Path.of("network.yaml"));
+ *     SettingsFileContent.KEYS_DIFFERING_FROM_DEFAULTS, true, Path.of("network.yaml")).write();
  * </pre>
  * <p>
  * give the file
@@ -50,11 +51,11 @@ import java.util.stream.Collectors;
  * </pre>
  * <p>
  * It exists so that anyone can see every key of some settings with its value and description, start a file from them,
- * or keep the choices made in a run, and read them back into equal settings. A writer holds the text of one file, made
- * when it is constructed. A file holds the header, then the values at the top level the constructor of the settings
- * took and the keys at the top level, both read from the settings themselves when they fill no section, otherwise from
- * the settings of the first section, which settings holding the settings of the sections pass their values at the top
- * level on to, then the sections in the order of the schema.
+ * or keep the choices made in a run, and read them back into equal settings. A writer holds the text of the one file
+ * it is made for, made when it is constructed. A file holds the header, then the values at the top level the
+ * constructor of the settings took and the keys at the top level, both read from the settings themselves when they fill
+ * no section, otherwise from the settings of the first section, which settings holding the settings of the sections
+ * pass their values at the top level on to, then the sections in the order of the schema.
  * The keys at the top level, and the keys and nested sections inside a section, go by level, then by the class first
  * annotating their method, the keys of a class before those of the classes extending it, then by name: the order nested
  * sections apply in when read.
@@ -72,10 +73,11 @@ import java.util.stream.Collectors;
  * <p>
  * With descriptions, the header line has a comment above it saying it gives the kind of the settings and the version of
  * their keys. Settings filling no section have every key of their class at the top level. A key naming the settings
- * file of a part ({@link SettingsFileReference}) is always written, as the name of a file of the part's own: the key's
- * name followed by {@code .yaml}, such as {@code zoning: zoning.yaml}. {@link #write(Path)} writes that file next to
- * the file naming it, so the files read back give the same settings, while {@link #toString()} gives the text of the
- * naming file only.
+ * file of nested settings ({@link SettingsFileReference}) is always written, as the name of a file of their own: the
+ * name of the file written without its extension, then {@code _}, the key and {@code .yaml}, such as
+ * {@code zoning: intermodal_zoning.yaml} in {@code intermodal.yaml}. {@link #write()} writes that file next to the file
+ * naming it, so the files read back give the same settings, and settings with nested settings written into one folder
+ * keep their own files, while {@link #toString()} gives the text of the naming file only.
  * </p>
  *
  * @author markr
@@ -90,8 +92,11 @@ public final class SettingsYamlWriter {
   /** what the comment above the header line says, written with the descriptions */
   private static final String HEADER_DESCRIPTION = "The kind of these settings and the version of their keys";
 
-  /** the extension of the file a part is written to, after the key naming it */
-  private static final String PART_FILE_EXTENSION = ".yaml";
+  /** what joins the name of a file and the key naming the file of its nested settings, in the name of that file */
+  private static final String NESTED_SETTINGS_FILE_NAME_SEPARATOR = "_";
+
+  /** the extension of the file nested settings are written to, after the key naming it */
+  private static final String NESTED_SETTINGS_FILE_EXTENSION = ".yaml";
 
   /**
    * The heading of a level, such as "--- standard ---"
@@ -193,11 +198,14 @@ public final class SettingsYamlWriter {
   /** true to write the descriptions and level headings as comments, and keys with no value commented out */
   private final boolean withDescriptions;
 
+  /** the file the text is written to, which the files of the nested settings are named after */
+  private final Path file;
+
   /** the YAML written so far */
   private final SimpleYamlWriter yaml = new SimpleYamlWriter();
 
-  /** the writer of each part whose settings file a key names, by the name of that file */
-  private final Map<String, SettingsYamlWriter> partWriters = new LinkedHashMap<>();
+  /** the writer of the file of each of the nested settings a key names, in the order of the keys */
+  private final List<SettingsYamlWriter> nestedSettingsWriters = new ArrayList<>();
 
   /**
    * The plain value of a value of a type the method of a key takes, from which the loader makes an equal value
@@ -392,24 +400,26 @@ public final class SettingsYamlWriter {
   }
 
   /**
-   * Add a key naming the settings file of a part, the file named after the key, keeping a writer of the part to write
-   * that file next to the file naming it
+   * Add a key naming the settings file of nested settings, the file next to the file written, named after it followed
+   * by the key, keeping a writer of the nested settings to write that file
    *
    * @param key naming the file
-   * @param fileReferenceGetter of the part
-   * @param settings holding the part
+   * @param fileReferenceGetter of the nested settings
+   * @param settings holding the nested settings
    */
-  private void addPart(String key, Method fileReferenceGetter, Object settings) {
-    var fileName = key + PART_FILE_EXTENSION;
-    addKey(key, List.of(fileReferenceGetter.getAnnotation(SettingsFileReference.class).description()), fileName);
-    partWriters.put(fileName, new SettingsYamlWriter(schema, ReflectionUtils.invoke(fileReferenceGetter, settings),
-        content, withDescriptions));
+  private void addFileReference(String key, Method fileReferenceGetter, Object settings) {
+    var nestedSettingsFile = file.resolveSibling(FileUtils.getFileNameWithoutExtension(file.getFileName().toString())
+        + NESTED_SETTINGS_FILE_NAME_SEPARATOR + key + NESTED_SETTINGS_FILE_EXTENSION);
+    addKey(key, List.of(fileReferenceGetter.getAnnotation(SettingsFileReference.class).description()),
+        nestedSettingsFile.getFileName().toString());
+    nestedSettingsWriters.add(new SettingsYamlWriter(schema, ReflectionUtils.invoke(fileReferenceGetter, settings),
+        content, withDescriptions, nestedSettingsFile));
   }
 
   /**
    * Add the keys of settings that are written: their keys at the top level, or the keys and nested sections of a
-   * section, in writing order, under a heading per level when descriptions are written. A key naming the file of a part
-   * is always written
+   * section, in writing order, under a heading per level when descriptions are written. A key naming the file of nested
+   * settings is always written
    *
    * @param settings to add the keys of
    * @param defaults fresh settings of the same class to compare with, null to write every key
@@ -429,7 +439,7 @@ public final class SettingsYamlWriter {
       }
       var sectionGetter = index.findSectionGetter(key);
       if (fileReferenceGetter != null) {
-        addPart(key, fileReferenceGetter, settings);
+        addFileReference(key, fileReferenceGetter, settings);
       } else if (sectionGetter == null) {
         addKey(key, describeYamlKey(index.findWrite(key)), toPlainValueOfKey(settings, index, key));
       } else {
@@ -448,15 +458,17 @@ public final class SettingsYamlWriter {
    * @param content which keys to write
    * @param withDescriptions true to write the description of each section and key, and a heading per level, as
    *     comments; false for no comment at all
+   * @param file the file the text is for, which the files of the nested settings are named after and written next to
    * @throws PlanItRunTimeException when a key or value at the top level has no getter marked with {@link SettingsRead}
    * @throws IllegalStateException when a section to write holds keys with no value only, which YAML cannot keep
    *     commented out at their depth
    */
   public SettingsYamlWriter(SettingsSchema schema, Object settings, SettingsFileContentType content,
-      boolean withDescriptions) {
+      boolean withDescriptions, Path file) {
     this.schema = schema;
     this.content = content;
     this.withDescriptions = withDescriptions;
+    this.file = file;
     var sections = schema.getSectionSettingsOf(settings);
     var sectionKeys = schema.getSectionKeys().stream().filter(sections::containsKey).collect(Collectors.toList());
     /* the keys and values at the top level are read from the settings themselves when they fill no section, otherwise
@@ -488,7 +500,7 @@ public final class SettingsYamlWriter {
   }
 
   /**
-   * The YAML text of the settings, without the files of their parts
+   * The YAML text of the settings, without the files of their nested settings
    *
    * @return the text
    */
@@ -498,16 +510,15 @@ public final class SettingsYamlWriter {
   }
 
   /**
-   * Write the YAML text of the settings to a file, as UTF-8, and each part whose settings file a key names to a file of
-   * its own next to it, named after the key
+   * Write the YAML text of the settings, as UTF-8, to the file the writer is made for, and the file of each of the
+   * nested settings a key names next to it
    *
-   * @param file to write
    * @throws IOException when a file cannot be written
    */
-  public void write(Path file) throws IOException {
+  public void write() throws IOException {
     yaml.write(file);
-    for (var part : partWriters.entrySet()) {
-      part.getValue().write(file.resolveSibling(part.getKey()));
+    for (var nestedSettingsWriter : nestedSettingsWriters) {
+      nestedSettingsWriter.write();
     }
   }
 }

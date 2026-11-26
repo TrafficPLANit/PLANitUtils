@@ -33,7 +33,7 @@ import java.util.stream.Stream;
 /**
  * The settings keys of one settings class, found through its annotations, with the method that writes each key or
  * former key and the getter that reads it, the level of each key and section, which keys sit at the top level, the
- * getter of each section and of each part whose settings file a key names, and the keys at the top level its
+ * getter of each section and of the nested settings whose settings file a key names, and the keys at the top level its
  * constructor takes
  * <p>
  * For example, for a class whose method {@code setMaximumReachMeters(double)} carries
@@ -89,7 +89,7 @@ final class SettingsKeyIndex {
   /** the getter of each section */
   private final Map<String, Method> sectionGetters = new HashMap<>();
 
-  /** the getter of each part whose settings file a key names */
+  /** the getter of the nested settings whose settings file each key names */
   private final Map<String, Method> fileReferenceGetters = new HashMap<>();
 
   /**
@@ -323,7 +323,8 @@ final class SettingsKeyIndex {
   }
 
   /**
-   * The plain keys at the top level of a settings file, the keys naming the files of parts included, in writing order
+   * The plain keys at the top level of a settings file, the keys naming the files of nested settings included, in
+   * writing order
    *
    * @return the keys, in order, the {@code +} and {@code -} forms of a list left out
    */
@@ -376,7 +377,7 @@ final class SettingsKeyIndex {
   }
 
   /**
-   * The getter of a part whose settings file a key names
+   * The getter of the nested settings whose settings file a key names
    *
    * @param key naming the file
    * @return the getter, null when the class has no such key
