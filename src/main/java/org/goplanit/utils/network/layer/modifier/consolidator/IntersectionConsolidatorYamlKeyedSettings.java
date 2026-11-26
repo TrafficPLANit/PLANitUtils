@@ -1,6 +1,10 @@
 package org.goplanit.utils.network.layer.modifier.consolidator;
 
+import java.util.logging.Logger;
+
 import org.goplanit.utils.exceptions.ExceptionUtils;
+import org.goplanit.utils.misc.LoggingUtils;
+import org.goplanit.utils.settings.annotations.NoSettingsKey;
 import org.goplanit.utils.settings.annotations.SettingsKeyLevel;
 import org.goplanit.utils.settings.annotations.SettingsRead;
 import org.goplanit.utils.settings.annotations.SettingsWrite;
@@ -17,6 +21,10 @@ import org.goplanit.utils.settings.annotations.SettingsWrite;
  * @author markr
  */
 public abstract class IntersectionConsolidatorYamlKeyedSettings {
+
+  /** logger to use */
+  private static final Logger LOGGER =
+      Logger.getLogger(IntersectionConsolidatorYamlKeyedSettings.class.getCanonicalName());
 
   /** see {@link #setMaximumJoiningReachMeters(double)} */
   private double maximumJoiningReachMeters = DEFAULT_MAXIMUM_JOINING_REACH_METERS;
@@ -453,5 +461,38 @@ public abstract class IntersectionConsolidatorYamlKeyedSettings {
       description = "Store the movements of active modes too, such as pedestrians, which collapsing them needs")
   public void setIncludeActiveModesInMovements(boolean includeActiveModesInMovements) {
     this.includeActiveModesInMovements = includeActiveModesInMovements;
+  }
+
+  /**
+   * Log the settings
+   *
+   * @param level to indent the values at
+   */
+  @NoSettingsKey(reason = "logs the settings")
+  public void logSettings(int level) {
+    LOGGER.info(LoggingUtils.settingsValue("Maximum joining reach (m)", getMaximumJoiningReachMeters(), level));
+    LOGGER.info(LoggingUtils.settingsValue("Minimum coverage gain per member",
+        getMinimumCoverageGainPerMember(), level));
+    LOGGER.info(LoggingUtils.settingsValue("Coverage tie margin", getCoverageTieMargin(), level));
+    LOGGER.info(LoggingUtils.settingsValue("Maximum parsed intersections to try every subdivision",
+        getMaximumParsedIntersectionsToTryEverySubdivision(), level));
+    LOGGER.info(LoggingUtils.settingsValue("Subdivisions kept per search step",
+        getSubdivisionsKeptPerSearchStep(), level));
+    LOGGER.info(LoggingUtils.settingsValue("Pull-in margin beyond radius (m)",
+        getPullInMarginBeyondRadiusMeters(), level));
+    LOGGER.info(LoggingUtils.settingsValue("Maximum pull-in connection length (m)",
+        getMaximumPullInConnectionLengthMeters(), level));
+    LOGGER.info(LoggingUtils.settingsValue("Internal link length warning (m)",
+        getInternalLinkLengthWarningMeters(), level));
+    LOGGER.info(LoggingUtils.settingsValue("Maximum distance reached only through intersection (m)",
+        getMaximumDistanceReachedOnlyThroughIntersectionMeters(), level));
+    LOGGER.info(LoggingUtils.settingsValue("Maximum distance reached only through intersection (radius factor)",
+        getMaximumDistanceReachedOnlyThroughIntersectionRadiusFactor(), level));
+    LOGGER.info(LoggingUtils.settingsValue("Maximum distance slip lane crossing to junction (m)",
+        getMaximumDistanceSlipLaneCrossingToJunctionMeters(), level));
+    LOGGER.info(LoggingUtils.settingsValue("Maximum distance between crossings side by side (m)",
+        getMaximumDistanceBetweenCrossingsSideBySideMeters(), level));
+    LOGGER.info(LoggingUtils.settingsValue("Include active modes in movements",
+        isIncludeActiveModesInMovements(), level));
   }
 }
