@@ -24,11 +24,10 @@ public interface ServiceLegSegment extends EdgeSegment {
   public ServiceLeg getParent();
 
   /**
-   * Collect the geometry of this service leg segment. Because
-   * service leg segments comprise one or more physical link segments, they may have unique geometry compared
-   * to their opposite direction counterpart. Therefore, they are expected to be able to provide their own
-   * unique access to their geometry rather than rely on their parent, also this may be generated on the fly rather than stored
-   * on the instance
+   * Collect the geometry of this service leg segment. A service leg segment comprises one or more physical link
+   * segments, so its geometry may differ from that of its opposite direction counterpart. It is therefore expected to
+   * provide its own geometry rather than rely on its parent, and may create it when asked rather than store it on the
+   * instance
    *
    * @return lineString
    */
@@ -68,7 +67,7 @@ public interface ServiceLegSegment extends EdgeSegment {
     if(getPhysicalParentSegments() == null || getPhysicalParentSegments().isEmpty()){
       return false;
     }
-    return getPhysicalParentSegments().stream().allMatch(ls -> ls.hasGeometry());
+    return getPhysicalParentSegments().stream().allMatch(EdgeSegment::hasGeometry);
   }
 
   /** Collect the links that make up this leg ordered and in direction from A to B

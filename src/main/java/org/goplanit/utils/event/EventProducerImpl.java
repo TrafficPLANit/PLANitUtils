@@ -11,11 +11,20 @@ import java.util.TreeMap;
 import java.util.TreeSet;
 import java.util.logging.Logger;
 
+import org.goplanit.utils.exceptions.ExceptionUtils;
+import org.goplanit.utils.exceptions.PlanItRunTimeException;
+
 /**
- * The EventProducer is the base class able to produce events. It provides protected methods to register listeners and remove listeners
- * as well as ways to fire a generic event. Event producing classes should either extend this class to provide more user friendly public methods
- * with the correct signatures that enforce the appropriate event and listener combinations suitable for that particular class while internally
- * making use of this implementations functionality. 
+ * Base class of event producers. It provides protected methods to register and remove listeners and to fire a generic
+ * event. Event producing classes should extend it with more user friendly public methods, whose signatures enforce the
+ * event and listener combinations that suit the class, and use this implementation internally.
+ * <p>
+ * A producer is given the event types it fires when made, usually its producer interface's list, and holds itself and
+ * its listeners to them: it refuses to fire an event of another type, registers a listener only for the types it fires,
+ * and refuses a listener supporting none of them or a type it never fires. So an event added without listing it fails
+ * the first test firing it, and a listener registered for what is never fired, a coding mistake, is refused rather
+ * than left waiting.
+ * </p>
  * 
  * @author markr
  */
@@ -23,62 +32,123 @@ public abstract class EventProducerImpl{
   
   /** the logger to use */
   private static final Logger LOGGER = Logger.getLogger(EventProducerImpl.class.getCanonicalName());
+
+  /** listeners internal to the owner of this producer by event type, in order of registration; they receive each
+   * event before the other listeners and are not removed with them */
+  private final Map<EventType, List<EventListener>> internalListeners = new HashMap<>();
+
+  /** the event types this producer fires; it fires no other, and registers listeners for no other */
+  private final Set<EventType> firedEventTypes;
+
+  /**
+   * The types among a listener's supported ones that this producer fires, refusing the listener when there are none
+   *
+   * @param listener being registered for every type it supports
+   * @return the supported types fired, in the listener's order
+   * @throws IllegalArgumentException when the producer fires none of them
+   */
+  private EventType[] findFiredSupportedEventTypes(final EventListener listener) {
+    var fired = listener.findKnownSupportedEventTypesAmong(firedEventTypes);
+    ExceptionUtils.throwIllegalArgumentIf(fired.length == 0,
+        "Listener %s refused by producer %s: it supports none of the event types the producer fires, %s",
+        listener.getClass().getName(), getClass().getName(), firedEventTypes);
+    return fired;
+  }
   
   /** The collection of interested listeners by event and priority */
   protected Map<EventType, Map<EventListenerPriority, List<EventListener>>> listeners;
-  
-  /** Add a listener for one or more event types (collected from listener's known supported types) that are presumably triggered by this producer 
-   * 
+
+  /** Add a listener for those of its known supported event types this producer fires
+   *
    * @param listener to register
    * @param priority to apply for the combination of listener and event type(s)
+   * @throws IllegalArgumentException when the producer fires none of the types the listener supports
    */
   protected final synchronized void addListener(final EventListener listener, EventListenerPriority priority){
     if(!listener.hasKnownSupportedEventTypes()) {
       LOGGER.severe("IGNORED: unable to identify listener's supported event types, "
-          + "consider registering with explicit event types, or provide supported types by implementing hasKnownSupportedEventTypes() on listener");
+          + "consider registering with explicit event types, or provide supported types by implementing " +
+          "hasKnownSupportedEventTypes() on listener");
+      return;
     }
-    if(listener.getKnownSupportedEventTypes().length > 0) {
-      addListener(listener, priority, listener.getKnownSupportedEventTypes());
-    }
-  }    
-  
-  /** Add a listener for one or more event types that are presumably triggered by this producer 
-   * 
+    addListener(listener, priority, findFiredSupportedEventTypes(listener));
+  }
+
+  /** Add a listener for one or more event types this producer fires
+   *
    * @param listener to register
    * @param priority to apply for the combination of listener and event type(s)
    * @param eventTypes to register the listener for
+   * @throws IllegalArgumentException when the producer does not fire one of the types, registering it for none
    */
-  protected final synchronized void addListener(final EventListener listener, EventListenerPriority priority, final EventType... eventTypes){
-    for(int index=0;index<eventTypes.length;++index) {
-      EventType type = eventTypes[index];
-      listeners.putIfAbsent(type, new TreeMap<>());
-      Map<EventListenerPriority, List<EventListener>> listenersByEventType = listeners.get(type);
-      listenersByEventType.putIfAbsent(priority, new ArrayList<>());
-      listenersByEventType.get(priority).add(listener);
-    }
+  protected final synchronized void addListener(
+          final EventListener listener, EventListenerPriority priority, final EventType... eventTypes){
+
+      for (EventType type : eventTypes) {
+        ExceptionUtils.throwIllegalArgumentIf(!firedEventTypes.contains(type),
+            "Listener %s refused for event type %s by producer %s: the producer does not fire it, only %s",
+            listener.getClass().getName(), type, getClass().getName(), firedEventTypes);
+      }
+      for (EventType type : eventTypes) {
+          listeners.putIfAbsent(type, new TreeMap<>());
+          Map<EventListenerPriority, List<EventListener>> listenersByEventType = listeners.get(type);
+          listenersByEventType.putIfAbsent(priority, new ArrayList<>());
+          listenersByEventType.get(priority).add(listener);
+      }
   }  
     
-  /** Add a listener for one or more event types that are presumably triggered by this producer, with the default priority (low) 
+  /** Add a listener for one or more event types this producer fires, with the default priority (low)
    * 
    * @param listener to register
    * @param eventTypes to register the listener for
+   * @throws IllegalArgumentException when the producer does not fire one of the types, registering it for none
    */
   protected final synchronized void addListener(final EventListener listener, final EventType... eventTypes){
     addListener(listener, EventListenerPriority.LOW, eventTypes);
   }    
   
-  /** add a listener for one or more event types that are presumably triggered by this producer absed on its known supported types.
-   *  If no known types are not available the listener will not be added and a warning is issued
-   * 
+  /** Add a listener for those of its known supported event types this producer fires, with the default priority
+   *  (low). Without known supported types the listener is not added and a warning is issued
+   *
    * @param listener to add
+   * @throws IllegalArgumentException when the producer fires none of the types the listener supports
    */
   protected final synchronized void addListener(final EventListener listener){
+    addListener(listener, EventListenerPriority.LOW);
+  }
+
+  /** Add a listener internal to the owner of this producer, for those of the event types it is known to support this
+   * producer fires. It receives each of these events before the other listeners do, and stays registered when they are
+   * removed. Without known supported event types the listener is not added and a warning is issued
+   *
+   * @param listener to add
+   * @throws IllegalArgumentException when the producer fires none of the types the listener supports
+   */
+  protected final synchronized void addInternalListener(final EventListener listener){
     if(!listener.hasKnownSupportedEventTypes()) {
-      LOGGER.severe("IGNORED: unable to identify listener's supported event types, "
-          + "consider registering with explicit event types, or provide supported types by implementing hasKnownSupportedEventTypes() on listener");
+      LOGGER.severe("IGNORED: unable to identify internal listener's supported event types, "
+          + "provide them by implementing getKnownSupportedEventTypes() on listener");
+      return;
     }
-    addListener(listener, listener.getKnownSupportedEventTypes());
-  }     
+    for (EventType type : findFiredSupportedEventTypes(listener)) {
+      internalListeners.computeIfAbsent(type, t -> new ArrayList<>()).add(listener);
+    }
+  }
+
+  /**
+   * Remove a listener internal to the owner of this producer, for all event types it is registered for
+   *
+   * @param listener to remove
+   * @return true when removed from one or more event types, false otherwise
+   */
+  protected final synchronized boolean removeInternalListener(final EventListener listener) {
+    boolean removed = false;
+    for (var listenersOfType : internalListeners.values()) {
+      removed = listenersOfType.removeIf(registered -> registered == listener) || removed;
+    }
+    internalListeners.values().removeIf(List::isEmpty);
+    return removed;
+  }
   
   /**
    *  Remove a listener for a given event type
@@ -136,10 +206,9 @@ public abstract class EventProducerImpl{
     return result;
   }
 
-  /** Let derived class deal with the handling of the listener, where based on the derived event implementation
-   * the listener's concrete class can be determined which in turn allows for calling the right event callback method
-   * which is unknown at this base level since this event mechanism does not force a particular notification method signature
-   * on its listener interface
+  /** Let the derived class notify the listener. From the derived event it can tell the listener's concrete class, and
+   * so call the right callback method. That method is unknown here, as this event mechanism does not force a
+   * notification method signature on its listener interface
    * 
    * @param eventListener to notify for the event
    * @param event to process for the listener
@@ -147,9 +216,11 @@ public abstract class EventProducerImpl{
   protected abstract void fireEvent(final EventListener eventListener, final Event event);
 
   /**
-   * Transmit an event to all interested listeners.
-   * 
+   * Transmit an event to all interested listeners, those internal to the owner of this producer first.
+   *
    * @param event the event fired
+   * @throws PlanItRunTimeException when the producer does not list the event's type among those it fires, before any
+   *     listener hears it
    */
   protected synchronized void fireEvent(final Event event){
     if(event==null) {
@@ -158,7 +229,15 @@ public abstract class EventProducerImpl{
     if(event.getType()==null) {
       throw new IllegalArgumentException("event type cannot be null");
     }
-    
+    PlanItRunTimeException.throwIf(!firedEventTypes.contains(event.getType()),
+        "Event of type %s refused by producer %s: it does not list the type among those it fires, %s",
+        event.getType(), getClass().getName(), firedEventTypes);
+
+    if (internalListeners.containsKey(event.getType())){
+      for (EventListener listener : new ArrayList<>(internalListeners.get(event.getType()))){
+        this.fireEvent(listener, event);
+      }
+    }
     if (this.listeners.containsKey(event.getType())){
       // copy containers while iterating in case removeListener() is called during this method processing
       Map<EventListenerPriority, List<EventListener>> listenersForEventType = this.listeners.get(event.getType());
@@ -173,36 +252,49 @@ public abstract class EventProducerImpl{
   }
 
   /**
-   * Constructs a new EventProducer and checks for duplicate values in event types.
+   * Constructor
+   *
+   * @param firedEventTypes the event types this producer fires, usually its producer interface's list: it fires no
+   *     other, and registers listeners for no other
    */
-  protected EventProducerImpl(){
+  protected EventProducerImpl(final Set<? extends EventType> firedEventTypes){
     this.listeners = new HashMap<>();
+    this.firedEventTypes = Set.copyOf(firedEventTypes);
   }
 
   /**
-   * Remove all the listeners from this producer
+   * The event types this producer fires, see {@link EventProducer#getFiredEventTypes()}
+   *
+   * @return unmodifiable set of the event types fired
    */
-  public synchronized void removeAllListeners(){
+  public Set<EventType> getFiredEventTypes() {
+    return firedEventTypes;
+  }
+
+  /**
+   * Remove all the listeners from this producer, apart from those internal to its owner
+   */
+  public synchronized void removeAllNonInternalListeners(){
     this.listeners = null;
     this.listeners = new HashMap<>();
   }
 
   /**
-   * Verify if any listeners are available
-   * 
+   * Verify if any listeners, including internal ones, are available
+   *
    * @return true when present, false otherwise
    */
   public boolean hasListeners(){
-      return !this.listeners.isEmpty();
+      return !this.listeners.isEmpty() || !internalListeners.isEmpty();
   }
-  
-  /** Verify if one or more listeners are registered for given event type
-   * 
+
+  /** Verify if one or more listeners, including internal ones, are registered for given event type
+   *
    * @param eventType to verify
    * @return true when present, false otherwise
    */
   public boolean hasListener(EventType eventType) {
-    return this.listeners.containsKey(eventType);
+    return this.listeners.containsKey(eventType) || internalListeners.containsKey(eventType);
   }
 
   /** Determine the number of listeners for a given event type

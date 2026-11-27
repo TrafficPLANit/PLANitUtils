@@ -3,10 +3,9 @@ package org.goplanit.utils.enums;
 import java.util.function.Supplier;
 
 /**
- * Interface that deals with injecting way to create an enum based on its internal enum value through EnumValue, e.g.
- * and enum can implement this interface and EnumValue, then call {@link #createFromValues(Supplier, Object)} where the supplier
- * is its values() method and the value is some value that is attached to the enum instance. It will then find that matching instance and
- * return it.
+ * Creates an enum instance from its internal value through EnumValue. For example, an enum implementing this interface
+ * and EnumValue calls {@link #createFromValues(Supplier, Object)} with its values() method as the supplier and a value
+ * attached to one of its instances, and gets the matching instance back.
  *
  * @param <T> enum type
  * @param <V> internal value type of enum

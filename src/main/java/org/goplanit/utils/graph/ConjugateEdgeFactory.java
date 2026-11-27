@@ -18,7 +18,9 @@ public interface ConjugateEdgeFactory extends GraphEntityFactory<ConjugateEdge> 
    * @return the created edge
    * @throws PlanItException thrown if there is an error
    */
-  public default ConjugateEdge registerNew(final ConjugateVertex vertexA, final ConjugateVertex vertexB, final Edge originalEdge) throws PlanItException{
+  public default ConjugateEdge registerNew(
+          final ConjugateVertex vertexA, final ConjugateVertex vertexB, final Edge originalEdge)
+          throws PlanItException{
     return registerNew(vertexA, vertexB, originalEdge, false);
   }
   
@@ -32,6 +34,10 @@ public interface ConjugateEdgeFactory extends GraphEntityFactory<ConjugateEdge> 
    * @return the created edge
    * @throws PlanItException thrown if there is an error
    */
-  public abstract ConjugateEdge registerNew(final ConjugateVertex vertexA, final ConjugateVertex vertexB,final Edge originalEdge, boolean registerOnVertices) throws PlanItException; 
+  public abstract ConjugateEdge registerNew(
+          final ConjugateVertex vertexA,
+          final ConjugateVertex vertexB,
+          final Edge originalEdge,
+          boolean registerOnVertices) throws PlanItException;
   
 }

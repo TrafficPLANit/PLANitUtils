@@ -1,16 +1,18 @@
 package org.goplanit.utils.event;
 
+import java.util.Optional;
+
 import org.goplanit.utils.id.IdAble;
 
 /**
- * The Event interface defines a typed event (using the EventType). The sender of the event can be identified via its source. This is a local
- * event not appropriate to send across a network as it allows the use of local references regarding its source and content.
+ * A typed event (using the EventType), whose sender is identified by its source. It is a local event, not suited to
+ * sending across a network, as its source and content may be local references.
  */
 public interface Event extends IdAble
 {   
     /**
-     * returns a reference to the source of the event however the derived event decides on how to expose its source, either as a pointer
-     * or simply an id or something else. 
+     * returns a reference to the source of the event however the derived event decides on how to expose its source,
+     * either as a pointer or simply an id or something else.
      * 
      * @return source of the event
      */
@@ -18,7 +20,17 @@ public interface Event extends IdAble
 
     /**
      * returns the type of the event.
-     * @return EbentType; the eventType of the event
+     * @return EventType; the eventType of the event
      */
     EventType getType();
+
+    /**
+     * Which end of an operation the event reports, for an event fired both when the operation starts and when it is
+     * done. Most events report neither
+     *
+     * @return the state, empty by default
+     */
+    default Optional<EventState> getState(){
+      return Optional.empty();
+    }
 }

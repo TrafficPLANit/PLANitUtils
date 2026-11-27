@@ -22,25 +22,25 @@ public interface Links<L extends Link> extends ManagedGraphEntities<L> {
    * {@inheritDoc}
    */
   @Override
-  public abstract LinkFactory getFactory();
+  public abstract LinkFactory<L> getFactory();
 
   /**
    * {@inheritDoc}
    */
   @Override
-  public abstract Links shallowClone();
+  public abstract Links<L> shallowClone();
 
   /**
    * {@inheritDoc}
    */
   @Override
-  public abstract Links deepClone();
+  public abstract Links<L> deepClone();
 
   /**
    * {@inheritDoc}
    */
   @Override
-  public abstract Links deepCloneWithMapping(BiConsumer<L, L> mapper);
+  public abstract Links<L> deepCloneWithMapping(BiConsumer<L, L> mapper);
 
   /**
    * verify if link is present

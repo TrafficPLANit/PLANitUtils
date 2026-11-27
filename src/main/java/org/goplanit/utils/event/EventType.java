@@ -6,8 +6,15 @@ import java.util.Set;
 import org.goplanit.utils.misc.StringUtils;
 
 /** Event type wraps a String representing the unique name identifier for an event. It is used as a quick
- *  way to identify listeners and events when dealing with events in a type safe manner. It should be uique across all available events.
- *  Each derived event implementation should make their type publicly available and each event producer should list the event types it triggers.
+ *  way to identify listeners and events when dealing with events in a type safe manner. It should be unique across all
+ *  available events. Each derived event implementation makes its type publicly available, and each event producer
+ *  lists the event types it fires, see {@link EventProducer#getFiredEventTypes()}.
+ * <p>
+ *  The type is what producers and listeners agree on: a listener names the types it handles, a producer the types it
+ *  fires, and a listener is registered on a producer for the types both name. For example the removal of a toll road
+ *  has one type, which the layer modifier fires and the pricing's network change handler handles. Types are compared by
+ *  name, and a name may be registered once, so two events cannot share a type by accident.
+ * </p>
  * 
  * @author markr
  *
@@ -18,7 +25,7 @@ public class EventType {
   private final String name;
   
   /** track s all event types */
-  private static final Set<EventType> eventTypes = new HashSet<EventType>();
+  private static final Set<EventType> eventTypes = new HashSet<>();
   
   /** Register event type
    * 

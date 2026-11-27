@@ -22,6 +22,13 @@ public interface UsabilityModeFeatures {
   public abstract UseOfModeType getUseOfType();
 
   /**
+   * Who drives this mode, e.g. one of the people travelling in it, someone else, or nobody
+   *
+   * @return driver type, null when not known
+   */
+  public abstract DriverType getDriverType();
+
+  /**
    * Shallow copy
    * @return shallow copy of instance
    */

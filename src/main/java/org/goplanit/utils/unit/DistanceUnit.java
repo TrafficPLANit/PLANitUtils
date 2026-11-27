@@ -69,7 +69,9 @@ public class DistanceUnit extends SimpleUnit{
     }
     switch (to) {
     case METER:
-      return value * KM_2_METER;       
+      return value * KM_2_METER;
+    case KM:
+      return value;
     default:
       throw new PlanItRunTimeException("Conversion illegal or not supported yet from %s --> %s",UnitType.KM, to);
     }  

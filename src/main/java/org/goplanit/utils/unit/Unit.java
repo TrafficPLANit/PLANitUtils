@@ -29,6 +29,11 @@ public interface Unit {
    * predefined SECOND TimeUnit
    */
   public static final TimeUnit SECOND =(TimeUnit) Unit.of(UnitType.SECOND);
+
+  /**
+   * predefined SECOND TimeUnit
+   */
+  public static final TimeUnit MILLISECOND = (TimeUnit) Unit.of(UnitType.MILLISECOND);
   
   /**
    * predefined KM DistanceUnit
@@ -138,8 +143,8 @@ public interface Unit {
    * @return combined unit created
    */
   public static GroupUnit of(UnitType[] numeratorUnits, UnitType[] denominatorUnits) {
-    SimpleUnit[] numeratorUnitTypes = Arrays.stream(numeratorUnits).map( unit -> Unit.of(unit)).toArray(SimpleUnit[]::new);
-    SimpleUnit[] denominatorUnitTypes = Arrays.stream(denominatorUnits).map( unit -> Unit.of(unit)).toArray(SimpleUnit[]::new);
+    SimpleUnit[] numeratorUnitTypes = Arrays.stream(numeratorUnits).map(Unit::of).toArray(SimpleUnit[]::new);
+    SimpleUnit[] denominatorUnitTypes = Arrays.stream(denominatorUnits).map(Unit::of).toArray(SimpleUnit[]::new);
     return new GroupUnit(numeratorUnitTypes).per(denominatorUnitTypes);    
   }
     

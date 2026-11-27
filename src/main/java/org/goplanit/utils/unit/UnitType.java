@@ -8,8 +8,9 @@ public enum UnitType {
   KM(UnitGroup.DISTANCE,"KM"),
   METER(UnitGroup.DISTANCE,"M"),     
   HOUR(UnitGroup.TIME,"H"),
-  SECOND(UnitGroup.TIME,"S"),
   MINUTE(UnitGroup.TIME,"MIN"),
+  SECOND(UnitGroup.TIME,"S"),
+  MILLISECOND(UnitGroup.TIME,"MS"),
   SRS(UnitGroup.SRS,"SRS");
   
   protected UnitGroup group;

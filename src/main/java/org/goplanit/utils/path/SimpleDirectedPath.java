@@ -4,6 +4,7 @@ import org.goplanit.utils.graph.directed.EdgeSegment;
 import org.goplanit.utils.id.ExternalIdAble;
 import org.goplanit.utils.id.ManagedId;
 import org.goplanit.utils.misc.IterableUtils;
+import org.locationtech.jts.geom.Geometry;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -53,7 +54,7 @@ public interface SimpleDirectedPath extends Iterable<EdgeSegment> {
    * @return total length of path in km
    */
   public default double computeLengthKm(){
-    return StreamSupport.stream(this.spliterator(),false).mapToDouble( es -> es.getLengthKm()).sum();
+    return StreamSupport.stream(this.spliterator(),false).mapToDouble(EdgeSegment::getLengthKm).sum();
   }
 
   /**
@@ -76,4 +77,19 @@ public interface SimpleDirectedPath extends Iterable<EdgeSegment> {
    */
   public abstract int hashCode();
 
+  public default boolean containsLinkSegmentId(long id){
+    for(var linkIter = iterator() ; linkIter.hasNext();){
+      if(linkIter.next().getId() == id){
+        return true;
+      }
+    }
+    return false;
+  }
+
+  /** construct geometry from underlying link (segments) in the form of one contiguous
+   * result from start to finish
+   *
+   * @return geometry (typically a line string)
+   */
+  public abstract Geometry createGeometry();
 }

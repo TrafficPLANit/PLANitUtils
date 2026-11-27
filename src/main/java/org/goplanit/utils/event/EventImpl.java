@@ -1,5 +1,6 @@
 package org.goplanit.utils.event;
 
+import java.util.Optional;
 import java.util.logging.Logger;
 
 import org.goplanit.utils.exceptions.PlanItRunTimeException;
@@ -25,7 +26,10 @@ public abstract class EventImpl extends IdAbleImpl implements Event{
 
   /** the source id of the event */
   private final Object sourceId;
-    
+
+  /** The end of an operation the event reports, null when it reports neither */
+  private final EventState state;
+
   /**
    * Access to the content for derived events
    * 
@@ -43,10 +47,23 @@ public abstract class EventImpl extends IdAbleImpl implements Event{
    * @param content content array of the event
    */
   public EventImpl(final EventType type, final Object source, final Object[] content){
+    this(type, source, content, null);
+  }
+
+  /**
+   * Constructor of an event reporting one end of an operation
+   *
+   * @param type EventType of the Event
+   * @param source source of the event sender
+   * @param content content array of the event
+   * @param state the end of the operation the event reports
+   */
+  public EventImpl(final EventType type, final Object source, final Object[] content, final EventState state){
     super(IdGenerator.generateId(IdGroupingToken.collectGlobalToken(), Event.class));
     this.type = type;
     this.sourceId = source;
     this.content = content;
+    this.state = state;
   }
   
   /**
@@ -57,10 +74,7 @@ public abstract class EventImpl extends IdAbleImpl implements Event{
    * @param content single entry content of the event
    */
   public EventImpl(final EventType type, final Object source, final Object content){
-    super(IdGenerator.generateId(IdGroupingToken.collectGlobalToken(), Event.class));
-    this.type = type;
-    this.sourceId = source;
-    this.content = new Object[] {content};
+    this(type, source, new Object[] {content}, null);
   }
 
   /**
@@ -77,6 +91,14 @@ public abstract class EventImpl extends IdAbleImpl implements Event{
   @Override
   public final EventType getType(){
     return this.type;
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public final Optional<EventState> getState(){
+    return Optional.ofNullable(state);
   }
 
   /**

@@ -19,8 +19,14 @@ public class LocaleUtils {
   static {
     for (String iso : Locale.getISOCountries()) {
       Locale l = new Locale("en", iso);
-      countries2ISO.put(l.getDisplayCountry(), iso);
+      countries2ISO.put(l.getDisplayCountry(Locale.ENGLISH), iso);
   }
+    /* country names spelt otherwise than Java's English names, such as Saint Lucia for St. Lucia */
+    countries2ISO.putAll(Map.of(CountryNames.ANTIGUA_BARBUDA, "AG", CountryNames.HONG_KONG, "HK",
+        CountryNames.MACAU, "MO", CountryNames.EAST_TIMOR, "TL", CountryNames.ENGLAND, "GB",
+        CountryNames.SAINT_KITS_NEVIS, "KN", CountryNames.SAINT_LUCIA, "LC",
+        CountryNames.SAINT_VINCENT_GRENADINES, "VC", CountryNames.TRINIDAD_TOBAGO, "TT",
+        CountryNames.TURKS_CAICOS_ISLANDS, "TC"));
   }
   
   /**Collect ISO2 code based on full name
@@ -38,7 +44,7 @@ public class LocaleUtils {
    * @return full name under English Locale, empty string if not available
    */
   public static String getCountryNameCodeByIso2Code(String iso2Code){
-    return new Locale("en", iso2Code).getDisplayCountry();
+    return new Locale("en", iso2Code).getDisplayCountry(Locale.ENGLISH);
   }  
 
 }

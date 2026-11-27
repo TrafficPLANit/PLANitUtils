@@ -29,6 +29,7 @@ public interface LinkSegmentFactory extends GraphEntityFactory<LinkSegment>{
    * @return the created segment
    * @throws PlanItException thrown if error
    */
-  public LinkSegment registerNew(Link parentLink, boolean directionAb, boolean registerOnNodeAndLink) throws PlanItException;
+  public LinkSegment registerNew(Link parentLink, boolean directionAb, boolean registerOnNodeAndLink)
+          throws PlanItException;
 
 }

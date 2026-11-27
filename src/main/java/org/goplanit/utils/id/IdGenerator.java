@@ -5,10 +5,9 @@ import java.util.Map;
 import java.util.logging.Logger;
 
 /**
- * Convenience class to track unique ids across different classes that decide to
- * use a generator for their id members. Ids are generated starting at zero and in an incremental
- * consecutive fashion. They are unique to their parent though, so if the same class is registered twice with different parents, then their ids will be unique per parent
- * but not across parents.
+ * Convenience class to track unique ids across the classes that use a generator for their id members. Ids are
+ * generated from zero, consecutively. They are unique per parent: when the same class is registered twice with
+ * different parents, its ids are unique per parent but not across parents.
  * 
  * @author markr
  *
@@ -28,7 +27,7 @@ public final class IdGenerator {
    * @param token the group for which ids will be generated
    * @return created IdGenerator
    */
-  protected static LocalIdGenerator createIdGeneratorForParent(IdGroupingToken token) {
+  private static LocalIdGenerator createIdGeneratorForParent(IdGroupingToken token) {
     LocalIdGenerator idGenerator = new LocalIdGenerator();
     idGroups.put(token, idGenerator);
     LOGGER.fine("created id group for" + token.toString());
@@ -42,7 +41,7 @@ public final class IdGenerator {
    * @param theClass the class for which the id is being generated
    * @return the generated id
    */
-  public static long generateId(IdGroupingToken token, Class<? extends Object> theClass) {
+  public static long generateId(IdGroupingToken token, Class<?> theClass) {
     LocalIdGenerator idGeneratorForGroup = null;
     if (!idGroups.containsKey(token)) {
       idGeneratorForGroup = createIdGeneratorForParent(token);
@@ -76,7 +75,7 @@ public final class IdGenerator {
    * @param groupId to reset
    * @param theClass to reset
    */
-  public static void reset(IdGroupingToken groupId, Class<? extends Object> theClass ) {
+  public static void reset(IdGroupingToken groupId, Class<?> theClass ) {
     if( idGroups.containsKey(groupId)) {
         idGroups.get(groupId).reset(theClass);
     }
@@ -89,7 +88,7 @@ public final class IdGenerator {
    * @param theClass to reset
    * @param offset to use
    */  
-  public static void resetTo(IdGroupingToken groupId, Class<? extends Object> theClass, long offset) {
+  public static void resetTo(IdGroupingToken groupId, Class<?> theClass, long offset) {
     if( idGroups.containsKey(groupId)) {
       idGroups.get(groupId).resetTo(theClass, offset);
   }
@@ -111,7 +110,7 @@ public final class IdGenerator {
    * @return idGroupingToken that has been created
    */
   public static IdGroupingToken createIdGroupingToken(Object groupOwner, long groupOwnerId) {
-    return new IdGroupingToken(groupOwner.getClass().getSimpleName()+"-"+Long.toString(groupOwnerId));
+    return new IdGroupingToken(groupOwner.getClass().getSimpleName()+"-"+ groupOwnerId);
   }  
   
   /** collect the latest generated id for a given class and token
@@ -119,7 +118,7 @@ public final class IdGenerator {
    * @param theClass to use
    * @return latest generated id, -1 if not available
    */
-  public static long getLatestIdForToken(IdGroupingToken token, Class<? extends Object> theClass) {
+  public static long getLatestIdForToken(IdGroupingToken token, Class<?> theClass) {
     if (idGroups.containsKey(token)) {
       LocalIdGenerator idGeneratorForGroup = idGroups.get(token);
       if(idGeneratorForGroup != null) {
@@ -127,6 +126,14 @@ public final class IdGenerator {
       }
     }
     return -1;
+  }
+
+  /** Check if token exists
+   * @param token to use
+   * @return true if present, false otherwise
+   */
+  public static boolean hasToken(IdGroupingToken token) {
+    return idGroups.containsKey(token);
   }
 
 

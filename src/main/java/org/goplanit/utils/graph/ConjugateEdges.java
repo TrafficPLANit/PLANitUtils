@@ -3,8 +3,8 @@ package org.goplanit.utils.graph;
 import java.util.function.BiConsumer;
 
 /**
- * Container and factory class for conjugate edges in a conjugate graph, also to be used to create and register conjugate edges of any
- * (derived) type
+ * Container and factory class for conjugate edges in a conjugate graph, also to be used to create and register
+ * conjugate edges of any (derived) type
  * 
  * @author markr
  */

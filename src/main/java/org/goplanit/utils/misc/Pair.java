@@ -1,9 +1,9 @@
 package org.goplanit.utils.misc;
 
-import org.opengis.feature.simple.SimpleFeatureType;
-
 import java.util.Objects;
 import java.util.function.Consumer;
+import java.util.function.Function;
+import java.util.function.Predicate;
 
 /**
  * Custom pair class similar to C++.
@@ -59,6 +59,17 @@ public class Pair<A, B> {
    */
   public static <A,B> Pair<A,B> empty() {
     return Pair.of(null, null);
+  }
+
+  /** check if pair is null or empty
+   *
+   * @param <A> typeA
+   * @param <B> typeB
+   * @param pair to check
+   * @return true when null or empty, false otherwise
+   */
+  public static <A,B> boolean isNullOrEmpty(Pair<A, B> pair) {
+    return pair == null || pair.bothNull();
   }
 
 
@@ -146,14 +157,15 @@ public class Pair<A, B> {
     return !bothNotNull();
   }
 
-  /**
+  /** check for exactly one non-null entry
+   *
    * @return true when exactly one of the two is not null
    */
   public boolean isExactlyOneNonNull() {
     return anyIsNotNull() && !bothNotNull();
   }
   
-  /**
+  /** Find earliest non null entry
    * @return earliest entry (first before second) that is nonNull, when both are null, null is returned
    */
   public Object getEarliestNonNull() {
@@ -164,15 +176,61 @@ public class Pair<A, B> {
     }
   }
 
-  /** Apply consumer to both entries. Throws ClassCastException when pair contains entries not compatible with type parameter of consumer
+  /** Apply consumer to both entries. Throws ClassCastException when pair contains entries not
+   * compatible with type parameter of consumer
    * 
    * @param <T> consumer type assumed to be compatible with both pair entries
    * @param pairEntryConsumer to apply
    */
   @SuppressWarnings("unchecked")
   public <T> void both(Consumer<T> pairEntryConsumer) {
-    pairEntryConsumer.accept( (T) first);
-    pairEntryConsumer.accept( (T) second);
+    if(first != null){
+      pairEntryConsumer.accept( (T) first);
+    }
+    if(second != null) {
+      pairEntryConsumer.accept((T) second);
+    }
+  }
+
+  /**
+   * Create a new pair based on this pair and transforming it applying the provided function
+   * @param pairEntryFunction to apply
+   * @return created pair
+   * @param <T> type of this pair
+   * @param <V> type of new pair
+   */
+  public <T, V> Pair<V,V> shallowCopyAndApply(Function<T,V> pairEntryFunction) {
+    V firstNew = null;
+    V secondNew= null;
+    if(first != null){
+      firstNew = pairEntryFunction.apply( (T) first);
+    }
+    if(second != null) {
+      secondNew = pairEntryFunction.apply( (T) second);
+    }
+    return Pair.of(firstNew, secondNew);
+  }
+
+  /** Apply predicate to find any match. Throws ClassCastException when pair contains entries not
+   * compatible with type parameter of consumer
+   *
+   * @param <T> consumer type assumed to be compatible with both pair entries
+   * @param pred to apply
+   * @return true when any match, false otherwise
+   */
+  public <T> boolean anyMatch(Predicate<T> pred) {
+    boolean result = false;
+    if(first != null){
+      result = pred.test((T) first);
+    }
+    if(result){
+      return result;
+    }
+
+    if(second != null){
+      result = pred.test((T) second);
+    }
+    return result;
   }
 
   /**
@@ -206,4 +264,5 @@ public class Pair<A, B> {
   public boolean bothNull() {
     return first()==null && second() == null;
   }
+
 }

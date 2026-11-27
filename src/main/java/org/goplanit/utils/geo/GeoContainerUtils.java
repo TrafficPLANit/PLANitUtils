@@ -2,6 +2,7 @@ package org.goplanit.utils.geo;
 
 import org.goplanit.utils.graph.Edge;
 import org.goplanit.utils.graph.GraphEntities;
+import org.goplanit.utils.network.layer.macroscopic.MacroscopicLink;
 import org.goplanit.utils.zoning.TransferZone;
 import org.goplanit.utils.zoning.TransferZones;
 import org.goplanit.utils.zoning.Zone;
@@ -9,6 +10,7 @@ import org.goplanit.utils.zoning.Zones;
 import org.locationtech.jts.geom.Envelope;
 import org.locationtech.jts.index.quadtree.Quadtree;
 
+import javax.annotation.Nonnull;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Map;
@@ -34,7 +36,8 @@ public class GeoContainerUtils {
     var spatialZones = new Quadtree();
     for(var zone : zones){
       if(zone.getEnvelope() == null) {
-        LOGGER.warning(String.format("Unable to spatially index %s %s, unknown spatial features, ignored", zone.getClass().getName(), zone.getXmlId()));
+        LOGGER.warning(String.format("Unable to spatially index %s %s, unknown spatial features, ignored",
+            zone.getClass().getName(), zone.getXmlId()));
         continue;
       }
       spatialZones.insert(zone.getEnvelope(), zone);
@@ -43,7 +46,8 @@ public class GeoContainerUtils {
   }
 
   /**
-   * Created quadtree based on edge envelopes as spatial index. Requires PlanitJtsIntersectEdgeVisitor to filter out true spatial matches when querying.
+   * Created quadtree based on edge envelopes as spatial index. Requires PlanitJtsIntersectEdgeVisitor to
+   * filter out true spatial matches when querying.
    *
    *  @param <T> type of edge
    *  @param edgesCollection collections to add
@@ -58,7 +62,25 @@ public class GeoContainerUtils {
   }
 
   /**
-   * Created quadtree based on edge envelopes as spatial index. Requires PlanitJtsIntersectEdgeVisitor to filter out true spatial matches when querying.
+   * Created quadtree based on edge envelopes as spatial index. Requires PlanitJtsIntersectEdgeVisitor to
+   * filter out true spatial matches when querying.
+   *
+   *  @param <T> type of edge
+   *  @param edges collections to add
+   *  @return created quadtree instance
+   */
+  @SafeVarargs
+  public static <T extends Edge> Quadtree toGeoIndexed(T... edges) {
+    Quadtree spatiallyIndexedEdges = new Quadtree();
+    for(T edge : edges) {
+      spatiallyIndexedEdges.insert(edge.getGeometry().getEnvelope().getEnvelopeInternal(),edge);
+    }
+    return spatiallyIndexedEdges;
+  }
+
+  /**
+   * Created quadtree based on edge envelopes as spatial index. Requires PlanitJtsIntersectEdgeVisitor to filter
+   * out true spatial matches when querying.
    *
    *  @param <T> type of edge
    *  @param edges collections to add
@@ -72,6 +94,22 @@ public class GeoContainerUtils {
       }
     });
     return spatiallyIndexedEdges;
+  }
+
+  /**
+   * Add an edge to an existing spatially indexed quad tree
+   *
+   * @param spatiallyIndexedEdges container to add to
+   * @param edge to add
+   * @return true when added because geometry present, false otherwise
+   * @param <T> type of edge
+   */
+  public static <T extends Edge> boolean addToGeoIndexed(@Nonnull Quadtree spatiallyIndexedEdges, @Nonnull T edge) {
+     if(edge.hasGeometry()){
+       spatiallyIndexedEdges.insert(edge.getGeometry().getEnvelope().getEnvelopeInternal(),edge);
+       return true;
+     }
+     return false;
   }
 
   /**
@@ -104,8 +142,10 @@ public class GeoContainerUtils {
    * @param spatiallyIndexedEdgeTree to consider
    * @return links found intersecting or within bounding box provided
    */
-  public static <T extends Edge> Collection<T> queryEdgeQuadtree(Quadtree spatiallyIndexedEdgeTree, Envelope searchBoundingBox) {
-    PlanitJtsIntersectEdgeVisitor<T> edgevisitor = new PlanitJtsIntersectEdgeVisitor<>(PlanitJtsUtils.create2DPolygon(searchBoundingBox), new HashSet<>());
+  public static <T extends Edge> Collection<T> queryEdgeQuadtree(
+      Quadtree spatiallyIndexedEdgeTree, Envelope searchBoundingBox) {
+    PlanitJtsIntersectEdgeVisitor<T> edgevisitor = new PlanitJtsIntersectEdgeVisitor<>(
+        PlanitJtsUtils.create2DPolygon(searchBoundingBox), new HashSet<>());
     spatiallyIndexedEdgeTree.query(searchBoundingBox, edgevisitor);
     return edgevisitor.getResult();
   }

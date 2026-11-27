@@ -1,0 +1,302 @@
+package org.goplanit.utils.network.layer.physical;
+
+import org.goplanit.utils.geo.PlanitJtsCrsUtils;
+import org.goplanit.utils.graph.directed.EdgeSegment;
+import org.goplanit.utils.math.Precision;
+import org.goplanit.utils.mode.Mode;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.IdentityHashMap;
+import java.util.List;
+import java.util.Set;
+import java.util.function.BiFunction;
+import java.util.function.Predicate;
+import java.util.function.UnaryOperator;
+import java.util.stream.Collectors;
+
+/**
+ * Utilities for link segments
+ *
+ * @author markr
+ *
+ */
+public class LinkSegmentUtils {
+
+  /**
+   * Find the segments of a group of link segments with an adjacent segment outside the group in a direction, see
+   * {@link #findAdjacent}: upstream, where traffic comes into the group, or downstream, where it goes out of it
+   *
+   * @param <LS> type of the link segments
+   * @param segments the link segments of the group, each once; a segment is in the group when it is one of these
+   * @param inTrafficDirection true to look downstream, false to look upstream
+   * @return the segments with an adjacent segment outside the group, in the order given
+   */
+  private static <LS extends LinkSegment> List<LS> findSegmentsWithAdjacentOutside(
+      Collection<LS> segments,
+      boolean inTrafficDirection) {
+    Set<LS> group = Collections.newSetFromMap(new IdentityHashMap<>());
+    group.addAll(segments);
+    Predicate<LS> outside = segment -> !group.contains(segment);
+    return segments.stream().filter(segment -> !findAdjacent(segment, inTrafficDirection, outside).isEmpty())
+        .collect(Collectors.toList());
+  }
+
+  /**
+   * Create a predicate selecting only those edge segments that are link segments permitting the given mode.
+   * <p>
+   * A {@code Predicate<EdgeSegment>}, so it can be handed straight to the graph level algorithms, which know nothing
+   * about modes, as an edge segment carries no mode information at all. Mode access is a network layer concept, and a
+   * predicate lets it reach a graph algorithm without that algorithm having to learn about it. Any segment that is not
+   * a link segment is rejected.
+   * </p>
+   * <p>
+   * Useful for asking connectivity questions per mode, e.g. whether the car network is strongly connected, a different
+   * question from whether the infrastructure carrying it is.
+   * </p>
+   *
+   * @param mode the mode that must be permitted
+   * @return predicate to use
+   */
+  public static Predicate<EdgeSegment> permitsMode(final Mode mode) {
+    return edgeSegment -> edgeSegment instanceof LinkSegment && ((LinkSegment) edgeSegment).isModeAllowed(mode);
+  }
+
+  /**
+   * Find the modes none of the link segments allows, see {@link #permitsMode}: for example the modes a toll road prices
+   * that cannot use any of its link segments
+   *
+   * @param <M> type of the modes
+   * @param modes to look at
+   * @param linkSegments to look at them on
+   * @return the modes none of the link segments allows, in the order given
+   */
+  public static <M extends Mode> List<M> findModesAllowedByNone(
+      Collection<M> modes,
+      Collection<? extends LinkSegment> linkSegments) {
+    return modes.stream()
+        .filter(mode -> linkSegments.stream().noneMatch(permitsMode(mode)))
+        .collect(Collectors.toList());
+  }
+
+  /**
+   * Create a predicate selecting only those edge segments that are link segments permitting at least one motorised
+   * road mode, such as a car or a bus, see {@link Mode#isMotorisedRoadMode()}. Shaped as a
+   * {@code Predicate<EdgeSegment>} for the same reason as {@link #permitsMode(Mode)}.
+   *
+   * @return predicate to use
+   */
+  public static Predicate<EdgeSegment> permitsMotorisedRoadMode() {
+    return edgeSegment -> edgeSegment instanceof LinkSegment &&
+        ((LinkSegment) edgeSegment).isAnyModeAllowed(Mode::isMotorisedRoadMode);
+  }
+
+  /**
+   * Find the link segments adjacent downstream of a segment, one step on: they leave the node it arrives at, meet the
+   * condition, and are not on the link arrived on, so going back is never adjacent downstream. For example, arriving at
+   * a node where a road splits in two, both roads ahead are adjacent downstream, but the opposite direction of the road
+   * arrived along is not.
+   *
+   * @param <LS> type of the link segments
+   * @param arriving segment arriving at the node
+   * @param condition an adjacent segment must meet
+   * @return the adjacent downstream segments, empty when there are none
+   */
+  public static <LS extends LinkSegment> List<LS> findAdjacentDownstream(
+      final LS arriving, final Predicate<? super LS> condition) {
+    var adjacent = new ArrayList<LS>(2);
+    for (LS leaving : arriving.getDownstreamNode().<LS>getExitLinkSegments()) {
+      if (leaving.getParent() != arriving.getParent() && condition.test(leaving)) {
+        adjacent.add(leaving);
+      }
+    }
+    return adjacent;
+  }
+
+  /**
+   * Find the link segments adjacent upstream of a segment, one step back: they enter the node it leaves, meet the
+   * condition, and are not on the link it leaves along, so coming back along it is never adjacent upstream. For
+   * example, leaving a node where two roads merge, both roads behind are adjacent upstream, but the opposite direction
+   * of the road left along is not.
+   *
+   * @param <LS> type of the link segments
+   * @param leaving segment leaving the node
+   * @param condition an adjacent segment must meet
+   * @return the adjacent upstream segments, empty when there are none
+   */
+  public static <LS extends LinkSegment> List<LS> findAdjacentUpstream(
+      final LS leaving, final Predicate<? super LS> condition) {
+    var adjacent = new ArrayList<LS>(2);
+    for (LS entering : leaving.getUpstreamNode().<LS>getEntryLinkSegments()) {
+      if (entering.getParent() != leaving.getParent() && condition.test(entering)) {
+        adjacent.add(entering);
+      }
+    }
+    return adjacent;
+  }
+
+  /**
+   * Find the link segments adjacent to a segment in a direction, one step: adjacent downstream in the traffic
+   * direction, see {@link #findAdjacentDownstream}, or adjacent upstream against it, see {@link #findAdjacentUpstream}
+   *
+   * @param <LS> type of the link segments
+   * @param segment to look from
+   * @param inTrafficDirection true to look in the traffic direction, false to look back against it
+   * @param condition an adjacent segment must meet
+   * @return the adjacent segments, empty when there are none
+   */
+  public static <LS extends LinkSegment> List<LS> findAdjacent(final LS segment,
+      boolean inTrafficDirection, final Predicate<? super LS> condition) {
+    return inTrafficDirection ? findAdjacentDownstream(segment, condition) : findAdjacentUpstream(segment, condition);
+  }
+
+  /**
+   * Find the only link segment adjacent to a segment in a direction, see {@link #findAdjacent}
+   *
+   * @param <LS> type of the link segments
+   * @param segment to look from
+   * @param inTrafficDirection true to look in the traffic direction, false to look back against it
+   * @param condition an adjacent segment must meet
+   * @return the only adjacent segment, null when there are several or none
+   */
+  public static <LS extends LinkSegment> LS findOnlyAdjacent(final LS segment,
+      boolean inTrafficDirection, final Predicate<? super LS> condition) {
+    var adjacent = findAdjacent(segment, inTrafficDirection, condition);
+    return adjacent.size() == 1 ? adjacent.get(0) : null;
+  }
+
+  /**
+   * Find the segments where traffic comes into a group of link segments: those with an adjacent upstream segment
+   * outside the group, see {@link #findAdjacentUpstream}. For a toll road's link segments, the first one and each one
+   * an on-ramp joins; not one in the middle, nor one fed only by another toll road priced with it
+   *
+   * @param <LS> type of the link segments
+   * @param segments the link segments of the group, each once; a segment is in the group when it is one of these
+   * @return the segments entering the group from outside it, in the order given
+   */
+  public static <LS extends LinkSegment> List<LS> findSegmentsEnteringFromOutside(Collection<LS> segments) {
+    return findSegmentsWithAdjacentOutside(segments, false);
+  }
+
+  /**
+   * Find the segments where traffic goes out of a group of link segments: those with an adjacent downstream segment
+   * outside the group, see {@link #findAdjacentDownstream}. For a toll road's link segments, the last one and each one
+   * an off-ramp leaves; not one in the middle, nor one leading only onto another toll road priced with it
+   *
+   * @param <LS> type of the link segments
+   * @param segments the link segments of the group, each once; a segment is in the group when it is one of these
+   * @return the segments leaving the group to outside it, in the order given
+   */
+  public static <LS extends LinkSegment> List<LS> findSegmentsLeavingToOutside(Collection<LS> segments) {
+    return findSegmentsWithAdjacentOutside(segments, true);
+  }
+
+  /**
+   * Follow segments meeting a condition from a segment, through nodes where they simply continue: one adjacent segment
+   * in the direction meets the condition, see {@link #findAdjacent}, and none comes back, other than on the link just
+   * followed. For example, a road followed through the shape nodes of a long bend, up to the junction it reaches
+   *
+   * @param <LS> type of the link segments
+   * @param segment to start along
+   * @param inTrafficDirection true to go in the traffic direction, false to go back against it
+   * @param maximumDistanceMeters furthest to follow, the first segment included
+   * @param condition the segments followed must meet
+   * @return the last segment followed, ending (or starting, against the traffic direction) at the node where the
+   *         segments stop simply continuing; null when that node is not reached within the distance
+   */
+  public static <LS extends LinkSegment> LS followUntilItBranches(final LS segment,
+      boolean inTrafficDirection, double maximumDistanceMeters, final Predicate<? super LS> condition) {
+    return followOnlySegmentsOnwardUntilAnswered(segment, inTrafficDirection, segment.getParent().getLengthMeters(),
+        maximumDistanceMeters, condition, (current, meters) -> {
+          var node = inTrafficDirection ? current.getDownstreamNode() : current.getUpstreamNode();
+          List<LS> back = inTrafficDirection ?
+              NodeUtils.<LS>findEntryLinkSegments(node, condition) :
+              NodeUtils.<LS>findExitLinkSegments(node, condition);
+          back.removeIf(previous -> previous.getParent() == current.getParent());
+          return findOnlyAdjacent(current, inTrafficDirection, condition) == null || !back.isEmpty() ?
+              current : null;
+        });
+  }
+
+  /**
+   * Follow segments from a segment one after the other, in a direction, until a rule gives an answer at a node reached.
+   * Each segment followed reaches a node: its downstream node in the traffic direction, its upstream node against it.
+   * At each, the rule is asked for an answer, and when it gives none, the next segment is asked for. It stops without
+   * an answer when there is no next segment, when the node reached lies beyond the distance, or when it gets back to a
+   * node already reached, as round a loop. For example, a road followed through the nodes where it simply continues,
+   * with the answer the junction it reaches
+   *
+   * @param <LS> type of the link segments
+   * @param <R> type of the answer
+   * @param start segment to start along
+   * @param inTrafficDirection true to go in the traffic direction, false to go back against it
+   * @param metersToFirstNodeReached distance to the node the start segment reaches: its length, or less when starting
+   *                                 part way along it
+   * @param maximumDistanceMeters furthest a node reached may lie
+   * @param answerAt given a segment followed and the distance to the node it reaches, the answer, null to go on
+   * @param nextSegment given a segment followed without an answer, the segment to follow next, null when there is none
+   * @return the first answer given, null when none was
+   */
+  public static <LS extends LinkSegment, R> R followSegmentsUntilAnswered(final LS start, boolean inTrafficDirection,
+      double metersToFirstNodeReached, double maximumDistanceMeters,
+      final BiFunction<? super LS, Double, ? extends R> answerAt, final UnaryOperator<LS> nextSegment) {
+    var nodesReached = new HashSet<Node>();
+    double meters = metersToFirstNodeReached;
+    var current = start;
+    while (current != null && meters <= maximumDistanceMeters + Precision.EPSILON_9) {
+      if (!nodesReached.add(inTrafficDirection ? current.getDownstreamNode() : current.getUpstreamNode())) {
+        return null;
+      }
+      R answer = answerAt.apply(current, meters);
+      if (answer != null) {
+        return answer;
+      }
+      current = nextSegment.apply(current);
+      if (current != null) {
+        meters += current.getParent().getLengthMeters();
+      }
+    }
+    return null;
+  }
+
+  /**
+   * Follow segments from a segment one after the other, in a direction, until a rule gives an answer at a node reached,
+   * see {@link #followSegmentsUntilAnswered(LinkSegment, boolean, double, double, BiFunction, UnaryOperator)}. The
+   * segment followed next is the only adjacent one that meets the condition, see {@link #findOnlyAdjacent}, so it also
+   * stops where none or more than one does
+   *
+   * @param <LS> type of the link segments
+   * @param <R> type of the answer
+   * @param start segment to start along
+   * @param inTrafficDirection true to go in the traffic direction, false to go back against it
+   * @param metersToFirstNodeReached distance to the node the start segment reaches: its length, or less when starting
+   *                                 part way along it
+   * @param maximumDistanceMeters furthest a node reached may lie
+   * @param condition the segments followed after the start segment must meet
+   * @param answerAt given a segment followed and the distance to the node it reaches, the answer, null to go on
+   * @return the first answer given, null when none was
+   */
+  public static <LS extends LinkSegment, R> R followOnlySegmentsOnwardUntilAnswered(final LS start,
+      boolean inTrafficDirection, double metersToFirstNodeReached, double maximumDistanceMeters,
+      final Predicate<? super LS> condition, final BiFunction<? super LS, Double, ? extends R> answerAt) {
+    return followSegmentsUntilAnswered(start, inTrafficDirection, metersToFirstNodeReached, maximumDistanceMeters,
+        answerAt, current -> findOnlyAdjacent(current, inTrafficDirection, condition));
+  }
+
+  /**
+   * The direction of travel along a link segment into its downstream node, over the last stretch before the node, see
+   * {@link LinkUtils#getAzimuthArrivingAtNodeInDegrees(Link, Node, double, PlanitJtsCrsUtils)}
+   *
+   * @param segment to measure along
+   * @param reachMeters how far back from its downstream node, along its link, shape nodes are considered, 0 or more
+   * @param crsUtils to measure distances and directions with
+   * @return the compass bearing of the direction of travel into its downstream node, in degrees from 0 to 360, 0 north
+   */
+  public static double getAzimuthArrivingAtDownstreamNodeInDegrees(
+      final LinkSegment segment, double reachMeters, final PlanitJtsCrsUtils crsUtils) {
+    return LinkUtils.getAzimuthArrivingAtNodeInDegrees(
+        segment.getParent(), segment.getDownstreamNode(), reachMeters, crsUtils);
+  }
+}

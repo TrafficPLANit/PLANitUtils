@@ -21,7 +21,12 @@ public interface ModeFactory extends ManagedIdEntityFactory<Mode> {
    * @param usabilityFeatures the usability features of this custom mode
    * @return new mode created
    */
-  public abstract Mode registerNewCustomMode(final String name, final double maxSpeed, double pcu, PhysicalModeFeatures physicalFeatures, UsabilityModeFeatures usabilityFeatures);
+  public abstract Mode registerNewCustomMode(
+          final String name,
+          final double maxSpeed,
+          double pcu,
+          PhysicalModeFeatures physicalFeatures,
+          UsabilityModeFeatures usabilityFeatures);
   
   /**
    * Create and register a new predefined mode. When it already exists, the existing entry is returned
@@ -32,13 +37,23 @@ public interface ModeFactory extends ManagedIdEntityFactory<Mode> {
   public abstract PredefinedMode registerNew(PredefinedModeType modeType);  
   
   /**
-   * create a predefined mode instance without registering it on the container. Use with caution as it can mess up the internal id structure if not registered subsequently
+   * create a predefined mode instance without registering it on the container. Use with caution as it can mess up
+   * the internal id structure if not registered subsequently
    * 
-   * @param groupId  the is generation token
+   * @param groupId  the id generation token
    * @param modeType predefined mode type to create
    * 
    * @return predefined mode instance
-   * @throws PlanItException thrown if error
    */
-  public abstract PredefinedMode createPredefinedMode(IdGroupingToken groupId, final PredefinedModeType modeType) throws PlanItException;  
+  public abstract PredefinedMode createPredefinedMode(
+          IdGroupingToken groupId, final PredefinedModeType modeType);
+
+  /**
+   * register an already created (but not registered) predefined mode. Make sure this mode was created
+   * via this factory to ensure contiguous ids.
+   *
+   *
+   * @param predefinedMode to register
+   */
+  public abstract void registerPredefinedMode(PredefinedMode predefinedMode);
 }

@@ -13,12 +13,12 @@ import java.util.stream.Stream;
 public interface RoutedServiceTripInfo {
 
   /**
-   * {@inheritDoc}
+   * Shallow clone trip info
    */
   public abstract RoutedServiceTripInfo shallowClone();
 
   /**
-   * {@inheritDoc}
+   * Deep clone trip info
    */
   public abstract RoutedServiceTripInfo deepClone();
 
