@@ -149,7 +149,18 @@ public class LoggingUtils {
    */   
   public static String zoningPrefix(long zoningId) {
     return surroundWithBrackets(String.format("zoning id: %d", zoningId));
-  }  
+  }
+
+  /**
+   * Create a prefix for the logger so that all logging items specific to a particular network pricing
+   * are prefixed with the exact same string, i.e.  {@code [network pricing id: <id> ]}
+   *
+   * @param networkPricingId the network pricing id
+   * @return network pricing prefix
+   */
+  public static String networkPricingPrefix(long networkPricingId) {
+    return surroundWithBrackets(String.format("network pricing id: %d", networkPricingId));
+  }
   
   /**
    * Create a prefix for the logger so that all logging items specific to a particular demands

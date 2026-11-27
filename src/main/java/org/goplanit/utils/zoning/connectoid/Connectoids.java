@@ -31,7 +31,8 @@ public interface Connectoids<T extends Connectoid> extends ManagedIdEntities<T>,
    * none
    *
    * @param accessNode to look up
-   * @return connectoids at the node in the order indexed, empty when none
+   * @return connectoids at the node in the order indexed, empty when none, unmodifiable and a copy: later changes to
+   *     the container do not show in it
    */
   public abstract List<T> getByAccessNode(DirectedVertex accessNode);
 

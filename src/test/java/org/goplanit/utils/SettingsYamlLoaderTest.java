@@ -3,7 +3,7 @@ package org.goplanit.utils;
 import org.goplanit.utils.exceptions.PlanItRunTimeException;
 import org.goplanit.utils.geo.PlanitCrsUtils;
 import org.goplanit.utils.settings.SettingsSchema;
-import org.goplanit.utils.settings.problem.SettingsProblem;
+import org.goplanit.utils.problem.Problem;
 import org.goplanit.utils.settings.problem.SettingsProblemKind;
 import org.goplanit.utils.settings.SettingsSource;
 import org.goplanit.utils.settings.SettingsValueConverter;
@@ -1007,7 +1007,7 @@ public class SettingsYamlLoaderTest {
    * @param sources in order
    * @return the problems
    */
-  private static List<SettingsProblem> problemsOf(SettingsSchema schema, Class<?> settingsClass,
+  private static List<Problem<SettingsProblemKind>> problemsOf(SettingsSchema schema, Class<?> settingsClass,
       SettingsSource... sources) {
     return SettingsFileAssertionUtils.assertThrowsSettingsProblems(
         () -> createFromSources(schema, settingsClass, sources));
@@ -1019,7 +1019,7 @@ public class SettingsYamlLoaderTest {
    * @param sources in order
    * @return the problems
    */
-  private static List<SettingsProblem> problemsOf(SettingsSource... sources) {
+  private static List<Problem<SettingsProblemKind>> problemsOf(SettingsSource... sources) {
     return problemsOf(TEST_SCHEMA, TestSettings.class, sources);
   }
 
@@ -1063,7 +1063,7 @@ public class SettingsYamlLoaderTest {
    * @param kind to count
    * @return the count
    */
-  private static long count(List<SettingsProblem> problems, SettingsProblemKind kind) {
+  private static long count(List<Problem<SettingsProblemKind>> problems, SettingsProblemKind kind) {
     return problems.stream().filter(problem -> problem.getKind() == kind).count();
   }
 
@@ -1253,7 +1253,7 @@ public class SettingsYamlLoaderTest {
     var problems = problemsOf(source);
     assertEquals(1, count(problems, SettingsProblemKind.VALUE_REFUSED));
     assertEquals(source.getDescription(), problems.get(0).getSource());
-    assertEquals("test.nested.steps", problems.get(0).getKeyPath());
+    assertEquals("test.nested.steps", problems.get(0).getSubject());
   }
 
   /** A key given twice in one section is a problem */
@@ -1530,7 +1530,7 @@ public class SettingsYamlLoaderTest {
     var holderFile = flatFile("run/holder.yaml", "network: [network.yaml, {a: b}]\n");
     var problem = SettingsFileAssertionUtils.assertThrowsOneSettingsProblem(SettingsProblemKind.WRONG_TYPE,
         () -> createFromSources(FLAT_TEST_SCHEMA, TestFlatHolderSettings.class, holderFile));
-    assertEquals("network[1]", problem.getKeyPath());
+    assertEquals("network[1]", problem.getSubject());
   }
 
   /** A coordinate reference system is given by its code */
@@ -1547,7 +1547,7 @@ public class SettingsYamlLoaderTest {
     var problem = SettingsFileAssertionUtils.assertThrowsOneSettingsProblem(SettingsProblemKind.WRONG_TYPE,
         () -> createFromSources(CRS_AND_FORMAT_TEST_SCHEMA, TestCrsAndFormatSettings.class,
             SettingsSource.ofText(CRS_AND_FORMAT_TEST_SCHEMA, "destinationCrs: EPSG:999999\n")));
-    assertEquals("destinationCrs", problem.getKeyPath());
+    assertEquals("destinationCrs", problem.getSubject());
   }
 
   /** A decimal format is given by its pattern */

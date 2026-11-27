@@ -28,7 +28,8 @@ public interface SpatialMovements extends ManagedIdEntities<SpatialMovement> {
    * every movement
    *
    * @param linkSegment to look up
-   * @return movements with the link segment as from or to segment, empty when none
+   * @return movements with the link segment as from or to segment, empty when none, unmodifiable and a copy: later
+   *     changes to the container do not show in it
    */
   public abstract List<SpatialMovement> getBySegment(LinkSegment linkSegment);
 

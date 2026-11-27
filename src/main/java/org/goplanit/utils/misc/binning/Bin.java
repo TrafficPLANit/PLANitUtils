@@ -23,6 +23,18 @@ import java.util.Objects;
  */
 public class Bin<T extends Number & Comparable<T>> {
 
+  /**
+   * Whether this bin starts before the given one ends, so some value at the start of this bin can still lie in the
+   * other: its lower bound below the other's upper bound, or equal to it with both including it
+   *
+   * @param other bin to compare with
+   * @return true when this bin starts before the other ends
+   */
+  private boolean startsBeforeEndOf(Bin<T> other) {
+    final int comparison = lowerBound.compareTo(other.upperBound);
+    return comparison < 0 || (comparison == 0 && lowerInclusive && other.upperInclusive);
+  }
+
   /** lower bound of this bin */
   protected final T lowerBound;
 
@@ -146,6 +158,31 @@ public class Bin<T extends Number & Comparable<T>> {
     }
     /* exactly one of the two claims the shared bound, so no value is counted twice or missed */
     return upperInclusive != next.isLowerInclusive();
+  }
+
+  /**
+   * Verify whether this bin and the given one share a value: each starts before the other ends, a shared bound
+   * counting only when both include it. For example [2,5] and [5,9] share 5, while [2,5) and [5,9] share nothing
+   *
+   * @param other bin to check against
+   * @return true when the bins share a value
+   */
+  public boolean overlaps(Bin<T> other) {
+    return startsBeforeEndOf(other) && other.startsBeforeEndOf(this);
+  }
+
+  /**
+   * How much of the values this bin and another hold they share, from the higher lower bound to the lower upper bound.
+   * For example the km of a use from 15 to 45 km that lie in a distance band from 0 to 20 km: 5. Whether a bound is
+   * held changes no length
+   *
+   * @param other bin to measure against
+   * @return the length shared, 0 when the bins share nothing
+   */
+  public double findOverlapLength(Bin<T> other) {
+    double from = Math.max(lowerBound.doubleValue(), other.lowerBound.doubleValue());
+    double to = Math.min(upperBound.doubleValue(), other.upperBound.doubleValue());
+    return Math.max(0, to - from);
   }
 
   /**

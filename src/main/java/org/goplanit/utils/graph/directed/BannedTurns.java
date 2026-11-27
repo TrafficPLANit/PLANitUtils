@@ -26,7 +26,8 @@ public interface BannedTurns extends ManagedGraphEntities<BannedTurn> {
    * turn
    *
    * @param segment to look up
-   * @return banned turns starting or ending at the segment, empty when none
+   * @return banned turns starting or ending at the segment, empty when none, unmodifiable and a copy: later changes to
+   *     the container do not show in it
    */
   public abstract List<BannedTurn> getBySegment(EdgeSegment segment);
 

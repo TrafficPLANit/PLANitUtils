@@ -2,14 +2,34 @@ package org.goplanit.utils.graph.modifier.event;
 
 import org.goplanit.utils.event.EventProducer;
 import org.goplanit.utils.graph.modifier.GraphModifier;
+import java.util.Set;
 
-/** Interface dedicated to the {@link GraphModifier} event related exposed methods. Specifies method signatures for registering
- * the appropriate listeners and event types that are supported on a graph modifier.
- *  
+/**
+ * Interface dedicated to the {@link GraphModifier} event related exposed methods. Specifies method
+ * signatures for registering the appropriate listeners and event types that are supported on a graph modifier,
+ * and lists the event types it fires, see {@link #FIRED_GRAPH_EVENT_TYPES}.
+ *
  * @author markr
  *
  */
 public interface GraphModifierEventProducer extends EventProducer{
+
+  /**
+   * The event types a graph modifier fires: {@link BreakEdgeEvent}, {@link RecreatedGraphEntitiesManagedIdsEvent},
+   * {@link RemoveEdgeEvent}, {@link RemoveGraphEntityEvent}, {@link RemoveVertexEvent}
+   */
+  public static final Set<GraphModifierEventType> FIRED_GRAPH_EVENT_TYPES = Set.of(
+      BreakEdgeEvent.EVENT_TYPE, RecreatedGraphEntitiesManagedIdsEvent.EVENT_TYPE, RemoveEdgeEvent.EVENT_TYPE,
+      RemoveGraphEntityEvent.EVENT_TYPE, RemoveVertexEvent.EVENT_TYPE);
+
+  /**
+   * The event types of this kind the producer fires, see {@link #FIRED_GRAPH_EVENT_TYPES}
+   *
+   * @return unmodifiable set of the event types fired
+   */
+  public default Set<GraphModifierEventType> getFiredGraphEventTypes() {
+    return FIRED_GRAPH_EVENT_TYPES;
+  }
   
   /**
    * Register listener for all its supported types fired by the graph modifier

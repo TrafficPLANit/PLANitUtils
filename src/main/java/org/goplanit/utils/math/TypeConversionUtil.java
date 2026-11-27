@@ -109,6 +109,28 @@ public class TypeConversionUtil {
   }
 
   /**
+   * A big decimal as a double, a value left out staying left out, such as an optional decimal read from a file into an
+   * optional amount
+   *
+   * @param value to convert, may be null
+   * @return the double, null when the value is null
+   */
+  public static Double toDoubleOrNull(BigDecimal value) {
+    return value == null ? null : value.doubleValue();
+  }
+
+  /**
+   * A double as a big decimal, a value left out staying left out, such as an optional amount written to a file as an
+   * optional decimal
+   *
+   * @param value to convert, may be null
+   * @return the big decimal, null when the value is null
+   */
+  public static BigDecimal toBigDecimalOrNull(Double value) {
+    return value == null ? null : BigDecimal.valueOf(value);
+  }
+
+  /**
    * Text that is exactly true or false as a boolean. Other forms, such as {@code yes}, {@code True} or {@code NO}, are
    * refused rather than read as true or false, so a mistake in a file is noticed
    *

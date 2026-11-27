@@ -1,8 +1,7 @@
 package org.goplanit.utils.settings;
 
 import org.goplanit.utils.exceptions.PlanItRunTimeException;
-import org.goplanit.utils.exceptions.SettingsProblemsException;
-import org.goplanit.utils.exceptions.YamlProblemsException;
+import org.goplanit.utils.exceptions.ProblemsRunTimeException;
 import org.goplanit.utils.math.TypeConversionUtil;
 import org.goplanit.utils.misc.CollectionUtils;
 import org.goplanit.utils.misc.Pair;
@@ -13,7 +12,8 @@ import org.goplanit.utils.settings.annotations.SettingsKeyEffect;
 import org.goplanit.utils.settings.annotations.SettingsTopLevelValue;
 import org.goplanit.utils.settings.annotations.SettingsSection;
 import org.goplanit.utils.settings.annotations.SettingsWrite;
-import org.goplanit.utils.settings.problem.SettingsProblem;
+import org.goplanit.utils.problem.Problem;
+import org.goplanit.utils.problem.Problems;
 import org.goplanit.utils.settings.problem.SettingsProblemKind;
 import org.goplanit.utils.yaml.SimpleYamlReader;
 import org.goplanit.utils.yaml.YamlProblemKind;
@@ -232,10 +232,10 @@ public final class SettingsYamlLoader {
   private final List<Pair<SettingsSource, Map<String, Object>>> parsedSources = new ArrayList<>();
 
   /** problems found so far */
-  private final List<SettingsProblem> problems = new ArrayList<>();
+  private final Problems<SettingsProblemKind> problems = new Problems<>();
 
   /** warnings found so far */
-  private final List<SettingsProblem> warnings = new ArrayList<>();
+  private final List<Problem<SettingsProblemKind>> warnings = new ArrayList<>();
 
   /** the files being read, the source applied first, so a file of nested settings naming one of them back is found */
   private final Deque<String> filesBeingRead = new ArrayDeque<>();
@@ -249,7 +249,7 @@ public final class SettingsYamlLoader {
    * @param detail what is wrong, for people
    */
   private void addProblem(SettingsProblemKind kind, SettingsSource source, String keyPath, String detail) {
-    problems.add(new SettingsProblem(kind, source.getDescription(), keyPath, detail));
+    problems.add(kind, source.getDescription(), keyPath, detail);
   }
 
   /**
@@ -282,9 +282,9 @@ public final class SettingsYamlLoader {
     } catch (IOException e) {
       addProblem(SettingsProblemKind.FILE_NOT_READ, source, "", "Cannot be read: " + e);
       return null;
-    } catch (YamlProblemsException e) {
-      e.getProblems().forEach(problem ->
-          addProblem(settingsKindOf(problem.getKind()), source, problem.getKeyPath(), problem.getDetail()));
+    } catch (ProblemsRunTimeException e) {
+      e.getProblems(YamlProblemKind.class).forEach(problem ->
+          addProblem(settingsKindOf(problem.getKind()), source, problem.getSubject(), problem.getDetail()));
       return null;
     }
     if (!(topLevel instanceof Map)) {
@@ -494,7 +494,7 @@ public final class SettingsYamlLoader {
       return null;
     }
     if (former != null) {
-      var warning = new SettingsProblem(SettingsProblemKind.FORMER_KEY_USED, source.getDescription(), keyPath,
+      var warning = new Problem<>(SettingsProblemKind.FORMER_KEY_USED, source.getDescription(), keyPath,
           "Applied under its current name " + former.getAnnotation(SettingsWrite.class).key());
       warnings.add(warning);
       LOGGER.warning(warning.toString());
@@ -830,16 +830,15 @@ public final class SettingsYamlLoader {
    * @param <T> type of the settings
    * @param settingsClass to make: the class of a section of the schema, or one giving such settings through getters
    * @return the settings
-   * @throws SettingsProblemsException holding every problem found, when there is any
+   * @throws ProblemsRunTimeException holding every problem found, of the kinds of {@link SettingsProblemKind}, when
+   *     there is any
    */
   public <T> T create(Class<T> settingsClass) {
     var index = SettingsKeyIndex.of(settingsClass);
     var settings = settingsClass.cast(index.createSettings(this::findTopLevelText));
     var settingsBySectionKey = schema.getSectionSettingsOf(settings);
     parsedSources.forEach(parsed -> applyTopLevel(parsed.first(), parsed.second(), settings, settingsBySectionKey));
-    if (!problems.isEmpty()) {
-      throw new SettingsProblemsException(problems);
-    }
+    problems.throwIfAny("Settings files have");
     return settings;
   }
 
@@ -848,7 +847,7 @@ public final class SettingsYamlLoader {
    *
    * @return the warnings, in the order found
    */
-  public List<SettingsProblem> getWarnings() {
+  public List<Problem<SettingsProblemKind>> getWarnings() {
     return Collections.unmodifiableList(warnings);
   }
 }

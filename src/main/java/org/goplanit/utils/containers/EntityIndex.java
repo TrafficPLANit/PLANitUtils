@@ -71,7 +71,8 @@ public interface EntityIndex<K, E> {
    * Collect the entities referring to the key
    *
    * @param key to look up
-   * @return entities in the order they were indexed, empty when none
+   * @return entities in the order they were indexed, empty when none; unmodifiable and a copy, so later changes to
+   *         the index do not show in it and a caller may change the index while going over it
    */
   public abstract List<E> get(K key);
 

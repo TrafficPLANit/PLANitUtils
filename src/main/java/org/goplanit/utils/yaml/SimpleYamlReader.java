@@ -1,6 +1,7 @@
 package org.goplanit.utils.yaml;
 
-import org.goplanit.utils.exceptions.YamlProblemsException;
+import org.goplanit.utils.exceptions.ProblemsRunTimeException;
+import org.goplanit.utils.problem.Problems;
 import org.snakeyaml.engine.v2.api.LoadSettings;
 import org.snakeyaml.engine.v2.api.lowlevel.Compose;
 import org.snakeyaml.engine.v2.exceptions.YamlEngineException;
@@ -15,7 +16,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
@@ -71,7 +71,7 @@ public final class SimpleYamlReader {
   }
 
   /** problems found so far */
-  private final List<YamlProblem> problems = new ArrayList<>();
+  private final Problems<YamlProblemKind> problems = new Problems<>();
 
   /** Constructor, private, as each text is read by a reader of its own through {@link #read(String)} */
   private SimpleYamlReader() {
@@ -85,7 +85,7 @@ public final class SimpleYamlReader {
    * @param detail what is wrong, for people
    */
   private void addProblem(YamlProblemKind kind, String keyPath, String detail) {
-    problems.add(new YamlProblem(kind, keyPath, detail));
+    problems.add(kind, "", keyPath, detail);
   }
 
   /**
@@ -217,14 +217,13 @@ public final class SimpleYamlReader {
    * @param yamlText to read
    * @return the value of the top level, a Map, a List or a String with any values in it nested as in the YAML; null for
    *     an empty document
-   * @throws YamlProblemsException holding every problem found, when there is any
+   * @throws ProblemsRunTimeException holding every problem found, of the kinds of {@link YamlProblemKind}, when there
+   *     is any
    */
   public static Object read(String yamlText) {
     var reader = new SimpleYamlReader();
     var topLevel = reader.toTopLevelValue(yamlText);
-    if (!reader.problems.isEmpty()) {
-      throw new YamlProblemsException(reader.problems);
-    }
+    reader.problems.throwIfAny("YAML has");
     return topLevel;
   }
 
@@ -234,7 +233,8 @@ public final class SimpleYamlReader {
    * @param file to read
    * @return the value of the top level, as {@link #read(String)} gives it
    * @throws IOException when the file cannot be read
-   * @throws YamlProblemsException holding every problem found, when there is any
+   * @throws ProblemsRunTimeException holding every problem found, of the kinds of {@link YamlProblemKind}, when there
+   *     is any
    */
   public static Object read(Path file) throws IOException {
     return read(Files.readString(file));

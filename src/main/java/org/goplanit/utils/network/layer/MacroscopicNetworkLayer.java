@@ -3,6 +3,7 @@ package org.goplanit.utils.network.layer;
 import org.goplanit.utils.mode.Mode;
 import org.goplanit.utils.network.layer.macroscopic.*;
 import org.goplanit.utils.network.layer.macroscopic.intersection.Intersections;
+import org.goplanit.utils.network.layer.macroscopic.tollroad.TollRoads;
 import org.goplanit.utils.network.layer.physical.Node;
 import org.goplanit.utils.network.layer.physical.Nodes;
 import org.goplanit.utils.network.layer.modifier.MacroscopicNetworkLayerModifier;
@@ -80,6 +81,14 @@ public interface MacroscopicNetworkLayer extends UntypedPhysicalLayer<Node, Macr
    * @return intersections container
    */
   public abstract Intersections getIntersections();
+
+  /**
+   * Provide access to the toll roads of this layer: its referenced (tolled) link segments,
+   * grouped into roads, and who pays on them
+   *
+   * @return toll roads container
+   */
+  public abstract TollRoads getTollRoads();
 
   /**
    * Provide access to the spatial movements of this layer: those through its spatial intersections and its

@@ -1,11 +1,11 @@
 package org.goplanit.utils.test;
 
-import org.goplanit.utils.exceptions.SettingsProblemsException;
+import org.goplanit.utils.exceptions.ProblemsRunTimeException;
 import org.goplanit.utils.misc.FileUtils;
+import org.goplanit.utils.problem.Problem;
 import org.goplanit.utils.settings.SettingsFileContentType;
 import org.goplanit.utils.settings.SettingsSource;
 import org.goplanit.utils.settings.YamlWriteSettingsSupport;
-import org.goplanit.utils.settings.problem.SettingsProblem;
 import org.goplanit.utils.settings.problem.SettingsProblemKind;
 
 import java.io.IOException;
@@ -17,8 +17,8 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 /**
- * Checks of the settings files a converter's settings write, and of the problems a {@link SettingsProblemsException}
- * holds when making settings throws it, shipped for the tests of every converter
+ * Checks of the settings files a converter's settings write, and of the problems a
+ * {@link ProblemsRunTimeException} holds when making settings throws it, shipped for the tests of every converter
  * <p>
  * A converter's tests hold two settings files per kind of settings: every key not at its default, and the global
  * defaults. These checks make settings from such a file, or at their defaults, write them out and compare the lines
@@ -149,30 +149,31 @@ public final class SettingsFileAssertionUtils {
   }
 
   /**
-   * Run code expected to throw a {@link SettingsProblemsException}, such as making settings from a file with a
-   * mistake, and give the problems the exception holds. Making settings throws that exception, holding every problem
+   * Run code expected to throw a {@link ProblemsRunTimeException}, such as making settings from a file with a mistake,
+   * and give the settings problems the exception holds. Making settings throws that exception, holding every problem
    * found in the sources, so a test of a mistake checks those problems.
    * <p>
-   * It does what JUnit's {@code assertThrows(SettingsProblemsException.class, ...).getProblems()} does, so the library
-   * needs no test framework; a JUnit test can call it as any other assertion, the {@link AssertionError} failing the
-   * test. Any other exception the code throws is passed on.
+   * It does what JUnit's
+   * {@code assertThrows(ProblemsRunTimeException.class, ...).getProblems(SettingsProblemKind.class)} does, so the
+   * library needs no test framework; a JUnit test can call it as any other assertion, the
+   * {@link AssertionError} failing the test. Any other exception the code throws is passed on.
    * </p>
    *
    * @param makeSettings the code expected to throw, such as {@code () -> factory.createFromYaml(sources)}
-   * @return the problems the exception holds
+   * @return the settings problems the exception holds
    * @throws AssertionError when the code throws nothing
    */
-  public static List<SettingsProblem> assertThrowsSettingsProblems(Runnable makeSettings) {
+  public static List<Problem<SettingsProblemKind>> assertThrowsSettingsProblems(Runnable makeSettings) {
     try {
       makeSettings.run();
-    } catch (SettingsProblemsException e) {
-      return e.getProblems();
+    } catch (ProblemsRunTimeException e) {
+      return e.getProblems(SettingsProblemKind.class);
     }
-    throw new AssertionError("No SettingsProblemsException was thrown, one was expected");
+    throw new AssertionError("No ProblemsRunTimeException was thrown, one was expected");
   }
 
   /**
-   * Run code expected to throw a {@link SettingsProblemsException} holding exactly one problem, of the kind given, as
+   * Run code expected to throw a {@link ProblemsRunTimeException} holding exactly one problem, of the kind given, as
    * making settings from a file with one mistake does, and give that problem, for a test to check where it was found.
    * As {@link #assertThrowsSettingsProblems(Runnable)}, a JUnit test can call it as any other assertion
    *
@@ -181,7 +182,8 @@ public final class SettingsFileAssertionUtils {
    * @return the problem
    * @throws AssertionError when the code throws nothing, or the exception holds more problems or one of another kind
    */
-  public static SettingsProblem assertThrowsOneSettingsProblem(SettingsProblemKind kind, Runnable makeSettings) {
+  public static Problem<SettingsProblemKind> assertThrowsOneSettingsProblem(SettingsProblemKind kind,
+      Runnable makeSettings) {
     var problems = assertThrowsSettingsProblems(makeSettings);
     if (problems.size() != 1 || problems.get(0).getKind() != kind) {
       throw new AssertionError(String.format("Expected one settings problem of kind %s, the exception holds %s",

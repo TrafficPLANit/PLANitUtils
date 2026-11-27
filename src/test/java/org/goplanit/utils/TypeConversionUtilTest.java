@@ -9,6 +9,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
 import java.io.File;
+import java.math.BigDecimal;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.file.Path;
@@ -16,6 +17,7 @@ import java.text.DecimalFormat;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -175,5 +177,14 @@ public class TypeConversionUtilTest {
     assertEquals(12345678901L, TypeConversionUtil.toNumber("12345678901"));
     assertEquals(0.5, TypeConversionUtil.toNumber("0.5"));
     assertThrows(NumberFormatException.class, () -> TypeConversionUtil.toNumber("many"));
+  }
+
+  /** A double and a big decimal convert both ways, and a value left out stays left out */
+  @Test
+  public void testDoubleAndBigDecimalOrNull() {
+    assertEquals(1.73, TypeConversionUtil.toDoubleOrNull(new BigDecimal("1.73")));
+    assertEquals(new BigDecimal("0.64"), TypeConversionUtil.toBigDecimalOrNull(0.64));
+    assertNull(TypeConversionUtil.toDoubleOrNull(null));
+    assertNull(TypeConversionUtil.toBigDecimalOrNull(null));
   }
 }

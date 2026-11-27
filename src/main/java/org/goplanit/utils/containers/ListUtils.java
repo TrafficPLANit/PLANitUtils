@@ -9,8 +9,10 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.IdentityHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.function.Function;
 import java.util.function.Predicate;
@@ -52,6 +54,25 @@ public class ListUtils {
       return null;
     }
     return list.get(list.size()-1);
+  }
+
+  /**
+   * Collect every unordered pair of different entries of the list once, in the order of the list: for x, y and z, the
+   * pairs (x,y), (x,z) and (y,z). Unlike {@link #getPairPermutations}, a pair is not repeated the other way round, so
+   * a check that is the same either way, such as whether two time bands overlap, is made once per pair
+   *
+   * @param list to pair the entries of
+   * @return the pairs, empty for a list of one entry or none
+   * @param <T> type of list
+   */
+  public static <T> List<Pair<T,T>> getPairCombinations(List<T> list) {
+    var combinations = new ArrayList<Pair<T,T>>();
+    for (int first = 0; first < list.size(); first++) {
+      for (int second = first + 1; second < list.size(); second++) {
+        combinations.add(Pair.of(list.get(first), list.get(second)));
+      }
+    }
+    return combinations;
   }
 
   /**
@@ -263,15 +284,54 @@ public class ListUtils {
   }
 
   /**
-   * Verify if a list holds this very instance, compared by identity rather than with equals. Entities equal each other
-   * by id, and ids can be recreated in place, so a list of entities is searched by identity
+   * Add an entry right after an existing one, found by identity, or at the end when the list does not hold it, so the
+   * list keeps an order such as that of the link segments along a road; nothing happens when it holds the entry already
+   *
+   * @param <T> type of entry
+   * @param list to add to
+   * @param existing entry to add after, compared by identity
+   * @param entry to add
+   * @return true when added
+   */
+  public static <T> boolean addAfter(List<T> list, T existing, T entry) {
+    if (containsByIdentity(list, entry)) {
+      return false;
+    }
+    int index = 0;
+    while (index < list.size() && list.get(index) != existing) {
+      ++index;
+    }
+    list.add(Math.min(index + 1, list.size()), entry);
+    return true;
+  }
+
+  /**
+   * Verify if a list, or any other collection, holds this very instance, compared by identity rather than with equals.
+   * Entities equal each other by id, and ids can be recreated in place, so a collection of entities is searched by
+   * identity
    *
    * @param <T> type of entry
    * @param list to look in
    * @param entry to look for
    * @return true when the list holds this instance, false otherwise
    */
-  public static <T> boolean containsByIdentity(List<? extends T> list, T entry){
+  public static <T> boolean containsByIdentity(Collection<? extends T> list, T entry){
     return list.stream().anyMatch(held -> held == entry);
+  }
+
+  /**
+   * The position of each entry of a list, found by identity rather than with equals, as {@link #containsByIdentity}
+   * searches: for an array indexed by position, such as a lookup table's amounts per section of a pricing scheme
+   *
+   * @param <T> type of entry
+   * @param list to index
+   * @return each entry with its position in the list, the first when it holds the entry twice
+   */
+  public static <T> Map<T, Integer> createIndexByIdentity(List<? extends T> list){
+    var indexByIdentity = new IdentityHashMap<T, Integer>(2 * list.size());
+    for (int position = list.size() - 1; position >= 0; --position) {
+      indexByIdentity.put(list.get(position), position);
+    }
+    return indexByIdentity;
   }
 }

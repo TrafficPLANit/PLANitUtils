@@ -6,11 +6,16 @@ import org.goplanit.utils.math.Precision;
 import org.goplanit.utils.mode.Mode;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.HashSet;
+import java.util.IdentityHashMap;
 import java.util.List;
+import java.util.Set;
 import java.util.function.BiFunction;
 import java.util.function.Predicate;
 import java.util.function.UnaryOperator;
+import java.util.stream.Collectors;
 
 /**
  * Utilities for link segments
@@ -19,6 +24,24 @@ import java.util.function.UnaryOperator;
  *
  */
 public class LinkSegmentUtils {
+
+  /**
+   * Find the segments of a group of link segments with an adjacent segment outside the group in a direction, see
+   * {@link #findAdjacent}: upstream, where traffic comes into the group, or downstream, where it goes out of it
+   *
+   * @param <LS> type of the link segments
+   * @param segments the link segments of the group, each once; a segment is in the group when it is one of these
+   * @param inTrafficDirection true to look downstream, false to look upstream
+   * @return the segments with an adjacent segment outside the group, in the order given
+   */
+  private static <LS extends LinkSegment> List<LS> findSegmentsWithAdjacentOutside(Collection<LS> segments,
+      boolean inTrafficDirection) {
+    Set<LS> group = Collections.newSetFromMap(new IdentityHashMap<>());
+    group.addAll(segments);
+    Predicate<LS> outside = segment -> !group.contains(segment);
+    return segments.stream().filter(segment -> !findAdjacent(segment, inTrafficDirection, outside).isEmpty())
+        .collect(Collectors.toList());
+  }
 
   /**
    * Create a predicate selecting only those edge segments that are link segments permitting the given mode.
@@ -124,6 +147,32 @@ public class LinkSegmentUtils {
       boolean inTrafficDirection, final Predicate<? super LS> condition) {
     var adjacent = findAdjacent(segment, inTrafficDirection, condition);
     return adjacent.size() == 1 ? adjacent.get(0) : null;
+  }
+
+  /**
+   * Find the segments where traffic comes into a group of link segments: those with an adjacent upstream segment
+   * outside the group, see {@link #findAdjacentUpstream}. For a toll road's link segments, the first one and each one
+   * an on-ramp joins; not one in the middle, nor one fed only by another toll road priced with it
+   *
+   * @param <LS> type of the link segments
+   * @param segments the link segments of the group, each once; a segment is in the group when it is one of these
+   * @return the segments entering the group from outside it, in the order given
+   */
+  public static <LS extends LinkSegment> List<LS> findSegmentsEnteringFromOutside(Collection<LS> segments) {
+    return findSegmentsWithAdjacentOutside(segments, false);
+  }
+
+  /**
+   * Find the segments where traffic goes out of a group of link segments: those with an adjacent downstream segment
+   * outside the group, see {@link #findAdjacentDownstream}. For a toll road's link segments, the last one and each one
+   * an off-ramp leaves; not one in the middle, nor one leading only onto another toll road priced with it
+   *
+   * @param <LS> type of the link segments
+   * @param segments the link segments of the group, each once; a segment is in the group when it is one of these
+   * @return the segments leaving the group to outside it, in the order given
+   */
+  public static <LS extends LinkSegment> List<LS> findSegmentsLeavingToOutside(Collection<LS> segments) {
+    return findSegmentsWithAdjacentOutside(segments, true);
   }
 
   /**

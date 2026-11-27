@@ -14,6 +14,7 @@ import org.goplanit.utils.network.layer.macroscopic.SpatialMovement;
 import org.goplanit.utils.network.layer.macroscopic.intersection.Intersection;
 import org.goplanit.utils.network.layer.macroscopic.intersection.SpatialIntersection;
 import org.goplanit.utils.network.layer.macroscopic.intersection.modifier.event.IntersectionModifierEventProducer;
+import org.goplanit.utils.network.layer.macroscopic.tollroad.modifier.event.TollRoadModifierEventProducer;
 import org.goplanit.utils.network.layer.modifier.consolidator.IntersectionCollapseModifierResult;
 import org.goplanit.utils.network.layer.modifier.consolidator.IntersectionCollapserSettings;
 import org.goplanit.utils.network.layer.modifier.consolidator.IntersectionConsolidationModifierResult;
@@ -24,14 +25,22 @@ import org.goplanit.utils.network.layer.physical.Node;
 
 /**
  * Modifier for macroscopic network layers. Besides the graph related changes of {@link UntypedDirectedGraphLayerModifier}
- * it keeps the layer's intersections and banned turns consistent with every change it makes, fires events about
- * intersections, and states what it changed unless the caller switches that off.
+ * it keeps the layer's intersections, toll roads and banned turns consistent with every change it makes, fires events
+ * about intersections and toll roads, and states what it changed unless the caller switches that off.
+ * <p>
+ * A layer holds more than its graph: intersections with their movements, toll roads and banned turns all refer to its
+ * link segments. A change made to the graph directly would leave them referring to link segments that are gone. Made
+ * through this modifier, each change keeps them in step: breaking a link at a node leaves both new link segments on
+ * the toll road the original was on, and removing a link segment takes it off its intersection and toll road and
+ * removes those left empty, with an event, so other components, such as a network pricing, can follow.
+ * </p>
  *
  * @author markr
  */
 public interface MacroscopicNetworkLayerModifier extends
     UntypedDirectedGraphLayerModifier<Node, MacroscopicLink, MacroscopicLinkSegment>,
-    IntersectionModifierEventProducer, LinkSegmentTypeModifierEventProducer, LoggableModifier {
+    IntersectionModifierEventProducer, LinkSegmentTypeModifierEventProducer, TollRoadModifierEventProducer,
+    LoggableModifier {
 
   /**
    * Remove an intersection from the layer, firing a remove intersection event. The movements of a spatial

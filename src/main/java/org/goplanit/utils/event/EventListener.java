@@ -1,5 +1,8 @@
 package org.goplanit.utils.event;
 
+import java.util.Arrays;
+import java.util.Set;
+
 /** Base interface for event listeners.
  * 
  * @author markr
@@ -23,5 +26,19 @@ public interface EventListener extends java.util.EventListener{
    */
   public default EventType[] getKnownSupportedEventTypes() {
     return null;
+  }
+
+  /**
+   * The known supported event types that are among the given ones, for example among those a producer fires
+   *
+   * @param eventTypes to look among
+   * @return the known supported event types among them, in the listener's order; empty when there are none, or when
+   *     the supported event types are not known
+   */
+  public default EventType[] findKnownSupportedEventTypesAmong(final Set<? extends EventType> eventTypes) {
+    if (!hasKnownSupportedEventTypes()) {
+      return new EventType[0];
+    }
+    return Arrays.stream(getKnownSupportedEventTypes()).filter(eventTypes::contains).toArray(EventType[]::new);
   }
 }

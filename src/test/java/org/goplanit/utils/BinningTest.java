@@ -87,6 +87,35 @@ public class BinningTest {
   }
 
   @Test
+  public void binsOverlapWhenTheyShareAValue() {
+    /* one reaching into the other, either way round */
+    assertTrue(Bin.of(2, 6).overlaps(Bin.of(5, 9)));
+    assertTrue(Bin.of(5, 9).overlaps(Bin.of(2, 6)));
+    /* one inside the other */
+    assertTrue(Bin.of(2, 9).overlaps(Bin.of(4, 5)));
+    /* meeting at 5, both claiming it */
+    assertTrue(Bin.of(2, 5).overlaps(Bin.of(5, 9)));
+    /* meeting at 5, only one claiming it, so they share no value */
+    assertFalse(Bin.of(2, 5, true, false, null).overlaps(Bin.of(5, 9)));
+    assertFalse(Bin.of(5, 9).overlaps(Bin.of(2, 5, true, false, null)));
+    /* apart */
+    assertFalse(Bin.of(2.0, 4.5).overlaps(Bin.of(4.6, 9.0)));
+  }
+
+  /**
+   * The length two bins share runs from the higher lower bound to the lower upper bound, whether the bounds are held or
+   * not, and is 0 when they share nothing: a use from 15 to 45 km has 5 km in a band from 0 to 20 km
+   */
+  @Test
+  public void overlapLengthRunsFromTheHigherLowerToTheLowerUpperBound() {
+    assertEquals(5.0, Bin.of(0.0, 20.0, true, false, null).findOverlapLength(Bin.of(15.0, 45.0)), 1e-12);
+    assertEquals(5.0, Bin.of(15.0, 45.0).findOverlapLength(Bin.of(0.0, 20.0)), 1e-12);
+    assertEquals(2.0, Bin.of(2, 9).findOverlapLength(Bin.of(4, 6)), 1e-12);
+    assertEquals(0.0, Bin.of(2, 5).findOverlapLength(Bin.of(5, 9)), 1e-12);
+    assertEquals(0.0, Bin.of(2.0, 4.5).findOverlapLength(Bin.of(4.6, 9.0)), 1e-12);
+  }
+
+  @Test
   public void configurationRejectsGapsOverlapsAndDisorder() {
     /* a gap between 5 and 6 */
     assertThrows(PlanItRunTimeException.class, () -> BinningConfiguration.of(

@@ -1,8 +1,8 @@
 package org.goplanit.utils;
 
-import org.goplanit.utils.exceptions.YamlProblemsException;
+import org.goplanit.utils.exceptions.ProblemsRunTimeException;
+import org.goplanit.utils.problem.Problem;
 import org.goplanit.utils.yaml.SimpleYamlReader;
-import org.goplanit.utils.yaml.YamlProblem;
 import org.goplanit.utils.yaml.YamlProblemKind;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
@@ -14,6 +14,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import static org.goplanit.utils.ProblemsTest.kindsOf;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -32,18 +33,9 @@ public class SimpleYamlReaderTest {
    * @param yamlText to read
    * @return the problems, in the order found
    */
-  private static List<YamlProblem> problemsOf(String yamlText) {
-    return assertThrows(YamlProblemsException.class, () -> SimpleYamlReader.read(yamlText)).getProblems();
-  }
-
-  /**
-   * The kinds of the problems
-   *
-   * @param problems to get the kinds of
-   * @return the kinds, in order
-   */
-  private static List<YamlProblemKind> kindsOf(List<YamlProblem> problems) {
-    return problems.stream().map(YamlProblem::getKind).collect(Collectors.toList());
+  private static List<Problem<YamlProblemKind>> problemsOf(String yamlText) {
+    return assertThrows(ProblemsRunTimeException.class, () -> SimpleYamlReader.read(yamlText))
+        .getProblems(YamlProblemKind.class);
   }
 
   /** folder for the test files */
@@ -85,7 +77,7 @@ public class SimpleYamlReaderTest {
   public void testEveryProblemFoundWithItsKeyPath() {
     var problems = problemsOf("a:\n  b: 1\n  b: 2\nlist:\n  - {k: 1, k: 2}\n  - !!java.io.File x\n");
     assertEquals(List.of("a.b", "list[0].k", "list[1]"),
-        problems.stream().map(YamlProblem::getKeyPath).collect(Collectors.toList()));
+        problems.stream().map(Problem::getSubject).collect(Collectors.toList()));
     assertEquals(List.of(YamlProblemKind.DUPLICATE_KEY, YamlProblemKind.DUPLICATE_KEY, YamlProblemKind.UNSUPPORTED_TAG),
         kindsOf(problems));
   }
@@ -101,7 +93,7 @@ public class SimpleYamlReaderTest {
   public void testValueHoldingItselfRefused() {
     var problems = problemsOf("a: &x [*x]\n");
     assertEquals(List.of(YamlProblemKind.HOLDS_ITSELF), kindsOf(problems));
-    assertEquals("a", problems.get(0).getKeyPath());
+    assertEquals("a", problems.get(0).getSubject());
   }
 
   /** Text that is not YAML is refused, and so are more aliases than allowed */

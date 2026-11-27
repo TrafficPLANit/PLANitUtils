@@ -11,6 +11,7 @@ import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
@@ -152,5 +153,76 @@ public class CollectionsTest {
     assertThrows(UnsupportedOperationException.class, () -> view.get("x").put(2L, "b"));
     inner.put(2L, "b");
     assertEquals(Map.of(1L, "a", 2L, "b"), view.get("x"));
+  }
+
+  /** The items meeting the condition are removed and given back in the order they were held; none, nothing changes */
+  @Test
+  public void removeMatchingRemovesAndGivesBackWhatMatches() {
+    var numbers = new LinkedHashSet<>(List.of(1, 2, 3, 4, 5, 6));
+
+    assertEquals(List.of(2, 4, 6), ContainerUtils.removeMatching(numbers, number -> number % 2 == 0));
+    assertEquals(Set.of(1, 3, 5), numbers);
+    assertTrue(ContainerUtils.removeMatching(numbers, number -> number > 5).isEmpty());
+    assertEquals(Set.of(1, 3, 5), numbers);
+  }
+
+  /** The union holds each element of any of the sets once, an empty set adding nothing, and refuses changes */
+  @Test
+  public void unmodifiableUnionOfHoldsEachElementOnceAndRefusesChanges() {
+    Set<Number> union = ContainerUtils.unmodifiableUnionOf(Set.of(1, 2), Set.of(2, 3), Set.of(4.5), Set.of());
+
+    assertEquals(Set.of(1, 2, 3, 4.5), union);
+    assertThrows(UnsupportedOperationException.class, () -> union.add(5));
+  }
+
+  /**
+   * Each entry held by two or more owners is given with those owners, in the order of the owners; an entry only one
+   * owner holds is not. For example, sections a, b and c holding link segments 1 and 2, 2 and 3, and 3, 4 and 2
+   */
+  @Test
+  public void findEntriesSharedBetweenGivesEachSharedEntryWithItsOwners() {
+    var entriesByOwner = new LinkedHashMap<String, List<Integer>>();
+    entriesByOwner.put("a", List.of(1, 2));
+    entriesByOwner.put("b", List.of(2, 3));
+    entriesByOwner.put("c", List.of(3, 4, 2));
+
+    var shared = ContainerUtils.findEntriesSharedBetween(entriesByOwner.keySet(), entriesByOwner::get);
+    assertEquals(Map.of(2, List.of("a", "b", "c"), 3, List.of("b", "c")), shared);
+    assertTrue(ContainerUtils.findEntriesSharedBetween(List.of("a"), entriesByOwner::get).isEmpty());
+  }
+
+  /** An entry is added right after one found by identity, at the end when that is not found, and never twice */
+  @Test
+  public void addAfterAddsRightAfterTheExistingEntry() {
+    var list = new ArrayList<>(List.of("a", "b", "c"));
+    assertTrue(ListUtils.addAfter(list, "a", "x"));
+    assertTrue(ListUtils.addAfter(list, "z", "y"));
+    assertFalse(ListUtils.addAfter(list, "c", "x"));
+    assertEquals(List.of("a", "x", "b", "c", "y"), list);
+  }
+
+  /** Each unordered pair of different entries once, in the order of the list; a list of one or none has no pair */
+  @Test
+  public void getPairCombinationsGivesEachPairOnce() {
+    assertEquals(List.of(Pair.of("x", "y"), Pair.of("x", "z"), Pair.of("y", "z")),
+        ListUtils.getPairCombinations(List.of("x", "y", "z")));
+    assertTrue(ListUtils.getPairCombinations(List.of("x")).isEmpty());
+    assertTrue(ListUtils.getPairCombinations(List.of()).isEmpty());
+  }
+
+  /**
+   * Each entry is found at its position by identity, an equal entry that is another instance not at all, and an entry
+   * held twice at its first position
+   */
+  @Test
+  public void createIndexByIdentityGivesEachEntryItsPosition() {
+    var first = "a";
+    var equalButOther = new String(first);
+    var second = "b";
+    var index = ListUtils.createIndexByIdentity(List.of(first, second, first));
+    assertEquals(0, index.get(first));
+    assertEquals(1, index.get(second));
+    assertNull(index.get(equalButOther));
+    assertEquals(2, index.size());
   }
 }

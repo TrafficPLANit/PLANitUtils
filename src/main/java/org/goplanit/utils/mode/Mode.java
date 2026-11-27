@@ -164,6 +164,14 @@ public interface Mode extends ExternalIdAble, ManagedId {
     return hasUseFeatures() && getUseFeatures().getUseOfType() == UseOfModeType.PUBLIC;
   }
 
+  /** Verify if this mode is an emergency mode: a mode whose use is emergency, such as an ambulance or a fire engine
+   *
+   * @return true when its use is emergency, false otherwise, including when its use features are not known
+   */
+  public default boolean isEmergencyMode() {
+    return hasUseFeatures() && getUseFeatures().getUseOfType() == UseOfModeType.EMERGENCY;
+  }
+
   /** check if the mode is one of the PLANit predefined mode types or not
    * 
    * @return true when predefined, false, when custom

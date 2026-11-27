@@ -1,5 +1,6 @@
 package org.goplanit.utils.misc;
 
+import org.goplanit.utils.exceptions.ExceptionUtils;
 import org.goplanit.utils.exceptions.PlanItRunTimeException;
 
 import java.lang.reflect.Array;
@@ -130,5 +131,19 @@ public class CollectionUtils {
    */
   public static LinkedHashSet<Long> toOrderedSet(long... values) {
     return LongStream.of(values).boxed().collect(Collectors.toCollection(LinkedHashSet::new));
+  }
+
+  /**
+   * The values as an unmodifiable list in the order given, refused when there are none, such as the modes a toll road
+   * names, which must be at least one
+   *
+   * @param <T> type of the values
+   * @param values to copy, at least one
+   * @return the list, unmodifiable
+   * @throws IllegalArgumentException when the values are null or empty
+   */
+  public static <T> List<T> copyToNonEmptyList(Collection<? extends T> values) {
+    ExceptionUtils.throwIllegalArgumentIf(nullOrEmpty(values), "Values refused, there must be at least one");
+    return List.copyOf(values);
   }
 }
