@@ -1,0 +1,27 @@
+package org.goplanit.utils.graph.modifier.event;
+
+import org.goplanit.utils.event.EventImpl;
+import org.goplanit.utils.graph.modifier.GraphModifier;
+
+/**
+ * Event called after a portion (subgraph) of a graph has been removed
+ * 
+ * @author markr
+ *
+ */
+public class RemoveGraphEntityEvent extends EventImpl implements GraphModificationEvent {
+
+  /** event type fired off when sub graph vertex has been removed */
+  public static final GraphModifierEventType EVENT_TYPE =
+      new GraphModifierEventType("GRAPHMODIFIER.REMOVE");
+
+  /**
+   * Constructor
+   * 
+   * @param source graph modifier firing the event
+   */
+  public RemoveGraphEntityEvent(GraphModifier<?, ?> source) {
+    super(EVENT_TYPE, source, null);
+  }
+
+}
