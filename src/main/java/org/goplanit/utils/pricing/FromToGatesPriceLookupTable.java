@@ -17,7 +17,7 @@ public interface FromToGatesPriceLookupTable extends PriceLookupTable {
    * The amount a mode pays for a use from one gate to another
    *
    * @param mode priced
-   * @param band index, see {@link #findBandIndex}
+   * @param timeBand index, see {@link #findTimeBandIndex}
    * @param distanceBand index, see {@link #findDistanceBandIndex}
    * @param fromGate entered, one of the scheme's gates
    * @param toGate left, one of the scheme's gates
@@ -25,7 +25,7 @@ public interface FromToGatesPriceLookupTable extends PriceLookupTable {
    */
   public abstract double getAmountInCurrency(
       Mode mode,
-      int band,
+      int timeBand,
       int distanceBand,
       PricingSchemeGate fromGate,
       PricingSchemeGate toGate);

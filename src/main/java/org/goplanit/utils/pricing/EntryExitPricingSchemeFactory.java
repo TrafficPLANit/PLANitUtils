@@ -30,7 +30,10 @@ public interface EntryExitPricingSchemeFactory extends ManagedIdEntityFactory<En
    * @param pricing what it charges
    * @return the scheme, null when a problem refuses it, and the problems found
    */
-  public abstract Pair<EntryExitPricingScheme, Problems<PricingProblemKind>> registerNew(String name,
-      PricedModeSelection modes, List<TollRoad> tollRoads, List<PricingSchemeGate> gates,
+  public abstract Pair<EntryExitPricingScheme, Problems<PricingProblemKind>> registerNew(
+      String name,
+      PricedModeSelection modes,
+      List<TollRoad> tollRoads,
+      List<PricingSchemeGate> gates,
       SchemePricing<FromToGatesPriceRule> pricing);
 }

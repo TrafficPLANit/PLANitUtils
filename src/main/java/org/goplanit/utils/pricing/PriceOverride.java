@@ -25,7 +25,7 @@ import java.util.List;
  * @param <P> the kind of price rule, {@link StartWithPerKmPriceRule} or {@link FromToGatesPriceRule}
  * @author markr
  */
-public interface PriceOverride<P extends PriceRule> extends Serializable {
+public interface PriceOverride<P extends PriceRule<P>> extends Serializable {
 
   /**
    * The first of some overrides applying to a mode, as each mode is in at most one override of a price rule
@@ -35,9 +35,13 @@ public interface PriceOverride<P extends PriceRule> extends Serializable {
    * @param mode to find
    * @return the override, null when none applies to the mode
    */
-  public static <P extends PriceRule> PriceOverride<P> findApplyingTo(List<PriceOverride<P>> priceOverrides,
+  public static <P extends PriceRule<P>> PriceOverride<P> findApplyingTo(
+      List<PriceOverride<P>> priceOverrides,
       Mode mode) {
-    return priceOverrides.stream().filter(priceOverride -> priceOverride.appliesTo(mode)).findFirst().orElse(null);
+    return priceOverrides.stream()
+        .filter(priceOverride -> priceOverride.appliesTo(mode))
+        .findFirst()
+        .orElse(null);
   }
 
   /**

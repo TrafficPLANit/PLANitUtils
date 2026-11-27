@@ -25,8 +25,11 @@ public class ChangeLinkSegmentTypeEvent extends EventImpl implements LinkSegment
    * @param previousType of the link segment, may be null when it had none
    * @param newType of the link segment
    */
-  public ChangeLinkSegmentTypeEvent(MacroscopicNetworkLayerModifier source, MacroscopicLinkSegment linkSegment,
-      MacroscopicLinkSegmentType previousType, MacroscopicLinkSegmentType newType) {
+  public ChangeLinkSegmentTypeEvent(
+      MacroscopicNetworkLayerModifier source,
+      MacroscopicLinkSegment linkSegment,
+      MacroscopicLinkSegmentType previousType,
+      MacroscopicLinkSegmentType newType) {
     super(EVENT_TYPE, source, new Object[] { linkSegment, previousType, newType });
   }
 

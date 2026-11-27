@@ -34,6 +34,21 @@ public final class ModePricingSchemeLinkSegmentCoverage implements Serializable 
   /** generated UID */
   private static final long serialVersionUID = 1L;
 
+  /**
+   * Take an entry off the included and the excluded entries of its kind, found by identity
+   *
+   * @param <T> type of the entries
+   * @param included entries of the kind
+   * @param excluded entries of the kind
+   * @param entry to take off
+   * @return true when it was included or excluded
+   */
+  private static <T> boolean removeFromIncludedOrExcluded(List<T> included, List<T> excluded, T entry) {
+    boolean removedIncluded = included.removeIf(held -> held == entry);
+    boolean removedExcluded = excluded.removeIf(held -> held == entry);
+    return removedIncluded || removedExcluded;
+  }
+
   /** the layers considered, empty for every layer */
   private final List<MacroscopicNetworkLayer> consideredLayers = new ArrayList<>();
 
@@ -163,9 +178,7 @@ public final class ModePricingSchemeLinkSegmentCoverage implements Serializable 
    * @return true when it was included or excluded one by one
    */
   public boolean removeLinkSegment(MacroscopicLinkSegment linkSegment) {
-    boolean removedIncluded = includedLinkSegments.removeIf(included -> included == linkSegment);
-    boolean removedExcluded = excludedLinkSegments.removeIf(excluded -> excluded == linkSegment);
-    return removedIncluded || removedExcluded;
+    return removeFromIncludedOrExcluded(includedLinkSegments, excludedLinkSegments, linkSegment);
   }
 
   /**
@@ -175,9 +188,7 @@ public final class ModePricingSchemeLinkSegmentCoverage implements Serializable 
    * @return true when it was included or excluded
    */
   public boolean removeLinkSegmentType(MacroscopicLinkSegmentType linkSegmentType) {
-    boolean removedIncluded = includedLinkSegmentTypes.removeIf(included -> included == linkSegmentType);
-    boolean removedExcluded = excludedLinkSegmentTypes.removeIf(excluded -> excluded == linkSegmentType);
-    return removedIncluded || removedExcluded;
+    return removeFromIncludedOrExcluded(includedLinkSegmentTypes, excludedLinkSegmentTypes, linkSegmentType);
   }
 
   /**

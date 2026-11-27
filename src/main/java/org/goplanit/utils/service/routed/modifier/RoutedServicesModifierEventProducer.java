@@ -43,7 +43,8 @@ public interface RoutedServicesModifierEventProducer extends EventProducer {
    *  @param listener to register
    *  @param eventType to register listener for
    */
-  public abstract void addListener(final RoutedServicesModifierListener listener,
+  public abstract void addListener(
+      final RoutedServicesModifierListener listener,
       final RoutedServicesModifierEventType eventType);
 
   /**
@@ -52,7 +53,8 @@ public interface RoutedServicesModifierEventProducer extends EventProducer {
    *  @param listener to remove
    *  @param eventType to unregister listener for
    */
-  public abstract void removeListener(final RoutedServicesModifierListener listener,
+  public abstract void removeListener(
+      final RoutedServicesModifierListener listener,
       final RoutedServicesModifierEventType eventType);
 
   /**

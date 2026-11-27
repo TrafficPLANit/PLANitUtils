@@ -31,8 +31,11 @@ public class RemoveConnectoidAccessLinkSegmentEvent extends EventImpl implements
    * @param accessZoneEntry the access link segment was removed from
    * @param removedAccessLinkSegment the access link segment removed
    */
-  public RemoveConnectoidAccessLinkSegmentEvent(ZoningModifier source, Connectoid connectoid,
-      DirectedConnectoidAccessZoneEntry accessZoneEntry, EdgeSegment removedAccessLinkSegment) {
+  public RemoveConnectoidAccessLinkSegmentEvent(
+      ZoningModifier source,
+      Connectoid connectoid,
+      DirectedConnectoidAccessZoneEntry accessZoneEntry,
+      EdgeSegment removedAccessLinkSegment) {
     super(EVENT_TYPE, source, new Object[] { connectoid, accessZoneEntry, removedAccessLinkSegment });
   }
 

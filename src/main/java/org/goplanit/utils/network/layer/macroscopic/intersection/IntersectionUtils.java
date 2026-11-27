@@ -17,6 +17,7 @@ import org.goplanit.utils.network.layer.macroscopic.SpatialMovement;
 import org.goplanit.utils.network.layer.physical.LinkSegment;
 import org.goplanit.utils.network.layer.physical.Node;
 import org.goplanit.utils.network.layer.physical.NodeUtils;
+import org.goplanit.utils.containers.ContainerUtils;
 
 /**
  * Utilities for intersections
@@ -158,14 +159,7 @@ public class IntersectionUtils {
    * @return intersections per node found in more than one, empty when none
    */
   public static Map<Node, List<Intersection>> findNodesInMoreThanOneIntersection(Intersections intersections){
-    Map<Node, List<Intersection>> intersectionsByNode = new IdentityHashMap<>();
-    for(var intersection : intersections){
-      for(var node : intersection.getMemberNodes()){
-        intersectionsByNode.computeIfAbsent(node, n -> new ArrayList<>(1)).add(intersection);
-      }
-    }
-    intersectionsByNode.values().removeIf(list -> list.size() < 2);
-    return intersectionsByNode;
+    return ContainerUtils.findEntriesSharedBetween(intersections.toCollection(), Intersection::getMemberNodes);
   }
 
   /**

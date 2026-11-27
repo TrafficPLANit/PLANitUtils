@@ -166,6 +166,15 @@ public class CollectionsTest {
     assertEquals(Set.of(1, 3, 5), numbers);
   }
 
+  /** The index of the first entry meeting a condition is found, -1 when no entry meets it */
+  @Test
+  public void findIndexOfFirstMatchingGivesTheFirstOrMinusOne() {
+    var numbers = List.of(3, 8, 5, 10);
+
+    assertEquals(1, ListUtils.findIndexOfFirstMatching(numbers, number -> number % 2 == 0));
+    assertEquals(-1, ListUtils.findIndexOfFirstMatching(numbers, number -> number > 10));
+  }
+
   /** The union holds each element of any of the sets once, an empty set adding nothing, and refuses changes */
   @Test
   public void unmodifiableUnionOfHoldsEachElementOnceAndRefusesChanges() {

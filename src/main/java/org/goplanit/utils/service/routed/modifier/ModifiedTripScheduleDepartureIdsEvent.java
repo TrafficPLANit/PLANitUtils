@@ -23,7 +23,8 @@ public class ModifiedTripScheduleDepartureIdsEvent extends ModifiedRoutedService
    * @param routedServicesLayer to use
    */
   public ModifiedTripScheduleDepartureIdsEvent(
-      RoutedServicesLayerModifier source, RoutedServicesLayer routedServicesLayer) {
+      RoutedServicesLayerModifier source,
+      RoutedServicesLayer routedServicesLayer) {
     super(EVENT_TYPE, source, routedServicesLayer);
   }
 

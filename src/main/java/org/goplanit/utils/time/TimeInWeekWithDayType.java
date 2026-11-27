@@ -62,7 +62,10 @@ public final class TimeInWeekWithDayType implements Serializable {
    * @return the moment
    * @throws IllegalArgumentException when the minute lies outside the day, or the day is null
    */
-  public static TimeInWeekWithDayType of(DayOfWeek dayOfWeek, int minuteOfDay, boolean publicHoliday,
+  public static TimeInWeekWithDayType of(
+      DayOfWeek dayOfWeek,
+      int minuteOfDay,
+      boolean publicHoliday,
       boolean schoolHoliday) {
     ExceptionUtils.throwIllegalArgumentIf(dayOfWeek == null, "A time in the week needs a day of the week");
     ExceptionUtils.throwIllegalArgumentIf(minuteOfDay < 0 || minuteOfDay >= MINUTES_PER_DAY,

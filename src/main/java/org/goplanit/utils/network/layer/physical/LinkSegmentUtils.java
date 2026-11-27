@@ -34,7 +34,8 @@ public class LinkSegmentUtils {
    * @param inTrafficDirection true to look downstream, false to look upstream
    * @return the segments with an adjacent segment outside the group, in the order given
    */
-  private static <LS extends LinkSegment> List<LS> findSegmentsWithAdjacentOutside(Collection<LS> segments,
+  private static <LS extends LinkSegment> List<LS> findSegmentsWithAdjacentOutside(
+      Collection<LS> segments,
       boolean inTrafficDirection) {
     Set<LS> group = Collections.newSetFromMap(new IdentityHashMap<>());
     group.addAll(segments);
@@ -61,6 +62,23 @@ public class LinkSegmentUtils {
    */
   public static Predicate<EdgeSegment> permitsMode(final Mode mode) {
     return edgeSegment -> edgeSegment instanceof LinkSegment && ((LinkSegment) edgeSegment).isModeAllowed(mode);
+  }
+
+  /**
+   * Find the modes none of the link segments allows, see {@link #permitsMode}: for example the modes a toll road prices
+   * that cannot use any of its link segments
+   *
+   * @param <M> type of the modes
+   * @param modes to look at
+   * @param linkSegments to look at them on
+   * @return the modes none of the link segments allows, in the order given
+   */
+  public static <M extends Mode> List<M> findModesAllowedByNone(
+      Collection<M> modes,
+      Collection<? extends LinkSegment> linkSegments) {
+    return modes.stream()
+        .filter(mode -> linkSegments.stream().noneMatch(permitsMode(mode)))
+        .collect(Collectors.toList());
   }
 
   /**

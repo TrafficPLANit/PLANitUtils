@@ -21,7 +21,7 @@ import org.goplanit.utils.time.TimeInWeekWithDayType;
  * @param <P> the kind of price rule, {@link StartWithPerKmPriceRule} or {@link FromToGatesPriceRule}
  * @author markr
  */
-public interface SchemePricing<P extends PriceRule> extends Serializable {
+public interface SchemePricing<P extends PriceRule<P>> extends Serializable {
 
   /**
    * The point price rule for a mode at a moment: the amounts in force there, with the distance band picked by the
@@ -41,7 +41,9 @@ public interface SchemePricing<P extends PriceRule> extends Serializable {
    *     before this moment, which picks the distance band
    * @return the price rule, with every amount it charges filled in
    */
-  public abstract P getPointPriceRule(Mode mode, TimeInWeekWithDayType moment,
+  public abstract P getPointPriceRule(
+      Mode mode,
+      TimeInWeekWithDayType moment,
       double distanceTravelledForBinSelectionKm);
 
   /**
@@ -93,7 +95,10 @@ public interface SchemePricing<P extends PriceRule> extends Serializable {
    * @return the band, null when the moment lies outside every band
    */
   public default PricingTimeBand<P> findTimeBand(TimeInWeekWithDayType moment) {
-    return getTimeBands().stream().filter(band -> band.covers(moment)).findFirst().orElse(null);
+    return getTimeBands().stream()
+        .filter(band -> band.covers(moment))
+        .findFirst()
+        .orElse(null);
   }
 
   /**
@@ -131,7 +136,8 @@ public interface SchemePricing<P extends PriceRule> extends Serializable {
    * @param useDistanceKm the distance of the use
    * @return the km of the use times their distance band factors
    */
-  public default double computeKmTimesDistanceBandFactors(double distanceTravelledForBinSelectionKm,
+  public default double computeKmTimesDistanceBandFactors(
+      double distanceTravelledForBinSelectionKm,
       double useDistanceKm) {
     if (useDistanceKm <= 0) {
       return 0;
@@ -153,7 +159,10 @@ public interface SchemePricing<P extends PriceRule> extends Serializable {
    * @return the minimum price, 0 when none applies to the mode
    */
   public default double findModesMinimumPrice(Mode mode) {
-    return getModesMinimumPrices().stream().filter(minimum -> minimum.appliesTo(mode))
-        .mapToDouble(ModesMinimumPrice::getAmountInCurrency).max().orElse(0);
+    return getModesMinimumPrices().stream()
+        .filter(minimum -> minimum.appliesTo(mode))
+        .mapToDouble(ModesMinimumPrice::getAmountInCurrency)
+        .max()
+        .orElse(0);
   }
 }

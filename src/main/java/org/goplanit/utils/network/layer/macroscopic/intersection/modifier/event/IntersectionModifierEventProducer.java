@@ -41,7 +41,8 @@ public interface IntersectionModifierEventProducer extends EventProducer {
    *  @param listener to register
    *  @param eventType to register listener for
    */
-  public abstract void addListener(final IntersectionModifierListener listener,
+  public abstract void addListener(
+      final IntersectionModifierListener listener,
       final IntersectionModifierEventType eventType);
 
   /**
@@ -50,7 +51,8 @@ public interface IntersectionModifierEventProducer extends EventProducer {
    *  @param listener to remove
    *  @param eventType to unregister listener for
    */
-  public abstract void removeListener(final IntersectionModifierListener listener,
+  public abstract void removeListener(
+      final IntersectionModifierListener listener,
       final IntersectionModifierEventType eventType);
 
   /**

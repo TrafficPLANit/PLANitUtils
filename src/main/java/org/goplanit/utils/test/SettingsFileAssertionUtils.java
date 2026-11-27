@@ -182,7 +182,8 @@ public final class SettingsFileAssertionUtils {
    * @return the problem
    * @throws AssertionError when the code throws nothing, or the exception holds more problems or one of another kind
    */
-  public static Problem<SettingsProblemKind> assertThrowsOneSettingsProblem(SettingsProblemKind kind,
+  public static Problem<SettingsProblemKind> assertThrowsOneSettingsProblem(
+      SettingsProblemKind kind,
       Runnable makeSettings) {
     var problems = assertThrowsSettingsProblems(makeSettings);
     if (problems.size() != 1 || problems.get(0).getKind() != kind) {

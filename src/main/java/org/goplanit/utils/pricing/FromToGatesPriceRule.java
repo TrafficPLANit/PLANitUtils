@@ -11,7 +11,7 @@ import java.util.List;
  *
  * @author markr
  */
-public interface FromToGatesPriceRule extends PriceRule {
+public interface FromToGatesPriceRule extends PriceRule<FromToGatesPriceRule> {
 
   /**
    * The amounts per pair of gates
@@ -27,7 +27,7 @@ public interface FromToGatesPriceRule extends PriceRule {
    * @param toGate left, compared by identity
    * @return the pair, null when this price rule gives none for it
    */
-  public abstract GateFromToAmount findGatePair(PricingSchemeGate fromGate, PricingSchemeGate toGate);
+  public abstract GateFromToAmount findByFromToGate(PricingSchemeGate fromGate, PricingSchemeGate toGate);
 
   /**
    * {@inheritDoc}
@@ -45,7 +45,7 @@ public interface FromToGatesPriceRule extends PriceRule {
    * @return the pair's amount in the pricing's currency, 0 when the rule does not list the pair
    */
   public default double findAmountInCurrency(PricingSchemeGate fromGate, PricingSchemeGate toGate) {
-    var gatePair = findGatePair(fromGate, toGate);
+    var gatePair = findByFromToGate(fromGate, toGate);
     return gatePair == null ? 0 : gatePair.getAmountInCurrency();
   }
 }

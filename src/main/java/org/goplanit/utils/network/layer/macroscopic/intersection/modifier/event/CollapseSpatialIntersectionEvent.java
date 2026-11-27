@@ -38,9 +38,14 @@ public class CollapseSpatialIntersectionEvent extends EventImpl implements Inter
    * @param collapsedModes the modes collapsed onto the centre node
    * @param state START when collapse is about to change the intersection, DONE when all its changes are made
    */
-  public CollapseSpatialIntersectionEvent(final MacroscopicNetworkLayerModifier source,
-      final MacroscopicNetworkLayer layer, final SpatialIntersection intersection, final Node centreNode,
-      final List<Node> memberNodes, final List<Mode> collapsedModes, final EventState state) {
+  public CollapseSpatialIntersectionEvent(
+      final MacroscopicNetworkLayerModifier source,
+      final MacroscopicNetworkLayer layer,
+      final SpatialIntersection intersection,
+      final Node centreNode,
+      final List<Node> memberNodes,
+      final List<Mode> collapsedModes,
+      final EventState state) {
     super(EVENT_TYPE, source,
         new Object[] {layer, intersection, centreNode, List.copyOf(memberNodes), List.copyOf(collapsedModes)}, state);
   }

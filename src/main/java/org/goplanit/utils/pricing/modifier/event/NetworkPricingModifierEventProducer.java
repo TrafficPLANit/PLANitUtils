@@ -42,7 +42,8 @@ public interface NetworkPricingModifierEventProducer extends EventProducer {
    * @param listener to register
    * @param eventType to register listener for
    */
-  public abstract void addListener(final NetworkPricingModifierListener listener,
+  public abstract void addListener(
+      final NetworkPricingModifierListener listener,
       final NetworkPricingModifierEventType eventType);
 
   /**
@@ -51,7 +52,8 @@ public interface NetworkPricingModifierEventProducer extends EventProducer {
    * @param listener to remove
    * @param eventType to unregister listener for
    */
-  public abstract void removeListener(final NetworkPricingModifierListener listener,
+  public abstract void removeListener(
+      final NetworkPricingModifierListener listener,
       final NetworkPricingModifierEventType eventType);
 
   /**

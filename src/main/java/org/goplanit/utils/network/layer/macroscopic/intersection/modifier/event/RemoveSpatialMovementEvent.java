@@ -22,7 +22,8 @@ public class RemoveSpatialMovementEvent extends EventImpl implements Intersectio
    * @param removedSpatialMovement the movement removed
    */
   public RemoveSpatialMovementEvent(
-      final MacroscopicNetworkLayerModifier source, final SpatialMovement removedSpatialMovement) {
+      final MacroscopicNetworkLayerModifier source,
+      final SpatialMovement removedSpatialMovement) {
     super(EVENT_TYPE, source, new Object[] {removedSpatialMovement});
   }
 

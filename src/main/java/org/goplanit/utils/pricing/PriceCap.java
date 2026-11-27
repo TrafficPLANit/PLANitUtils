@@ -20,16 +20,16 @@ import org.goplanit.utils.mode.Mode;
  *
  * @author markr
  */
-public interface PricingCap extends ExternalIdAble, ManagedId, Serializable {
+public interface PriceCap extends ExternalIdAble, ManagedId, Serializable {
 
   /** id class for generating ids */
-  public static final Class<PricingCap> CAP_ID_CLASS = PricingCap.class;
+  public static final Class<PriceCap> CAP_ID_CLASS = PriceCap.class;
 
   /**
    * {@inheritDoc}
    */
   @Override
-  public default Class<? extends PricingCap> getIdClass() {
+  public default Class<? extends PriceCap> getIdClass() {
     return CAP_ID_CLASS;
   }
 
@@ -78,13 +78,13 @@ public interface PricingCap extends ExternalIdAble, ManagedId, Serializable {
    * {@inheritDoc}
    */
   @Override
-  public abstract PricingCap shallowClone();
+  public abstract PriceCap shallowClone();
 
   /**
    * {@inheritDoc}
    */
   @Override
-  public abstract PricingCap deepClone();
+  public abstract PriceCap deepClone();
 
   /**
    * Whether the cap covers a mode its schemes charge: always when its modes are not given, else when it names the mode
@@ -115,7 +115,7 @@ public interface PricingCap extends ExternalIdAble, ManagedId, Serializable {
    * @param capTotals the traveller's totals per cap, null to count the use as the first in the cap's period
    * @return the capped price, the price itself when the cap leaves all of it
    */
-  public default double computeCappedPrice(double cumulativePrice, PricingCapTotals capTotals) {
+  public default double computeCappedPrice(double cumulativePrice, PriceCapTotals capTotals) {
     if (getAmountInCurrency() != null) {
       double currentTotal = capTotals == null ? 0 : capTotals.getCurrentTotal(this);
       return Math.min(cumulativePrice, Math.max(0, getAmountInCurrency() - currentTotal));

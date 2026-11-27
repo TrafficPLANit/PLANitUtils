@@ -21,7 +21,8 @@ public class RecreatedZoningEntitiesManagedIdsEvent extends EventImpl implements
    * @param managedIdEntities that have been recreated in terms of their ids
    */
   public RecreatedZoningEntitiesManagedIdsEvent(
-      final ZoningModifier source, final ManagedIdEntities<? extends ManagedId> managedIdEntities) {
+      final ZoningModifier source,
+      final ManagedIdEntities<? extends ManagedId> managedIdEntities) {
     super(EVENT_TYPE, source, new Object[] {managedIdEntities});
   }
 

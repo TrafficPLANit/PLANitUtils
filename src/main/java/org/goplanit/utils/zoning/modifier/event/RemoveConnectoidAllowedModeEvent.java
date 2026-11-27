@@ -32,7 +32,10 @@ public class RemoveConnectoidAllowedModeEvent extends EventImpl implements Zonin
    * @param removedMode the mode removed
    */
   public RemoveConnectoidAllowedModeEvent(
-      ZoningModifier source, Connectoid connectoid, ConnectoidAccessZoneEntry accessZoneEntry, Mode removedMode) {
+      ZoningModifier source,
+      Connectoid connectoid,
+      ConnectoidAccessZoneEntry accessZoneEntry,
+      Mode removedMode) {
     super(EVENT_TYPE, source, new Object[] { connectoid, accessZoneEntry, removedMode });
   }
 

@@ -25,7 +25,7 @@ import org.goplanit.utils.time.TimeInWeekWithDayType;
  * @param <P> the kind of price rule, {@link StartWithPerKmPriceRule} or {@link FromToGatesPriceRule}
  * @author markr
  */
-public interface PricingTimeBand<P extends PriceRule> extends Serializable {
+public interface PricingTimeBand<P extends PriceRule<P>> extends Serializable {
 
   /**
    * The id of the band in the file, unique within its scheme, such as {@code peak}

@@ -31,8 +31,10 @@ public class MoveEdgeEndsAtVertexEvent extends EventImpl implements DirectedGrap
    * @param previousEndVertex the vertex the ends moved away from
    * @param newEndVertex the vertex the ends moved to
    */
-  public MoveEdgeEndsAtVertexEvent(final DirectedGraphModifier<?, ?, ?> source,
-      final List<? extends DirectedEdge> edges, final DirectedVertex previousEndVertex,
+  public MoveEdgeEndsAtVertexEvent(
+      final DirectedGraphModifier<?, ?, ?> source,
+      final List<? extends DirectedEdge> edges,
+      final DirectedVertex previousEndVertex,
       final DirectedVertex newEndVertex) {
     super(EVENT_TYPE, source, new Object[] { List.copyOf(edges), previousEndVertex, newEndVertex });
   }

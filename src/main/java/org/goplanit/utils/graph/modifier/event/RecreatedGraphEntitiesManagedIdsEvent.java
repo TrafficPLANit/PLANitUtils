@@ -21,7 +21,8 @@ public class RecreatedGraphEntitiesManagedIdsEvent extends EventImpl implements 
    * @param managedIdEntities that have been recreated in terms of their ids
    */
   public RecreatedGraphEntitiesManagedIdsEvent(
-      final GraphModifier source, final ManagedIdEntities<? extends ManagedId> managedIdEntities) {
+      final GraphModifier source,
+      final ManagedIdEntities<? extends ManagedId> managedIdEntities) {
     super(EVENT_TYPE, source, new Object[] {managedIdEntities});
   }
 

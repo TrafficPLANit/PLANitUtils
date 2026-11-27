@@ -28,7 +28,8 @@ public class RemoveLinkSegmentTypeEvent extends EventImpl implements LinkSegment
    * @param source modifier of the layer the type was part of
    * @param removedLinkSegmentType the type removed
    */
-  public RemoveLinkSegmentTypeEvent(MacroscopicNetworkLayerModifier source,
+  public RemoveLinkSegmentTypeEvent(
+      MacroscopicNetworkLayerModifier source,
       MacroscopicLinkSegmentType removedLinkSegmentType) {
     super(EVENT_TYPE, source, new Object[] { removedLinkSegmentType });
   }

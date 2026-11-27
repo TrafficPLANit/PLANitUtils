@@ -19,11 +19,11 @@ public interface PricingSchemeGateFactory extends ManagedIdEntityFactory<Pricing
   /**
    * Create a gate and register it on its container
    *
-   * @param entryLinkSegments the scheme's link segments entered at the gate, may be empty
-   * @param exitLinkSegments the scheme's link segments left at the gate, may be empty
+   * @param entryLinkSegments the scheme's link segments entered at the gate, empty when it is an exit only
+   * @param exitLinkSegments the scheme's link segments left at the gate, empty when it is an entry only
    * @return the registered gate
-   * @throws IllegalArgumentException when both are empty, as a gate is an entry, an exit, or both
    */
-  public abstract PricingSchemeGate registerNew(Collection<MacroscopicLinkSegment> entryLinkSegments,
+  public abstract PricingSchemeGate registerNew(
+      Collection<MacroscopicLinkSegment> entryLinkSegments,
       Collection<MacroscopicLinkSegment> exitLinkSegments);
 }

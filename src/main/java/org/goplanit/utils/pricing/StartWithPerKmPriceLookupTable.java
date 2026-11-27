@@ -19,32 +19,35 @@ public interface StartWithPerKmPriceLookupTable extends PriceLookupTable {
    * The start a mode pays once per use
    *
    * @param mode priced
-   * @param band index, see {@link #findBandIndex}
+   * @param timeBand index, see {@link #findTimeBandIndex}
    * @param distanceBand index, see {@link #findDistanceBandIndex}
    * @return the start, 0 when the scheme does not charge the mode
    */
-  public abstract double getStartAmountInCurrency(Mode mode, int band, int distanceBand);
+  public abstract double getStartAmountInCurrency(Mode mode, int timeBand, int distanceBand);
 
   /**
    * The rate per km a mode pays on a link segment: that of the section it lies in, else the scheme's
    *
    * @param mode priced
-   * @param band index, see {@link #findBandIndex}
+   * @param timeBand index, see {@link #findTimeBandIndex}
    * @param distanceBand index, see {@link #findDistanceBandIndex}
    * @param linkSegment one of the scheme's priced link segments
    * @return the rate per km, 0 when the scheme does not charge the mode
    */
-  public abstract double getPerKmAmountInCurrency(Mode mode, int band, int distanceBand, LinkSegment linkSegment);
+  public abstract double getPerKmAmountInCurrency(Mode mode, int timeBand, int distanceBand, LinkSegment linkSegment);
 
   /**
    * The start a mode pays each time it passes the section a link segment lies in
    *
    * @param mode priced
-   * @param band index, see {@link #findBandIndex}
+   * @param timeBand index, see {@link #findTimeBandIndex}
    * @param distanceBand index, see {@link #findDistanceBandIndex}
    * @param linkSegment one of the scheme's priced link segments
    * @return the section's start, 0 when the link segment lies in no section or the scheme does not charge the mode
    */
-  public abstract double getSectionStartAmountInCurrency(Mode mode, int band, int distanceBand,
+  public abstract double getSectionStartAmountInCurrency(
+      Mode mode,
+      int timeBand,
+      int distanceBand,
       LinkSegment linkSegment);
 }

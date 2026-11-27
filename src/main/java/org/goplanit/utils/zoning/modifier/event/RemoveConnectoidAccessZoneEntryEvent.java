@@ -31,7 +31,9 @@ public class RemoveConnectoidAccessZoneEntryEvent extends EventImpl implements Z
    * @param removedAccessZoneEntry the entry removed
    */
   public RemoveConnectoidAccessZoneEntryEvent(
-      ZoningModifier source, Connectoid connectoid, ConnectoidAccessZoneEntry removedAccessZoneEntry) {
+      ZoningModifier source,
+      Connectoid connectoid,
+      ConnectoidAccessZoneEntry removedAccessZoneEntry) {
     super(EVENT_TYPE, source, new Object[] { connectoid, removedAccessZoneEntry });
   }
 

@@ -24,6 +24,7 @@ public interface PricingSchemeSectionFactory extends ManagedIdEntityFactory<Pric
    * @param linkSegmentTypes the section's link segment types, may be empty when it is given by link segment
    * @return the registered section
    */
-  public abstract PricingSchemeSection registerNew(Collection<MacroscopicLinkSegment> linkSegments,
+  public abstract PricingSchemeSection registerNew(
+      Collection<MacroscopicLinkSegment> linkSegments,
       Collection<MacroscopicLinkSegmentType> linkSegmentTypes);
 }

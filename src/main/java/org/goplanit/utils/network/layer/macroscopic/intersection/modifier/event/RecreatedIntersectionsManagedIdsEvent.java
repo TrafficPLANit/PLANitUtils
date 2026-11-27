@@ -24,7 +24,8 @@ public class RecreatedIntersectionsManagedIdsEvent extends EventImpl implements 
    * @param spatialMovements whose ids have been recreated, those of spatial intersections and independent ones alike
    */
   public RecreatedIntersectionsManagedIdsEvent(
-      final MacroscopicNetworkLayerModifier source, final Intersections intersections,
+      final MacroscopicNetworkLayerModifier source,
+      final Intersections intersections,
       final SpatialMovements spatialMovements) {
     super(EVENT_TYPE, source, new Object[] {intersections, spatialMovements});
   }

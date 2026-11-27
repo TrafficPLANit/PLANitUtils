@@ -54,7 +54,9 @@ public class ProblemsRunTimeException extends PlanItRunTimeException {
    */
   @SuppressWarnings("unchecked")
   public <K extends Enum<K>> List<Problem<K>> getProblems(Class<K> kindType) {
-    return problems.stream().filter(problem -> kindType.isInstance(problem.getKind()))
-        .map(problem -> (Problem<K>) problem).collect(Collectors.toList());
+    return problems.stream()
+        .filter(problem -> kindType.isInstance(problem.getKind()))
+        .map(problem -> (Problem<K>) problem)
+        .collect(Collectors.toList());
   }
 }

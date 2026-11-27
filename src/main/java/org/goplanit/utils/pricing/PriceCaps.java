@@ -13,13 +13,13 @@ import java.util.List;
  *
  * @author markr
  */
-public interface PricingCaps extends ManagedIdEntities<PricingCap> {
+public interface PriceCaps extends ManagedIdEntities<PriceCap> {
 
   /**
    * {@inheritDoc}
    */
   @Override
-  public abstract PricingCapFactory getFactory();
+  public abstract PriceCapFactory getFactory();
 
   /**
    * The registered caps covering a scheme
@@ -28,5 +28,12 @@ public interface PricingCaps extends ManagedIdEntities<PricingCap> {
    * @return the caps, empty when none covers it, unmodifiable and a copy: later changes to the container do not show in
    *     it
    */
-  public abstract List<PricingCap> getByScheme(PricingScheme scheme);
+  public abstract List<PriceCap> getByScheme(PricingScheme scheme);
+
+  /**
+   * Create a traveller's totals per cap over a period, with nothing paid yet, for the cumulative prices of its uses
+   *
+   * @return the totals
+   */
+  public abstract PriceCapTotals createPriceCapTotals();
 }

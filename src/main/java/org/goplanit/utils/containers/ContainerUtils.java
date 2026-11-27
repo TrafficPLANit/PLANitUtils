@@ -64,7 +64,8 @@ public class ContainerUtils {
    * @return each entry held by two or more owners, with those owners in the order given, entries in the order first
    *     held; empty when no entry is shared
    */
-  public static <O, E> Map<E, List<O>> findEntriesSharedBetween(Collection<O> owners,
+  public static <O, E> Map<E, List<O>> findEntriesSharedBetween(
+      Collection<O> owners,
       Function<? super O, ? extends Collection<E>> entriesOf) {
     var ownersByEntry = new LinkedHashMap<E, List<O>>();
     for (var owner : owners) {

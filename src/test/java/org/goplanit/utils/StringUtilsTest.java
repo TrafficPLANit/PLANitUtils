@@ -21,6 +21,13 @@ public class StringUtilsTest {
     assertEquals("10,2,9", StringUtils.toSortedCommaSeparatedString(List.of(9, 10, 2), Object::toString));
   }
 
+  /** Elements are turned into text and joined with commas in the order given */
+  @Test
+  public void toCommaSeparatedString() {
+    assertEquals("", StringUtils.toCommaSeparatedString(List.<Integer>of(), Object::toString));
+    assertEquals("9,10,2", StringUtils.toCommaSeparatedString(List.of(9, 10, 2), Object::toString));
+  }
+
   /** Values of any type are turned into text in order, an enum's by their names, as whole numbers are */
   @Test
   public void toStrings() {
@@ -37,7 +44,9 @@ public class StringUtilsTest {
     assertEquals("Days", StringUtils.toSentence(java.util.concurrent.TimeUnit.DAYS));
   }
 
-  /** Text is broken at the last space that keeps a line within the length; a longer word stays whole; breaks are kept */
+  /**
+   * Text is broken at the last space that keeps a line within the length; a longer word stays whole; breaks are kept
+   */
   @Test
   public void wrapLineAtSpaces() {
     assertEquals(List.of("one two", "three"), StringUtils.wrapLineAtSpaces("one two three", 7));

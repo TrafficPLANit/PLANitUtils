@@ -1007,7 +1007,9 @@ public class SettingsYamlLoaderTest {
    * @param sources in order
    * @return the problems
    */
-  private static List<Problem<SettingsProblemKind>> problemsOf(SettingsSchema schema, Class<?> settingsClass,
+  private static List<Problem<SettingsProblemKind>> problemsOf(
+      SettingsSchema schema,
+      Class<?> settingsClass,
       SettingsSource... sources) {
     return SettingsFileAssertionUtils.assertThrowsSettingsProblems(
         () -> createFromSources(schema, settingsClass, sources));

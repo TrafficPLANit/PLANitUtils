@@ -12,7 +12,7 @@ import java.util.List;
  *
  * @author markr
  */
-public interface StartWithPerKmPriceRule extends PriceRule {
+public interface StartWithPerKmPriceRule extends PriceRule<StartWithPerKmPriceRule> {
 
   /**
    * The amount charged once per use of the scheme: the flagfall, or the whole charge of a gantry or cordon crossing
@@ -43,8 +43,10 @@ public interface StartWithPerKmPriceRule extends PriceRule {
    * @return its section price rule, null when this price rule gives none for it
    */
   public default SectionPriceRule findSectionPriceRule(PricingSchemeSection section) {
-    return getSectionPriceRules().stream().filter(sectionPriceRule -> sectionPriceRule.getSection() == section)
-        .findFirst().orElse(null);
+    return getSectionPriceRules().stream()
+        .filter(sectionPriceRule -> sectionPriceRule.getSection() == section)
+        .findFirst()
+        .orElse(null);
   }
 
   /**

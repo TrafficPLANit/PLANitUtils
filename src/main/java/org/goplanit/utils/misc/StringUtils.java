@@ -213,6 +213,22 @@ public class StringUtils {
   }
 
   /**
+   * Turn each element into text and join the texts with commas in the order given, e.g. "9,10,2"
+   *
+   * @param <E> type of element
+   * @param elements to join
+   * @param toText turning an element into its text
+   * @return the joined texts, empty when there are no elements
+   */
+  public static <E> String toCommaSeparatedString(
+      Collection<? extends E> elements,
+      Function<? super E, String> toText) {
+    return elements.stream()
+        .map(toText)
+        .collect(Collectors.joining(CharacterUtils.COMMA.toString()));
+  }
+
+  /**
    * Turn each element into text, sort the texts, and join them with commas, e.g. "10,2,9". Texts are sorted as
    * text, so "10" comes before "2". Every element must give a text, null is not allowed
    *
@@ -223,7 +239,11 @@ public class StringUtils {
    */
   public static <E> String toSortedCommaSeparatedString(
       Collection<? extends E> elements, Function<? super E, String> toText) {
-    return elements.stream().map(toText).sorted().collect(Collectors.joining(CharacterUtils.COMMA.toString()));
+    var sortedTexts = elements.stream()
+        .map(toText)
+        .sorted()
+        .collect(Collectors.toList());
+    return toCommaSeparatedString(sortedTexts, Function.identity());
   }
 
   /**

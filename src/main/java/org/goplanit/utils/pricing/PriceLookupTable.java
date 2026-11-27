@@ -26,7 +26,7 @@ public interface PriceLookupTable extends Serializable {
    * @param moment to look up
    * @return the band's index, the last index when the moment lies outside every band
    */
-  public abstract int findBandIndex(TimeInWeekWithDayType moment);
+  public abstract int findTimeBandIndex(TimeInWeekWithDayType moment);
 
   /**
    * The distance band holding a distance travelled on the scheme in its distance bands' period
@@ -48,7 +48,8 @@ public interface PriceLookupTable extends Serializable {
    * The most one use costs a mode, the lowest of the caps per use covering it, to apply at the end of a use
    *
    * @param mode to look up
-   * @return the cap per use, {@code Double.POSITIVE_INFINITY} when there is none or the scheme does not charge the mode
+   * @return the price cap per use, {@code Double.POSITIVE_INFINITY} when there is none or the scheme does not charge
+   *     the mode
    */
-  public abstract double getCapPerUse(Mode mode);
+  public abstract double getPriceCapPerUse(Mode mode);
 }

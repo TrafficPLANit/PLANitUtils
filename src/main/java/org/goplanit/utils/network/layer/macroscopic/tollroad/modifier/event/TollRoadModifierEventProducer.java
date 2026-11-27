@@ -51,7 +51,8 @@ public interface TollRoadModifierEventProducer extends EventProducer {
    * @param listener to remove
    * @param eventType to unregister listener for
    */
-  public abstract void removeListener(final TollRoadModifierListener listener,
+  public abstract void removeListener(
+      final TollRoadModifierListener listener,
       final TollRoadModifierEventType eventType);
 
   /**

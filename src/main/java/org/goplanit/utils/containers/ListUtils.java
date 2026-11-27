@@ -320,6 +320,21 @@ public class ListUtils {
   }
 
   /**
+   * The index of the first entry of a list meeting a condition, as {@link List#indexOf} gives that of an entry
+   *
+   * @param <T> type of entry
+   * @param list to look in
+   * @param condition the entry meets
+   * @return the index, -1 when no entry meets it
+   */
+  public static <T> int findIndexOfFirstMatching(List<? extends T> list, Predicate<? super T> condition) {
+    return IntStream.range(0, list.size())
+        .filter(index -> condition.test(list.get(index)))
+        .findFirst()
+        .orElse(-1);
+  }
+
+  /**
    * The position of each entry of a list, found by identity rather than with equals, as {@link #containsByIdentity}
    * searches: for an array indexed by position, such as a lookup table's amounts per section of a pricing scheme
    *

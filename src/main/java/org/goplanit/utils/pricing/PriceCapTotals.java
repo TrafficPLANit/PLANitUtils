@@ -15,7 +15,7 @@ import java.io.Serializable;
  *
  * @author markr
  */
-public interface PricingCapTotals extends Serializable {
+public interface PriceCapTotals extends Serializable {
 
   /**
    * Add to the totals of every cap over a period covering a scheme and mode: the cumulative price to the current total,
@@ -43,7 +43,7 @@ public interface PricingCapTotals extends Serializable {
    * @param cap to look up
    * @return the current total in the pricing's currency, 0 when nothing yet
    */
-  public abstract double getCurrentTotal(PricingCap cap);
+  public abstract double getCurrentTotal(PriceCap cap);
 
   /**
    * How many uses the traveller has made in a cap's current period of the schemes it covers
@@ -51,5 +51,5 @@ public interface PricingCapTotals extends Serializable {
    * @param cap to look up
    * @return the use count, 0 when none yet
    */
-  public abstract int getUseCount(PricingCap cap);
+  public abstract int getUseCount(PriceCap cap);
 }
